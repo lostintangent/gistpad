@@ -1,0 +1,77 @@
+{
+	"name": "gistfs",
+	"displayName": "GistFS",
+	"description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
+	"publisher": "vsls-contrib",
+	"version": "0.0.1",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/vsls-contrib/gist-fs"
+	},
+	"engines": {
+		"vscode": "^1.40.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"keywords": [
+		"Collaboration",
+		"Sharing",
+		"Remote"
+	],
+	"activationEvents": [
+		"onCommand:gistfs.deleteGist",
+		"onCommand:gistfs.forkGist",
+		"onCommand:gistfs.newGist",
+		"onCommand:gistfs.openGist",
+		"onCommand:gistfs.signOut",
+		"onFileSystem:gist"
+	],
+	"main": "./out/extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "gistfs.deleteGist",
+				"title": "Delete Gist",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.forkGist",
+				"title": "Fork Gist",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.newGist",
+				"title": "New Gist",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.openGist",
+				"title": "Open Gist",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.signOut",
+				"title": "Sign Out",
+				"category": "GistFS"
+			}
+		]
+	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "npm run compile && node ./node_modules/vscode/bin/test"
+	},
+	"devDependencies": {
+		"@types/keytar": "^4.4.2",
+		"@types/node": "^8.10.25",
+		"tslint": "^5.8.0",
+		"typescript": "^3.1.4",
+		"vscode": "^1.1.25"
+	},
+	"dependencies": {
+		"gists": "^2.0.0"
+	}
+}

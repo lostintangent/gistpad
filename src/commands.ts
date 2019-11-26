@@ -1,10 +1,26 @@
 import { commands, env, ExtensionContext, window } from "vscode";
-import { deleteGist, forkGist, newGist } from "./api";
+import { deleteGist, forkGist, newGist, listGists } from "./api";
 import { ensureAuthenticated, signout } from "./auth";
 import { EXTENSION_ID } from "./constants";
-import { getGistWorkspaceId, isGistWorkspace, openGist } from "./utils";
+import { getGistWorkspaceId, isGistWorkspace, openGist, getGistLabel } from "./utils";
 
 export function registerCommands(context: ExtensionContext) {
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.listGists`, async () => {
+		await ensureAuthenticated();
+
+		const gists = await listGists();
+		const items = gists.map(g => ({
+			label: getGistLabel(g),
+			description: g.description,
+			id: g.id
+		}))
+		const selected = await window.showQuickPick(items);
+
+		if (selected) {
+			openGist(selected.id)
+		}
+	}));
+
     context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.openGist`, async () => {
 		const clipboardValue = await env.clipboard.readText();
 		const gistID = await window.showInputBox({

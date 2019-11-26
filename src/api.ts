@@ -11,6 +11,13 @@ export interface Gist {
     html_url: string;
     truncated: boolean;
     url: string;
+    description: string;
+    owner: Owner;
+}
+
+interface Owner {
+    login: string;
+    id: number;
 }
 
 export interface GistFile {
@@ -23,6 +30,12 @@ export interface GistFile {
 async function getApi() {
     const token = await getToken();
     return new Gists({ token });
+}
+
+export async function listGists(): Promise<Gist[]> {
+    const api = await getApi();
+    const { pages } = await api.all();
+    return pages.reduce((result: Gist[], page: any) => [...result, ...page.body], [])
 }
 
 export async function getGist(id: string): Promise<Gist> {

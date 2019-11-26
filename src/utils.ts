@@ -1,6 +1,7 @@
 import * as path from "path";
 import { Uri, workspace, commands } from "vscode";
 import { FS_SCHEME } from "./constants";
+import { Gist } from "./api";
 
 export function getGistDetailsFromUri(uri: Uri) {
 	return {
@@ -25,4 +26,8 @@ export function openGist(id: string) {
 
 export function uriToFileName(uri: Uri): string {
     return decodeURIComponent(path.basename(uri.toString()));
+}
+
+export function getGistLabel(gist: Gist) {
+	return `${gist.owner.login} / ${Object.keys(gist.files)[0]}`
 }

@@ -45,7 +45,7 @@ export function registerCommands(context: ExtensionContext) {
 		await ensureAuthenticated();
 
 		const fileName = await window.showInputBox({
-			prompt: "Enter the starting file name",
+			prompt: "Enter the files name(s) to seed the Gist with (can be a comma-seperated list)",
 			value: "foo.txt"
 		});
 		if (!fileName) return;
@@ -54,7 +54,8 @@ export function registerCommands(context: ExtensionContext) {
 			prompt: "Enter an optional description for the new Gist",
 		});
 		
-		newGist(fileName, isPublic, description);
+		const fileNames = fileName.split(",");
+		newGist(fileNames, isPublic, description);
 	}
 
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.newPublicGist`, newGistInternal.bind(null, true)));

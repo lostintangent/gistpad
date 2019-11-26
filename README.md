@@ -24,9 +24,9 @@ This extension provides the following commands:
 
 * `GistFS: Open Gist` - Prompts you for a Gist ID and then opens it as a virtual workspace.
 
-* `GistFS: New Gist (Public)` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens it as a virtual workspace.
+* `GistFS: New Gist (Public)` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens it as a virtual workspace. If you'd like to seed the gist with multiple files, you can specify a comma-seperated list of names (e.g. `foo.txt,bar.js`).
 
-* `GistFS: New Gist (Secret)` - Creates a new [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists), and then opens it as a virtual workspace.
+* `GistFS: New Gist (Secret)` - Same behavior as the `GistFS: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
 * `GistFS: List Gists` - Lists your Gists, and then opens the selected one as a virtual workspace.
 

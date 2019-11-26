@@ -73,17 +73,28 @@ export async function forkGist(id: string) {
     }
 }
   
-export async function newGist(fileName: string, isPublic: boolean, description?: string) {
+export async function newGist(fileNames: string[], isPublic: boolean, description?: string) {
     const api = await getApi();
+
+    const files = fileNames
+        .map(fileName => fileName.trim())
+        .filter(fileName => fileName !== "")
+        .reduce((accumulator, fileName) => {
+            return {
+                ...accumulator,
+                [fileName]: {
+                    content: ZERO_WIDTH_SPACE
+                }
+            };
+        }
+    , {});
+
     const gist = await api.create({
       description,
       public: isPublic,
-      files: {
-        [fileName]: {
-          content: ZERO_WIDTH_SPACE
-        }
-      }
+      files
     });
+    
     openGist(gist.body.id);
 }
 

@@ -1,3 +1,7 @@
+## v0.0.4 (11/27/2016)
+
+* Allow seeding multiple files in a new gist, by specifying a comma-seperated list of files names
+
 ## v0.0.3 (11/26/2016)
 
 * Introduced the `GistFS: List Gists` command, which lets you view your list of gists and then open one

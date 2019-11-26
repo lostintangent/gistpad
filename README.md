@@ -8,6 +8,8 @@ GistFS is a Visual Studio Code extension that allows you to develop [GitHub Gist
 
 1. Install this extension from the marketplace
 
+    > **Linux Users**: Ensure you have the `gnome-keyring` and `libsecret` packages installed as well. These will enable GistFS to read/write your GitHub auth token securely.
+
 1. Run the `GistFS: New Gist (Public)`, `GistFS: New Gist (Secret)` or `GistFS: Open Gist` command (depending on which you want), and then when prompted, enter a GitHub token that includes the `gist` scope
 
     > In order to generate a new token, simply visit [this page](https://github.com/settings/tokens/new), give it a name (e.g. `gistfs`), and then check the `gist` checkbox.

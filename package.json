@@ -3,7 +3,7 @@
 	"displayName": "GistFS",
 	"description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
 	"publisher": "vsls-contrib",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"icon": "icon.png",
 	"repository": {
 		"type": "git",
@@ -23,7 +23,8 @@
 	"activationEvents": [
 		"onCommand:gistfs.deleteGist",
 		"onCommand:gistfs.forkGist",
-		"onCommand:gistfs.newGist",
+		"onCommand:gistfs.newPublicGist",
+		"onCommand:gistfs.newSecretGist",
 		"onCommand:gistfs.openGist",
 		"onCommand:gistfs.signOut",
 		"onFileSystem:gist"
@@ -42,8 +43,12 @@
 				"category": "GistFS"
 			},
 			{
-				"command": "gistfs.newGist",
-				"title": "New Gist",
+				"command": "gistfs.newPublicGist",
+				"title": "New Gist (Public)",
+				"category": "GistFS"
+			},{
+				"command": "gistfs.newSecretGist",
+				"title": "New Gist (Secret)",
 				"category": "GistFS"
 			},
 			{

@@ -17,8 +17,7 @@ export function registerCommands(context: ExtensionContext) {
 		}
 	}));
 
-	const PUBLIC_VISIBILITY = "Public";
-	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.newGist`, async () => {
+	async function newGistInternal(isPublic: boolean = true) {
 		await ensureAuthenticated();
 
 		const fileName = await window.showInputBox({
@@ -26,16 +25,16 @@ export function registerCommands(context: ExtensionContext) {
 			value: "foo.txt"
 		});
 		if (!fileName) return;
-
-		const visibility = await window.showQuickPick([PUBLIC_VISIBILITY, "Secret"], { placeHolder: "Select the new Gist's visibility"});
-		if (!visibility) return;
 		
 		const description = await window.showInputBox({
 			prompt: "Enter an optional description for the new Gist",
 		});
 		
-		newGist(fileName, visibility === PUBLIC_VISIBILITY, description);
-	}));
+		newGist(fileName, isPublic, description);
+	}
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.newPublicGist`, newGistInternal.bind(null, true)));
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.newSecretGist`, newGistInternal.bind(null, false)));
 
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.forkGist`, async () => {
 		await ensureAuthenticated();

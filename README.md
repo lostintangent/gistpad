@@ -6,9 +6,9 @@ GistFS is a Visual Studio Code extension that allows you to develop [GitHub Gist
 
 ## Getting Started
 
-1. Install this extension and then reload VS Code
+1. Install this extension from the marketplace
 
-1. Run the `GistFS: New Gist` or `GistFS: Open Gist` command (depending on which you want), and then when prompted, enter a GitHub token that includes the `gist` scope
+1. Run the `GistFS: New Gist (Public)`, `GistFS: New Gist (Secret)` or `GistFS: Open Gist` command (depending on which you want), and then when prompted, enter a GitHub token that includes the `gist` scope
 
     > In order to generate a new token, simply visit [this page](https://github.com/settings/tokens/new), give it a name (e.g. `gistfs`), and then check the `gist` checkbox.
 
@@ -22,7 +22,9 @@ This extension provides the following commands:
 
 * `GistFS: Open Gist` - Prompts you for a Gist ID and then opens it as a virtual workspace.
 
-* `GistFS: New Gist` - Creates a new Gist, and then opens it as a virtual workspace.
+* `GistFS: New Gist (Public)` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens it as a virtual workspace.
+
+* `GistFS: New Gist (Secret)` - Creates a new [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists), and then opens it as a virtual workspace.
 
 * `GistFS: Fork Gist` - Forks the currently opened Gist, and then opens it as a virtual workspace.
 

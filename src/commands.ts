@@ -14,7 +14,13 @@ export function registerCommands(context: ExtensionContext) {
 			description: g.description,
 			id: g.id
 		}))
-		const selected = await window.showQuickPick(items);
+		
+		if (items.length === 0) {
+			const message = `You don't have any${showStarred ? " starred" : ""} Gists`;
+			return window.showInformationMessage(message)
+		}
+
+		const selected = await window.showQuickPick(items, { placeHolder: "Select the Gist you'd like to open" });
 
 		if (selected) {
 			openGist(selected.id)

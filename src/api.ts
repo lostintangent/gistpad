@@ -13,6 +13,9 @@ export interface Gist {
     url: string;
     description: string;
     owner: Owner;
+    public: boolean;
+    created_at: string;
+    updated_at: string;
 }
 
 interface Owner {
@@ -36,6 +39,12 @@ export async function listGists(): Promise<Gist[]> {
     const api = await getApi();
     const { pages } = await api.all();
     return pages.reduce((result: Gist[], page: any) => [...result, ...page.body], [])
+}
+
+export async function starredGists(showStarred: boolean = false): Promise<Gist[]> {
+    const api = await getApi();
+    const { body } = await api.starred();
+    return body;
 }
 
 export async function getGist(id: string): Promise<Gist> {

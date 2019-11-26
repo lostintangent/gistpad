@@ -1,14 +1,14 @@
 import { commands, env, ExtensionContext, window } from "vscode";
-import { deleteGist, forkGist, newGist, listGists } from "./api";
+import { deleteGist, forkGist, newGist, listGists, starredGists } from "./api";
 import { ensureAuthenticated, signout } from "./auth";
 import { EXTENSION_ID } from "./constants";
 import { getGistWorkspaceId, isGistWorkspace, openGist, getGistLabel } from "./utils";
 
 export function registerCommands(context: ExtensionContext) {
-	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.listGists`, async () => {
+	async function listGistsInternal(showStarred: boolean = false) {
 		await ensureAuthenticated();
 
-		const gists = await listGists();
+		const gists = await (showStarred ? starredGists() : listGists());
 		const items = gists.map(g => ({
 			label: getGistLabel(g),
 			description: g.description,
@@ -19,7 +19,9 @@ export function registerCommands(context: ExtensionContext) {
 		if (selected) {
 			openGist(selected.id)
 		}
-	}));
+	}
+ 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.listGists`, listGistsInternal.bind(null, false)));
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.starredGists`, listGistsInternal.bind(null, true)));
 
     context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.openGist`, async () => {
 		const clipboardValue = await env.clipboard.readText();

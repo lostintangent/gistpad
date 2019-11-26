@@ -1,5 +1,5 @@
 import * as keytarType from "keytar";
-import { window } from "vscode";
+import { env, window } from "vscode";
 
 export type Keytar = {
 	getPassword: typeof keytarType['getPassword'];
@@ -24,7 +24,8 @@ export async function ensureAuthenticated() {
 
     const response = await window.showErrorMessage("You need to sign-in with GitHub to perform this operation.", TOKEN_RESPONSE);
     if (response === TOKEN_RESPONSE) {
-        const token = await window.showInputBox({ prompt: "Enter your GitHub token"});
+        const value = await env.clipboard.readText();
+        const token = await window.showInputBox({ prompt: "Enter your GitHub token", value });
         if (token) {
             await keytar.setPassword(SERVICE, ACCOUNT, token);
         } else {

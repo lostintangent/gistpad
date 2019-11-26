@@ -28,6 +28,10 @@ This extension provides the following commands:
 
 * `GistFS: New Gist (Secret)` - Creates a new [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists), and then opens it as a virtual workspace.
 
+* `GistFS: List Gists` - Lists your Gists, and then opens the selected one as a virtual workspace.
+
+* `GistFS: Starred Gists` - Lists your starred Gists, and then opens the selected one as a virtual workspace.
+
 * `GistFS: Fork Gist` - Forks the currently opened Gist, and then opens it as a virtual workspace.
 
 * `GistFS: Delete Gist` - Deletes the currently opened Gist, and then closes the folder.

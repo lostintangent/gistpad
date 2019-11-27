@@ -12,13 +12,17 @@ GistFS is a Visual Studio Code extension that allows you to develop [GitHub Gist
 
 1. Run the `GistFS: New Gist`, `GistFS: New Gist (Secret)` or `GistFS: Open Gist` command (depending on which you want), and then when prompted, enter a GitHub token that includes the `gist` scope
 
+    <img width="466" src="https://user-images.githubusercontent.com/116461/69696114-94941580-10d6-11ea-80a6-94b6735a5596.png" />
+
     > In order to generate a new token, simply visit [this page](https://github.com/settings/tokens/new), give it a name (e.g. `gistfs`), and then check the `gist` checkbox.
 
-1. Begin editing files, and have them be fully synchronized with the service!
+1. Begin editing files, and rest assured that they'll be fully synchronized with the service!
 
 1. When you're done with the Gist, run the `GistFS: Delete Gist` command to delete it
 
-## Contributed Commands
+    <img width="550px" src="https://user-images.githubusercontent.com/116461/69696163-bb524c00-10d6-11ea-98dc-c2ae643fa4bc.png" />
+
+## Available Commands
 
 This extension provides the following commands:
 

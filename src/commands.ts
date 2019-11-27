@@ -95,7 +95,7 @@ export function registerCommands(context: ExtensionContext) {
 				if (openAsWorkspace) {
 					return openGistAsWorkspace(gistId);
 				} else {
-					return openGist(gistId);
+					return openGist(gistId, false);
 				}
 			} else {
 				switch (gist.label) {

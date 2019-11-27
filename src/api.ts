@@ -95,7 +95,7 @@ export async function newGist(fileNames: string[], isPublic: boolean, descriptio
       files
     });
     
-    openGist(gist.body.id);
+    openGist(gist.body.id, true);
 }
 
 export async function updateGist(id: string, filename: string, file: GistFile | null) {

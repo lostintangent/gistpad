@@ -19,13 +19,13 @@ export function isGistWorkspace() {
 		workspace.workspaceFolders[0].uri.scheme === FS_SCHEME;
 }
 
-export async function openGist(id: string) {
+export async function openGist(id: string, isNew: boolean = false) {
 	const { files } = await getGist(id);
 
 	Object.entries(files).reverse().forEach(async ([_, file], index) => {
 		const uri = Uri.parse(`${FS_SCHEME}://${id}/${file.filename}`);
 
-		if (path.extname(file.filename!) === ".md") {
+		if (!isNew && path.extname(file.filename!) === ".md") {
 			commands.executeCommand("markdown.showPreview", uri);
 		} else {
 			// TODO: Improve the view column arrangement for more than 2 files

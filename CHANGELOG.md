@@ -1,6 +1,7 @@
 ## v0.0.4 (11/27/2016)
 
 * Allow seeding multiple files in a new gist, by specifying a comma-seperated list of files names
+* Update the behavior of opening gists, to open them as "loose files" instead of as a workspace
 
 ## v0.0.3 (11/26/2016)
 

@@ -1,7 +1,7 @@
 import * as path from "path";
-import { Uri, workspace, commands } from "vscode";
+import { Uri, workspace, commands, window, ViewColumn } from "vscode";
 import { FS_SCHEME } from "./constants";
-import { Gist } from "./api";
+import { Gist, getGist } from "./api";
 
 export function getGistDetailsFromUri(uri: Uri) {
 	return {
@@ -19,7 +19,20 @@ export function isGistWorkspace() {
 		workspace.workspaceFolders[0].uri.scheme === FS_SCHEME;
 }
 
-export function openGist(id: string) {
+export async function openGist(id: string) {
+	const { files } = await getGist(id);
+
+	Object.entries(files).reverse().forEach(async ([_, file], index) => {
+		const uri = Uri.parse(`${FS_SCHEME}://${id}/${file.filename}`);
+
+		// TODO: Improve the view column arrangement for more than 2 files
+		await window.showTextDocument(uri, { preview: false, viewColumn: ViewColumn.Beside });
+	});
+}
+
+export function openGistAsWorkspace(id: string) {
+	// TODO: Add support for adding the Gist as a new
+	// root to an existing workspace
 	const uri = Uri.parse(`${FS_SCHEME}://${id}/`);
 	commands.executeCommand("vscode.openFolder", uri, false);
 }

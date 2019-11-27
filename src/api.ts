@@ -7,7 +7,7 @@ const Gists = require("gists");
 
 export interface Gist {
     id: string;
-    files: { string: GistFile };
+    files: { [fileName:string]: GistFile };
     html_url: string;
     truncated: boolean;
     url: string;

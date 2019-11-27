@@ -3,7 +3,7 @@
 	"displayName": "GistFS",
 	"description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
 	"publisher": "vsls-contrib",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"icon": "icon.png",
 	"repository": {
 		"type": "git",

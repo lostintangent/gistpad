@@ -1,31 +1,38 @@
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileStat, FileSystemError, FileSystemProvider, FileType, Uri, window, workspace } from "vscode";
-import { updateGist, getGist, GistFile } from "./api";
+import { updateGist, getGist, GistFile, Gist } from "./api";
 import { FS_SCHEME, ZERO_WIDTH_SPACE } from "./constants";
 import { getGistDetailsFromUri, uriToFileName } from "./utils";
 import { ensureAuthenticated } from "./auth";
 
 export class GistFileSystemProvider implements FileSystemProvider {
-  private _gist: any;
+  private _gists = new Map<string, Gist>();
 
-  private getFileFromUri(uri: Uri): GistFile {
-    const fileName = uriToFileName(uri);
-    return this._gist.files[fileName];
+  private async getFileFromUri(uri: Uri): Promise<GistFile> {
+    const { gistId, file } = getGistDetailsFromUri(uri);
+
+    if (!this._gists.has(gistId)) {
+      const gist = await getGist(gistId);
+      this._gists.set(gistId, gist);
+    }
+
+    return this._gists.get(gistId)!.files[file];
   }
 
   async copy?(source: Uri, destination: Uri, options: { overwrite: boolean }): Promise<void> {
     await ensureAuthenticated();
 
-    const file = this.getFileFromUri(source);
-    const filename = uriToFileName(destination);
-
-    await updateGist(this._gist.id, filename, {
-          content: file.content!
+    const { gistId } = getGistDetailsFromUri(source);
+    const newFileName = uriToFileName(destination);
+    
+    const file = await this.getFileFromUri(source);
+    await updateGist(gistId, newFileName, {
+      content: file.content!
     });
 
-    this._gist.files[filename] = {
+    this._gists.get(gistId)!.files[newFileName] = {
       ...file,
-      filename
-    };;
+      filename: newFileName
+    };
   }
 
   createDirectory(uri: Uri): void {
@@ -35,28 +42,29 @@ export class GistFileSystemProvider implements FileSystemProvider {
   async delete(uri: Uri, options: { recursive: boolean }): Promise<void> {
     await ensureAuthenticated();
 
-    const { filename } = this.getFileFromUri(uri);
- 
-    await updateGist(this._gist.id, filename!, null);
+    const { gistId, file } = getGistDetailsFromUri(uri);
+    await updateGist(gistId, file!, null);
 
-    delete this._gist.files[filename!];
+    delete this._gists.get(gistId)!.files[file!];
   }
 
   async readFile(uri: Uri): Promise<Uint8Array> {
     // TODO: Check to see if the file is truncated, and if so,
     // retrieve the full contents from the service.
-    const { content } = this.getFileFromUri(uri);
+
+    const { content } = await this.getFileFromUri(uri);
     return Buffer.from(content!);
   }
 
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
     if (uri.path === "/") {
       const { gistId } = getGistDetailsFromUri(uri);
-      this._gist = await getGist(gistId);
+      const gist = await getGist(gistId);
+      this._gists.set(gistId, gist);
 
       // TODO: Check to see if the file list is truncated, and if
       // so, retrieve the full contents from the service.
-      const files = Object.keys(this._gist.files).map(file => [
+      const files = Object.keys(gist.files).map(file => [
         file,
         FileType.File
       ]);
@@ -76,17 +84,18 @@ export class GistFileSystemProvider implements FileSystemProvider {
   async rename(oldUri: Uri, newUri: Uri, options: { overwrite: boolean }): Promise<void> {
     await ensureAuthenticated();
 
-    const file = this.getFileFromUri(oldUri);
+    const file = await this.getFileFromUri(oldUri);
+    const { gistId } = getGistDetailsFromUri(oldUri);
     const newFileName = uriToFileName(newUri);
   
-    await updateGist(this._gist.id, file.filename!, {
+    await updateGist(gistId, file.filename!, {
       filename: newFileName
     });
 
-    delete this._gist.files[file.filename!];
+    delete this._gists.get(gistId)!.files[file.filename!];
 
     file.filename = newFileName;
-    this._gist.files[newFileName] = file;
+    this._gists.get(gistId)!.files[newFileName] = file;
   }
 
   async stat(uri: Uri): Promise<FileStat> {
@@ -99,7 +108,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
       };
     }
 
-    const file = this.getFileFromUri(uri);
+    const file = await this.getFileFromUri(uri);
 
     if (!file) {
       throw FileSystemError.FileNotFound(uri);
@@ -120,7 +129,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
   ): Promise<void> {
     await ensureAuthenticated();
     
-    let file = this.getFileFromUri(uri);
+    let file = await this.getFileFromUri(uri);
+    const { gistId } = getGistDetailsFromUri(uri);
 
     if (!file) {
       const newFileName = uriToFileName(uri);
@@ -128,7 +138,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
         filename: newFileName,
         truncated: false
       };
-      this._gist.files[newFileName] = file;
+      this._gists.get(gistId)!.files[newFileName] = file;
     }
     
     let newContent = content.toString();
@@ -140,7 +150,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     file.content = newContent;
     file.size = newContent.length;
     
-    await updateGist(this._gist.id, file.filename!, {
+    await updateGist(gistId, file.filename!, {
       content: file.content
     });
   }

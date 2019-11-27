@@ -1,4 +1,4 @@
-import { commands, window } from "vscode";
+import { window } from "vscode";
 import { getToken } from "./auth";
 import { ZERO_WIDTH_SPACE } from "./constants";
 import { openGist } from "./utils";
@@ -38,6 +38,7 @@ async function getApi() {
 export async function listGists(): Promise<Gist[]> {
     const api = await getApi();
     const { pages } = await api.all();
+    console.log(`GFS: %o`, pages);
     return pages.reduce((result: Gist[], page: any) => [...result, ...page.body], [])
 }
 
@@ -57,7 +58,6 @@ export async function deleteGist(id: string) {
     try {
     const api = await getApi();
       await api.delete(id);
-      commands.executeCommand("workbench.action.closeFolder");
     } catch (e) {
       window.showErrorMessage(e);
     }

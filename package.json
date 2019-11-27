@@ -26,7 +26,7 @@
 		"onCommand:gistfs.newPublicGist",
 		"onCommand:gistfs.newSecretGist",
 		"onCommand:gistfs.openGist",
-		"onCommand:gistfs.listGists",
+		"onCommand:gistfs.openGistWorkspace",
 		"onCommand:gistfs.starredGists",
 		"onCommand:gistfs.signOut",
 		"onFileSystem:gist"
@@ -45,13 +45,8 @@
 				"category": "GistFS"
 			},
 			{
-				"command": "gistfs.listGists",
-				"title": "List Gists",
-				"category": "GistFS"
-			},
-			{
 				"command": "gistfs.newPublicGist",
-				"title": "New Gist (Public)",
+				"title": "New Gist",
 				"category": "GistFS"
 			},
 			{
@@ -62,6 +57,16 @@
 			{
 				"command": "gistfs.openGist",
 				"title": "Open Gist",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.openGistWorkspace",
+				"title": "Open Gist as Workspace",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.signIn",
+				"title": "Sign In",
 				"category": "GistFS"
 			},
 			{

@@ -1,46 +1,14 @@
-import { commands, env, ExtensionContext, window } from "vscode";
-import { deleteGist, forkGist, newGist, listGists, starredGists } from "./api";
-import { ensureAuthenticated, signout } from "./auth";
+import { commands, ExtensionContext, QuickPickItem, window, ProgressLocation } from "vscode";
+import { deleteGist, forkGist, listGists, newGist, starredGists } from "./api";
+import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
 import { EXTENSION_ID } from "./constants";
-import { getGistWorkspaceId, isGistWorkspace, openGist, getGistLabel } from "./utils";
+import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace } from "./utils";
+
+interface GistQuickPickItem extends QuickPickItem {
+	id?: string;
+}
 
 export function registerCommands(context: ExtensionContext) {
-	async function listGistsInternal(showStarred: boolean = false) {
-		await ensureAuthenticated();
-
-		const gists = await (showStarred ? starredGists() : listGists());
-		const items = gists.map(g => ({
-			label: getGistLabel(g),
-			description: g.description,
-			id: g.id
-		}))
-		
-		if (items.length === 0) {
-			const message = `You don't have any${showStarred ? " starred" : ""} Gists`;
-			return window.showInformationMessage(message)
-		}
-
-		const selected = await window.showQuickPick(items, { placeHolder: "Select the Gist you'd like to open" });
-
-		if (selected) {
-			openGist(selected.id)
-		}
-	}
- 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.listGists`, listGistsInternal.bind(null, false)));
-	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.starredGists`, listGistsInternal.bind(null, true)));
-
-    context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.openGist`, async () => {
-		const clipboardValue = await env.clipboard.readText();
-		const gistID = await window.showInputBox({
-			prompt: "Enter the ID of the Gist you'd like to open",
-			value: clipboardValue
-		});
-
-		if (gistID) {
-			openGist(gistID);
-		}
-	}));
-
 	async function newGistInternal(isPublic: boolean = true) {
 		await ensureAuthenticated();
 
@@ -54,16 +22,125 @@ export function registerCommands(context: ExtensionContext) {
 			prompt: "Enter an optional description for the new Gist",
 		});
 		
-		const fileNames = fileName.split(",");
-		newGist(fileNames, isPublic, description);
+		window.withProgress({ location: ProgressLocation.Notification, title: "Creating Gist..." }, () => {
+			const fileNames = fileName.split(",");
+			return newGist(fileNames, isPublic, description);
+		});
 	}
 
-	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.newPublicGist`, newGistInternal.bind(null, true)));
-	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.newSecretGist`, newGistInternal.bind(null, false)));
+	const newPublicGist = newGistInternal.bind(null, true);
+	const newSecretGist = newGistInternal.bind(null, false);
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.newPublicGist`, newPublicGist));
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.newSecretGist`, newSecretGist));
+
+	const SIGN_IN_ITEM = "Sign in to view Gists...";
+	const CREATE_PUBLIC_GIST_ITEM = "$(gist-new) Create new Gist...";
+	const CREATE_SECRET_GIST_ITEM = "$(gist-private) Create new secret Gist...";
+	const STARRED_GIST_ITEM = "$(star) View starred Gists...";
+	const CREATE_GIST_ITEMS = [
+		{ label: CREATE_PUBLIC_GIST_ITEM },
+		{ label: CREATE_SECRET_GIST_ITEM },
+		{ label: STARRED_GIST_ITEM }
+	];
+
+	async function openGistInternal(openAsWorkspace: boolean = false) {
+		let gistItems: GistQuickPickItem[] = [];
+		
+		if (await isAuthenticated()) {
+			const gists = await listGists();
+
+			if (gists.length > 0) {
+				gistItems = gists.map(gist => {
+					return <GistQuickPickItem>{  
+						label: getGistLabel(gist),
+						description: gist.description,
+						id: gist.id
+					}
+				});
+			}
+
+			gistItems.push(...CREATE_GIST_ITEMS);
+		} else {
+			gistItems = [{ label: SIGN_IN_ITEM }];
+		}
+
+		const list = window.createQuickPick();
+		list.placeholder = "Select or specify the Gist you'd like to open";
+		list.items = gistItems;
+
+		// TODO: Validate that the clipboard contains a Gist URL or ID
+		//const clipboardValue = await env.clipboard.readText();
+		//list.value = clipboardValue;
+
+    	list.onDidChangeValue(gistId => {
+      		list.items = gistId
+        		? [{ label: gistId }, ...gistItems]
+        		: gistItems;
+    		});
+
+    	list.onDidAccept(async () => {
+			const gist = <GistQuickPickItem>list.selectedItems[0];
+
+			list.hide();
+
+			if (gist.id) {
+				if (openAsWorkspace) {
+					return openGistAsWorkspace(gist.id);
+				} else {
+					return openGist(gist.id);
+				}
+			} else {
+				switch (gist.label) {
+					case SIGN_IN_ITEM:
+						await signIn();
+						await openGistInternal();
+						return;
+					case CREATE_PUBLIC_GIST_ITEM:
+						return await newPublicGist();
+					case CREATE_SECRET_GIST_ITEM:
+						return await newSecretGist();
+					case STARRED_GIST_ITEM:
+						return await listGistsInternal();
+					default:
+				}
+			}
+		});
+
+    	list.show();
+	}
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.openGist`, openGistInternal.bind(null, false)));
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.openGistWorkspace`, openGistInternal.bind(null, true)));
+
+	async function listGistsInternal() {
+		await ensureAuthenticated();
+
+		const gists = await starredGists();
+		const items = gists.map(g => ({
+			label: getGistLabel(g),
+			description: g.description,
+			id: g.id
+		}))
+		
+		if (items.length === 0) {
+			const message = `You don't have any starred Gists`;
+			return window.showInformationMessage(message)
+		}
+
+		const selected = await window.showQuickPick(items, { placeHolder: "Select the Gist you'd like to open" });
+
+		if (selected) {
+			openGist(selected.id)
+		}
+	}
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.starredGists`, listGistsInternal.bind(null)));
 
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.forkGist`, async () => {
 		await ensureAuthenticated();
 
+		// TODO: Display your list of starred Gists
 		let gistId;
 		if (isGistWorkspace()) {	
 			gistId = getGistWorkspaceId();
@@ -79,19 +156,34 @@ export function registerCommands(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.deleteGist`, async () => {
 		await ensureAuthenticated();
 		
-		let gistId;
 		if (isGistWorkspace()) {	
 			const response = await window.showInformationMessage("Are you sure you want to delete this Gist?", DELETE_RESPONSE);
 			if (response !== DELETE_RESPONSE) return;
 
-			gistId = getGistWorkspaceId();
+			const gistId = getGistWorkspaceId();
+			deleteGist(gistId);
+			commands.executeCommand("workbench.action.closeFolder");
 		} else {
-			gistId = await window.showInputBox({ prompt: "Enter the Gist ID to delete" });
-			if (!gistId) return;
-		}
+			const gists = await listGists();
 
-		deleteGist(gistId);
+			if (gists.length === 0) {
+				return window.showInformationMessage("You don't have any Gists to delete")
+			}
+
+			const items = gists.map(g => ({
+				label: getGistLabel(g),
+				description: g.description,
+				id: g.id
+			}));
+		
+			const gist = await window.showQuickPick(items, { placeHolder: "Select the Gist to delete..." });
+			if (!gist) return;
+
+			await deleteGist(gist.id);
+			await window.showInformationMessage("Gist deleted!");
+		}
 	}));
 
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.signIn`, signIn));
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.signOut`, signout));
 }

@@ -1,7 +1,7 @@
-import { commands, env, ExtensionContext, QuickPickItem, window, ProgressLocation } from "vscode";
+import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, window } from "vscode";
 import { deleteGist, forkGist, listGists, newGist, starredGists } from "./api";
 import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
-import { EXTENSION_ID } from "./constants";
+import { EXTENSION_ID, FS_SCHEME } from "./constants";
 import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace } from "./utils";
 
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
@@ -187,6 +187,13 @@ export function registerCommands(context: ExtensionContext) {
 			if (!gist) return;
 
 			await deleteGist(gist.id);
+
+			window.visibleTextEditors.forEach((editor) => {
+				if (editor.document.uri.scheme === FS_SCHEME && editor.document.uri.authority === gist.id) {
+					editor.hide();
+				}
+			});
+
 			await window.showInformationMessage("Gist deleted!");
 		}
 	}));

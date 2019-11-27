@@ -25,8 +25,12 @@ export async function openGist(id: string) {
 	Object.entries(files).reverse().forEach(async ([_, file], index) => {
 		const uri = Uri.parse(`${FS_SCHEME}://${id}/${file.filename}`);
 
-		// TODO: Improve the view column arrangement for more than 2 files
-		await window.showTextDocument(uri, { preview: false, viewColumn: ViewColumn.Beside });
+		if (path.extname(file.filename!) === ".md") {
+			commands.executeCommand("markdown.showPreview", uri);
+		} else {
+			// TODO: Improve the view column arrangement for more than 2 files
+			await window.showTextDocument(uri, { preview: false, viewColumn: ViewColumn.Beside });
+		}
 	});
 }
 

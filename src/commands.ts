@@ -1,8 +1,10 @@
-import { commands, ExtensionContext, QuickPickItem, window, ProgressLocation } from "vscode";
+import { commands, env, ExtensionContext, QuickPickItem, window, ProgressLocation } from "vscode";
 import { deleteGist, forkGist, listGists, newGist, starredGists } from "./api";
 import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
 import { EXTENSION_ID } from "./constants";
 import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace } from "./utils";
+
+const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
 interface GistQuickPickItem extends QuickPickItem {
 	id?: string;
@@ -68,16 +70,17 @@ export function registerCommands(context: ExtensionContext) {
 		const list = window.createQuickPick();
 		list.placeholder = "Select or specify the Gist you'd like to open";
 		list.items = gistItems;
-
-		// TODO: Validate that the clipboard contains a Gist URL or ID
-		//const clipboardValue = await env.clipboard.readText();
-		//list.value = clipboardValue;
-
+		
     	list.onDidChangeValue(gistId => {
       		list.items = gistId
-        		? [{ label: gistId }, ...gistItems]
+        		? [{ label: gistId, id: gistId }, ...gistItems]
         		: gistItems;
-    		});
+		});
+		
+		const clipboardValue = await env.clipboard.readText();
+		if (GIST_URL_PATTERN.test(clipboardValue)) {
+			list.value = clipboardValue;
+		}
 
     	list.onDidAccept(async () => {
 			const gist = <GistQuickPickItem>list.selectedItems[0];
@@ -85,10 +88,14 @@ export function registerCommands(context: ExtensionContext) {
 			list.hide();
 
 			if (gist.id) {
+				let gistId = gist.id;
+				if (GIST_URL_PATTERN.test(gist.id)) {
+					gistId = (<any>GIST_URL_PATTERN.exec(gist.id)!).groups.id;
+				}
 				if (openAsWorkspace) {
-					return openGistAsWorkspace(gist.id);
+					return openGistAsWorkspace(gistId);
 				} else {
-					return openGist(gist.id);
+					return openGist(gistId);
 				}
 			} else {
 				switch (gist.label) {

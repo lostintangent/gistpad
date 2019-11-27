@@ -7,6 +7,8 @@
 * Added support for being able to seed multiple files when creating a Gist, by specifying a comma-seperated list of files names
 * Added a progress indicator when creating a new Gist
 * Introduced a new `GistFS: Sign In` command, to explicitly sign in to your GitHub account
+* When opening the files for a Gist, Markdown files are now displayed in preview mode by default
+* Allow specifying a Gist URL in addition to an ID when opening a Gist
 
 ## v0.0.3 (11/26/2016)
 

@@ -5,7 +5,8 @@
 * Added the `Change Description` command to the `Gists` view, which allows changing an existing Gist's description
 * Added the `Rename File` command to the `Gists` view, which allows renaming an existing file in a Gist
 * Added the `Add Active File` command to the `Gists` view, which allows "uploading" the active editor to the specified Gist
- 
+* Remove the username prefix from the display name of your own Gists
+
 ## v0.0.5 (11/27/2016)
 
 * Introduced the `Gists` view to the `Explorer` tab, which allows you to manage/access your Gists from a single place

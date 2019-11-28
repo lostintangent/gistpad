@@ -1,6 +1,6 @@
 import * as path from "path";
 import { TreeItem, TreeItemCollapsibleState, ThemeIcon } from "vscode";
-import { fileNameToUri, getGistLabel } from "../utils";
+import { fileNameToUri, getGistLabel, getStarredGistLabel } from "../utils";
 import { Gist } from "../api";
 
 export abstract class TreeNode extends TreeItem {
@@ -103,7 +103,7 @@ export class StarredGistsNode extends TreeNode {
 
 export class StarredGistNode extends TreeNode {
   constructor(public gist: Gist) {
-      super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
+      super(getStarredGistLabel(gist), TreeItemCollapsibleState.Collapsed);
   
       this.description = gist.description;
       this.tooltip = `${this.label} - ${this.description}`;

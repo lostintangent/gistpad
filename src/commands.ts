@@ -4,7 +4,7 @@ import { addGistFiles, changeDescription, deleteGist, forkGist, listGists, loadG
 import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
 import { EXTENSION_ID, FS_SCHEME } from "./constants";
 import { GistFileNode, GistNode, StarredGistNode } from "./tree/nodes";
-import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace, fileNameToUri } from "./utils";
+import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace, fileNameToUri, getStarredGistLabel } from "./utils";
 
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
@@ -134,7 +134,7 @@ export function registerCommands(context: ExtensionContext) {
 
 		const gists = await starredGists();
 		const items = gists.map(g => ({
-			label: getGistLabel(g),
+			label: getStarredGistLabel(g),
 			description: g.description,
 			id: g.id
 		}))

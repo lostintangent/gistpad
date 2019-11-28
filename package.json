@@ -56,16 +56,16 @@
 			},
 			{
 				"command": "gistfs.newSecretGist",
-				"title": "New Gist (Secret)",
+				"title": "New Secret Gist",
 				"category": "GistFS",
 				"icon": {
-					"dark": "images/dark/lock.svg",
-					"light": "images/light/lock.svg"
+					"dark": "images/dark/add-secret.svg",
+					"light": "images/light/add-secret.svg"
 				}
 			},
 			{
 				"command": "gistfs.loadGists",
-				"title": "Load Gists",
+				"title": "Refresh Gists",
 				"category": "GistFS",
 				"icon": {
 					"dark": "images/dark/refresh.svg",
@@ -141,17 +141,17 @@
 				}
 			],
 			"view/title": [
-				{ 
+				{
 					"command": "gistfs.newPublicGist",
 					"when": "view == gistfs.gists && gistfs:state == SignedIn",
 					"group": "navigation@1"
 				},
-				{ 
+				{
 					"command": "gistfs.newSecretGist",
 					"when": "view == gistfs.gists && gistfs:state == SignedIn",
 					"group": "navigation@2"
 				},
-				{ 
+				{
 					"command": "gistfs.loadGists",
 					"when": "view == gistfs.gists && gistfs:state == SignedIn",
 					"group": "navigation@3"

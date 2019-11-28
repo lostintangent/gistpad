@@ -1,10 +1,10 @@
+import * as path from "path";
 import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, window } from "vscode";
-import { addGistFiles, deleteGist, deleteGistFile, forkGist, listGists, loadGists, newGist, starredGists, unstarGist, changeDescription, addExistingFile } from "./api";
+import { addExistingFile, addGistFiles, changeDescription, deleteGist, deleteGistFile, forkGist, listGists, loadGists, newGist, renameGistFile, starredGists, unstarGist } from "./api";
 import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
 import { EXTENSION_ID, FS_SCHEME } from "./constants";
 import { GistFileNode, GistNode, StarredGistNode } from "./tree/nodes";
 import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace } from "./utils";
-import * as path from "path";
 
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
@@ -260,7 +260,21 @@ export function registerCommands(context: ExtensionContext) {
 		await ensureAuthenticated();
 
 		if (node) {
-			await deleteGistFile(node.gistId, node.filename)
+			await deleteGistFile(node.gistId, node.filename);
+		}
+	}));
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.renameFile`, async (node?: GistFileNode) => {
+		await ensureAuthenticated();
+
+		if (node) {
+			const newFilename = await window.showInputBox({
+				prompt: "Specify the new name for this file",
+				value: node.filename
+			});
+
+			if (!newFilename) return;
+			await renameGistFile(node.gistId, node.filename, newFilename);
 		}
 	}));
 

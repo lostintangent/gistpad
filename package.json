@@ -113,6 +113,11 @@
 				"category": "GistFS"
 			},
 			{
+				"command": "gistfs.renameFile",
+				"title": "Rename File",
+				"category": "GistFS"
+			},
+			{
 				"command": "gistfs.changeGistDescription",
 				"title": "Change Description",
 				"category": "GistFS"
@@ -139,6 +144,10 @@
 				},
 				{
 					"command": "gistfs.deleteFile",
+					"when": "false"
+				},
+				{
+					"command": "gistfs.renameFile",
 					"when": "false"
 				},
 				{
@@ -197,27 +206,34 @@
 					"group": "manage@2"
 				},
 				{
-					"command": "gistfs.deleteFile",
-					"when": "viewItem == gists.gist.file",
-					"group": "manage@3"
-				},
-				{
 					"command": "gistfs.changeGistDescription",
 					"when": "viewItem == gists.gist",
-					"group": "manage@4"
+					"group": "manage@3"
 				},
 				{
 					"command": "gistfs.deleteGist",
 					"when": "viewItem == gists.gist",
-					"group": "manage@3"
-				},
-				{
-					"command": "gistfs.unstarGist",
-					"when": "viewItem == starredGists.gist"
+					"group": "manage@4"
 				},
 				{
 					"command": "gistfs.forkGist",
-					"when": "viewItem == starredGists.gist"
+					"when": "viewItem == starredGists.gist",
+					"group": "manage@1"
+				},
+				{
+					"command": "gistfs.unstarGist",
+					"when": "viewItem == starredGists.gist",
+					"group": "manage@2"
+				},
+				{
+					"command": "gistfs.renameFile",
+					"when": "viewItem == gists.gist.file",
+					"group": "manage@1"
+				},
+				{
+					"command": "gistfs.deleteFile",
+					"when": "viewItem == gists.gist.file",
+					"group": "manage@2"
 				}
 			]
 		},

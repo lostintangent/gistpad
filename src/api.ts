@@ -170,6 +170,21 @@ export async function deleteGistFile(id: string, filename: string) {
     store.gists.push(response.body);
 }
 
+export async function renameGistFile(id: string, oldFileName: string, newFileName: string) {
+    const api = await getApi();
+
+    const response = await api.edit(id, { 
+        files: {
+            [oldFileName]: {
+                filename: newFileName
+            }
+        }
+     });
+
+    store.gists = store.gists.filter(gist => gist.id != id);
+    store.gists.push(response.body);
+}
+
 export async function unstarGist(id: string) {
     const api = await getApi();
     await api.unstar(id);

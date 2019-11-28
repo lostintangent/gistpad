@@ -1,9 +1,10 @@
 import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, window } from "vscode";
-import { addGistFiles, deleteGist, deleteGistFile, forkGist, listGists, loadGists, newGist, starredGists, unstarGist } from "./api";
+import { addGistFiles, deleteGist, deleteGistFile, forkGist, listGists, loadGists, newGist, starredGists, unstarGist, changeDescription, addExistingFile } from "./api";
 import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
 import { EXTENSION_ID, FS_SCHEME } from "./constants";
 import { GistFileNode, GistNode, StarredGistNode } from "./tree/nodes";
 import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace } from "./utils";
+import * as path from "path";
 
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
@@ -166,9 +167,7 @@ export function registerCommands(context: ExtensionContext) {
 			if (!gistId) return;
 		}
 
-		window.withProgress({ location: ProgressLocation.Notification, title: "Forking Gist..." }, async () => {
-			await forkGist(gistId!);
-		});
+		await forkGist(gistId!);
 	}));
 
 	const DELETE_RESPONSE = "Delete";
@@ -244,11 +243,38 @@ export function registerCommands(context: ExtensionContext) {
 		}
 	}));
 
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.addActiveFile`, async (node?: GistNode) => {
+		await ensureAuthenticated();
+
+		if (node && window.activeTextEditor) {			
+			window.withProgress({ location: ProgressLocation.Notification, title: "Adding files..." }, () => {
+				const fileName = path.basename(window.activeTextEditor!.document.fileName);
+				const content = window.activeTextEditor!.document.getText();
+
+				return addExistingFile(node.gist.id, fileName, content!);
+			});
+		}
+	}));
+
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.deleteFile`, async (node?: GistFileNode) => {
 		await ensureAuthenticated();
 
 		if (node) {
 			await deleteGistFile(node.gistId, node.filename)
+		}
+	}));
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.changeGistDescription`, async (node?: GistNode) => {
+		await ensureAuthenticated();
+
+		if (node) {
+			const description = await window.showInputBox({
+				prompt: "Specify the description for this Gist",
+				value: node.gist.description
+			});
+
+			if (!description) return;
+			await changeDescription(node.gist.id, description);
 		}
 	}));
 }

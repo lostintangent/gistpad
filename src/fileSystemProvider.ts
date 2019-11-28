@@ -1,5 +1,5 @@
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileStat, FileSystemError, FileSystemProvider, FileType, Uri, window, workspace } from "vscode";
-import { updateGist, getGist, GistFile, Gist } from "./api";
+import { updateGist, getGist, GistFile, Gist, forkGist } from "./api";
 import { FS_SCHEME, ZERO_WIDTH_SPACE } from "./constants";
 import { getGistDetailsFromUri, uriToFileName } from "./utils";
 import { ensureAuthenticated } from "./auth";
@@ -150,9 +150,16 @@ export class GistFileSystemProvider implements FileSystemProvider {
     file.content = newContent;
     file.size = newContent.length;
     
-    await updateGist(gistId, file.filename!, {
-      content: file.content
-    });
+    try {
+      await updateGist(gistId, file.filename!, {
+        content: file.content
+      });
+    } catch (e) {
+      const response = await window.showInformationMessage("You can't edit a Gist you don't own.", "Fork this Gist")
+      if (response === "Fork this Gist") {
+        await forkGist(gistId);
+      }
+     }
   }
 
   // Unimplemented members

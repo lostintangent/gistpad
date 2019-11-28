@@ -1,3 +1,9 @@
+## v0.0.6 (11/28/2016)
+
+* Introduced a `GistFS` tab, to allow you choose between managing Gists in it's own side-bar, or via the `Gists` view on the `Explorer` tab
+* Added the `Change Description` command to the `Gists` view, which allows changing an existing Gist's description
+* Added the `Add Active File` command to the `Gists` view, which allows "uploading" the active editor to the specified Gist
+ 
 ## v0.0.5 (11/27/2016)
 
 * Introduced the `Gists` view to the `Explorer` tab, which allows you to manage/access your Gists from a single place

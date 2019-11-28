@@ -3,7 +3,7 @@
 	"displayName": "GistFS",
 	"description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
 	"publisher": "vsls-contrib",
-	"version": "0.0.5",
+	"version": "0.0.6",
 	"icon": "icon.png",
 	"repository": {
 		"type": "git",
@@ -111,6 +111,16 @@
 				"command": "gistfs.deleteFile",
 				"title": "Delete File",
 				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.changeGistDescription",
+				"title": "Change Description",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.addActiveFile",
+				"title": "Add Active File",
+				"category": "GistFS"
 			}
 		],
 		"menus": {
@@ -129,6 +139,14 @@
 				},
 				{
 					"command": "gistfs.deleteFile",
+					"when": "false"
+				},
+				{
+					"command": "gistfs.changeGistDescription",
+					"when": "false"
+				},
+				{
+					"command": "gistfs.addActiveFile",
 					"when": "false"
 				},
 				{
@@ -174,14 +192,24 @@
 					"group": "manage@1"
 				},
 				{
+					"command": "gistfs.addActiveFile",
+					"when": "viewItem == gists.gist",
+					"group": "manage@2"
+				},
+				{
 					"command": "gistfs.deleteFile",
 					"when": "viewItem == gists.gist.file",
-					"group": "manage@1"
+					"group": "manage@3"
+				},
+				{
+					"command": "gistfs.changeGistDescription",
+					"when": "viewItem == gists.gist",
+					"group": "manage@4"
 				},
 				{
 					"command": "gistfs.deleteGist",
 					"when": "viewItem == gists.gist",
-					"group": "manage@2"
+					"group": "manage@3"
 				},
 				{
 					"command": "gistfs.unstarGist",
@@ -198,6 +226,21 @@
 				{
 					"id": "gistfs.gists",
 					"name": "Gists"
+				}
+			],
+			"gistfs": [
+				{
+					"id": "gistfs.gists",
+					"name": "Gists"
+				}
+			]
+		},
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "gistfs",
+					"title": "GistFS",
+					"icon": "icon.png"
 				}
 			]
 		}

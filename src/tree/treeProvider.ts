@@ -19,7 +19,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     ._onDidChangeTreeData.event;
 
   constructor(private store: IStore, private extensionPath: string) {
-    reaction(() => [store.gists.length, store.starredGists.length, store.isLoading, store.isSignedIn], () => {
+    reaction(() => [store.gists.map(gist => gist.description), store.starredGists.length, store.isLoading, store.isSignedIn], () => {
       this._onDidChangeTreeData.fire();
     });
   }

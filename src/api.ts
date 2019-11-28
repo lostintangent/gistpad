@@ -1,4 +1,4 @@
-import { window } from "vscode";
+import { window, ProgressLocation } from "vscode";
 import { getToken } from "./auth";
 import { ZERO_WIDTH_SPACE } from "./constants";
 import { openGist } from "./utils";
@@ -74,10 +74,12 @@ export async function deleteGist(id: string) {
 export async function forkGist(id: string) {
     try {
         const api = await getApi();
-        const gist = await api.fork(id);
 
-        store.gists.push(gist.body);
-        openGist(gist.body.id);
+        window.withProgress({ location: ProgressLocation.Notification, title: "Forking Gist..." }, async () => {
+            const gist = await api.fork(id);
+            store.gists.push(gist.body);
+            openGist(gist.body.id);
+		});
     } catch (e) {
         window.showErrorMessage(e);
     }
@@ -140,6 +142,21 @@ export async function addGistFiles(id: string, fileNames: string[]) {
     store.gists.push(response.body);
 }
 
+export async function addExistingFile(id: string, fileName: string, content: string) {
+    const api = await getApi();
+
+    const response = await api.edit(id, {
+        files: {
+            [fileName]: {
+                content
+            }
+        }
+    });
+
+    store.gists = store.gists.filter(gist => gist.id != id);
+    store.gists.push(response.body);
+}
+
 export async function deleteGistFile(id: string, filename: string) {
     const api = await getApi();
 
@@ -158,4 +175,13 @@ export async function unstarGist(id: string) {
     await api.unstar(id);
 
     store.starredGists = store.starredGists.filter(gist => gist.id !== id);
+}
+
+export async function changeDescription(id: string, description: string) {
+    const api = await getApi();
+    await api.edit(id, {
+        description
+    });
+
+    store.gists.find(gist => gist.id === id)!.description = description;
 }

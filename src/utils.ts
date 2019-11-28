@@ -50,7 +50,6 @@ export function fileNameToUri(gistId: string, filename: string): Uri {
 }
 
 export function getGistLabel(gist: Gist) {
-	console.log("Gist: %o", gist);
 	const suffix = gist.public ? "" : " (Secret)"
 	return `${gist.owner.login} / ${Object.keys(gist.files)[0]}${suffix}`
 }

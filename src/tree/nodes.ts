@@ -70,6 +70,8 @@ export class GistNode extends TreeNode {
     constructor(public gist: Gist) {
       super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
   
+      this.description = gist.description;
+      this.tooltip = `${this.label} - ${this.description}`;
       this.contextValue = "gists.gist";
     }
 }
@@ -103,6 +105,8 @@ export class StarredGistNode extends TreeNode {
   constructor(public gist: Gist) {
       super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
   
+      this.description = gist.description;
+      this.tooltip = `${this.label} - ${this.description}`;
       this.contextValue = "starredGists.gist";
     }
 }

@@ -270,7 +270,7 @@
 				{
 					"id": "gistpad",
 					"title": "GistPad",
-					"icon": "icon.png"
+					"icon": "images/activity-bar-icon.svg"
 				}
 			]
 		}

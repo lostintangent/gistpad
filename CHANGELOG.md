@@ -1,6 +1,7 @@
 ## v0.0.7 (11/28/2016)
 
 * Added the `Copy Contents` command to the `Gists` view, which allows you to copy file contents and paste them into other files
+* Updated the `Add Active File` command to support "untitled" files
 
 ## v0.0.6 (11/28/2016)
 

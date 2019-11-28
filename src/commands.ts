@@ -246,12 +246,22 @@ export function registerCommands(context: ExtensionContext) {
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.addActiveFile`, async (node?: GistNode) => {
 		await ensureAuthenticated();
 
-		if (node && window.activeTextEditor) {			
-			window.withProgress({ location: ProgressLocation.Notification, title: "Adding files..." }, () => {
-				const fileName = path.basename(window.activeTextEditor!.document.fileName);
-				const content = window.activeTextEditor!.document.getText();
+		if (node && window.activeTextEditor) {	
+			let filename: string | undefined;
+			if (window.activeTextEditor.document.isUntitled) {
+				filename = await window.showInputBox({
+					prompt: "Enter a name to give to this file",
+					value: "foo.txt"
+				});
 
-				return workspace.fs.writeFile(fileNameToUri(node.gist.id, fileName), Buffer.from(content!));
+				if (!filename) return;
+			} else {
+				filename = path.basename(window.activeTextEditor!.document.fileName);
+			}
+				
+			window.withProgress({ location: ProgressLocation.Notification, title: "Adding files..." }, () => {
+				const content = window.activeTextEditor!.document.getText();
+				return workspace.fs.writeFile(fileNameToUri(node.gist.id, filename!), Buffer.from(content!));
 			});
 		} else {
 			window.showErrorMessage("There's no active editor. Open a file and then retry again.");

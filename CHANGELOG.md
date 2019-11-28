@@ -1,3 +1,7 @@
+## v0.0.7 (11/28/2016)
+
+* Add the `Copy Contents` command to the `Gists` view, which allows you to copy file contents and paste them into other files
+
 ## v0.0.6 (11/28/2016)
 
 * Renamed the existing from `GistFS` to `GistPad`, to best reflect it's purpose

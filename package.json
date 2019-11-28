@@ -3,7 +3,7 @@
 	"displayName": "GistPad",
 	"description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
 	"publisher": "vsls-contrib",
-	"version": "0.0.6",
+	"version": "0.0.7",
 	"icon": "icon.png",
 	"repository": {
 		"type": "git",
@@ -126,6 +126,11 @@
 				"command": "gistpad.addActiveFile",
 				"title": "Add Active File",
 				"category": "GistPad"
+			},
+			{
+				"command": "gistpad.copyFileContents",
+				"title": "Copy Contents",
+				"category": "GistPad"
 			}
 		],
 		"menus": {
@@ -152,6 +157,10 @@
 				},
 				{
 					"command": "gistpad.changeGistDescription",
+					"when": "false"
+				},
+				{
+					"command": "gistpad.copyFileContents",
 					"when": "false"
 				},
 				{
@@ -224,6 +233,11 @@
 					"command": "gistpad.unstarGist",
 					"when": "viewItem == starredGists.gist",
 					"group": "manage@2"
+				},
+				{
+					"command": "gistpad.copyFileContents",
+					"when": "viewItem == gists.gist.file",
+					"group": "base@1"
 				},
 				{
 					"command": "gistpad.renameFile",

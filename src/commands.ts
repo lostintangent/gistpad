@@ -294,4 +294,13 @@ export function registerCommands(context: ExtensionContext) {
 			await changeDescription(node.gist.id, description);
 		}
 	}));
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.copyFileContents`, async (node?: GistFileNode) => {
+		await ensureAuthenticated();
+
+		if (node) {
+			const contents = await workspace.fs.readFile(fileNameToUri(node.gistId, node.filename));
+			await env.clipboard.writeText(contents.toString());
+		}
+	}));
 }

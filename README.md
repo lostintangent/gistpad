@@ -1,6 +1,6 @@
 # GistPad
 
-GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad 🚀
+GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad and code snippet manager 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69490621-b6c03600-0e3f-11ea-9c52-b65bb73885b1.gif" width="800px" />
 
@@ -16,10 +16,16 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
     > In order to generate a new token, simply visit [this page](https://github.com/settings/tokens/new), give it a name (e.g. `gistpad`), and then check the `gist` checkbox.
 
-## Contributed Commands (Explorer/Editor)
+1. Add existing files to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Add to Gist` ([details](#contributed-commands--file-explorer-editor-))
 
-In addition to the `Gists` view, this extension also contributes an `Add to Gist` command to the context menu of the `Explorer` tree, as well as the editor window. This makes it easy to add an existing file to a Gist.
+## Contributed Commands (File Explorer/Editor)
 
+In addition to the `Gists` view, this extension also contributes an `Add to Gist` command to the context menu of the `Explorer` file tree, as well as the editor window. This makes it easy to add  existing files to your Gists.
+
+<img width="260px" src="https://user-images.githubusercontent.com/116461/69831695-58001100-11df-11ea-997e-fc8020556348.png" />
+
+<img width="400px" src="https://user-images.githubusercontent.com/116461/69831691-53d3f380-11df-11ea-8578-266e27ec4d43.png" />
+    
 ## Contributed Commands (Command Palette)
 
 In addition to the `Gists` view, this extension also provides the following commands:

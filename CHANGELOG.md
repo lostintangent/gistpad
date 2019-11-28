@@ -6,12 +6,13 @@
 * Added the `Rename File` command to the `Gists` view, which allows renaming an existing file in a Gist
 * Added the `Add Active File` command to the `Gists` view, which allows "uploading" the active editor to the specified Gist
 * Remove the username prefix from the display name of your own Gists
+* Added a lock icon (🔒) suffix to the display name of secret Gists
 
 ## v0.0.5 (11/27/2016)
 
 * Introduced the `Gists` view to the `Explorer` tab, which allows you to manage/access your Gists from a single place
 
-    <img width="263" src="https://user-images.githubusercontent.com/116461/69767270-4d3a7300-1130-11ea-9785-fc88c5dda79c.png" />
+     <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
 ## v0.0.4 (11/27/2016)
 

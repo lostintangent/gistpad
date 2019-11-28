@@ -50,11 +50,11 @@ export function fileNameToUri(gistId: string, filename: string): Uri {
 }
 
 export function getGistLabel(gist: Gist) {
-	const suffix = gist.public ? "" : " (Secret)"
+	const suffix = gist.public ? "" : " 🔒"
 	return `${Object.keys(gist.files)[0]}${suffix}`
 }
 
 export function getStarredGistLabel(gist: Gist) {
-	const suffix = gist.public ? "" : " (Secret)"
+	const suffix = gist.public ? "" : " 🔒"
 	return `${gist.owner.login} / ${Object.keys(gist.files)[0]}${suffix}`
 }

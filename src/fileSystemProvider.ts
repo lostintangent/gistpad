@@ -47,7 +47,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     const file = await this.getFileFromUri(uri);
 
     if (file.truncated || !file.content) {
-      file.content = (await axios.get(file.raw_url!)).data;
+      file.content = (await axios.get(file.raw_url!, { transformResponse: (data) => { return data; } })).data;
     }
     return Buffer.from(file.content!);
   }

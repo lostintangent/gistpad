@@ -2,9 +2,7 @@
 
 * Added a new `Add to Gist` command to the context menu of both the `Explorer` tree and the document editor. This way you can easily add files to a gist
 
-     <img width="260px" src="https://user-images.githubusercontent.com/116461/69831695-58001100-11df-11ea-997e-fc8020556348.png" />
-
-     <img width="400px" src="https://user-images.githubusercontent.com/116461/69831691-53d3f380-11df-11ea-8578-266e27ec4d43.png" />
+     <img width="260px" src="https://user-images.githubusercontent.com/116461/69831695-58001100-11df-11ea-997e-fc8020556348.png" /> <img width="400px" src="https://user-images.githubusercontent.com/116461/69831691-53d3f380-11df-11ea-8578-266e27ec4d43.png" />
     
 * Added the `Copy Contents` command to the `Gists` view, which allows you to copy file contents and paste them into other files
 * Updated the `Add Active File` command within the `Gists` view to support "untitled" files

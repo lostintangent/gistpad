@@ -1,13 +1,13 @@
 {
 	"name": "gistfs",
-	"displayName": "GistFS",
+	"displayName": "GistPad",
 	"description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
 	"publisher": "vsls-contrib",
 	"version": "0.0.6",
 	"icon": "icon.png",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/vsls-contrib/gist-fs"
+		"url": "https://github.com/vsls-contrib/gistpad"
 	},
 	"engines": {
 		"vscode": "^1.40.0"
@@ -21,217 +21,217 @@
 		"Remote"
 	],
 	"activationEvents": [
-		"onCommand:gistfs.deleteGist",
-		"onCommand:gistfs.forkGist",
-		"onCommand:gistfs.newPublicGist",
-		"onCommand:gistfs.newSecretGist",
-		"onCommand:gistfs.openGist",
-		"onCommand:gistfs.openGistWorkspace",
-		"onCommand:gistfs.starredGists",
-		"onCommand:gistfs.signOut",
+		"onCommand:gistpad.deleteGist",
+		"onCommand:gistpad.forkGist",
+		"onCommand:gistpad.newPublicGist",
+		"onCommand:gistpad.newSecretGist",
+		"onCommand:gistpad.openGist",
+		"onCommand:gistpad.openGistWorkspace",
+		"onCommand:gistpad.starredGists",
+		"onCommand:gistpad.signOut",
 		"onFileSystem:gist",
-		"onView:gistfs.gists"
+		"onView:gistpad.gists"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
-				"command": "gistfs.deleteGist",
+				"command": "gistpad.deleteGist",
 				"title": "Delete Gist",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.forkGist",
+				"command": "gistpad.forkGist",
 				"title": "Fork Gist",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.newPublicGist",
+				"command": "gistpad.newPublicGist",
 				"title": "New Gist",
-				"category": "GistFS",
+				"category": "GistPad",
 				"icon": {
 					"dark": "images/dark/add.svg",
 					"light": "images/light/add.svg"
 				}
 			},
 			{
-				"command": "gistfs.newSecretGist",
+				"command": "gistpad.newSecretGist",
 				"title": "New Secret Gist",
-				"category": "GistFS",
+				"category": "GistPad",
 				"icon": {
 					"dark": "images/dark/add-secret.svg",
 					"light": "images/light/add-secret.svg"
 				}
 			},
 			{
-				"command": "gistfs.loadGists",
+				"command": "gistpad.loadGists",
 				"title": "Refresh Gists",
-				"category": "GistFS",
+				"category": "GistPad",
 				"icon": {
 					"dark": "images/dark/refresh.svg",
 					"light": "images/light/refresh.svg"
 				}
 			},
 			{
-				"command": "gistfs.openGist",
+				"command": "gistpad.openGist",
 				"title": "Open Gist",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.openGistWorkspace",
+				"command": "gistpad.openGistWorkspace",
 				"title": "Open Gist as Workspace",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.signIn",
+				"command": "gistpad.signIn",
 				"title": "Sign In",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.signOut",
+				"command": "gistpad.signOut",
 				"title": "Sign Out",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.starredGists",
+				"command": "gistpad.starredGists",
 				"title": "Starred Gists",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.unstarGist",
+				"command": "gistpad.unstarGist",
 				"title": "Unstar Gist",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.addFile",
+				"command": "gistpad.addFile",
 				"title": "Add File(s)",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.deleteFile",
+				"command": "gistpad.deleteFile",
 				"title": "Delete File",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.renameFile",
+				"command": "gistpad.renameFile",
 				"title": "Rename File",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.changeGistDescription",
+				"command": "gistpad.changeGistDescription",
 				"title": "Change Description",
-				"category": "GistFS"
+				"category": "GistPad"
 			},
 			{
-				"command": "gistfs.addActiveFile",
+				"command": "gistpad.addActiveFile",
 				"title": "Add Active File",
-				"category": "GistFS"
+				"category": "GistPad"
 			}
 		],
 		"menus": {
 			"commandPalette": [
 				{
-					"command": "gistfs.loadGists",
+					"command": "gistpad.loadGists",
 					"when": "false"
 				},
 				{
-					"command": "gistfs.unstarGist",
+					"command": "gistpad.unstarGist",
 					"when": "false"
 				},
 				{
-					"command": "gistfs.addFile",
+					"command": "gistpad.addFile",
 					"when": "false"
 				},
 				{
-					"command": "gistfs.deleteFile",
+					"command": "gistpad.deleteFile",
 					"when": "false"
 				},
 				{
-					"command": "gistfs.renameFile",
+					"command": "gistpad.renameFile",
 					"when": "false"
 				},
 				{
-					"command": "gistfs.changeGistDescription",
+					"command": "gistpad.changeGistDescription",
 					"when": "false"
 				},
 				{
-					"command": "gistfs.addActiveFile",
+					"command": "gistpad.addActiveFile",
 					"when": "false"
 				},
 				{
-					"command": "gistfs.signIn",
-					"when": "gistfs:state != SignedIn"
+					"command": "gistpad.signIn",
+					"when": "gistpad:state != SignedIn"
 				},
 				{
-					"command": "gistfs.signOut",
-					"when": "gistfs:state != SignedOut"
+					"command": "gistpad.signOut",
+					"when": "gistpad:state != SignedOut"
 				}
 			],
 			"view/title": [
 				{
-					"command": "gistfs.newPublicGist",
-					"when": "view == gistfs.gists && gistfs:state == SignedIn",
+					"command": "gistpad.newPublicGist",
+					"when": "view == gistpad.gists && gistpad:state == SignedIn",
 					"group": "navigation@1"
 				},
 				{
-					"command": "gistfs.newSecretGist",
-					"when": "view == gistfs.gists && gistfs:state == SignedIn",
+					"command": "gistpad.newSecretGist",
+					"when": "view == gistpad.gists && gistpad:state == SignedIn",
 					"group": "navigation@2"
 				},
 				{
-					"command": "gistfs.loadGists",
-					"when": "view == gistfs.gists && gistfs:state == SignedIn",
+					"command": "gistpad.loadGists",
+					"when": "view == gistpad.gists && gistpad:state == SignedIn",
 					"group": "navigation@3"
 				}
 			],
 			"view/item/context": [
 				{
-					"command": "gistfs.openGist",
+					"command": "gistpad.openGist",
 					"when": "viewItem == gists.gist",
 					"group": "base@1"
 				},
 				{
-					"command": "gistfs.openGistWorkspace",
+					"command": "gistpad.openGistWorkspace",
 					"when": "viewItem == gists.gist",
 					"group": "base@2"
 				},
 				{
-					"command": "gistfs.addFile",
+					"command": "gistpad.addFile",
 					"when": "viewItem == gists.gist",
 					"group": "manage@1"
 				},
 				{
-					"command": "gistfs.addActiveFile",
+					"command": "gistpad.addActiveFile",
 					"when": "viewItem == gists.gist",
 					"group": "manage@2"
 				},
 				{
-					"command": "gistfs.changeGistDescription",
+					"command": "gistpad.changeGistDescription",
 					"when": "viewItem == gists.gist",
 					"group": "manage@3"
 				},
 				{
-					"command": "gistfs.deleteGist",
+					"command": "gistpad.deleteGist",
 					"when": "viewItem == gists.gist",
 					"group": "manage@4"
 				},
 				{
-					"command": "gistfs.forkGist",
+					"command": "gistpad.forkGist",
 					"when": "viewItem == starredGists.gist",
 					"group": "manage@1"
 				},
 				{
-					"command": "gistfs.unstarGist",
+					"command": "gistpad.unstarGist",
 					"when": "viewItem == starredGists.gist",
 					"group": "manage@2"
 				},
 				{
-					"command": "gistfs.renameFile",
+					"command": "gistpad.renameFile",
 					"when": "viewItem == gists.gist.file",
 					"group": "manage@1"
 				},
 				{
-					"command": "gistfs.deleteFile",
+					"command": "gistpad.deleteFile",
 					"when": "viewItem == gists.gist.file",
 					"group": "manage@2"
 				}
@@ -240,13 +240,13 @@
 		"views": {
 			"explorer": [
 				{
-					"id": "gistfs.gists",
+					"id": "gistpad.gists",
 					"name": "Gists"
 				}
 			],
-			"gistfs": [
+			"gistpad": [
 				{
-					"id": "gistfs.gists",
+					"id": "gistpad.gists",
 					"name": "Gists"
 				}
 			]
@@ -254,8 +254,8 @@
 		"viewsContainers": {
 			"activitybar": [
 				{
-					"id": "gistfs",
-					"title": "GistFS",
+					"id": "gistpad",
+					"title": "GistPad",
 					"icon": "icon.png"
 				}
 			]
@@ -276,6 +276,7 @@
 		"vscode": "^1.1.25"
 	},
 	"dependencies": {
+		"axios": "^0.19.0",
 		"gists": "^2.0.0",
 		"mobx": "^5.14.2"
 	}

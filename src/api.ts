@@ -29,6 +29,7 @@ export interface GistFile {
     filename?: string;
     size?: number;
     truncated?: boolean;
+    raw_url?: string;
 }
 
 async function getApi() {
@@ -113,11 +114,14 @@ export async function newGist(fileNames: string[], isPublic: boolean, descriptio
 
 export async function updateGist(id: string, filename: string, file: GistFile | null) {
     const api = await getApi();
-    await api.edit(id, {
+    const response = await api.edit(id, {
         files: {
           [filename]: file
         }
     });
+
+    store.gists = store.gists.filter(gist => gist.id != id);
+    store.gists.push(response.body);
 }
 
 export async function addGistFiles(id: string, fileNames: string[]) {
@@ -137,49 +141,6 @@ export async function addGistFiles(id: string, fileNames: string[]) {
     , {});
 
     const response = await api.edit(id, { files });
-
-    store.gists = store.gists.filter(gist => gist.id != id);
-    store.gists.push(response.body);
-}
-
-export async function addExistingFile(id: string, fileName: string, content: string) {
-    const api = await getApi();
-
-    const response = await api.edit(id, {
-        files: {
-            [fileName]: {
-                content
-            }
-        }
-    });
-
-    store.gists = store.gists.filter(gist => gist.id != id);
-    store.gists.push(response.body);
-}
-
-export async function deleteGistFile(id: string, filename: string) {
-    const api = await getApi();
-
-    const response = await api.edit(id, { 
-        files: {
-            [filename]: null
-        }
-     });
-
-    store.gists = store.gists.filter(gist => gist.id != id);
-    store.gists.push(response.body);
-}
-
-export async function renameGistFile(id: string, oldFileName: string, newFileName: string) {
-    const api = await getApi();
-
-    const response = await api.edit(id, { 
-        files: {
-            [oldFileName]: {
-                filename: newFileName
-            }
-        }
-     });
 
     store.gists = store.gists.filter(gist => gist.id != id);
     store.gists.push(response.body);

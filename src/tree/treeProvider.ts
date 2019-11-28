@@ -70,7 +70,7 @@ export function registerTreeProvider(
   extensionPath: string
 ) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);
-  window.createTreeView("gistfs.gists", {
+  window.createTreeView("gistpad.gists", {
     showCollapseAll: true,
     treeDataProvider
   });

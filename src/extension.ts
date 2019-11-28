@@ -6,7 +6,7 @@ import { store } from "./store";
 import { registerTreeProvider } from "./tree/treeProvider";
 
 export function activate(context: ExtensionContext) {
-	registerFileSystemProvider();
+	registerFileSystemProvider(store);
 	registerCommands(context);
 	registerTreeProvider(store, context.extensionPath);
 

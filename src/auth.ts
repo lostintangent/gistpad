@@ -16,18 +16,18 @@ function getNativeKeytar(): Keytar {
 
 const keytar = getNativeKeytar();
 
-const SERVICE = "vscode-gistfs";
+const SERVICE = "vscode-gistpad";
 const ACCOUNT = "gist-token";
 
 const TOKEN_RESPONSE = "Enter token";
 
 export async function initializeAuth() {
-    commands.executeCommand("setContext", "gistfs:state", "SignedOut");
+    commands.executeCommand("setContext", "gistpad:state", "SignedOut");
     
     const isSignedIn = await isAuthenticated()
     if (isSignedIn) {
         store.isSignedIn = true;
-        commands.executeCommand("setContext", "gistfs:state", "SignedIn");
+        commands.executeCommand("setContext", "gistpad:state", "SignedIn");
         await loadGists();
     }
 }
@@ -57,7 +57,7 @@ export async function signIn() {
     if (token) {
         await keytar.setPassword(SERVICE, ACCOUNT, token);
         store.isSignedIn = true;
-        commands.executeCommand("setContext", "gistfs:state", "SignedIn");
+        commands.executeCommand("setContext", "gistpad:state", "SignedIn");
 
         await loadGists();
     } else {
@@ -68,5 +68,5 @@ export async function signIn() {
 export async function signout() {
     await keytar.deletePassword(SERVICE, ACCOUNT);
     store.isSignedIn = false;
-    commands.executeCommand("setContext", "gistfs:state", "SignedOut");
+    commands.executeCommand("setContext", "gistpad:state", "SignedOut");
 }

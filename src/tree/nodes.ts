@@ -17,7 +17,7 @@ export class OpenGistNode extends TreeNode {
       super("Open Gist...");
   
       this.command = {
-        command: "gistfs.openGist",
+        command: "gistpad.openGist",
         title: "Open Gist.."
       };
     }
@@ -28,7 +28,7 @@ export class SignInNode extends TreeNode {
     super("Sign in to view your Gists...");
 
     this.command = {
-      command: "gistfs.signIn",
+      command: "gistpad.signIn",
       title: "Sign in to view your Gists..."
     };
   }
@@ -54,7 +54,7 @@ export class CreateNewGistNode extends TreeNode {
       super("Create new Gist...");
   
       this.command = {
-          command: "gistfs.newPublicGist",
+          command: "gistpad.newPublicGist",
           title: "Create new Gist..."
       }
     }

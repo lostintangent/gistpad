@@ -1,21 +1,23 @@
 import { Disposable, Event, EventEmitter, FileChangeEvent, FileStat, FileSystemError, FileSystemProvider, FileType, Uri, window, workspace } from "vscode";
-import { updateGist, getGist, GistFile, Gist, forkGist } from "./api";
-import { FS_SCHEME, ZERO_WIDTH_SPACE } from "./constants";
-import { getGistDetailsFromUri, uriToFileName } from "./utils";
+import { forkGist, getGist, GistFile, updateGist } from "./api";
 import { ensureAuthenticated } from "./auth";
+import { FS_SCHEME, ZERO_WIDTH_SPACE } from "./constants";
+import { IStore } from "./store";
+import { getGistDetailsFromUri, uriToFileName, openGist } from "./utils";
+import axios from "axios";
 
 export class GistFileSystemProvider implements FileSystemProvider {
-  private _gists = new Map<string, Gist>();
+  constructor(private store: IStore) {}
 
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
 
-    if (!this._gists.has(gistId)) {
-      const gist = await getGist(gistId);
-      this._gists.set(gistId, gist);
-    }
+    let gist = this.store.gists.find(gist => gist.id === gistId);
+    if (!gist) {
+      gist = await getGist(gistId);
+    } 
 
-    return this._gists.get(gistId)!.files[file];
+    return gist.files[file];
   }
 
   async copy?(source: Uri, destination: Uri, options: { overwrite: boolean }): Promise<void> {
@@ -28,11 +30,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
     await updateGist(gistId, newFileName, {
       content: file.content!
     });
-
-    this._gists.get(gistId)!.files[newFileName] = {
-      ...file,
-      filename: newFileName
-    };
   }
 
   createDirectory(uri: Uri): void {
@@ -44,23 +41,21 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
     const { gistId, file } = getGistDetailsFromUri(uri);
     await updateGist(gistId, file!, null);
-
-    delete this._gists.get(gistId)!.files[file!];
   }
 
   async readFile(uri: Uri): Promise<Uint8Array> {
-    // TODO: Check to see if the file is truncated, and if so,
-    // retrieve the full contents from the service.
+    const file = await this.getFileFromUri(uri);
 
-    const { content } = await this.getFileFromUri(uri);
-    return Buffer.from(content!);
+    if (file.truncated || !file.content) {
+      file.content = (await axios.get(file.raw_url!)).data;
+    }
+    return Buffer.from(file.content!);
   }
 
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
     if (uri.path === "/") {
       const { gistId } = getGistDetailsFromUri(uri);
       const gist = await getGist(gistId);
-      this._gists.set(gistId, gist);
 
       // TODO: Check to see if the file list is truncated, and if
       // so, retrieve the full contents from the service.
@@ -68,9 +63,9 @@ export class GistFileSystemProvider implements FileSystemProvider {
         file,
         FileType.File
       ]);
-
+      
       setTimeout(() => {
-        window.showTextDocument(uri.with({ path: `/${files[0][0]}` }))
+        openGist(gistId, false);
       }, 500);
 
       // @ts-ignore
@@ -91,11 +86,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
     await updateGist(gistId, file.filename!, {
       filename: newFileName
     });
-
-    delete this._gists.get(gistId)!.files[file.filename!];
-
-    file.filename = newFileName;
-    this._gists.get(gistId)!.files[newFileName] = file;
   }
 
   async stat(uri: Uri): Promise<FileStat> {
@@ -138,7 +128,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
         filename: newFileName,
         truncated: false
       };
-      this._gists.get(gistId)!.files[newFileName] = file;
     }
     
     let newContent = content.toString();
@@ -176,8 +165,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 }
 
-export function registerFileSystemProvider() {
-  const provider = new GistFileSystemProvider();
+export function registerFileSystemProvider(store: IStore) {
+  const provider = new GistFileSystemProvider(store);
   workspace.registerFileSystemProvider(FS_SCHEME, provider);
   return provider;
 }

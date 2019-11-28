@@ -1,10 +1,10 @@
 import * as path from "path";
-import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, window } from "vscode";
-import { addExistingFile, addGistFiles, changeDescription, deleteGist, deleteGistFile, forkGist, listGists, loadGists, newGist, renameGistFile, starredGists, unstarGist } from "./api";
+import { commands, env, workspace, ExtensionContext, ProgressLocation, QuickPickItem, window } from "vscode";
+import { addGistFiles, changeDescription, deleteGist, forkGist, listGists, loadGists, newGist, starredGists, unstarGist } from "./api";
 import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
 import { EXTENSION_ID, FS_SCHEME } from "./constants";
 import { GistFileNode, GistNode, StarredGistNode } from "./tree/nodes";
-import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace } from "./utils";
+import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace, fileNameToUri } from "./utils";
 
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
@@ -251,8 +251,10 @@ export function registerCommands(context: ExtensionContext) {
 				const fileName = path.basename(window.activeTextEditor!.document.fileName);
 				const content = window.activeTextEditor!.document.getText();
 
-				return addExistingFile(node.gist.id, fileName, content!);
+				return workspace.fs.writeFile(fileNameToUri(node.gist.id, fileName), Buffer.from(content!));
 			});
+		} else {
+			window.showErrorMessage("There's no active editor. Open a file and then retry again.");
 		}
 	}));
 
@@ -260,7 +262,7 @@ export function registerCommands(context: ExtensionContext) {
 		await ensureAuthenticated();
 
 		if (node) {
-			await deleteGistFile(node.gistId, node.filename);
+			await workspace.fs.delete(fileNameToUri(node.gistId, node.filename));
 		}
 	}));
 
@@ -274,7 +276,8 @@ export function registerCommands(context: ExtensionContext) {
 			});
 
 			if (!newFilename) return;
-			await renameGistFile(node.gistId, node.filename, newFilename);
+
+			await workspace.fs.rename(fileNameToUri(node.gistId, node.filename), fileNameToUri(node.gistId, newFilename));
 		}
 	}));
 

@@ -6,7 +6,7 @@ import { Gist, getGist } from "./api";
 export function getGistDetailsFromUri(uri: Uri) {
 	return {
 	  gistId: uri.authority,
-	  file: path.basename(uri.toString())
+	  file: decodeURIComponent(path.basename(uri.toString()))
 	};
 }
   

@@ -45,7 +45,12 @@ export function uriToFileName(uri: Uri): string {
     return decodeURIComponent(path.basename(uri.toString()));
 }
 
+export function fileNameToUri(gistId: string, filename: string): Uri {
+    return Uri.parse(`${FS_SCHEME}://${gistId}/${filename}`);
+}
+
 export function getGistLabel(gist: Gist) {
+	console.log("Gist: %o", gist);
 	const suffix = gist.public ? "" : " (Secret)"
 	return `${gist.owner.login} / ${Object.keys(gist.files)[0]}${suffix}`
 }

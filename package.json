@@ -3,7 +3,7 @@
 	"displayName": "GistFS",
 	"description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
 	"publisher": "vsls-contrib",
-	"version": "0.0.4",
+	"version": "0.0.5",
 	"icon": "icon.png",
 	"repository": {
 		"type": "git",
@@ -29,7 +29,8 @@
 		"onCommand:gistfs.openGistWorkspace",
 		"onCommand:gistfs.starredGists",
 		"onCommand:gistfs.signOut",
-		"onFileSystem:gist"
+		"onFileSystem:gist",
+		"onView:gistfs.gists"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
@@ -47,12 +48,29 @@
 			{
 				"command": "gistfs.newPublicGist",
 				"title": "New Gist",
-				"category": "GistFS"
+				"category": "GistFS",
+				"icon": {
+					"dark": "images/dark/add.svg",
+					"light": "images/light/add.svg"
+				}
 			},
 			{
 				"command": "gistfs.newSecretGist",
 				"title": "New Gist (Secret)",
-				"category": "GistFS"
+				"category": "GistFS",
+				"icon": {
+					"dark": "images/dark/lock.svg",
+					"light": "images/light/lock.svg"
+				}
+			},
+			{
+				"command": "gistfs.loadGists",
+				"title": "Load Gists",
+				"category": "GistFS",
+				"icon": {
+					"dark": "images/dark/refresh.svg",
+					"light": "images/light/refresh.svg"
+				}
 			},
 			{
 				"command": "gistfs.openGist",
@@ -78,8 +96,111 @@
 				"command": "gistfs.starredGists",
 				"title": "Starred Gists",
 				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.unstarGist",
+				"title": "Unstar Gist",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.addFile",
+				"title": "Add File(s)",
+				"category": "GistFS"
+			},
+			{
+				"command": "gistfs.deleteFile",
+				"title": "Delete File",
+				"category": "GistFS"
 			}
-		]
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "gistfs.loadGists",
+					"when": "false"
+				},
+				{
+					"command": "gistfs.unstarGist",
+					"when": "false"
+				},
+				{
+					"command": "gistfs.addFile",
+					"when": "false"
+				},
+				{
+					"command": "gistfs.deleteFile",
+					"when": "false"
+				},
+				{
+					"command": "gistfs.signIn",
+					"when": "gistfs:state != SignedIn"
+				},
+				{
+					"command": "gistfs.signOut",
+					"when": "gistfs:state != SignedOut"
+				}
+			],
+			"view/title": [
+				{ 
+					"command": "gistfs.newPublicGist",
+					"when": "view == gistfs.gists && gistfs:state == SignedIn",
+					"group": "navigation@1"
+				},
+				{ 
+					"command": "gistfs.newSecretGist",
+					"when": "view == gistfs.gists && gistfs:state == SignedIn",
+					"group": "navigation@2"
+				},
+				{ 
+					"command": "gistfs.loadGists",
+					"when": "view == gistfs.gists && gistfs:state == SignedIn",
+					"group": "navigation@3"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "gistfs.openGist",
+					"when": "viewItem == gists.gist",
+					"group": "base@1"
+				},
+				{
+					"command": "gistfs.openGistWorkspace",
+					"when": "viewItem == gists.gist",
+					"group": "base@2"
+				},
+				{
+					"command": "gistfs.addFile",
+					"when": "viewItem == gists.gist",
+					"group": "manage@1"
+				},
+				{
+					"command": "gistfs.deleteFile",
+					"when": "viewItem == gists.gist.file",
+					"group": "manage@1"
+				},
+				{
+					"command": "gistfs.deleteGist",
+					"when": "viewItem == gists.gist",
+					"group": "manage@2"
+				},
+				{
+					"command": "gistfs.unstarGist",
+					"when": "viewItem == starredGists.gist"
+				},
+				{
+					"command": "gistfs.forkGist",
+					"when": "viewItem == starredGists.gist"
+				}
+			]
+		},
+		"views": {
+			"explorer": [
+				{
+					"id": "gistfs.gists",
+					"name": "Gists"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
@@ -96,6 +217,7 @@
 		"vscode": "^1.1.25"
 	},
 	"dependencies": {
-		"gists": "^2.0.0"
+		"gists": "^2.0.0",
+		"mobx": "^5.14.2"
 	}
 }

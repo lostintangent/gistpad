@@ -10,21 +10,15 @@ GistFS is a Visual Studio Code extension that allows you to develop [GitHub Gist
 
     > **Linux Users**: Ensure you have the `gnome-keyring` and `libsecret` packages installed as well. These will enable GistFS to read/write your GitHub auth token securely.
 
-1. Run the `GistFS: New Gist`, `GistFS: New Gist (Secret)` or `GistFS: Open Gist` command (depending on which you want), and then when prompted, enter a GitHub token that includes the `gist` scope
+1. Open the `Explorer` tab and expand the `Gists` view. From there, you can open a Gist by ID/URL, or sign-in in wth a GitHub token, in order to view/edit/create/delete Gists.
 
-    <img width="466" src="https://user-images.githubusercontent.com/116461/69696114-94941580-10d6-11ea-80a6-94b6735a5596.png" />
+    <img width="263" src="https://user-images.githubusercontent.com/116461/69767270-4d3a7300-1130-11ea-9785-fc88c5dda79c.png" />
 
     > In order to generate a new token, simply visit [this page](https://github.com/settings/tokens/new), give it a name (e.g. `gistfs`), and then check the `gist` checkbox.
 
-1. Begin editing files, and rest assured that they'll be fully synchronized with the service!
-
-1. When you're done with the Gist, run the `GistFS: Delete Gist` command to delete it
-
-    <img width="550px" src="https://user-images.githubusercontent.com/116461/69696163-bb524c00-10d6-11ea-98dc-c2ae643fa4bc.png" />
-
 ## Available Commands
 
-This extension provides the following commands:
+In addition to the `Gists` view, this extension also provides the following commands:
 
 * `GistFS: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a Gist ID directly, which doesn't require being signed in.
 

@@ -1,3 +1,9 @@
+## v0.0.5 (11/27/2016)
+
+* Introduced the `Gists` view to the `Explorer` tab, which allows you to manage/access your Gists from a single place
+
+    <img width="263" src="https://user-images.githubusercontent.com/116461/69767270-4d3a7300-1130-11ea-9785-fc88c5dda79c.png" />
+
 ## v0.0.4 (11/27/2016)
 
 * Improved the `GistFS: Delete Gist` command, by allowing you to select a Gist from your list of Gists, instead of just providing a Gist ID

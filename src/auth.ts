@@ -1,5 +1,7 @@
 import * as keytarType from "keytar";
-import { env, window } from "vscode";
+import { env, window, commands } from "vscode";
+import { store } from "./store";
+import { loadGists } from "./api";
 
 export type Keytar = {
 	getPassword: typeof keytarType['getPassword'];
@@ -18,6 +20,18 @@ const SERVICE = "vscode-gistfs";
 const ACCOUNT = "gist-token";
 
 const TOKEN_RESPONSE = "Enter token";
+
+export async function initializeAuth() {
+    commands.executeCommand("setContext", "gistfs:state", "SignedOut");
+    
+    const isSignedIn = await isAuthenticated()
+    if (isSignedIn) {
+        store.isSignedIn = true;
+        commands.executeCommand("setContext", "gistfs:state", "SignedIn");
+        await loadGists();
+    }
+}
+
 export async function ensureAuthenticated() {
     const password = await getToken();
     if (password) return;
@@ -42,6 +56,10 @@ export async function signIn() {
     const token = await window.showInputBox({ prompt: "Enter your GitHub token", value });
     if (token) {
         await keytar.setPassword(SERVICE, ACCOUNT, token);
+        store.isSignedIn = true;
+        commands.executeCommand("setContext", "gistfs:state", "SignedIn");
+
+        await loadGists();
     } else {
         throw new Error("Authentication required");
     }
@@ -49,4 +67,6 @@ export async function signIn() {
 
 export async function signout() {
     await keytar.deletePassword(SERVICE, ACCOUNT);
+    store.isSignedIn = false;
+    commands.executeCommand("setContext", "gistfs:state", "SignedOut");
 }

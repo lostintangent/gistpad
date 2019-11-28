@@ -1,7 +1,8 @@
 import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, window } from "vscode";
-import { deleteGist, forkGist, listGists, newGist, starredGists } from "./api";
+import { addGistFiles, deleteGist, deleteGistFile, forkGist, listGists, loadGists, newGist, starredGists, unstarGist } from "./api";
 import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
 import { EXTENSION_ID, FS_SCHEME } from "./constants";
+import { GistFileNode, GistNode, StarredGistNode } from "./tree/nodes";
 import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace } from "./utils";
 
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
@@ -46,9 +47,16 @@ export function registerCommands(context: ExtensionContext) {
 		{ label: STARRED_GIST_ITEM }
 	];
 
-	async function openGistInternal(openAsWorkspace: boolean = false) {
+	async function openGistInternal(openAsWorkspace: boolean = false, node?: GistNode) {
 		let gistItems: GistQuickPickItem[] = [];
 		
+		if (node) {
+			if (openAsWorkspace) {
+				return openGistAsWorkspace(node.gist.id);
+			} else {
+				return openGist(node.gist.id, false);
+			}
+		}
 		if (await isAuthenticated()) {
 			const gists = await listGists();
 
@@ -144,26 +152,35 @@ export function registerCommands(context: ExtensionContext) {
 
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.starredGists`, listGistsInternal.bind(null)));
 
-	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.forkGist`, async () => {
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.forkGist`, async (node?: StarredGistNode) => {
 		await ensureAuthenticated();
 
-		// TODO: Display your list of starred Gists
-		let gistId;
-		if (isGistWorkspace()) {	
+		let gistId: string | undefined;
+		if (node) {
+			gistId = node.gist.id;
+		} else if (isGistWorkspace()) {	
 			gistId = getGistWorkspaceId();
 		} else {
+			// TODO: Display the list of starred gists
 			gistId = await window.showInputBox({ prompt: "Enter the Gist ID to fork" });
 			if (!gistId) return;
 		}
 
-		forkGist(gistId);
+		window.withProgress({ location: ProgressLocation.Notification, title: "Forking Gist..." }, async () => {
+			await forkGist(gistId!);
+		});
 	}));
 
 	const DELETE_RESPONSE = "Delete";
-	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.deleteGist`, async () => {
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.deleteGist`, async (node?: GistNode) => {
 		await ensureAuthenticated();
 		
-		if (isGistWorkspace()) {	
+		if (node) {
+			const response = await window.showInformationMessage("Are you sure you want to delete this Gist?", DELETE_RESPONSE);
+			if (response !== DELETE_RESPONSE) return;
+			
+			await deleteGist(node.gist.id);
+		} else if (isGistWorkspace()) {	
 			const response = await window.showInformationMessage("Are you sure you want to delete this Gist?", DELETE_RESPONSE);
 			if (response !== DELETE_RESPONSE) return;
 
@@ -200,4 +217,38 @@ export function registerCommands(context: ExtensionContext) {
 
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.signIn`, signIn));
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.signOut`, signout));
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.loadGists`, loadGists));
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.unstarGist`, async (node?: StarredGistNode) => {
+		await ensureAuthenticated();
+
+		if (node) {
+			unstarGist(node.gist.id);
+		}
+	}));
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.addFile`, async (node?: GistNode) => {
+		await ensureAuthenticated();
+
+		if (node) {
+			const fileName = await window.showInputBox({
+				prompt: "Enter the files name(s) to seed the Gist with (can be a comma-seperated list)",
+				value: "foo.txt"
+			});
+			if (!fileName) return;
+			
+			window.withProgress({ location: ProgressLocation.Notification, title: "Adding files..." }, () => {
+				const fileNames = fileName.split(",");
+				return addGistFiles(node.gist.id, fileNames);
+			});
+		}
+	}));
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.deleteFile`, async (node?: GistFileNode) => {
+		await ensureAuthenticated();
+
+		if (node) {
+			await deleteGistFile(node.gistId, node.filename)
+		}
+	}));
 }

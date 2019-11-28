@@ -2,6 +2,7 @@ import { window } from "vscode";
 import { getToken } from "./auth";
 import { ZERO_WIDTH_SPACE } from "./constants";
 import { openGist } from "./utils";
+import { store } from "./store";
 
 const Gists = require("gists");
 
@@ -35,10 +36,16 @@ async function getApi() {
     return new Gists({ token });
 }
 
+export async function loadGists() {
+    store.isLoading = true;
+    store.gists = await listGists();
+    store.starredGists = await starredGists();
+    store.isLoading = false;
+}
+
 export async function listGists(): Promise<Gist[]> {
     const api = await getApi();
     const { pages } = await api.all();
-    console.log(`GFS: %o`, pages);
     return pages.reduce((result: Gist[], page: any) => [...result, ...page.body], [])
 }
 
@@ -58,6 +65,7 @@ export async function deleteGist(id: string) {
     try {
     const api = await getApi();
       await api.delete(id);
+      store.gists = store.gists.filter(gist => gist.id !== id);
     } catch (e) {
       window.showErrorMessage(e);
     }
@@ -67,6 +75,8 @@ export async function forkGist(id: string) {
     try {
         const api = await getApi();
         const gist = await api.fork(id);
+
+        store.gists.push(gist.body);
         openGist(gist.body.id);
     } catch (e) {
         window.showErrorMessage(e);
@@ -95,6 +105,7 @@ export async function newGist(fileNames: string[], isPublic: boolean, descriptio
       files
     });
     
+    store.gists.push(gist.body);
     openGist(gist.body.id, true);
 }
 
@@ -105,4 +116,46 @@ export async function updateGist(id: string, filename: string, file: GistFile | 
           [filename]: file
         }
     });
+}
+
+export async function addGistFiles(id: string, fileNames: string[]) {
+    const api = await getApi();
+
+    const files = fileNames
+        .map(fileName => fileName.trim())
+        .filter(fileName => fileName !== "")
+        .reduce((accumulator, fileName) => {
+            return {
+                ...accumulator,
+                [fileName]: {
+                    content: ZERO_WIDTH_SPACE
+                }
+            };
+        }
+    , {});
+
+    const response = await api.edit(id, { files });
+
+    store.gists = store.gists.filter(gist => gist.id != id);
+    store.gists.push(response.body);
+}
+
+export async function deleteGistFile(id: string, filename: string) {
+    const api = await getApi();
+
+    const response = await api.edit(id, { 
+        files: {
+            [filename]: null
+        }
+     });
+
+    store.gists = store.gists.filter(gist => gist.id != id);
+    store.gists.push(response.body);
+}
+
+export async function unstarGist(id: string) {
+    const api = await getApi();
+    await api.unstar(id);
+
+    store.starredGists = store.starredGists.filter(gist => gist.id !== id);
 }

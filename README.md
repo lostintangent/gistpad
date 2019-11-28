@@ -16,7 +16,11 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
     > In order to generate a new token, simply visit [this page](https://github.com/settings/tokens/new), give it a name (e.g. `gistpad`), and then check the `gist` checkbox.
 
-## Available Commands
+## Contributed Commands (Explorer/Editor)
+
+In addition to the `Gists` view, this extension also contributes an `Add to Gist` command to the context menu of the `Explorer` tree, as well as the editor window. This makes it easy to add an existing file to a Gist.
+
+## Contributed Commands (Command Palette)
 
 In addition to the `Gists` view, this extension also provides the following commands:
 

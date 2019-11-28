@@ -131,6 +131,11 @@
 				"command": "gistpad.copyFileContents",
 				"title": "Copy Contents",
 				"category": "GistPad"
+			},
+			{
+				"command": "gistpad.addFileToGist",
+				"title": "Add to Gist",
+				"category": "GistPad"
 			}
 		],
 		"menus": {
@@ -165,6 +170,10 @@
 				},
 				{
 					"command": "gistpad.addActiveFile",
+					"when": "false"
+				},
+				{
+					"command": "gistpad.addFileToGist",
 					"when": "false"
 				},
 				{
@@ -248,6 +257,16 @@
 					"command": "gistpad.deleteFile",
 					"when": "viewItem == gists.gist.file",
 					"group": "manage@2"
+				}
+			],
+			"editor/context": [
+				{
+					"command": "gistpad.addFileToGist"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "gistpad.addFileToGist"
 				}
 			]
 		},

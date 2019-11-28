@@ -1,7 +1,8 @@
 ## v0.0.7 (11/28/2016)
 
+* Added a new `Add to Gist` command to the context menu of both the `Explorer` tree and the document editor. This way you can easily add files to a gist
 * Added the `Copy Contents` command to the `Gists` view, which allows you to copy file contents and paste them into other files
-* Updated the `Add Active File` command to support "untitled" files
+* Updated the `Add Active File` command within the `Gists` view to support "untitled" files
 
 ## v0.0.6 (11/28/2016)
 

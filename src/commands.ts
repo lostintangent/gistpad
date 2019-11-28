@@ -1,10 +1,10 @@
 import * as path from "path";
-import { commands, env, workspace, ExtensionContext, ProgressLocation, QuickPickItem, window } from "vscode";
+import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, Uri, window, workspace } from "vscode";
 import { addGistFiles, changeDescription, deleteGist, forkGist, listGists, loadGists, newGist, starredGists, unstarGist } from "./api";
 import { ensureAuthenticated, isAuthenticated, signIn, signout } from "./auth";
-import { EXTENSION_ID, FS_SCHEME } from "./constants";
+import { EXTENSION_ID, FS_SCHEME, UNTITLED_SCHEME } from "./constants";
 import { GistFileNode, GistNode, StarredGistNode } from "./tree/nodes";
-import { getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistAsWorkspace, fileNameToUri, getStarredGistLabel } from "./utils";
+import { fileNameToUri, getGistLabel, getGistWorkspaceId, getStarredGistLabel, isGistWorkspace, openGist, openGistAsWorkspace } from "./utils";
 
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
@@ -266,6 +266,51 @@ export function registerCommands(context: ExtensionContext) {
 		} else {
 			window.showErrorMessage("There's no active editor. Open a file and then retry again.");
 		}
+	}));
+
+	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.addFileToGist`, async (fileUri: Uri) => {
+		await ensureAuthenticated();
+
+		console.log("GFS: uri, %o", fileUri);
+		let filename: string | undefined;
+		let contents: string | undefined;
+		if (fileUri.scheme === UNTITLED_SCHEME) {
+			filename = await window.showInputBox({
+				prompt: "Enter a name to give to this file",
+				value: "foo.txt"
+			});
+
+			if (!filename) return;
+
+			contents = await window.activeTextEditor!.document.getText();
+		} else {
+			filename = path.basename(fileUri.toString());
+			contents = (await workspace.fs.readFile(fileUri)).toString();
+		}
+			
+		const gists = await listGists();
+
+		let gistItems: GistQuickPickItem[];
+		if (gists.length > 0) {
+			gistItems = gists.map(gist => {
+				return <GistQuickPickItem>{  
+					label: getGistLabel(gist),
+					description: gist.description,
+					id: gist.id
+				}
+			});
+		} else {
+			// TODO: Allow creating a Gist
+			window.showInformationMessage("You don't have any Gists");
+			return;
+		}
+
+		const selected = await window.showQuickPick(gistItems, { placeHolder: "Select the Gist you'd like to add this file to" });
+		if (!selected) return;
+
+		window.withProgress({ location: ProgressLocation.Notification, title: "Adding files..." }, () => {
+			return workspace.fs.writeFile(fileNameToUri(selected.id!, filename!), Buffer.from(contents!));
+		});
 	}));
 
 	context.subscriptions.push(commands.registerCommand(`${EXTENSION_ID}.deleteFile`, async (node?: GistFileNode) => {

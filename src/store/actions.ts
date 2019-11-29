@@ -71,6 +71,7 @@ export async function followUser(username: string) {
 
   store.followedUsers.push(user);
   user.gists = await listUserGists(username);
+  user.isLoading = false;
 }
 
 export async function forkGist(id: string) {

@@ -3,6 +3,7 @@ import { registerCommands } from "./commands";
 import { registerFileSystemProvider } from "./fileSystem";
 import { store } from "./store";
 import { initializeAuth } from "./store/auth";
+import { initializeStorage } from "./store/storage";
 import { registerTreeProvider } from "./tree";
 
 export function activate(context: ExtensionContext) {
@@ -10,5 +11,6 @@ export function activate(context: ExtensionContext) {
   registerFileSystemProvider(store);
   registerTreeProvider(store, context.extensionPath);
 
+  initializeStorage(context);
   initializeAuth();
 }

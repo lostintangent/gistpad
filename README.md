@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad and code snippet manager 🚀
+GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad and code snippet manager. Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork their Gists, directly from within Visual Studio Code 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69490621-b6c03600-0e3f-11ea-9c52-b65bb73885b1.gif" width="800px" />
 
@@ -20,6 +20,10 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
 1. Add existing files to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Add Document to Gist` or `Add Selection to Gist` ([details](#contributed-commands-file-explorereditor))
 
+1. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
+
+   <img width="258" src="https://user-images.githubusercontent.com/116461/69890616-9cc69d80-12ee-11ea-83df-c88a4dbded7c.png" />
+
 ## Contributed Commands (File Explorer/Editor)
 
 In addition to the `Gists` view, this extension also contributes an `Add Document to Gist` command to the context menu of the `Explorer` file tree, as well as the editor window. This makes it easy to add existing files to your Gists.
@@ -31,6 +35,8 @@ If you want to add just a snippet of code to a Gist, instead of an entire docume
 ## Contributed Commands (Command Palette)
 
 In addition to the `Gists` view, this extension also provides the following commands:
+
+- `GistPad: Follow User` - Follow another GitHub user, whuich allows you to browser/access/fork their Gists from within the `Gists` view.
 
 - `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a Gist ID directly, which doesn't require being signed in.
 

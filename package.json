@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -22,6 +22,7 @@
   ],
   "activationEvents": [
     "onCommand:gistpad.deleteGist",
+    "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
     "onCommand:gistpad.newPublicGist",
     "onCommand:gistpad.newSecretGist",
@@ -63,6 +64,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.copyGistUrl",
+        "title": "Copy Gist URL",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.copyFileContents",
         "title": "Copy Contents",
         "category": "GistPad"
@@ -76,6 +82,15 @@
         "command": "gistpad.deleteGist",
         "title": "Delete Gist",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.followUser",
+        "title": "Follow User",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/follow.svg",
+          "light": "images/light/follow.svg"
+        }
       },
       {
         "command": "gistpad.forkGist",
@@ -103,6 +118,11 @@
       {
         "command": "gistpad.openGist",
         "title": "Open Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openGistInBrowser",
+        "title": "Open Gist in Browser",
         "category": "GistPad"
       },
       {
@@ -140,6 +160,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.unfollowUser",
+        "title": "Unfollow User",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.unstarGist",
         "title": "Unstar Gist",
         "category": "GistPad"
@@ -168,11 +193,19 @@
           "when": "false"
         },
         {
+          "command": "gistpad.copyGistUrl",
+          "when": "false"
+        },
+        {
           "command": "gistpad.copyFileContents",
           "when": "false"
         },
         {
           "command": "gistpad.deleteFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openGistInBrowser",
           "when": "false"
         },
         {
@@ -194,6 +227,10 @@
         {
           "command": "gistpad.signOut",
           "when": "gistpad:state != SignedOut"
+        },
+        {
+          "command": "gistpad.unfollowUser",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -208,21 +245,36 @@
           "group": "navigation@2"
         },
         {
-          "command": "gistpad.refreshGists",
+          "command": "gistpad.followUser",
           "when": "view == gistpad.gists && gistpad:state == SignedIn",
           "group": "navigation@3"
+        },
+        {
+          "command": "gistpad.refreshGists",
+          "when": "view == gistpad.gists && gistpad:state == SignedIn",
+          "group": "navigation@4"
         }
       ],
       "view/item/context": [
         {
           "command": "gistpad.openGist",
-          "when": "viewItem == gists.gist",
+          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
           "group": "base@1"
         },
         {
           "command": "gistpad.openGistWorkspace",
-          "when": "viewItem == gists.gist",
+          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
           "group": "base@2"
+        },
+        {
+          "command": "gistpad.openGistInBrowser",
+          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "group": "base@3"
+        },
+        {
+          "command": "gistpad.copyGistUrl",
+          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "group": "base@4"
         },
         {
           "command": "gistpad.addFile",
@@ -246,13 +298,18 @@
         },
         {
           "command": "gistpad.forkGist",
-          "when": "viewItem == starredGists.gist",
+          "when": "viewItem == starredGists.gist || viewItem == followedUser.gist",
           "group": "manage@1"
         },
         {
           "command": "gistpad.unstarGist",
           "when": "viewItem == starredGists.gist",
           "group": "manage@2"
+        },
+        {
+          "command": "gistpad.unfollowUser",
+          "when": "viewItem == followedUserGists",
+          "group": "base@1"
         },
         {
           "command": "gistpad.copyFileContents",

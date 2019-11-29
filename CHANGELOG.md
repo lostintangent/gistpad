@@ -1,3 +1,12 @@
+## v0.0.9 (11/29/2016)
+
+- Introduced the ability to follow users, so you can browser/access/fork their Gists directly from the `Gists` view
+
+     <img width="258" src="https://user-images.githubusercontent.com/116461/69890616-9cc69d80-12ee-11ea-83df-c88a4dbded7c.png" />
+
+* Added a new `Open Gist in Browser` command to the `Gists` view, which opens a Gist in your default browser
+* Added a new `Copy Gist URL` command to the `Gists` view, which allows you to copy a Gist's URL to your clipboard
+
 ## v0.0.8 (11/29/2016)
 
 - Added a new `Add Selection to Gist` command to the editor context menu. This allows you to add a snippet of code to a Gist, instead to an entire document (via the `Add Document to Gist`).

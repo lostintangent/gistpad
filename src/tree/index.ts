@@ -13,11 +13,14 @@ import { IStore } from "../store";
 import { getGistLabel } from "../utils";
 import {
   CreateNewGistNode,
+  FollowedUserGistNode,
+  FollowedUserGistsNode,
   GistFileNode,
   GistNode,
   GistsNode,
   LoadingNode,
   NoStarredGistsNode,
+  NoUserGistsNode,
   OpenGistNode,
   SignInNode,
   StarredGistNode,
@@ -37,6 +40,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       () => [
         store.gists.map(gist => gist.description),
         store.starredGists.length,
+        store.followedUsers.map(user => user.isLoading),
         store.isLoading,
         store.isSignedIn
       ],
@@ -58,10 +62,18 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         if (this.store.isLoading) {
           return [new LoadingNode()];
         } else {
-          return [
+          const nodes = [
             new GistsNode(this.extensionPath),
             new StarredGistsNode(this.extensionPath)
           ];
+
+          if (this.store.followedUsers.length > 0) {
+            this.store.followedUsers.forEach(user => {
+              nodes.push(new FollowedUserGistsNode(user, this.extensionPath));
+            });
+          }
+
+          return nodes;
         }
       }
     } else if (element instanceof GistsNode) {
@@ -85,6 +97,18 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         ([_, file]) => new GistFileNode(element.gist.id, file.filename!)
       );
     } else if (element instanceof StarredGistNode) {
+      return Object.entries(element.gist.files).map(
+        ([_, file]) => new GistFileNode(element.gist.id, file.filename!)
+      );
+    } else if (element instanceof FollowedUserGistsNode) {
+      if (element.user.isLoading) {
+        return [new LoadingNode()];
+      } else if (element.user.gists.length === 0) {
+        return [new NoUserGistsNode()];
+      } else {
+        return element.user.gists.map(gist => new FollowedUserGistNode(gist));
+      }
+    } else if (element instanceof FollowedUserGistNode) {
       return Object.entries(element.gist.files).map(
         ([_, file]) => new GistFileNode(element.gist.id, file.filename!)
       );

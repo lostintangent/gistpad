@@ -1,7 +1,7 @@
 import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { EXTENSION_ID } from "../constants";
-import { Gist } from "../store";
+import { Gist, IFollowedUser } from "../store";
 import { fileNameToUri, getGistLabel, getStarredGistLabel } from "../utils";
 
 export abstract class TreeNode extends TreeItem {
@@ -112,5 +112,37 @@ export class StarredGistNode extends TreeNode {
     this.description = gist.description;
     this.tooltip = `${this.label} - ${this.description}`;
     this.contextValue = "starredGists.gist";
+  }
+}
+
+export class FollowedUserGistsNode extends TreeNode {
+  constructor(public user: IFollowedUser, extensionPath: string) {
+    super(`${user.username}'s Gists`, TreeItemCollapsibleState.Collapsed);
+
+    this.iconPath = {
+      dark: path.join(extensionPath, "images/dark/user.svg"),
+      light: path.join(extensionPath, "images/light/user.svg")
+    };
+
+    this.contextValue = "followedUserGists";
+  }
+}
+
+export class NoUserGistsNode extends TreeNode {
+  constructor() {
+    super("No Gists");
+  }
+}
+
+export class FollowedUserGistNode extends TreeNode {
+  constructor(public gist: Gist) {
+    super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
+
+    if (!gist.public) {
+      this.description = "Secret";
+    }
+
+    this.tooltip = getGistLabel(gist);
+    this.contextValue = "followedUser.gist";
   }
 }

@@ -4,6 +4,7 @@ import {
   ExtensionContext,
   ProgressLocation,
   QuickPickItem,
+  Uri,
   window
 } from "vscode";
 import { EXTENSION_ID, FS_SCHEME } from "../constants";
@@ -199,6 +200,16 @@ export async function registerGistCommands(context: ExtensionContext) {
     )
   );
 
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.copyGistUrl`,
+      async (node: GistNode) => {
+        await ensureAuthenticated();
+        env.clipboard.writeText(node.gist.html_url);
+      }
+    )
+  );
+
   const DELETE_RESPONSE = "Delete";
   context.subscriptions.push(
     commands.registerCommand(
@@ -306,6 +317,17 @@ export async function registerGistCommands(context: ExtensionContext) {
       openGistInternal.bind(null, false)
     )
   );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.openGistInBrowser`,
+      async (node: GistNode) => {
+        await ensureAuthenticated();
+        env.openExternal(Uri.parse(node.gist.html_url));
+      }
+    )
+  );
+
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.openGistWorkspace`,

@@ -1,8 +1,9 @@
 import { ProgressLocation, window } from "vscode";
-import { Gist, GistFile, store } from ".";
+import { Gist, GistFile, IFollowedUser, store } from ".";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { openGist } from "../utils";
 import { getToken } from "./auth";
+import { storage } from "./storage";
 
 const Gists = require("gists");
 
@@ -51,6 +52,27 @@ export async function deleteGist(id: string) {
   }
 }
 
+export async function followUser(username: string) {
+  const followedUsers = storage.followedUsers;
+
+  if (followedUsers.find(user => user === username)) {
+    window.showInformationMessage("You're already following this user");
+    return;
+  } else {
+    followedUsers.push(username);
+    storage.followedUsers = followedUsers;
+  }
+
+  const user: IFollowedUser = {
+    username,
+    gists: [],
+    isLoading: true
+  };
+
+  store.followedUsers.push(user);
+  user.gists = await listUserGists(username);
+}
+
 export async function forkGist(id: string) {
   try {
     const api = await getApi();
@@ -83,6 +105,12 @@ export async function listGists(): Promise<Gist[]> {
   );
 
   return gists.sort((a, b) => a.description.localeCompare(b.description));
+}
+
+export async function listUserGists(username: string): Promise<Gist[]> {
+  const api = await getApi();
+  const { body } = await api.list(username);
+  return body;
 }
 
 export async function newGist(
@@ -119,13 +147,39 @@ export async function refreshGists() {
   store.isLoading = true;
   store.gists = await listGists();
   store.starredGists = await starredGists();
+
+  if (storage.followedUsers.length > 0) {
+    store.followedUsers = storage.followedUsers.map(username => ({
+      username,
+      gists: [],
+      isLoading: true
+    }));
+  }
+
   store.isLoading = false;
+
+  if (storage.followedUsers.length > 0) {
+    for (const followedUser of store.followedUsers) {
+      followedUser.gists = await listUserGists(followedUser.username);
+      followedUser.isLoading = false;
+    }
+  }
 }
 
 export async function starredGists(): Promise<Gist[]> {
   const api = await getApi();
   const { body } = await api.starred();
   return body;
+}
+
+export async function unfollowUser(username: string) {
+  storage.followedUsers = storage.followedUsers.filter(
+    user => user !== username
+  );
+
+  store.followedUsers = store.followedUsers.filter(
+    user => user.username !== username
+  );
 }
 
 export async function updateGist(

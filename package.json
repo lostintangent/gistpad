@@ -1,316 +1,317 @@
 {
-	"name": "gistfs",
-	"displayName": "GistPad",
-	"description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
-	"publisher": "vsls-contrib",
-	"version": "0.0.7",
-	"icon": "icon.png",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/vsls-contrib/gistpad"
-	},
-	"engines": {
-		"vscode": "^1.40.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"keywords": [
-		"Collaboration",
-		"Sharing",
-		"Remote"
-	],
-	"activationEvents": [
-		"onCommand:gistpad.deleteGist",
-		"onCommand:gistpad.forkGist",
-		"onCommand:gistpad.newPublicGist",
-		"onCommand:gistpad.newSecretGist",
-		"onCommand:gistpad.openGist",
-		"onCommand:gistpad.openGistWorkspace",
-		"onCommand:gistpad.starredGists",
-		"onCommand:gistpad.signOut",
-		"onFileSystem:gist",
-		"onView:gistpad.gists"
-	],
-	"main": "./out/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "gistpad.deleteGist",
-				"title": "Delete Gist",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.forkGist",
-				"title": "Fork Gist",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.newPublicGist",
-				"title": "New Gist",
-				"category": "GistPad",
-				"icon": {
-					"dark": "images/dark/add.svg",
-					"light": "images/light/add.svg"
-				}
-			},
-			{
-				"command": "gistpad.newSecretGist",
-				"title": "New Secret Gist",
-				"category": "GistPad",
-				"icon": {
-					"dark": "images/dark/add-secret.svg",
-					"light": "images/light/add-secret.svg"
-				}
-			},
-			{
-				"command": "gistpad.loadGists",
-				"title": "Refresh Gists",
-				"category": "GistPad",
-				"icon": {
-					"dark": "images/dark/refresh.svg",
-					"light": "images/light/refresh.svg"
-				}
-			},
-			{
-				"command": "gistpad.openGist",
-				"title": "Open Gist",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.openGistWorkspace",
-				"title": "Open Gist as Workspace",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.signIn",
-				"title": "Sign In",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.signOut",
-				"title": "Sign Out",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.starredGists",
-				"title": "Starred Gists",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.unstarGist",
-				"title": "Unstar Gist",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.addFile",
-				"title": "Add File(s)",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.deleteFile",
-				"title": "Delete File",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.renameFile",
-				"title": "Rename File",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.changeGistDescription",
-				"title": "Change Description",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.addActiveFile",
-				"title": "Add Active File",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.copyFileContents",
-				"title": "Copy Contents",
-				"category": "GistPad"
-			},
-			{
-				"command": "gistpad.addFileToGist",
-				"title": "Add to Gist",
-				"category": "GistPad"
-			}
-		],
-		"menus": {
-			"commandPalette": [
-				{
-					"command": "gistpad.loadGists",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.unstarGist",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.addFile",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.deleteFile",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.renameFile",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.changeGistDescription",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.copyFileContents",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.addActiveFile",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.addFileToGist",
-					"when": "false"
-				},
-				{
-					"command": "gistpad.signIn",
-					"when": "gistpad:state != SignedIn"
-				},
-				{
-					"command": "gistpad.signOut",
-					"when": "gistpad:state != SignedOut"
-				}
-			],
-			"view/title": [
-				{
-					"command": "gistpad.newPublicGist",
-					"when": "view == gistpad.gists && gistpad:state == SignedIn",
-					"group": "navigation@1"
-				},
-				{
-					"command": "gistpad.newSecretGist",
-					"when": "view == gistpad.gists && gistpad:state == SignedIn",
-					"group": "navigation@2"
-				},
-				{
-					"command": "gistpad.loadGists",
-					"when": "view == gistpad.gists && gistpad:state == SignedIn",
-					"group": "navigation@3"
-				}
-			],
-			"view/item/context": [
-				{
-					"command": "gistpad.openGist",
-					"when": "viewItem == gists.gist",
-					"group": "base@1"
-				},
-				{
-					"command": "gistpad.openGistWorkspace",
-					"when": "viewItem == gists.gist",
-					"group": "base@2"
-				},
-				{
-					"command": "gistpad.addFile",
-					"when": "viewItem == gists.gist",
-					"group": "manage@1"
-				},
-				{
-					"command": "gistpad.addActiveFile",
-					"when": "viewItem == gists.gist",
-					"group": "manage@2"
-				},
-				{
-					"command": "gistpad.changeGistDescription",
-					"when": "viewItem == gists.gist",
-					"group": "manage@3"
-				},
-				{
-					"command": "gistpad.deleteGist",
-					"when": "viewItem == gists.gist",
-					"group": "manage@4"
-				},
-				{
-					"command": "gistpad.forkGist",
-					"when": "viewItem == starredGists.gist",
-					"group": "manage@1"
-				},
-				{
-					"command": "gistpad.unstarGist",
-					"when": "viewItem == starredGists.gist",
-					"group": "manage@2"
-				},
-				{
-					"command": "gistpad.copyFileContents",
-					"when": "viewItem == gists.gist.file",
-					"group": "base@1"
-				},
-				{
-					"command": "gistpad.renameFile",
-					"when": "viewItem == gists.gist.file",
-					"group": "manage@1"
-				},
-				{
-					"command": "gistpad.deleteFile",
-					"when": "viewItem == gists.gist.file",
-					"group": "manage@2"
-				}
-			],
-			"editor/context": [
-				{
-					"command": "gistpad.addFileToGist"
-				}
-			],
-			"explorer/context": [
-				{
-					"command": "gistpad.addFileToGist"
-				}
-			]
-		},
-		"views": {
-			"explorer": [
-				{
-					"id": "gistpad.gists",
-					"name": "Gists"
-				}
-			],
-			"gistpad": [
-				{
-					"id": "gistpad.gists",
-					"name": "Gists"
-				}
-			]
-		},
-		"viewsContainers": {
-			"activitybar": [
-				{
-					"id": "gistpad",
-					"title": "GistPad",
-					"icon": "images/activity-bar-icon.svg"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "npm run compile",
-		"compile": "tsc -p ./",
-		"watch": "tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
-		"test": "npm run compile && node ./node_modules/vscode/bin/test"
-	},
-	"devDependencies": {
-		"@types/keytar": "^4.4.2",
-		"@types/node": "^8.10.25",
-		"tslint": "^5.8.0",
-		"typescript": "^3.1.4",
-		"vscode": "^1.1.25"
-	},
-	"dependencies": {
-		"axios": "^0.19.0",
-		"gists": "^2.0.0",
-		"mobx": "^5.14.2"
-	}
+  "name": "gistfs",
+  "displayName": "GistPad",
+  "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
+  "publisher": "vsls-contrib",
+  "version": "0.0.7",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/vsls-contrib/gistpad"
+  },
+  "engines": {
+    "vscode": "^1.40.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "Collaboration",
+    "Sharing",
+    "Remote"
+  ],
+  "activationEvents": [
+    "onCommand:gistpad.deleteGist",
+    "onCommand:gistpad.forkGist",
+    "onCommand:gistpad.newPublicGist",
+    "onCommand:gistpad.newSecretGist",
+    "onCommand:gistpad.openGist",
+    "onCommand:gistpad.openGistWorkspace",
+    "onCommand:gistpad.signIn",
+    "onCommand:gistpad.signOut",
+    "onCommand:gistpad.starredGists",
+    "onFileSystem:gist",
+    "onView:gistpad.gists"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "gistpad.addActiveFile",
+        "title": "Add Active File",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.addFile",
+        "title": "Add File(s)",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.addFileToGist",
+        "title": "Add to Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.changeGistDescription",
+        "title": "Change Description",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.copyFileContents",
+        "title": "Copy Contents",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.deleteFile",
+        "title": "Delete File",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.deleteGist",
+        "title": "Delete Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.forkGist",
+        "title": "Fork Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.newPublicGist",
+        "title": "New Gist",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add.svg",
+          "light": "images/light/add.svg"
+        }
+      },
+      {
+        "command": "gistpad.newSecretGist",
+        "title": "New Secret Gist",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add-secret.svg",
+          "light": "images/light/add-secret.svg"
+        }
+      },
+      {
+        "command": "gistpad.openGist",
+        "title": "Open Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openGistWorkspace",
+        "title": "Open Gist as Workspace",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.refreshGists",
+        "title": "Refresh Gists",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/refresh.svg",
+          "light": "images/light/refresh.svg"
+        }
+      },
+      {
+        "command": "gistpad.renameFile",
+        "title": "Rename File",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.signIn",
+        "title": "Sign In",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.signOut",
+        "title": "Sign Out",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.starredGists",
+        "title": "Starred Gists",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.unstarGist",
+        "title": "Unstar Gist",
+        "category": "GistPad"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "gistpad.addActiveFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.addFileToGist",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.addFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.changeGistDescription",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.copyFileContents",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.deleteFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.refreshGists",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.renameFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.unstarGist",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.signIn",
+          "when": "gistpad:state != SignedIn"
+        },
+        {
+          "command": "gistpad.signOut",
+          "when": "gistpad:state != SignedOut"
+        }
+      ],
+      "view/title": [
+        {
+          "command": "gistpad.newPublicGist",
+          "when": "view == gistpad.gists && gistpad:state == SignedIn",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gistpad.newSecretGist",
+          "when": "view == gistpad.gists && gistpad:state == SignedIn",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gistpad.refreshGists",
+          "when": "view == gistpad.gists && gistpad:state == SignedIn",
+          "group": "navigation@3"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "gistpad.openGist",
+          "when": "viewItem == gists.gist",
+          "group": "base@1"
+        },
+        {
+          "command": "gistpad.openGistWorkspace",
+          "when": "viewItem == gists.gist",
+          "group": "base@2"
+        },
+        {
+          "command": "gistpad.addFile",
+          "when": "viewItem == gists.gist",
+          "group": "manage@1"
+        },
+        {
+          "command": "gistpad.addActiveFile",
+          "when": "viewItem == gists.gist",
+          "group": "manage@2"
+        },
+        {
+          "command": "gistpad.changeGistDescription",
+          "when": "viewItem == gists.gist",
+          "group": "manage@3"
+        },
+        {
+          "command": "gistpad.deleteGist",
+          "when": "viewItem == gists.gist",
+          "group": "manage@4"
+        },
+        {
+          "command": "gistpad.forkGist",
+          "when": "viewItem == starredGists.gist",
+          "group": "manage@1"
+        },
+        {
+          "command": "gistpad.unstarGist",
+          "when": "viewItem == starredGists.gist",
+          "group": "manage@2"
+        },
+        {
+          "command": "gistpad.copyFileContents",
+          "when": "viewItem == gists.gist.file",
+          "group": "base@1"
+        },
+        {
+          "command": "gistpad.renameFile",
+          "when": "viewItem == gists.gist.file",
+          "group": "manage@1"
+        },
+        {
+          "command": "gistpad.deleteFile",
+          "when": "viewItem == gists.gist.file",
+          "group": "manage@2"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "gistpad.addFileToGist"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "gistpad.addFileToGist"
+        }
+      ]
+    },
+    "views": {
+      "explorer": [
+        {
+          "id": "gistpad.gists",
+          "name": "Gists"
+        }
+      ],
+      "gistpad": [
+        {
+          "id": "gistpad.gists",
+          "name": "Gists"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gistpad",
+          "title": "GistPad",
+          "icon": "images/activity-bar-icon.svg"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "postinstall": "node ./node_modules/vscode/bin/install",
+    "test": "npm run compile && node ./node_modules/vscode/bin/test"
+  },
+  "devDependencies": {
+    "@types/keytar": "^4.4.2",
+    "@types/node": "^8.10.25",
+    "tslint": "^5.8.0",
+    "typescript": "^3.1.4",
+    "vscode": "^1.1.25"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "gists": "^2.0.0",
+    "mobx": "^5.14.2"
+  }
 }

@@ -1,7 +1,8 @@
 import * as path from "path";
-import { TreeItem, TreeItemCollapsibleState, ThemeIcon } from "vscode";
+import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { EXTENSION_ID } from "../constants";
+import { Gist } from "../store";
 import { fileNameToUri, getGistLabel, getStarredGistLabel } from "../utils";
-import { Gist } from "../api";
 
 export abstract class TreeNode extends TreeItem {
   constructor(
@@ -13,14 +14,14 @@ export abstract class TreeNode extends TreeItem {
 }
 
 export class OpenGistNode extends TreeNode {
-    constructor() {
-      super("Open Gist...");
-  
-      this.command = {
-        command: "gistpad.openGist",
-        title: "Open Gist.."
-      };
-    }
+  constructor() {
+    super("Open Gist...");
+
+    this.command = {
+      command: `${EXTENSION_ID}.openGist`,
+      title: "Open Gist.."
+    };
+  }
 }
 
 export class SignInNode extends TreeNode {
@@ -28,16 +29,16 @@ export class SignInNode extends TreeNode {
     super("Sign in to view your Gists...");
 
     this.command = {
-      command: "gistpad.signIn",
+      command: `${EXTENSION_ID}.signIn`,
       title: "Sign in to view your Gists..."
     };
   }
 }
 
 export class LoadingNode extends TreeNode {
-    constructor() {
-      super("Loading Gists...");
-    }
+  constructor() {
+    super("Loading Gists...");
+  }
 }
 
 export class GistsNode extends TreeNode {
@@ -50,30 +51,24 @@ export class GistsNode extends TreeNode {
 }
 
 export class CreateNewGistNode extends TreeNode {
-    constructor() {
-      super("Create new Gist...");
-  
-      this.command = {
-          command: "gistpad.newPublicGist",
-          title: "Create new Gist..."
-      }
-    }
-}
-
-export class NoStarredGistsNode extends TreeNode {
   constructor() {
-    super("No starred Gists");
+    super("Create new Gist...");
+
+    this.command = {
+      command: `${EXTENSION_ID}.newPublicGist`,
+      title: "Create new Gist..."
+    };
   }
 }
 
 export class GistNode extends TreeNode {
-    constructor(public gist: Gist) {
-      super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
-  
-      this.description = gist.description;
-      this.tooltip = `${this.label} - ${this.description}`;
-      this.contextValue = "gists.gist";
-    }
+  constructor(public gist: Gist) {
+    super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
+
+    this.description = gist.description;
+    this.tooltip = `${this.label} - ${this.description}`;
+    this.contextValue = "gists.gist";
+  }
 }
 
 export class GistFileNode extends TreeNode {
@@ -88,25 +83,31 @@ export class GistFileNode extends TreeNode {
       command: "vscode.open",
       title: "Open File",
       arguments: [this.resourceUri]
-    }
+    };
   }
 }
 
 export class StarredGistsNode extends TreeNode {
-    constructor(extensionPath: string) {
-      super("Starred Gists", TreeItemCollapsibleState.Expanded);
+  constructor(extensionPath: string) {
+    super("Starred Gists", TreeItemCollapsibleState.Expanded);
 
-      this.iconPath = path.join(extensionPath, "images/star.svg");
-      this.contextValue = "starredGists";
-    }
+    this.iconPath = path.join(extensionPath, "images/star.svg");
+    this.contextValue = "starredGists";
+  }
+}
+
+export class NoStarredGistsNode extends TreeNode {
+  constructor() {
+    super("No starred Gists");
+  }
 }
 
 export class StarredGistNode extends TreeNode {
   constructor(public gist: Gist) {
-      super(getStarredGistLabel(gist), TreeItemCollapsibleState.Collapsed);
-  
-      this.description = gist.description;
-      this.tooltip = `${this.label} - ${this.description}`;
-      this.contextValue = "starredGists.gist";
-    }
+    super(getStarredGistLabel(gist), TreeItemCollapsibleState.Collapsed);
+
+    this.description = gist.description;
+    this.tooltip = `${this.label} - ${this.description}`;
+    this.contextValue = "starredGists.gist";
+  }
 }

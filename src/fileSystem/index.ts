@@ -1,10 +1,22 @@
-import { Disposable, Event, EventEmitter, FileChangeEvent, FileStat, FileSystemError, FileSystemProvider, FileType, Uri, window, workspace } from "vscode";
-import { forkGist, getGist, GistFile, updateGist } from "./api";
-import { ensureAuthenticated } from "./auth";
-import { FS_SCHEME, ZERO_WIDTH_SPACE } from "./constants";
-import { IStore } from "./store";
-import { getGistDetailsFromUri, uriToFileName, openGist } from "./utils";
 import axios from "axios";
+import {
+  Disposable,
+  Event,
+  EventEmitter,
+  FileChangeEvent,
+  FileStat,
+  FileSystemError,
+  FileSystemProvider,
+  FileType,
+  Uri,
+  window,
+  workspace
+} from "vscode";
+import { FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
+import { GistFile, IStore } from "../store";
+import { forkGist, getGist, updateGist } from "../store/actions";
+import { ensureAuthenticated } from "../store/auth";
+import { getGistDetailsFromUri, openGist, uriToFileName } from "../utils";
 
 export class GistFileSystemProvider implements FileSystemProvider {
   constructor(private store: IStore) {}
@@ -15,17 +27,21 @@ export class GistFileSystemProvider implements FileSystemProvider {
     let gist = this.store.gists.find(gist => gist.id === gistId);
     if (!gist) {
       gist = await getGist(gistId);
-    } 
+    }
 
     return gist.files[file];
   }
 
-  async copy?(source: Uri, destination: Uri, options: { overwrite: boolean }): Promise<void> {
+  async copy?(
+    source: Uri,
+    destination: Uri,
+    options: { overwrite: boolean }
+  ): Promise<void> {
     await ensureAuthenticated();
 
     const { gistId } = getGistDetailsFromUri(source);
     const newFileName = uriToFileName(destination);
-    
+
     const file = await this.getFileFromUri(source);
     await updateGist(gistId, newFileName, {
       content: file.content!
@@ -33,7 +49,9 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 
   createDirectory(uri: Uri): void {
-    throw FileSystemError.NoPermissions("Directories aren't supported by GitHub Gist.");
+    throw FileSystemError.NoPermissions(
+      "Directories aren't supported by GitHub Gist."
+    );
   }
 
   async delete(uri: Uri, options: { recursive: boolean }): Promise<void> {
@@ -47,7 +65,13 @@ export class GistFileSystemProvider implements FileSystemProvider {
     const file = await this.getFileFromUri(uri);
 
     if (file.truncated || !file.content) {
-      file.content = (await axios.get(file.raw_url!, { transformResponse: (data) => { return data; } })).data;
+      file.content = (
+        await axios.get(file.raw_url!, {
+          transformResponse: data => {
+            return data;
+          }
+        })
+      ).data;
     }
     return Buffer.from(file.content!);
   }
@@ -59,30 +83,30 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
       // TODO: Check to see if the file list is truncated, and if
       // so, retrieve the full contents from the service.
-      const files = Object.keys(gist.files).map(file => [
-        file,
-        FileType.File
-      ]);
-      
+      const files = Object.keys(gist.files).map(file => [file, FileType.File]);
+
       setTimeout(() => {
         openGist(gistId, false);
       }, 500);
 
       // @ts-ignore
       return files;
+    } else {
+      throw FileSystemError.FileNotFound;
     }
-     else {
-        throw FileSystemError.FileNotFound;
-     }
   }
 
-  async rename(oldUri: Uri, newUri: Uri, options: { overwrite: boolean }): Promise<void> {
+  async rename(
+    oldUri: Uri,
+    newUri: Uri,
+    options: { overwrite: boolean }
+  ): Promise<void> {
     await ensureAuthenticated();
 
     const file = await this.getFileFromUri(oldUri);
     const { gistId } = getGistDetailsFromUri(oldUri);
     const newFileName = uriToFileName(newUri);
-  
+
     await updateGist(gistId, file.filename!, {
       filename: newFileName
     });
@@ -118,7 +142,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     options: { create: boolean; overwrite: boolean }
   ): Promise<void> {
     await ensureAuthenticated();
-    
+
     let file = await this.getFileFromUri(uri);
     const { gistId } = getGistDetailsFromUri(uri);
 
@@ -129,7 +153,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
         truncated: false
       };
     }
-    
+
     let newContent = content.toString();
     if (newContent.trim().length === 0) {
       // Gist doesn't allow files to be blank
@@ -138,25 +162,28 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
     file.content = newContent;
     file.size = newContent.length;
-    
+
     try {
       await updateGist(gistId, file.filename!, {
         content: file.content
       });
     } catch (e) {
-      const response = await window.showInformationMessage("You can't edit a Gist you don't own.", "Fork this Gist")
+      const response = await window.showInformationMessage(
+        "You can't edit a Gist you don't own.",
+        "Fork this Gist"
+      );
       if (response === "Fork this Gist") {
         await forkGist(gistId);
       }
-     }
+    }
   }
 
   // Unimplemented members
-  
+
   private _onDidChangeFile = new EventEmitter<FileChangeEvent[]>();
   public readonly onDidChangeFile: Event<FileChangeEvent[]> = this
     ._onDidChangeFile.event;
-  
+
   watch(
     uri: Uri,
     options: { recursive: boolean; excludes: string[] }

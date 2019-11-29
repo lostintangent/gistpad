@@ -1,14 +1,14 @@
 import { ExtensionContext } from "vscode";
-import { initializeAuth } from "./auth";
 import { registerCommands } from "./commands";
-import { registerFileSystemProvider } from "./fileSystemProvider";
+import { registerFileSystemProvider } from "./fileSystem";
 import { store } from "./store";
-import { registerTreeProvider } from "./tree/treeProvider";
+import { initializeAuth } from "./store/auth";
+import { registerTreeProvider } from "./tree";
 
 export function activate(context: ExtensionContext) {
-	registerFileSystemProvider(store);
-	registerCommands(context);
-	registerTreeProvider(store, context.extensionPath);
+  registerCommands(context);
+  registerFileSystemProvider(store);
+  registerTreeProvider(store, context.extensionPath);
 
-	initializeAuth();
+  initializeAuth();
 }

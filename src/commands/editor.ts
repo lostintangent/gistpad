@@ -13,6 +13,49 @@ import { ensureAuthenticated } from "../store/auth";
 import { fileNameToUri, getGistLabel } from "../utils";
 import { GistQuickPickItem } from "./gist";
 
+async function askForFileName() {
+  return window.showInputBox({
+    prompt: "Enter a name to give to this file",
+    value: "foo.txt"
+  });
+}
+
+async function promptForGistSelection(filename: string, contents: string) {
+  const gists = await listGists();
+
+  let gistItems: GistQuickPickItem[];
+  if (gists.length > 0) {
+    gistItems = gists.map(gist => {
+      return <GistQuickPickItem>{
+        label: getGistLabel(gist),
+        description: gist.description,
+        id: gist.id
+      };
+    });
+  } else {
+    // TODO: Allow creating a Gist
+    window.showInformationMessage("You don't have any Gists");
+    return;
+  }
+
+  const selected = await window.showQuickPick(gistItems, {
+    placeHolder: "Select the Gist you'd like to add this file to"
+  });
+  if (!selected) {
+    return;
+  }
+
+  window.withProgress(
+    { location: ProgressLocation.Notification, title: "Adding files..." },
+    () => {
+      return workspace.fs.writeFile(
+        fileNameToUri(selected.id!, filename!),
+        Buffer.from(contents!)
+      );
+    }
+  );
+}
+
 export function registerEditorCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
@@ -23,11 +66,7 @@ export function registerEditorCommands(context: ExtensionContext) {
         let filename: string | undefined;
         let contents: string | undefined;
         if (fileUri.scheme === UNTITLED_SCHEME) {
-          filename = await window.showInputBox({
-            prompt: "Enter a name to give to this file",
-            value: "foo.txt"
-          });
-
+          filename = await askForFileName();
           if (!filename) {
             return;
           }
@@ -38,39 +77,27 @@ export function registerEditorCommands(context: ExtensionContext) {
           contents = (await workspace.fs.readFile(fileUri)).toString();
         }
 
-        const gists = await listGists();
+        promptForGistSelection(filename, contents);
+      }
+    )
+  );
 
-        let gistItems: GistQuickPickItem[];
-        if (gists.length > 0) {
-          gistItems = gists.map(gist => {
-            return <GistQuickPickItem>{
-              label: getGistLabel(gist),
-              description: gist.description,
-              id: gist.id
-            };
-          });
-        } else {
-          // TODO: Allow creating a Gist
-          window.showInformationMessage("You don't have any Gists");
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.addSelectionToGist`,
+      async (fileUri: Uri) => {
+        await ensureAuthenticated();
+
+        const filename = await askForFileName();
+        if (!filename) {
           return;
         }
 
-        const selected = await window.showQuickPick(gistItems, {
-          placeHolder: "Select the Gist you'd like to add this file to"
-        });
-        if (!selected) {
-          return;
-        }
-
-        window.withProgress(
-          { location: ProgressLocation.Notification, title: "Adding files..." },
-          () => {
-            return workspace.fs.writeFile(
-              fileNameToUri(selected.id!, filename!),
-              Buffer.from(contents!)
-            );
-          }
+        const contents = await window.activeTextEditor!.document.getText(
+          window.activeTextEditor!.selection
         );
+
+        promptForGistSelection(filename, contents);
       }
     )
   );

@@ -48,8 +48,14 @@
       },
       {
         "command": "gistpad.addFileToGist",
-        "title": "Add to Gist",
+        "title": "Add Document to Gist",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.addSelectionToGist",
+        "title": "Add Selection to Gist",
+        "category": "GistPad",
+        "enablement": "editorHasSelection"
       },
       {
         "command": "gistpad.changeGistDescription",
@@ -151,6 +157,10 @@
         },
         {
           "command": "gistpad.addFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.addSelectionToGist",
           "when": "false"
         },
         {
@@ -262,12 +272,16 @@
       ],
       "explorer/context": [
         {
-          "command": "gistpad.addFileToGist"
+          "command": "gistpad.addFileToGist",
+          "when": "!explorerResourceIsFolder"
         }
       ],
       "editor/context": [
         {
           "command": "gistpad.addFileToGist"
+        },
+        {
+          "command": "gistpad.addSelectionToGist"
         }
       ]
     },

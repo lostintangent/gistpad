@@ -15,9 +15,8 @@ export function getGistDetailsFromUri(uri: Uri) {
   };
 }
 
-export function getGistLabel(gist: Gist) {
-  const suffix = gist.public ? "" : " 🔒";
-  return `${Object.keys(gist.files)[0]}${suffix}`;
+export function getGistLabel(gist: Gist): string {
+  return gist.description || `${Object.keys(gist.files)[0]}`;
 }
 
 export function getGistWorkspaceId() {

@@ -1,6 +1,7 @@
 ## v0.0.8 (11/29/2016)
 
 - Added a new `Add Selection to Gist` command to the editor context menu. This allows you to add a snippet of code to a Gist, instead to an entire document (via the `Add Document to Gist`).
+- Updated the `Gists` view to use the description as the Gist label (or it's file name if there isn't a description)
 
 ## v0.0.7 (11/28/2016)
 

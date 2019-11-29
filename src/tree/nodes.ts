@@ -65,8 +65,11 @@ export class GistNode extends TreeNode {
   constructor(public gist: Gist) {
     super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
 
-    this.description = gist.description;
-    this.tooltip = `${this.label} - ${this.description}`;
+    if (!gist.public) {
+      this.description = "Secret";
+    }
+
+    this.tooltip = getGistLabel(gist);
     this.contextValue = "gists.gist";
   }
 }

@@ -117,7 +117,7 @@
       },
       {
         "command": "gistpad.openGist",
-        "title": "Open Gist",
+        "title": "Open Gist Files",
         "category": "GistPad"
       },
       {

@@ -1,3 +1,4 @@
+import { observable } from "mobx";
 import { ProgressLocation, window } from "vscode";
 import { Gist, GistFile, IFollowedUser, store } from ".";
 import { ZERO_WIDTH_SPACE } from "../constants";
@@ -63,13 +64,14 @@ export async function followUser(username: string) {
     storage.followedUsers = followedUsers;
   }
 
-  const user: IFollowedUser = {
+  const user: IFollowedUser = observable({
     username,
     gists: [],
     isLoading: true
-  };
+  });
 
   store.followedUsers.push(user);
+
   user.gists = await listUserGists(username);
   user.isLoading = false;
 }

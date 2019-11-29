@@ -4,8 +4,6 @@
 
 GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad and code snippet manager. Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork their Gists, directly from within Visual Studio Code 🚀
 
-<img src="https://user-images.githubusercontent.com/116461/69490621-b6c03600-0e3f-11ea-9c52-b65bb73885b1.gif" width="800px" />
-
 ## Getting Started
 
 1. Install this extension from the marketplace
@@ -22,7 +20,7 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
 1. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
 
-   <img width="258" src="https://user-images.githubusercontent.com/116461/69890616-9cc69d80-12ee-11ea-83df-c88a4dbded7c.png" />
+   <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
 ## Contributed Commands (File Explorer/Editor)
 

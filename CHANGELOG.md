@@ -2,7 +2,7 @@
 
 - Introduced the ability to follow users, so you can browser/access/fork their Gists directly from the `Gists` view
 
-     <img width="258" src="https://user-images.githubusercontent.com/116461/69890616-9cc69d80-12ee-11ea-83df-c88a4dbded7c.png" />
+     <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
 * Added a new `Open Gist in Browser` command to the `Gists` view, which opens a Gist in your default browser
 * Added a new `Copy Gist URL` command to the `Gists` view, which allows you to copy a Gist's URL to your clipboard

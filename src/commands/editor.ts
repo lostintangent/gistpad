@@ -8,7 +8,7 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_ID, UNTITLED_SCHEME } from "../constants";
-import { listGists } from "../store/actions";
+import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { fileNameToUri, getGistLabel } from "../utils";
 import { GistQuickPickItem } from "./gist";
@@ -20,40 +20,78 @@ async function askForFileName() {
   });
 }
 
-async function promptForGistSelection(filename: string, contents: string) {
-  const gists = await listGists();
+const CREATE_PUBLIC_GIST_ITEM = "$(gist-new) Create new Gist...";
+const CREATE_SECRET_GIST_ITEM = "$(gist-private) Create new secret Gist...";
+const CREATE_GIST_ITEMS = [
+  { label: CREATE_PUBLIC_GIST_ITEM },
+  { label: CREATE_SECRET_GIST_ITEM }
+];
 
-  let gistItems: GistQuickPickItem[];
-  if (gists.length > 0) {
-    gistItems = gists.map(gist => {
-      return <GistQuickPickItem>{
-        label: getGistLabel(gist),
-        description: gist.description,
-        id: gist.id
-      };
-    });
-  } else {
-    // TODO: Allow creating a Gist
-    window.showInformationMessage("You don't have any Gists");
-    return;
-  }
-
-  const selected = await window.showQuickPick(gistItems, {
-    placeHolder: "Select the Gist you'd like to add this file to"
+async function newGistWithFile(
+  isPublic: boolean,
+  filename: string,
+  content: string
+) {
+  const description = await window.showInputBox({
+    prompt: "Enter an optional description for the new Gist"
   });
-  if (!selected) {
-    return;
-  }
 
   window.withProgress(
-    { location: ProgressLocation.Notification, title: "Adding files..." },
+    { location: ProgressLocation.Notification, title: "Creating Gist..." },
     () => {
-      return workspace.fs.writeFile(
-        fileNameToUri(selected.id!, filename!),
-        Buffer.from(contents!)
+      return newGist(
+        [
+          {
+            filename,
+            content
+          }
+        ],
+        isPublic,
+        description,
+        false
       );
     }
   );
+}
+
+async function promptForGistSelection(filename: string, contents: string) {
+  const gists = await listGists();
+  const gistItems = gists.map(gist => {
+    return <GistQuickPickItem>{
+      label: getGistLabel(gist),
+      description: gist.public ? "" : "Secret",
+      id: gist.id
+    };
+  });
+
+  gistItems.push(...CREATE_GIST_ITEMS);
+
+  const list = window.createQuickPick();
+  list.placeholder = "Specify the Gist you'd like to add this file to";
+  list.items = gistItems;
+
+  list.onDidAccept(async () => {
+    const gist = <GistQuickPickItem>list.selectedItems[0];
+
+    list.hide();
+
+    if (gist.id) {
+      window.withProgress(
+        { location: ProgressLocation.Notification, title: "Adding files..." },
+        () => {
+          return workspace.fs.writeFile(
+            fileNameToUri(gist.id!, filename!),
+            Buffer.from(contents!)
+          );
+        }
+      );
+    } else {
+      const isPublic = gist.label === CREATE_PUBLIC_GIST_ITEM;
+      newGistWithFile(isPublic, filename, contents);
+    }
+  });
+
+  list.show();
 }
 
 export function registerEditorCommands(context: ExtensionContext) {

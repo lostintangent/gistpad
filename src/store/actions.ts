@@ -77,30 +77,30 @@ export async function getGist(id: string): Promise<Gist> {
 export async function listGists(): Promise<Gist[]> {
   const api = await getApi();
   const { pages } = await api.all();
-  return pages.reduce(
+  const gists: Gist[] = await pages.reduce(
     (result: Gist[], page: any) => [...result, ...page.body],
     []
   );
+
+  return gists.sort((a, b) => a.description.localeCompare(b.description));
 }
 
 export async function newGist(
-  fileNames: string[],
+  gistFiles: GistFile[],
   isPublic: boolean,
-  description?: string
+  description?: string,
+  openAfterCreation: boolean = true
 ) {
   const api = await getApi();
 
-  const files = fileNames
-    .map(fileName => fileName.trim())
-    .filter(fileName => fileName !== "")
-    .reduce((accumulator, fileName) => {
-      return {
-        ...accumulator,
-        [fileName]: {
-          content: ZERO_WIDTH_SPACE
-        }
-      };
-    }, {});
+  const files = gistFiles.reduce((accumulator, gistFile) => {
+    return {
+      ...accumulator,
+      [gistFile.filename!.trim()]: {
+        content: gistFile.content || ZERO_WIDTH_SPACE
+      }
+    };
+  }, {});
 
   const gist = await api.create({
     description,
@@ -109,7 +109,10 @@ export async function newGist(
   });
 
   store.gists.push(gist.body);
-  openGist(gist.body.id, true);
+
+  if (openAfterCreation) {
+    openGist(gist.body.id, true);
+  }
 }
 
 export async function refreshGists() {

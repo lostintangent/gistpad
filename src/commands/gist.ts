@@ -56,8 +56,8 @@ async function newGistInternal(isPublic: boolean = true) {
   window.withProgress(
     { location: ProgressLocation.Notification, title: "Creating Gist..." },
     () => {
-      const fileNames = fileName.split(",");
-      return newGist(fileNames, isPublic, description);
+      const files = fileName.split(",").map(filename => ({ filename }));
+      return newGist(files, isPublic, description);
     }
   );
 }

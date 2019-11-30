@@ -13,6 +13,26 @@
         "kind": "build",
         "isDefault": true
       }
+    },
+    {
+      "label": "build-watch",
+      "type": "npm",
+      "script": "watch:webpack",
+      "problemMatcher": {
+        "base": "$tsc-watch",
+        "background": {
+          "beginsPattern": "\\d{1,2}%\\sbuilding",
+          "endsPattern": "Hash:\\s[a-f0-9]{20}"
+        }
+      },
+      "isBackground": true,
+      "group": "build"
+    },
+    {
+      "type": "npm",
+      "script": "build:webpack",
+      "problemMatcher": ["$gulp-tsc"],
+      "group": "build"
     }
   ]
 }

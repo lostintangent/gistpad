@@ -1,6 +1,7 @@
 import * as path from "path";
 import {
   commands,
+  env,
   ExtensionContext,
   ProgressLocation,
   Uri,
@@ -10,7 +11,7 @@ import {
 import { EXTENSION_ID, UNTITLED_SCHEME } from "../constants";
 import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
-import { fileNameToUri, getGistLabel } from "../utils";
+import { fileNameToUri, getFileContents, getGistLabel } from "../utils";
 import { GistQuickPickItem } from "./gist";
 
 async function askForFileName() {
@@ -136,6 +137,49 @@ export function registerEditorCommands(context: ExtensionContext) {
         );
 
         promptForGistSelection(filename, contents);
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.pasteGistFile`,
+      async (fileUri: Uri) => {
+        await ensureAuthenticated();
+
+        const gists = await listGists();
+        const gistItems = gists.map(gist => ({
+          label: getGistLabel(gist),
+          description: gist.public ? "" : "Secret",
+          id: gist.id
+        }));
+
+        const selectedGist = await window.showQuickPick(gistItems, {
+          placeHolder: "Select the Gist you'd like to paste from"
+        });
+        if (!selectedGist) {
+          return;
+        }
+
+        const gist = gists.find(gist => gist.id === selectedGist!.id);
+
+        const fileItems = Object.keys(gist!.files);
+
+        let selectedFile: string | undefined;
+        if (fileItems.length === 1) {
+          selectedFile = fileItems[0];
+        } else {
+          selectedFile = await window.showQuickPick(fileItems, {
+            placeHolder: "Select the file to paste from"
+          });
+          if (!selectedFile) {
+            return;
+          }
+        }
+
+        const contents = await getFileContents(gist!.files[selectedFile]);
+        await env.clipboard.writeText(contents);
+        await commands.executeCommand("editor.action.clipboardPasteAction");
       }
     )
   );

@@ -1,3 +1,7 @@
+## v0.0.10 (11/30/2016)
+
+- Added a new `Paste Gist File` command to the editor's context menu, which allows you to paste a Gist file into the active editor
+
 ## v0.0.9 (11/29/2016)
 
 - Introduced the ability to follow users, so you can browser/access/fork their Gists directly from the `Gists` view

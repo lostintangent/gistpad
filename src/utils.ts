@@ -1,11 +1,26 @@
+import axios from "axios";
 import * as path from "path";
 import { commands, Uri, ViewColumn, window, workspace } from "vscode";
 import { FS_SCHEME } from "./constants";
-import { Gist } from "./store";
+import { Gist, GistFile } from "./store";
 import { getGist } from "./store/actions";
 
 export function fileNameToUri(gistId: string, filename: string): Uri {
   return Uri.parse(`${FS_SCHEME}://${gistId}/${filename}`);
+}
+
+export async function getFileContents(file: GistFile) {
+  if (file.truncated || !file.content) {
+    file.content = (
+      await axios.get(file.raw_url!, {
+        transformResponse: data => {
+          return data;
+        }
+      })
+    ).data;
+  }
+
+  return file.content!;
 }
 
 export function getGistDetailsFromUri(uri: Uri) {

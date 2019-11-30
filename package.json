@@ -21,6 +21,8 @@
     "Remote"
   ],
   "activationEvents": [
+    "onCommand:gistpad.addFileToGist",
+    "onCommand:gistpad.addSelectionToGist",
     "onCommand:gistpad.deleteGist",
     "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
@@ -28,6 +30,7 @@
     "onCommand:gistpad.newSecretGist",
     "onCommand:gistpad.openGist",
     "onCommand:gistpad.openGistWorkspace",
+    "onCommand:gistpad.pasteGistFile",
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
@@ -131,6 +134,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.pasteGistFile",
+        "title": "Paste Gist File",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.refreshGists",
         "title": "Refresh Gists",
         "category": "GistPad",
@@ -206,6 +214,10 @@
         },
         {
           "command": "gistpad.openGistInBrowser",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.pasteGistFile",
           "when": "false"
         },
         {
@@ -339,6 +351,9 @@
         },
         {
           "command": "gistpad.addSelectionToGist"
+        },
+        {
+          "command": "gistpad.pasteGistFile"
         }
       ]
     },

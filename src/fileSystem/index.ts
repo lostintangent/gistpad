@@ -1,4 +1,3 @@
-import axios from "axios";
 import {
   Disposable,
   Event,
@@ -16,7 +15,12 @@ import { FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
 import { GistFile, IStore } from "../store";
 import { forkGist, getGist, updateGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
-import { getGistDetailsFromUri, openGist, uriToFileName } from "../utils";
+import {
+  getFileContents,
+  getGistDetailsFromUri,
+  openGist,
+  uriToFileName
+} from "../utils";
 
 export class GistFileSystemProvider implements FileSystemProvider {
   constructor(private store: IStore) {}
@@ -63,17 +67,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
   async readFile(uri: Uri): Promise<Uint8Array> {
     const file = await this.getFileFromUri(uri);
-
-    if (file.truncated || !file.content) {
-      file.content = (
-        await axios.get(file.raw_url!, {
-          transformResponse: data => {
-            return data;
-          }
-        })
-      ).data;
-    }
-    return Buffer.from(file.content!);
+    const contents = await getFileContents(file);
+    return Buffer.from(contents);
   }
 
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {

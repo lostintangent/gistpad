@@ -16,19 +16,31 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
    > In order to generate a new token, simply visit [this page](https://github.com/settings/tokens/new), give it a name (e.g. `gistpad`), and then check the `gist` checkbox.
 
-1. Add existing files to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Add Document to Gist` or `Add Selection to Gist` ([details](#contributed-commands-file-explorereditor))
+1. Add existing files to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Add Document to Gist`, `Add Selection to Gist` or `Paste Gist File` ([details](#contributed-commands-editor))
 
-1. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
+   <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
+
+1) Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
 
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
-## Contributed Commands (File Explorer/Editor)
+## Contributed Commands (File Explorer)
 
-In addition to the `Gists` view, this extension also contributes an `Add Document to Gist` command to the context menu of the `Explorer` file tree, as well as the editor window. This makes it easy to add existing files to your Gists.
+In addition to the `Gists` view, GistPad also contributes an `Add Document to Gist` command to the context menu of the `Explorer` file tree, which allows you to easily add local files to an existing or new Gist.
 
-<img width="260px" src="https://user-images.githubusercontent.com/116461/69831695-58001100-11df-11ea-997e-fc8020556348.png" /> <img width="400px" src="https://user-images.githubusercontent.com/116461/69831691-53d3f380-11df-11ea-8578-266e27ec4d43.png" />
+<img width="260px" src="https://user-images.githubusercontent.com/116461/69831695-58001100-11df-11ea-997e-fc8020556348.png" />
 
-If you want to add just a snippet of code to a Gist, instead of an entire document, you can select the code, right-click the docucment, and then click `Add Selection to Gist`.
+## Contributed Commands (Editor)
+
+In addition to the `Explorer` file tree commands, GistPad also contributes the following commands to the editor's context menu:
+
+- `Add Document to Gist` - Same behavior as the equivalent command in the `Explorer` tree
+
+- `Add Selection to Gist` - Allows you to add a snippet/selection of code to a Gist, instead of the entire document
+
+- `Paste Gist File` - Allows you to paste the contents of a Gist file into the active document
+
+    <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
 ## Contributed Commands (Command Palette)
 

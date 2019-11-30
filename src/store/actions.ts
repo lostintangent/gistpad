@@ -2,7 +2,7 @@ import { observable } from "mobx";
 import { ProgressLocation, window } from "vscode";
 import { Gist, GistFile, IFollowedUser, store } from ".";
 import { ZERO_WIDTH_SPACE } from "../constants";
-import { openGist } from "../utils";
+import { getGistLabel, openGist } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
 
@@ -107,7 +107,7 @@ export async function listGists(): Promise<Gist[]> {
     []
   );
 
-  return gists.sort((a, b) => a.description.localeCompare(b.description));
+  return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
 }
 
 export async function listUserGists(username: string): Promise<Gist[]> {

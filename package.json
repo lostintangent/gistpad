@@ -34,7 +34,7 @@
     "onFileSystem:gist",
     "onView:gistpad.gists"
   ],
-  "main": "./out/extension.js",
+  "main": "./out/prod/extension.js",
   "contributes": {
     "commands": [
       {
@@ -370,15 +370,22 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
+    "build:webpack": "webpack --config ./webpack/webpack.node.config.js",
+    "watch:webpack": "webpack --watch --progress --config ./webpack/webpack.node.config.js",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },
   "devDependencies": {
     "@types/keytar": "^4.4.2",
     "@types/node": "^8.10.25",
+    "ts-loader": "^6.2.1",
     "tslint": "^5.8.0",
     "typescript": "^3.1.4",
-    "vscode": "^1.1.25"
+    "vscode": "^1.1.25",
+    "vscode-nls-dev": "^3.3.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-merge": "^4.2.2"
   },
   "dependencies": {
     "axios": "^0.19.0",

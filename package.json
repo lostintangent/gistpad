@@ -407,5 +407,8 @@
     "gists": "^2.0.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0"
-  }
+  },
+  "extensionPack": [
+    "bierner.markdown-checkbox"
+  ]
 }

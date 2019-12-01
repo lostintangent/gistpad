@@ -3,6 +3,8 @@ import { observable } from "mobx";
 interface Owner {
   login: string;
   id: number;
+  avatar_url: string;
+  html_url: string;
 }
 
 export interface GistFile {
@@ -11,6 +13,19 @@ export interface GistFile {
   size?: number;
   truncated?: boolean;
   raw_url?: string;
+}
+
+export interface GistRevisionStatus {
+  total: number;
+  additions: number;
+  deletions: number;
+}
+
+export interface GistRevision {
+  user: Owner;
+  version: string;
+  committed_at: string;
+  change_status: GistRevisionStatus;
 }
 
 export interface Gist {
@@ -24,6 +39,7 @@ export interface Gist {
   public: boolean;
   created_at: string;
   updated_at: string;
+  history: GistRevision[];
 }
 
 export interface IFollowedUser {

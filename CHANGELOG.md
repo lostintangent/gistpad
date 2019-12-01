@@ -1,3 +1,7 @@
+## v0.0.11 (11/30/2016)
+
+- Added an extension dependency on the [GitHub Markdown Preview](https://marketplace.visualstudio.com/items?itemName=bierner.github-markdown-preview) extension, so that the VS Code markdown preview behaves similarly to GitHub's.
+
 ## v0.0.10 (11/30/2016)
 
 - Added a new `Paste Gist File` command to the editor's context menu, which allows you to paste a Gist file into the active editor

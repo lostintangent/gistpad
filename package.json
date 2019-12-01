@@ -409,6 +409,6 @@
     "moment": "^2.24.0"
   },
   "extensionPack": [
-    "bierner.markdown-checkbox"
+    "bierner.github-markdown-preview"
   ]
 }

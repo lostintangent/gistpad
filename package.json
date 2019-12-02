@@ -409,6 +409,7 @@
     "moment": "^2.24.0"
   },
   "extensionPack": [
-    "bierner.github-markdown-preview"
+    "bierner.markdown-checkbox",
+    "yzhang.markdown-all-in-one"
   ]
 }

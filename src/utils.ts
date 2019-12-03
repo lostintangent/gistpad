@@ -80,3 +80,8 @@ export function openGistAsWorkspace(id: string) {
 export function uriToFileName(uri: Uri): string {
   return decodeURIComponent(path.basename(uri.toString()));
 }
+
+
+export const randomInt = (base = 1000000) => {
+  return Math.round(Math.random() * base);
+}

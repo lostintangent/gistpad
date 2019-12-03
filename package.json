@@ -34,13 +34,15 @@
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
+    "onCommand:gistpad.pasteImage",
+    "onCommand:gistpad.pasteImageAsFile",
     "onFileSystem:gist",
-    "onView:gistpad.gists"
+    "onView:gistpad.gists",
+    "*"
   ],
   "main": "./out/prod/extension.js",
   "contributes": {
-    "commands": [
-      {
+    "commands": [{
         "command": "gistpad.addActiveFile",
         "title": "Add Active File",
         "category": "GistPad"
@@ -176,11 +178,20 @@
         "command": "gistpad.unstarGist",
         "title": "Unstar Gist",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.pasteImage",
+        "title": "Paste Image",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.pasteImageAsFile",
+        "title": "Paste Image As File",
+        "category": "GistPad"
       }
     ],
     "menus": {
-      "commandPalette": [
-        {
+      "commandPalette": [{
           "command": "gistpad.addActiveFile",
           "when": "false"
         },
@@ -245,8 +256,7 @@
           "when": "false"
         }
       ],
-      "view/title": [
-        {
+      "view/title": [{
           "command": "gistpad.newPublicGist",
           "when": "view == gistpad.gists && gistpad:state == SignedIn",
           "group": "navigation@1"
@@ -267,8 +277,7 @@
           "group": "navigation@4"
         }
       ],
-      "view/item/context": [
-        {
+      "view/item/context": [{
           "command": "gistpad.openGist",
           "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
           "group": "base@1"
@@ -339,14 +348,11 @@
           "group": "manage@2"
         }
       ],
-      "explorer/context": [
-        {
-          "command": "gistpad.addFileToGist",
-          "when": "!explorerResourceIsFolder"
-        }
-      ],
-      "editor/context": [
-        {
+      "explorer/context": [{
+        "command": "gistpad.addFileToGist",
+        "when": "!explorerResourceIsFolder"
+      }],
+      "editor/context": [{
           "command": "gistpad.addFileToGist"
         },
         {
@@ -358,27 +364,21 @@
       ]
     },
     "views": {
-      "explorer": [
-        {
-          "id": "gistpad.gists",
-          "name": "Gists"
-        }
-      ],
-      "gistpad": [
-        {
-          "id": "gistpad.gists",
-          "name": "Gists"
-        }
-      ]
+      "explorer": [{
+        "id": "gistpad.gists",
+        "name": "Gists"
+      }],
+      "gistpad": [{
+        "id": "gistpad.gists",
+        "name": "Gists"
+      }]
     },
     "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "gistpad",
-          "title": "GistPad",
-          "icon": "images/activity-bar-icon.svg"
-        }
-      ]
+      "activitybar": [{
+        "id": "gistpad",
+        "title": "GistPad",
+        "icon": "images/activity-bar-icon.svg"
+      }]
     }
   },
   "scripts": {
@@ -403,10 +403,17 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@types/fs-extra": "^8.0.1",
+    "@types/nodegit": "^0.24.13",
     "axios": "^0.19.0",
+    "fs-extra": "^8.1.0",
     "gists": "^2.0.0",
+    "git-cli": "^0.11.0",
+    "github-image-upload": "^1.0.11",
     "mobx": "^5.14.2",
-    "moment": "^2.24.0"
+    "moment": "^2.24.0",
+    "nodegit": "^0.26.2",
+    "simple-git": "^1.126.0"
   },
   "extensionPack": [
     "bierner.github-markdown-preview"

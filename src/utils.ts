@@ -1,6 +1,13 @@
 import axios from "axios";
 import * as path from "path";
-import { commands, Uri, ViewColumn, window, workspace } from "vscode";
+import {
+  commands,
+  TextDocument,
+  Uri,
+  ViewColumn,
+  window,
+  workspace
+} from "vscode";
 import { FS_SCHEME } from "./constants";
 import { Gist, GistFile } from "./store";
 import { getGist } from "./store/actions";
@@ -41,6 +48,10 @@ export function getGistWorkspaceId() {
 export function getStarredGistLabel(gist: Gist) {
   const suffix = gist.public ? "" : " 🔒";
   return `${gist.owner.login} / ${Object.keys(gist.files)[0]}${suffix}`;
+}
+
+export function isGistDocument(document: TextDocument) {
+  return document.uri.scheme === FS_SCHEME;
 }
 
 export function isGistWorkspace() {

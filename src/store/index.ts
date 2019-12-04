@@ -42,6 +42,15 @@ export interface Gist {
   history: GistRevision[];
 }
 
+export interface GistComment {
+  id: string;
+  body: string;
+  user: Owner;
+  created_at: string;
+  updated_at: string;
+  author_association: "NONE" | "OWNER";
+}
+
 export interface IFollowedUser {
   username: string;
   gists: Gist[];
@@ -54,6 +63,7 @@ export interface IStore {
   followedUsers: IFollowedUser[];
   isLoading: boolean;
   isSignedIn: boolean;
+  login: string;
 }
 
 export const store: IStore = observable({
@@ -61,5 +71,6 @@ export const store: IStore = observable({
   starredGists: [],
   followedUsers: [],
   isLoading: false,
-  isSignedIn: false
+  isSignedIn: false,
+  login: ""
 });

@@ -56,6 +56,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.addGistComment",
+        "title": "Add Comment",
+        "enablement": "!commentIsEmpty"
+      },
+      {
         "command": "gistpad.addSelectionToGist",
         "title": "Add Selection to Gist",
         "category": "GistPad",
@@ -84,6 +89,16 @@
       {
         "command": "gistpad.deleteGist",
         "title": "Delete Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.deleteGistComment",
+        "title": "Delete Comment",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.editGistComment",
+        "title": "Edit Comment",
         "category": "GistPad"
       },
       {
@@ -153,6 +168,15 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.replyGistComment",
+        "title": "Reply",
+        "enablement": "!commentIsEmpty"
+      },
+      {
+        "command": "gistpad.saveGistComment",
+        "title": "Save"
+      },
+      {
         "command": "gistpad.signIn",
         "title": "Sign In",
         "category": "GistPad"
@@ -193,6 +217,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.addGistComment",
+          "when": "false"
+        },
+        {
           "command": "gistpad.addSelectionToGist",
           "when": "false"
         },
@@ -213,6 +241,14 @@
           "when": "false"
         },
         {
+          "command": "gistpad.deleteGistComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.editGistComment",
+          "when": "false"
+        },
+        {
           "command": "gistpad.openGistInBrowser",
           "when": "false"
         },
@@ -226,6 +262,10 @@
         },
         {
           "command": "gistpad.renameFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.saveGistComment",
           "when": "false"
         },
         {
@@ -355,6 +395,37 @@
         {
           "command": "gistpad.pasteGistFile"
         }
+      ],
+      "comments/comment/title": [
+        {
+          "command": "gistpad.editGistComment",
+          "group": "group@1",
+          "when": "commentController == gistpad && comment == canEdit"
+        },
+        {
+          "command": "gistpad.deleteGistComment",
+          "group": "group@2",
+          "when": "commentController == gistpad && comment == canEdit"
+        }
+      ],
+      "comments/comment/context": [
+        {
+          "command": "gistpad.saveGistComment",
+          "group": "inline@2",
+          "when": "commentController == gistpad"
+        }
+      ],
+      "comments/commentThread/context": [
+        {
+          "command": "gistpad.addGistComment",
+          "group": "inline",
+          "when": "commentController == gistpad && commentThreadIsEmpty && gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.replyGistComment",
+          "group": "inline",
+          "when": "commentController == gistpad && !commentThreadIsEmpty && gistpad:state == SignedIn"
+        }
       ]
     },
     "views": {
@@ -404,7 +475,8 @@
   },
   "dependencies": {
     "axios": "^0.19.0",
-    "gists": "^2.0.0",
+    "gists": "github:lostintangent/gists",
+    "github-base": "^1.0.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0"
   },

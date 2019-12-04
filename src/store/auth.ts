@@ -4,6 +4,19 @@ import { store } from ".";
 import { EXTENSION_ID } from "../constants";
 import { refreshGists } from "./actions";
 
+const GitHub = require("github-base");
+
+async function fetchCurrentUser() {
+  const token = await getToken();
+  const github = new GitHub({ token });
+  const response = await github.get("/user");
+  return response.body.login;
+}
+
+export function getCurrentUser() {
+  return store.login;
+}
+
 export type Keytar = {
   getPassword: typeof keytarType["getPassword"];
   setPassword: typeof keytarType["setPassword"];
@@ -50,7 +63,7 @@ export async function initializeAuth() {
 
   const isSignedIn = await isAuthenticated();
   if (isSignedIn) {
-    markUserAsSignedIn();
+    await markUserAsSignedIn();
     await refreshGists();
   }
 }
@@ -59,12 +72,14 @@ export async function isAuthenticated() {
   return (await getToken()) !== null;
 }
 
-function markUserAsSignedIn() {
+async function markUserAsSignedIn() {
+  store.login = await fetchCurrentUser();
   store.isSignedIn = true;
   commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
 }
 
 function markUserAsSignedOut() {
+  store.login = "";
   store.isSignedIn = false;
   commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_OUT);
 }
@@ -77,7 +92,7 @@ export async function signIn() {
   });
   if (token) {
     await keytar.setPassword(SERVICE, ACCOUNT, token);
-    markUserAsSignedIn();
+    await markUserAsSignedIn();
     await refreshGists();
   } else {
     throw new Error("Authentication required");

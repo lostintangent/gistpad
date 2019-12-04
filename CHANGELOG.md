@@ -1,3 +1,11 @@
+## v0.0.12 (11/30/2016)
+
+- Added the ability to view, add, edit and delete comments within the editor 🎉
+  
+  <img width="783" src="https://user-images.githubusercontent.com/116461/70117955-a9633280-161b-11ea-88a5-ac8a15a3b7a0.png" />
+  
+- Added an extension dependency on the [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) extension.
+  
 ## v0.0.11 (11/30/2016)
 
 - Added an extension dependency on the [GitHub Markdown Preview](https://marketplace.visualstudio.com/items?itemName=bierner.github-markdown-preview) extension, so that the VS Code markdown preview behaves similarly to GitHub's.

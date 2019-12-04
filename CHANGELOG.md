@@ -1,20 +1,21 @@
-## v0.0.12 (11/30/2016)
+## v0.0.12 (12/02/2019)
 
 - Added the ability to view, add, edit and delete comments within the editor 🎉
   
   <img width="783" src="https://user-images.githubusercontent.com/116461/70117955-a9633280-161b-11ea-88a5-ac8a15a3b7a0.png" />
   
-- Added an extension dependency on the [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) extension.
+- Added an extension dependency on the [Markdown All in One](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) extension
+- Allow specifying a Gist URL in addition to an ID when opening a Gist
   
-## v0.0.11 (11/30/2016)
+## v0.0.11 (11/30/2019)
 
 - Added an extension dependency on the [GitHub Markdown Preview](https://marketplace.visualstudio.com/items?itemName=bierner.github-markdown-preview) extension, so that the VS Code markdown preview behaves similarly to GitHub's.
 
-## v0.0.10 (11/30/2016)
+## v0.0.10 (11/30/2019)
 
 - Added a new `Paste Gist File` command to the editor's context menu, which allows you to paste a Gist file into the active editor
 
-## v0.0.9 (11/29/2016)
+## v0.0.9 (11/29/2019)
 
 - Introduced the ability to follow users, so you can browser/access/fork their Gists directly from the `Gists` view
 
@@ -23,12 +24,12 @@
 * Added a new `Open Gist in Browser` command to the `Gists` view, which opens a Gist in your default browser
 * Added a new `Copy Gist URL` command to the `Gists` view, which allows you to copy a Gist's URL to your clipboard
 
-## v0.0.8 (11/29/2016)
+## v0.0.8 (11/29/2019)
 
 - Added a new `Add Selection to Gist` command to the editor context menu. This allows you to add a snippet of code to a Gist, instead to an entire document (via the `Add Document to Gist`).
 - Updated the `Gists` view to use the description as the Gist label (or it's file name if there isn't a description)
 
-## v0.0.7 (11/28/2016)
+## v0.0.7 (11/28/2019)
 
 - Added a new `Add Document to Gist` command to the context menu of both the `Explorer` tree and the document editor. This way you can easily add files to a gist
 
@@ -47,13 +48,13 @@
 - Remove the username prefix from the display name of your own Gists
 - Added a lock icon (🔒) suffix to the display name of secret Gists
 
-## v0.0.5 (11/27/2016)
+## v0.0.5 (11/27/2019)
 
 - Introduced the `Gists` view to the `Explorer` tab, which allows you to manage/access your Gists from a single place
 
      <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
-## v0.0.4 (11/27/2016)
+## v0.0.4 (11/27/2019)
 
 - Improved the `GistPad: Delete Gist` command, by allowing you to select a Gist from your list of Gists, instead of just providing a Gist ID
 - Improved the `GistPad: Open Gist` command, by allowing you to select one of your Gists from a list, instead of just providing a Gist ID
@@ -63,17 +64,16 @@
 - Added a progress indicator when creating a new Gist
 - Introduced a new `GistPad: Sign In` command, to explicitly sign in to your GitHub account
 - When opening the files for a Gist, Markdown files are now displayed in preview mode by default
-- Allow specifying a Gist URL in addition to an ID when opening a Gist
 
-## v0.0.3 (11/26/2016)
+## v0.0.3 (11/26/2019)
 
 - Introduced the `GistPad: List Gists` command, which lets you view your list of gists and then open one
 - Introduced the `GistPad: Starred Gists` command, which lets you view your starred of gists and then open one
 
-## v0.0.2 (11/25/2016)
+## v0.0.2 (11/25/2019)
 
 - Replaced the `GistPad: New Gist` command with the following commands, in order to simplify Gist creation: `GistPad: New Gist (Public)`, `GistPad: New Gist (Secret)`
 
-## v0.0.1 (11/24/2016)
+## v0.0.1 (11/24/2019)
 
 Initial release! 🎉

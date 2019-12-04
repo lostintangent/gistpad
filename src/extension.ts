@@ -7,16 +7,15 @@ import { initializeAuth } from "./store/auth";
 import { initializeStorage } from "./store/storage";
 import { registerTreeProvider } from "./tree";
 
-export function activate(context: vscode.ExtensionContext) {
+
+export async function activate(context: vscode.ExtensionContext) {
   try {
     log.setLoggingChannel(vscode.window.createOutputChannel('GitPad'));
 
     registerCommands(context);
     registerFileSystemProvider(store);
 
-    setTimeout(() => {
-      registerTreeProvider(store, context.extensionPath);
-    }, 1000);
+    registerTreeProvider(store, context.extensionPath);
 
     initializeStorage(context);
     initializeAuth();

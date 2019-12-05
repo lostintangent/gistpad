@@ -93,10 +93,11 @@ async function openGistInternal(
   const clipboardValue = await env.clipboard.readText();
   if (GIST_URL_PATTERN.test(clipboardValue)) {
     list.value = clipboardValue;
+    list.items = [{ label: clipboardValue, id: clipboardValue }, ...gistItems];
   }
 
   list.onDidAccept(async () => {
-    const gist = <GistQuickPickItem>list.selectedItems[0];
+    const gist = <GistQuickPickItem>list.selectedItems[0] || list.value;
 
     list.hide();
 

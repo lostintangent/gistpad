@@ -1,6 +1,6 @@
 import { observable } from "mobx";
 import { ProgressLocation, window } from "vscode";
-import { Gist, GistFile, IFollowedUser, store } from ".";
+import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { getGistLabel, openGist } from "../utils";
 import { getToken } from "./auth";
@@ -43,6 +43,15 @@ export async function changeDescription(id: string, description: string) {
   store.gists.find(gist => gist.id === id)!.description = description;
 }
 
+export async function createGistComment(
+  id: string,
+  body: string
+): Promise<GistComment> {
+  const api = await getApi();
+  const gist = await api.createComment(id, { body });
+  return gist.body;
+}
+
 export async function deleteGist(id: string) {
   try {
     const api = await getApi();
@@ -51,6 +60,23 @@ export async function deleteGist(id: string) {
   } catch (e) {
     window.showErrorMessage(e);
   }
+}
+
+export async function deleteGistComment(
+  gistId: string,
+  commentId: string
+): Promise<void> {
+  const api = await getApi();
+  await api.deleteComment(gistId, commentId);
+}
+
+export async function editGistComment(
+  gistId: string,
+  commentId: string,
+  body: string
+): Promise<void> {
+  const api = await getApi();
+  await api.editComment(gistId, commentId, { body });
 }
 
 export async function followUser(username: string) {
@@ -97,6 +123,12 @@ export async function getGist(id: string): Promise<Gist> {
   const api = await getApi();
   const gist = await api.get(id);
   return gist.body;
+}
+
+export async function getGistComments(id: string): Promise<GistComment[]> {
+  const api = await getApi();
+  const response = await api.listComments(id);
+  return response.body;
 }
 
 export async function listGists(): Promise<Gist[]> {

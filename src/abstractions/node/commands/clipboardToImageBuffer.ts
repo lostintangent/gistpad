@@ -4,7 +4,6 @@ import { spawn } from 'child_process';
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import * as vscode from 'vscode';
 import { IClipboardToImageBuffer } from '../../../interfaces/IClipboardToImageBuffer';
 import { log } from '../../../logger';
 import { randomInt } from '../../../utils/randomInt';
@@ -46,7 +45,7 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
   }
 
   private getImageFromClipboardWin(imagePath: string): Promise<Buffer> {
-    return new Promise((res) => {
+    return new Promise((res, rej) => {
       const scriptPath = path.join(__dirname, './scripts/win.ps1');
 
       let command = 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe';
@@ -71,7 +70,7 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
 
         const { code } = e as any;
 
-        vscode.window.showErrorMessage(
+        rej(
           (code === "ENOENT")
             ? 'The powershell command is not in you PATH environment variables.Please add it and retry.'
             : e
@@ -93,6 +92,7 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
       const ascript = spawn('osascript', [scriptPath, imagePath]);
       ascript.on('error', function (e: any) {
         log.error(e);
+        rej(e);
       });
 
       ascript.stdout.on('data', function (data: Buffer) {
@@ -112,7 +112,7 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
 
   // TODO: make it work in Linux
   private getImageFromClipboardLinux(imagePath: string): Promise<Buffer> {
-    return new Promise((res) => {
+    return new Promise((res, rej) => {
       const scriptPath = path.join(__dirname, './scripts/linux.sh');
 
       const ascript = spawn('sh', [scriptPath, imagePath]);
@@ -121,13 +121,22 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
       });
 
       ascript.stdout.on('data', function (data: Buffer) {
-        let result = data.toString().trim();
+        const result = data.toString().trim();
         if (result === 'no xclip') {
-          vscode.window.showErrorMessage('You need to install xclip command first.');
-          return;
+          const message = 'You need to install xclip command first.';
+          // vscode.window.showErrorMessage(message);
+          return rej(message);
         }
 
-        res(data);
+        if (result === 'no image') {
+          const message = 'Cannot get image in the clipboard.';
+          // vscode.window.showErrorMessage('');
+          return rej(message);
+        }
+
+        const binary = fs.readFileSync(result);
+
+        res(binary);
         removeImage(imagePath);
       });
     });

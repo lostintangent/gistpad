@@ -9,12 +9,12 @@ import { pasteImageAsFile } from './pasteImageAsFile';
 
 const tryToRemoveUploadingMarkup = async (id: string | number, isUploadAsFile: boolean) => {
   try {
+    const markup = createUploadMarkup(id, isUploadAsFile);
+
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
       throw new Error('No active text editor to paste the image.');
     }
-
-    const markup = createUploadMarkup(id, isUploadAsFile);
 
     editor.edit(edit => {
       const { document } = editor;
@@ -73,7 +73,7 @@ export const pasteImageCommand = createCommand(
 
       return await pasteImageAsFile(imageId);
     } finally {
-      tryToRemoveUploadingMarkup(imageId, isUploadAsFile)
+      await tryToRemoveUploadingMarkup(imageId, isUploadAsFile)
     }
   }
 )

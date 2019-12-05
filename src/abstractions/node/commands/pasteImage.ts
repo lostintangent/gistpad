@@ -47,7 +47,7 @@ const addUploadingMarkup = async (id: string | number) => {
 
   const markup = createUploadMarkup(id, isUploading);
 
-  editor.edit(edit => {
+  await editor.edit(edit => {
     const current = editor.selection;
 
     if (current.isEmpty) {

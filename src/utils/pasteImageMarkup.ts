@@ -13,7 +13,7 @@ export const pasteImageMarkup = async (imageMarkup: string, imageMarkupId: strin
   const uploadSetting = await config.get('pasteImageType');
   const isUploading = (uploadSetting === 'file');
 
-  editor.edit(async (edit) => {
+  await editor.edit(async (edit) => {
     const { document, selection } = editor;
     const text = document.getText();
 

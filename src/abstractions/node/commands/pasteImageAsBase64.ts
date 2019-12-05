@@ -14,5 +14,5 @@ export const pasteImageAsBase64 = async (imageMarkupId: string | number) => {
     const base64Image = createBase64ImageSource(imageBits);
     const imageMarkup = await createImageMarkup(base64Image);
 
-    pasteImageMarkup(imageMarkup, imageMarkupId);
+    await pasteImageMarkup(imageMarkup, imageMarkupId);
 }

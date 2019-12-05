@@ -64,7 +64,7 @@ export const pasteImageCommand = createCommand(
     const isUploadAsFile = (imageType === 'file');
 
     const imageId = randomInt();
-    await addUploadingMarkup(imageId);
+    const addUploadingMarkupPromise = addUploadingMarkup(imageId);
 
     try {
       if (!isUploadAsFile) {
@@ -73,6 +73,7 @@ export const pasteImageCommand = createCommand(
 
       return await pasteImageAsFile(imageId);
     } finally {
+      await addUploadingMarkupPromise;
       await tryToRemoveUploadingMarkup(imageId, isUploadAsFile)
     }
   }

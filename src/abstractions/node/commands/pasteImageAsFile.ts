@@ -98,5 +98,5 @@ export const pasteImageAsFile = async (imageMarkupId: string | number) => {
   const imageSrc = `https://gist.github.com/${login}/${gistId}/raw/${fileName}`;
   const imageMarkup = await createImageMarkup(imageSrc);
 
-  pasteImageMarkup(imageMarkup, imageMarkupId);
+  await pasteImageMarkup(imageMarkup, imageMarkupId);
 }

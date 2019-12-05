@@ -84,7 +84,6 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
     });
   }
 
-  // TODO: remove temp image after the use
   private getImageFromClipboardMac(imagePath: string): Promise<Buffer> {
     return new Promise((res, rej) => {
       const scriptPath = path.join(__dirname, './scripts/mac.applescript');
@@ -104,13 +103,11 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
         }
 
         res(binary);
-
         removeImage(imagePath);
       });
     });
   }
 
-  // TODO: make it work in Linux
   private getImageFromClipboardLinux(imagePath: string): Promise<Buffer> {
     return new Promise((res, rej) => {
       const scriptPath = path.join(__dirname, './scripts/linux.sh');

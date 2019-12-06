@@ -66,8 +66,6 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
       ]);
 
       powershell.on('error', function (e: any) {
-        log.error(e);
-
         const { code } = e as any;
 
         rej(
@@ -78,7 +76,19 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
       });
 
       powershell.stdout.on('data', function (data: Buffer) {
-        res(data);
+        const filePath = data.toString().trim();
+
+        if (filePath === 'no image') {
+          rej('No image found.');
+        }
+
+        const binary = fs.readFileSync(filePath);
+
+        if (!binary) {
+          rej('No temporary image file read');
+        }
+
+        res(binary);
         removeImage(imagePath);
       });
     });
@@ -90,16 +100,19 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
 
       const ascript = spawn('osascript', [scriptPath, imagePath]);
       ascript.on('error', function (e: any) {
-        log.error(e);
         rej(e);
       });
 
       ascript.stdout.on('data', function (data: Buffer) {
         const filePath = data.toString().trim();
-        const binary = fs.readFileSync(filePath);
 
+        if (filePath === 'no image') {
+          rej('No image found.');
+        }
+
+        const binary = fs.readFileSync(filePath);
         if (!binary) {
-          rej('No temporary image file read');
+          rej('No temporary image file read.');
         }
 
         res(binary);
@@ -114,24 +127,26 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
 
       const ascript = spawn('sh', [scriptPath, imagePath]);
       ascript.on('error', function (e: any) {
-        log.error(e);
+        rej(e);
       });
 
       ascript.stdout.on('data', function (data: Buffer) {
         const result = data.toString().trim();
         if (result === 'no xclip') {
           const message = 'You need to install xclip command first.';
-          // vscode.window.showErrorMessage(message);
           return rej(message);
         }
 
         if (result === 'no image') {
           const message = 'Cannot get image in the clipboard.';
-          // vscode.window.showErrorMessage('');
           return rej(message);
         }
 
         const binary = fs.readFileSync(result);
+
+        if (!binary) {
+          rej('No temporary image file read.')
+        }
 
         res(binary);
         removeImage(imagePath);

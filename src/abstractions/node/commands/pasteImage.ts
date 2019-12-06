@@ -72,6 +72,8 @@ export const pasteImageCommand = createCommand(
       }
 
       return await pasteImageAsFile(imageId);
+    } catch (e) {
+      throw e;
     } finally {
       await addUploadingMarkupPromise;
       await tryToRemoveUploadingMarkup(imageId, isUploadAsFile)

@@ -38,10 +38,23 @@ Gist comments are exposed within the editor at the bottom of any opened Gist fil
 
 If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments.
 
-## Paste Images
+## Paste Screenshots
 
-You can paste images from your clipboard directly to the gist by using the `> GistPad: Paste Image` command:
+`> GistPad: Paste Screenshot` allows to paste screenshots from your clipboard:
 
+![paste-screenshot](https://user-images.githubusercontent.com/1478800/70298532-d001a480-17a6-11ea-8ee2-3d0daf29097d.gif)
+
+By default the screenshot gets uploaded as a `.png` file to the gist and the link is added to the gist as `Markdown` image markup. The behaviour can be changed using the next settings.
+
+- `Gistpad: Paste Screenshot Type`:
+
+  - `file` (default): the screenshot is `uploaded` as a `.png` file to the gist.
+  - `base64`: the screenshot is `base64`-embedded into the gist.
+  
+- `Gistpad: Paste Screenshot Output`
+
+  - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
+  - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
 
 ## Contributed Commands (File Explorer)
@@ -68,6 +81,8 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Follow User` - Follow another GitHub user, whuich allows you to browser/access/fork their Gists from within the `Gists` view.
 
+- `GistPad: Paste Screenshot` - Paste screenshot from the clipboard.
+
 - `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a Gist ID directly, which doesn't require being signed in.
 
 - `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, istead of "loose files".
@@ -85,6 +100,18 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
 
 - `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
+
+## Contributed Settings
+
+- `Gistpad: Paste Screenshot Type`:
+
+  - `file` (default): the screenshot is `uploaded` as a `.png` file to the gist.
+  - `base64`: the screenshot is `base64`-embedded into the gist.
+  
+- `Gistpad: Paste Screenshot Output`
+
+  - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
+  - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
 ## Supported Filesystem Operations
 

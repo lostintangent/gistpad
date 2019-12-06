@@ -42,7 +42,7 @@ const addUploadingMarkup = async (id: string | number) => {
     throw new Error('No active text editor to paste the image.');
   }
 
-  const uploadSetting = await config.get('pasteImageType');
+  const uploadSetting = await config.get('pasteScreenshotType');
   const isUploading = (uploadSetting === 'file');
 
   const markup = createUploadMarkup(id, isUploading);
@@ -60,7 +60,7 @@ const addUploadingMarkup = async (id: string | number) => {
 
 export const pasteImageCommand = createCommand(
   async () => {
-    const imageType = await config.get('pasteImageType');
+    const imageType = await config.get('pasteScreenshotType');
     const isUploadAsFile = (imageType === 'file');
 
     const imageId = randomInt();

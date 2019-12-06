@@ -10,7 +10,7 @@ export const pasteImageMarkup = async (imageMarkup: string, imageMarkupId: strin
     throw new Error('No active text editor to paste the image.');
   }
 
-  const uploadSetting = await config.get('pasteImageType');
+  const uploadSetting = await config.get('pasteScreenshotType');
   const isUploading = (uploadSetting === 'file');
 
   await editor.edit(async (edit) => {

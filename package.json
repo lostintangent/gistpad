@@ -34,7 +34,7 @@
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
-    "onCommand:gistpad.pasteImage",
+    "onCommand:gistpad.pasteScreenshot",
     "onFileSystem:gist",
     "onView:gistpad.gists",
     "*"
@@ -204,8 +204,8 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.pasteImage",
-        "title": "Paste Image",
+        "command": "gistpad.pasteScreenshot",
+        "title": "Paste Screenshot",
         "category": "GistPad"
       }
     ],
@@ -462,7 +462,7 @@
       "type": "object",
       "title": "GistPad Settings",
       "properties": {
-        "gistpad.pasteImageOutput": {
+        "gistpad.pasteScreenshotOutput": {
           "default": "markdown",
           "enum": [
             "markdown",
@@ -470,13 +470,13 @@
           ],
           "description": "Specify the image tag for the paste image command as Markdown or HTML"
         },
-        "gistpad.pasteImageType": {
+        "gistpad.pasteScreenshotType": {
           "default": "file",
           "enum": [
             "file",
             "base64"
           ],
-          "description": "Upload pasted image to the Gist as a file or Base64-embed it to the gist."
+          "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
         }
       }
     }

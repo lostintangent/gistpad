@@ -38,6 +38,12 @@ Gist comments are exposed within the editor at the bottom of any opened Gist fil
 
 If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments.
 
+## Paste Images
+
+You can paste images from your clipboard directly to the gist by using the `> GistPad: Paste Image` command:
+
+
+
 ## Contributed Commands (File Explorer)
 
 In addition to the `Gists` view, GistPad also contributes an `Add Document to Gist` command to the context menu of the `Explorer` file tree, which allows you to easily add local files to an existing or new Gist.

@@ -1,6 +1,6 @@
 ## v0.0.13 (12/07/2019)
 
-- Gists are now sorted by update time, not alphabetically (in both the tree view and command palette)
+- Gists are now sorted by their last update time, not alphabetically (in both the tree view and command palette)
 - Introduced a new `gistpad.apiUrl` setting, which allows users to use GitHub Enterprise servers
 
 ## v0.0.12 (12/02/2019)

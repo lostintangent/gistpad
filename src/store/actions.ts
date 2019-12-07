@@ -131,7 +131,9 @@ export async function getGistComments(id: string): Promise<GistComment[]> {
   return response.body;
 }
 
-export async function listGists(): Promise<Gist[]> {
+export async function listGists(
+  sortByDescription: boolean = false
+): Promise<Gist[]> {
   const api = await getApi();
   const { pages } = await api.all();
   const gists: Gist[] = await pages.reduce(
@@ -139,13 +141,21 @@ export async function listGists(): Promise<Gist[]> {
     []
   );
 
-  return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
+  if (sortByDescription) {
+    return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
+  } else {
+    return gists.sort(
+      (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
+    );
+  }
 }
 
 export async function listUserGists(username: string): Promise<Gist[]> {
   const api = await getApi();
   const { body } = await api.list(username);
-  return body;
+  return body.sort(
+    (a: Gist, b: Gist) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
+  );
 }
 
 export async function newGist(

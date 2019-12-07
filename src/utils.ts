@@ -1,4 +1,5 @@
 import axios from "axios";
+import * as moment from "moment";
 import * as path from "path";
 import {
   commands,
@@ -35,6 +36,12 @@ export function getGistDetailsFromUri(uri: Uri) {
     gistId: uri.authority,
     file: decodeURIComponent(path.basename(uri.toString()))
   };
+}
+
+export function getGistDescription(gist: Gist): string {
+  return `${moment(gist.updated_at).calendar()}${
+    gist.public ? "" : " (Secret)"
+  }`;
 }
 
 export function getGistLabel(gist: Gist): string {

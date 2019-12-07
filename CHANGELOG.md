@@ -1,3 +1,7 @@
+## v0.0.13 (12/07/2019)
+
+- Gists are now sorted by update time, not alphabetically
+  
 ## v0.0.12 (12/02/2019)
 
 - Added the ability to view, add, edit and delete comments within the editor 🎉

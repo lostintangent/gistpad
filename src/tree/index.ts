@@ -10,7 +10,6 @@ import {
 } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { IStore } from "../store";
-import { getGistLabel } from "../utils";
 import {
   CreateNewGistNode,
   FollowedUserGistNode,
@@ -80,11 +79,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       if (this.store.gists.length === 0) {
         return [new CreateNewGistNode()];
       } else {
-        return this.store.gists
-          .sort((a, b) => {
-            return getGistLabel(a).localeCompare(getGistLabel(b));
-          })
-          .map(gist => new GistNode(gist));
+        return this.store.gists.map(gist => new GistNode(gist));
       }
     } else if (element instanceof StarredGistsNode) {
       if (this.store.starredGists.length === 0) {

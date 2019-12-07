@@ -1,8 +1,14 @@
+import * as moment from "moment";
 import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { Gist, IFollowedUser } from "../store";
-import { fileNameToUri, getGistLabel, getStarredGistLabel } from "../utils";
+import {
+  fileNameToUri,
+  getGistDescription,
+  getGistLabel,
+  getStarredGistLabel
+} from "../utils";
 
 export abstract class TreeNode extends TreeItem {
   constructor(
@@ -65,11 +71,13 @@ export class GistNode extends TreeNode {
   constructor(public gist: Gist) {
     super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
 
-    if (!gist.public) {
-      this.description = "Secret";
-    }
+    this.description = getGistDescription(gist);
 
-    this.tooltip = getGistLabel(gist);
+    this.tooltip = `Description: ${this.label}
+Updated: ${moment(gist.updated_at).calendar()}
+Created: ${moment(gist.created_at).calendar()}
+Type: ${gist.public ? "Public" : "Secret"}`;
+
     this.contextValue = "gists.gist";
   }
 }
@@ -138,11 +146,12 @@ export class FollowedUserGistNode extends TreeNode {
   constructor(public gist: Gist) {
     super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
 
-    if (!gist.public) {
-      this.description = "Secret";
-    }
+    this.description = getGistDescription(gist);
 
-    this.tooltip = getGistLabel(gist);
+    this.tooltip = `Description: ${this.label}
+Updated: ${moment(gist.updated_at).calendar()}
+Created: ${moment(gist.created_at).calendar()}`;
+
     this.contextValue = "followedUser.gist";
   }
 }

@@ -21,6 +21,7 @@ import {
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
 import { GistNode, StarredGistNode } from "../tree/nodes";
 import {
+  getGistDescription,
   getGistLabel,
   getGistWorkspaceId,
   getStarredGistLabel,
@@ -93,7 +94,7 @@ async function openGistInternal(
       gistItems = gists.map(gist => {
         return <GistQuickPickItem>{
           label: getGistLabel(gist),
-          description: gist.description,
+          description: getGistDescription(gist),
           id: gist.id
         };
       });

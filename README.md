@@ -105,7 +105,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 ## Configuration Settings
 
-- `gistpad.apiUrl` - Specified the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
+- `Gistpad: Api Url` - Specified the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
 
 - `Gistpad: Paste Screenshot Type`:
 

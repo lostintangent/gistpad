@@ -3,19 +3,8 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  <<
-  <<
-  <<
-  <
-  HEAD "version": "0.0.14",
-  ===
-  ===
-  =
-  "version": "0.0.13",
-  >>>
-  >>>
-  >
-  827 a981e5a3d2e85125279682f7e98c86992465d "icon": "images/icon.png",
+  "version": "0.0.14",
+  "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/vsls-contrib/gistpad"
@@ -507,10 +496,12 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@types/moment": "^2.13.0",
     "axios": "^0.19.0",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "mobx": "^5.14.2",
+    "moment": "^2.24.0",
     "simple-git": "^1.126.0"
   },
   "extensionPack": [

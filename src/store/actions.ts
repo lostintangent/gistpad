@@ -2,7 +2,7 @@ import { observable } from "mobx";
 import { ProgressLocation, window } from "vscode";
 import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
 import { ZERO_WIDTH_SPACE } from "../constants";
-import { getGistLabel, openGist } from "../utils";
+import { getGistLabel, openGist, sortGists } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
 
@@ -30,8 +30,10 @@ export async function addGistFiles(id: string, fileNames: string[]) {
 
   const response = await api.edit(id, { files });
 
-  store.gists = store.gists.filter(gist => gist.id !== id);
-  store.gists.push(response.body);
+  const newGists = store.gists.filter(gist => gist.id !== id);
+  newGists.push(response.body);
+
+  store.gists = sortGists(newGists);
 }
 
 export async function changeDescription(id: string, description: string) {
@@ -239,8 +241,10 @@ export async function updateGist(
     }
   });
 
-  store.gists = store.gists.filter(gist => gist.id !== id);
-  store.gists.push(response.body);
+  const newGists = store.gists.filter(gist => gist.id !== id);
+  newGists.push(response.body);
+
+  store.gists = sortGists(newGists);
 }
 
 export async function unstarGist(id: string) {

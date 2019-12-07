@@ -37,7 +37,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   constructor(private store: IStore, private extensionPath: string) {
     reaction(
       () => [
-        store.gists.map(gist => gist.description),
+        store.gists.map(gist => [gist.description, gist.updated_at]),
         store.starredGists.length,
         store.followedUsers.map(user => user.isLoading),
         store.isLoading,

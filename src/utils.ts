@@ -95,6 +95,16 @@ export function openGistAsWorkspace(id: string) {
   commands.executeCommand("vscode.openFolder", uri, false);
 }
 
+export function sortGists(gists: Gist[], sortByDescription: boolean = false) {
+  if (sortByDescription) {
+    return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
+  } else {
+    return gists.sort(
+      (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
+    );
+  }
+}
+
 export function uriToFileName(uri: Uri): string {
   return decodeURIComponent(path.basename(uri.toString()));
 }

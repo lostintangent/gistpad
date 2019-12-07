@@ -12,6 +12,8 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
    > **Linux Users**: Ensure you have the `gnome-keyring` and `libsecret` packages installed as well. These will enable GistPad to read/write your GitHub auth token securely.
 
+   > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. ` https://[YOUR_HOST]/api/v3`).
+
 1. Open the `Explorer` tab and expand the `Gists` view. From there, you can open a Gist by ID/URL, or sign-in in wth a GitHub token, in order to view/edit/create/delete Gists.
 
    <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
@@ -80,6 +82,10 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
 
+## Configuration Settings
+
+- `gistpad.apiUrl` - Specified the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
+  
 ## Supported Filesystem Operations
 
 Once you've opened a Gist, you can perform the following filesystem operations:

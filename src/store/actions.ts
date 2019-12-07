@@ -1,6 +1,7 @@
 import { observable } from "mobx";
 import { ProgressLocation, window } from "vscode";
 import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
+import config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { getGistLabel, openGist, sortGists } from "../utils";
 import { getToken } from "./auth";
@@ -8,9 +9,10 @@ import { storage } from "./storage";
 
 const Gists = require("gists");
 
+const apiurl = config.apiUrl;
 async function getApi() {
   const token = await getToken();
-  return new Gists({ token });
+  return new Gists({ apiurl, token });
 }
 
 export async function addGistFiles(id: string, fileNames: string[]) {

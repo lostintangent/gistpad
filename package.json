@@ -3,8 +3,19 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.14",
-  "icon": "images/icon.png",
+  <<
+  <<
+  <<
+  <
+  HEAD "version": "0.0.14",
+  ===
+  ===
+  =
+  "version": "0.0.13",
+  >>>
+  >>>
+  >
+  827 a981e5a3d2e85125279682f7e98c86992465d "icon": "images/icon.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/vsls-contrib/gistpad"
@@ -447,7 +458,7 @@
     },
     "configuration": {
       "type": "object",
-      "title": "GistPad Settings",
+      "title": "GistPad",
       "properties": {
         "gistpad.pasteScreenshotOutput": {
           "default": "markdown",
@@ -464,6 +475,11 @@
             "base64"
           ],
           "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
+        },
+        "gistpad.apiUrl": {
+          "default": "https://api.github.com",
+          "type": "string",
+          "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
         }
       }
     }

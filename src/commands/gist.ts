@@ -3,7 +3,7 @@ import { EXTENSION_ID, FS_SCHEME } from "../constants";
 import { changeDescription, deleteGist, forkGist, listGists, newGist, refreshGists, starredGists, unstarGist } from "../store/actions";
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
 import { GistNode, StarredGistNode } from "../tree/nodes";
-import { getGistLabel, getGistWorkspaceId, getStarredGistLabel, isGistWorkspace, openGist, openGistAsWorkspace } from "../utils";
+import { getGistDescription, getGistLabel, getGistWorkspaceId, getStarredGistLabel, isGistWorkspace, openGist, openGistAsWorkspace } from "../utils";
 
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
@@ -69,7 +69,7 @@ async function openGistInternal(
       gistItems = gists.map(gist => {
         return <GistQuickPickItem>{
           label: getGistLabel(gist),
-          description: gist.description,
+          description: getGistDescription(gist),
           id: gist.id
         };
       });

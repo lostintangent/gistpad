@@ -11,7 +11,12 @@ import {
 import { EXTENSION_ID, UNTITLED_SCHEME } from "../constants";
 import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
-import { fileNameToUri, getFileContents, getGistLabel } from "../utils";
+import {
+  fileNameToUri,
+  getFileContents,
+  getGistDescription,
+  getGistLabel
+} from "../utils";
 import { GistQuickPickItem } from "./gist";
 
 async function askForFileName() {
@@ -60,7 +65,7 @@ async function promptForGistSelection(filename: string, contents: string) {
   const gistItems = gists.map(gist => {
     return <GistQuickPickItem>{
       label: getGistLabel(gist),
-      description: gist.public ? "" : "Secret",
+      description: getGistDescription(gist),
       id: gist.id
     };
   });
@@ -150,7 +155,7 @@ export function registerEditorCommands(context: ExtensionContext) {
         const gists = await listGists();
         const gistItems = gists.map(gist => ({
           label: getGistLabel(gist),
-          description: gist.public ? "" : "Secret",
+          description: getGistDescription(gist),
           id: gist.id
         }));
 

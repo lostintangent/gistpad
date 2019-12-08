@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -34,24 +34,20 @@
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
+    "onCommand:gistpad.pasteScreenshot",
     "onFileSystem:gist",
-    "onView:gistpad.gists"
+    "onView:gistpad.gists",
+    "*"
   ],
   "main": "./out/prod/extension.js",
   "contributes": {
-    "configuration": {
-      "type": "object",
-      "title": "GistPad",
-      "properties": {
-        "gistpad.apiUrl": {
-          "default": "https://api.github.com",
-          "type": "string",
-          "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
-        }
-      }
+    "keybindings": {
+      "key": "ctrl+shift+v",
+      "mac": "cmd+shift+v",
+      "command": "gistpad.pasteScreenshot",
+      "when": "resourceScheme == gist && resourceLangId == markdown"
     },
-    "commands": [
-      {
+    "commands": [{
         "command": "gistpad.addActiveFile",
         "title": "Add Active File",
         "category": "GistPad"
@@ -211,11 +207,15 @@
         "command": "gistpad.unstarGist",
         "title": "Unstar Gist",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.pasteScreenshot",
+        "title": "Paste Screenshot",
+        "category": "GistPad"
       }
     ],
     "menus": {
-      "commandPalette": [
-        {
+      "commandPalette": [{
           "command": "gistpad.addActiveFile",
           "when": "false"
         },
@@ -296,8 +296,7 @@
           "when": "false"
         }
       ],
-      "view/title": [
-        {
+      "view/title": [{
           "command": "gistpad.newPublicGist",
           "when": "view == gistpad.gists && gistpad:state == SignedIn",
           "group": "navigation@1"
@@ -318,8 +317,7 @@
           "group": "navigation@4"
         }
       ],
-      "view/item/context": [
-        {
+      "view/item/context": [{
           "command": "gistpad.openGist",
           "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
           "group": "base@1"
@@ -390,14 +388,11 @@
           "group": "manage@2"
         }
       ],
-      "explorer/context": [
-        {
-          "command": "gistpad.addFileToGist",
-          "when": "!explorerResourceIsFolder"
-        }
-      ],
-      "editor/context": [
-        {
+      "explorer/context": [{
+        "command": "gistpad.addFileToGist",
+        "when": "!explorerResourceIsFolder"
+      }],
+      "editor/context": [{
           "command": "gistpad.addFileToGist"
         },
         {
@@ -405,10 +400,13 @@
         },
         {
           "command": "gistpad.pasteGistFile"
+        },
+        {
+          "command": "gistpad.pasteScreenshot",
+          "when": "resourceScheme == gist && resourceLangId == markdown"
         }
       ],
-      "comments/comment/title": [
-        {
+      "comments/comment/title": [{
           "command": "gistpad.editGistComment",
           "group": "group@1",
           "when": "commentController == gistpad && comment == canEdit"
@@ -419,15 +417,12 @@
           "when": "commentController == gistpad && comment == canEdit"
         }
       ],
-      "comments/comment/context": [
-        {
-          "command": "gistpad.saveGistComment",
-          "group": "inline@2",
-          "when": "commentController == gistpad"
-        }
-      ],
-      "comments/commentThread/context": [
-        {
+      "comments/comment/context": [{
+        "command": "gistpad.saveGistComment",
+        "group": "inline@2",
+        "when": "commentController == gistpad"
+      }],
+      "comments/commentThread/context": [{
           "command": "gistpad.addGistComment",
           "group": "inline",
           "when": "commentController == gistpad && commentThreadIsEmpty && gistpad:state == SignedIn"
@@ -440,27 +435,48 @@
       ]
     },
     "views": {
-      "explorer": [
-        {
-          "id": "gistpad.gists",
-          "name": "Gists"
-        }
-      ],
-      "gistpad": [
-        {
-          "id": "gistpad.gists",
-          "name": "Gists"
-        }
-      ]
+      "explorer": [{
+        "id": "gistpad.gists",
+        "name": "Gists"
+      }],
+      "gistpad": [{
+        "id": "gistpad.gists",
+        "name": "Gists"
+      }]
     },
     "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "gistpad",
-          "title": "GistPad",
-          "icon": "images/activity-bar-icon.svg"
+      "activitybar": [{
+        "id": "gistpad",
+        "title": "GistPad",
+        "icon": "images/activity-bar-icon.svg"
+      }]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "GistPad",
+      "properties": {
+        "gistpad.pasteScreenshotOutput": {
+          "default": "markdown",
+          "enum": [
+            "markdown",
+            "html"
+          ],
+          "description": "Specify the image tag for the paste image command as Markdown or HTML"
+        },
+        "gistpad.pasteScreenshotType": {
+          "default": "file",
+          "enum": [
+            "file",
+            "base64"
+          ],
+          "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
+        },
+        "gistpad.apiUrl": {
+          "default": "https://api.github.com",
+          "type": "string",
+          "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
         }
-      ]
+      }
     }
   },
   "scripts": {
@@ -475,6 +491,7 @@
   "devDependencies": {
     "@types/keytar": "^4.4.2",
     "@types/node": "^8.10.25",
+    "copy-webpack-plugin": "^5.0.5",
     "ts-loader": "^6.2.1",
     "tslint": "^5.8.0",
     "typescript": "^3.1.4",
@@ -485,11 +502,13 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@types/moment": "^2.13.0",
     "axios": "^0.19.0",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "mobx": "^5.14.2",
-    "moment": "^2.24.0"
+    "moment": "^2.24.0",
+    "simple-git": "^1.126.0"
   },
   "extensionPack": [
     "bierner.markdown-checkbox",

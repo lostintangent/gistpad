@@ -27,7 +27,7 @@ const config = {
   devtool: "source-map",
   externals: {
     vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
-    electron: "electron" // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
+    electron: "electron", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader
@@ -37,12 +37,10 @@ const config = {
     }
   },
   module: {
-    rules: [
-      {
+    rules: [{
         test: /\.ts$/,
         exclude: /node_modules/,
-        use: [
-          {
+        use: [{
             // vscode-nls-dev loader:
             // * rewrite nls-calls
             loader: "vscode-nls-dev/lib/webpack-loader",
@@ -57,7 +55,9 @@ const config = {
       },
       {
         test: /node_modules[\\|/](jsonc-parser)/,
-        use: { loader: "umd-compat-loader?amd=true" }
+        use: {
+          loader: "umd-compat-loader?amd=true"
+        }
       }
     ]
   },

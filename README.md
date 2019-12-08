@@ -40,6 +40,32 @@ Gist comments are exposed within the editor at the bottom of any opened Gist fil
 
 If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments.
 
+## Paste Screenshots
+
+Paste screenshots from your clipboard into the gist:
+
+![paste-screenshot](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
+
+ - From context menu: `Paste Screenshot` command.
+ - From command palette: `GistPad: Paste Screenshot` command.
+ - With a shortcut:
+   - Windows/Linux: `ctrl + shift + v`
+   - Mac OSx: `cmd + shift + v`
+
+
+By default the screenshot gets uploaded as a `.png` file to the gist and the link is added to the gist as `Markdown` image markup. The behaviour can be changed using the next settings.
+
+- `Gistpad: Paste Screenshot Type`:
+
+  - `file` (default): the screenshot is `uploaded` as a `.png` file to the gist.
+  - `base64`: the screenshot is `base64`-embedded into the gist.
+  
+- `Gistpad: Paste Screenshot Output`
+
+  - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
+  - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
+
+
 ## Contributed Commands (File Explorer)
 
 In addition to the `Gists` view, GistPad also contributes an `Add Document to Gist` command to the context menu of the `Explorer` file tree, which allows you to easily add local files to an existing or new Gist.
@@ -64,6 +90,8 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Follow User` - Follow another GitHub user, whuich allows you to browser/access/fork their Gists from within the `Gists` view.
 
+- `GistPad: Paste Screenshot` - Paste screenshot from the clipboard.
+
 - `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a Gist ID directly, which doesn't require being signed in.
 
 - `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, istead of "loose files".
@@ -84,8 +112,25 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 ## Configuration Settings
 
-- `gistpad.apiUrl` - Specified the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
+- `Gistpad: Api Url` - Specified the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
+
+- `Gistpad: Paste Screenshot Type`:
+
+  - `file` (default): the screenshot is `uploaded` as a `.png` file to the gist.
+  - `base64`: the screenshot is `base64`-embedded into the gist.
   
+- `Gistpad: Paste Screenshot Output`
+
+  - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
+  - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
+
+## Shortcuts
+
+- `Paste Screenshot` command:
+
+   - Windows/Linux: `ctrl + shift + v`
+   - Mac OSx: `cmd + shift + v`
+
 ## Supported Filesystem Operations
 
 Once you've opened a Gist, you can perform the following filesystem operations:

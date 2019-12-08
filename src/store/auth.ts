@@ -54,7 +54,17 @@ export async function ensureAuthenticated() {
 }
 
 export async function getToken() {
-  const token = await keytar.getPassword(SERVICE, ACCOUNT);
+  const getTokenTask = Promise.race([
+    await keytar.getPassword(SERVICE, ACCOUNT),
+    new Promise((res, rej) => {
+      setTimeout(() => {
+        rej('Token retrieval took too long.');
+      }, 5000);
+    })
+  ]);
+
+  const token = await getTokenTask;
+
   return token;
 }
 

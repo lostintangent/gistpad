@@ -1,17 +1,32 @@
 import { observable } from "mobx";
 import { ProgressLocation, window } from "vscode";
 import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
-import config from "../config";
+import * as config from '../config/config';
 import { ZERO_WIDTH_SPACE } from "../constants";
+import { log } from "../logger";
 import { openGist, sortGists } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
 
 const Gists = require("gists");
 
-const apiurl = config.apiUrl;
 async function getApi() {
   const token = await getToken();
+
+  if (!token) {
+    const message = 'No authentication token found.';
+    log.error(message);
+    throw new Error(message);
+  }
+
+  const apiurl = await config.get('apiUrl');
+
+  if (!apiurl) {
+    const message = 'No API URL is set.';
+    log.error(message);
+    throw new Error(message);
+  }
+
   return new Gists({ apiurl, token });
 }
 

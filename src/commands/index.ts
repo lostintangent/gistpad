@@ -5,6 +5,7 @@ import { registerEditorCommands } from "./editor";
 import { registerFileCommands } from "./file";
 import { registerFollowCommands } from "./follow";
 import { registerGistCommands } from "./gist";
+import { registerPasteImageCommands } from "./pasteImage";
 
 export function registerCommands(context: ExtensionContext) {
   registerAuthCommands(context);
@@ -13,4 +14,5 @@ export function registerCommands(context: ExtensionContext) {
   registerFollowCommands(context);
   registerGistCommands(context);
   registerFileCommands(context);
+  registerPasteImageCommands(context);
 }

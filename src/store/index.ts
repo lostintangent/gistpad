@@ -13,6 +13,7 @@ export interface GistFile {
   size?: number;
   truncated?: boolean;
   raw_url?: string;
+  type?: string;
 }
 
 export interface GistRevisionStatus {

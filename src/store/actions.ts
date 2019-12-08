@@ -1,7 +1,7 @@
 import { observable } from "mobx";
 import { ProgressLocation, window } from "vscode";
 import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
-import * as config from '../config/config';
+import * as config from "../config/config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { log } from "../logger";
 import { openGist, sortGists } from "../utils";
@@ -14,15 +14,15 @@ async function getApi() {
   const token = await getToken();
 
   if (!token) {
-    const message = 'No authentication token found.';
+    const message = "No authentication token found.";
     log.error(message);
     throw new Error(message);
   }
 
-  const apiurl = await config.get('apiUrl');
+  const apiurl = await config.get("apiUrl");
 
   if (!apiurl) {
-    const message = 'No API URL is set.';
+    const message = "No API URL is set.";
     log.error(message);
     throw new Error(message);
   }

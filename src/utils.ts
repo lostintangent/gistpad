@@ -19,8 +19,12 @@ export function fileNameToUri(gistId: string, filename: string): Uri {
 
 export async function getFileContents(file: GistFile) {
   if (file.truncated || !file.content) {
+    const responseType = file.type!.startsWith("image/")
+      ? "arraybuffer"
+      : "text";
     file.content = (
       await axios.get(file.raw_url!, {
+        responseType,
         transformResponse: data => {
           return data;
         }
@@ -34,7 +38,7 @@ export async function getFileContents(file: GistFile) {
 export function getGistDetailsFromUri(uri: Uri) {
   return {
     gistId: uri.authority,
-    file: decodeURIComponent(path.basename(uri.toString()))
+    file: decodeURIComponent(path.basename(uri.path))
   };
 }
 

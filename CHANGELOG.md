@@ -1,3 +1,7 @@
+## v0.0.15 (12/08/2019)
+
+- Added support for opening image files in a Gist
+  
 ## v0.0.14 (12/07/2019)
 
 - 🖼️ Implement the `Paste Screenshot` command that allows to paste a screenshot from your clipboard into the gist.

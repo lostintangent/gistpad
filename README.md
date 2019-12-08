@@ -42,9 +42,16 @@ If you're not authenticated, you can view existing comments, but you can't reply
 
 ## Paste Screenshots
 
-`> GistPad: Paste Screenshot` allows to paste screenshots from your clipboard:
+Paste screenshots from your clipboard into the gist:
 
-![paste-screenshot](https://user-images.githubusercontent.com/1478800/70298532-d001a480-17a6-11ea-8ee2-3d0daf29097d.gif)
+![paste-screenshot](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
+
+ - From context menu: `Paste Screenshot` command.
+ - From command palette: `GistPad: Paste Screenshot` command.
+ - With a shortcut:
+   - Windows/Linux: `ctrl + shift + v`
+   - Mac OSx: `cmd + shift + v`
+
 
 By default the screenshot gets uploaded as a `.png` file to the gist and the link is added to the gist as `Markdown` image markup. The behaviour can be changed using the next settings.
 
@@ -116,6 +123,13 @@ In addition to the `Gists` view, this extension also provides the following comm
 
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
+
+## Shortcuts
+
+- `Paste Screenshot` command:
+
+   - Windows/Linux: `ctrl + shift + v`
+   - Mac OSx: `cmd + shift + v`
 
 ## Supported Filesystem Operations
 

@@ -1,14 +1,7 @@
 import axios from "axios";
 import * as moment from "moment";
 import * as path from "path";
-import {
-  commands,
-  TextDocument,
-  Uri,
-  ViewColumn,
-  window,
-  workspace
-} from "vscode";
+import { commands, TextDocument, Uri, ViewColumn, window, workspace } from "vscode";
 import { FS_SCHEME } from "./constants";
 import { Gist, GistFile } from "./store";
 import { getGist } from "./store/actions";
@@ -45,7 +38,7 @@ export function getGistDetailsFromUri(uri: Uri) {
 export function getGistDescription(gist: Gist): string {
   return `${moment(gist.updated_at).calendar()}${
     gist.public ? "" : " (Secret)"
-  }`;
+    }`;
 }
 
 export function getGistLabel(gist: Gist): string {

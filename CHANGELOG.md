@@ -1,3 +1,10 @@
+## v0.0.16 (12/08/2019)
+
+- Add the ability to open gits with protocol handler:
+  
+  - `Using gist Id`: vscode://vsls-contrib.gistfs/open-gist?id=b01737ed99192dab436adea1d6d92975
+  - `Using gist URL`: vscode://vsls-contrib.gistfs/open-gist-url?url=https://gist.github.com/legomushroom/b01737ed99192dab436adea1d6d92975
+
 ## v0.0.15 (12/08/2019)
 
 - Added support for opening image files in a Gist

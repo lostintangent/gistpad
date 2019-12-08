@@ -11,7 +11,7 @@ export class Log {
     }
 
     const time = new Date();
-    this.channel.appendLine(`[${time.toUTCString()}] ${message}`);
+    this.channel.appendLine(`[${type}][${time.toUTCString()}] ${message}`);
   }
 
   public info = (message: string) => {

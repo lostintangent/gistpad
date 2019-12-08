@@ -1,24 +1,24 @@
-'use strict';
+"use strict";
 
-import { spawn } from 'child_process';
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
-import { IClipboardToImageBuffer } from '../../../interfaces/IClipboardToImageBuffer';
-import { log } from '../../../logger';
-import { randomInt } from '../../../utils/randomInt';
+import { spawn } from "child_process";
+import * as fs from "fs";
+import * as os from "os";
+import * as path from "path";
+import { IClipboardToImageBuffer } from "../../../interfaces/IClipboardToImageBuffer";
+import { log } from "../../../logger";
+import { randomInt } from "../../../utils/randomInt";
 
 const createImagePath = () => {
   const imagePath = path.join(os.tmpdir(), `${randomInt()}_${randomInt()}.png`);
 
   return imagePath;
-}
+};
 
 const removeImage = (imagePath: string) => {
   fs.unlink(imagePath, (e: any | null) => {
     log.error(e);
   });
-}
+};
 
 export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
   public async getImageBits(): Promise<Buffer> {
@@ -26,15 +26,15 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
     const imagePath = createImagePath();
 
     switch (platform) {
-      case 'win32': {
+      case "win32": {
         return await this.getImageFromClipboardWin(imagePath);
       }
 
-      case 'darwin': {
+      case "darwin": {
         return await this.getImageFromClipboardMac(imagePath);
       }
 
-      case 'linux': {
+      case "linux": {
         return await this.getImageFromClipboardLinux(imagePath);
       }
 
@@ -46,46 +46,50 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
 
   private getImageFromClipboardWin(imagePath: string): Promise<Buffer> {
     return new Promise((res, rej) => {
-      const scriptPath = path.join(__dirname, './scripts/win.ps1');
+      const scriptPath = path.join(__dirname, "./scripts/win.ps1");
 
-      let command = 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe';
-      const powershellExisted = fs.existsSync(command)
+      let command =
+        "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe";
+      const powershellExisted = fs.existsSync(command);
       if (!powershellExisted) {
-        command = 'powershell'
+        command = "powershell";
       }
 
       const powershell = spawn(command, [
-        '-noprofile',
-        '-noninteractive',
-        '-nologo',
-        '-sta',
-        '-executionpolicy', 'unrestricted',
-        '-windowstyle', 'hidden',
-        '-file', scriptPath,
+        "-noprofile",
+        "-noninteractive",
+        "-nologo",
+        "-sta",
+        "-executionpolicy",
+        "unrestricted",
+        "-windowstyle",
+        "hidden",
+        "-file",
+        scriptPath,
         imagePath
       ]);
 
-      powershell.on('error', function (e: any) {
+      powershell.on("error", function(e: any) {
         const { code } = e as any;
 
         rej(
-          (code === "ENOENT")
-            ? 'The powershell command is not in you PATH environment variables.Please add it and retry.'
+          code === "ENOENT"
+            ? "The powershell command is not in you PATH environment variables.Please add it and retry."
             : e
         );
       });
 
-      powershell.stdout.on('data', function (data: Buffer) {
+      powershell.stdout.on("data", function(data: Buffer) {
         const filePath = data.toString().trim();
 
-        if (filePath === 'no image') {
-          rej('No image found.');
+        if (filePath === "no image") {
+          rej("No image found.");
         }
 
         const binary = fs.readFileSync(filePath);
 
         if (!binary) {
-          rej('No temporary image file read');
+          rej("No temporary image file read");
         }
 
         res(binary);
@@ -96,23 +100,23 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
 
   private getImageFromClipboardMac(imagePath: string): Promise<Buffer> {
     return new Promise((res, rej) => {
-      const scriptPath = path.join(__dirname, './scripts/mac.applescript');
+      const scriptPath = path.join(__dirname, "./scripts/mac.applescript");
 
-      const ascript = spawn('osascript', [scriptPath, imagePath]);
-      ascript.on('error', function (e: any) {
+      const ascript = spawn("osascript", [scriptPath, imagePath]);
+      ascript.on("error", function(e: any) {
         rej(e);
       });
 
-      ascript.stdout.on('data', function (data: Buffer) {
+      ascript.stdout.on("data", function(data: Buffer) {
         const filePath = data.toString().trim();
 
-        if (filePath === 'no image') {
-          rej('No image found.');
+        if (filePath === "no image") {
+          rej("No image found.");
         }
 
         const binary = fs.readFileSync(filePath);
         if (!binary) {
-          rej('No temporary image file read.');
+          rej("No temporary image file read.");
         }
 
         res(binary);
@@ -123,29 +127,29 @@ export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
 
   private getImageFromClipboardLinux(imagePath: string): Promise<Buffer> {
     return new Promise((res, rej) => {
-      const scriptPath = path.join(__dirname, './scripts/linux.sh');
+      const scriptPath = path.join(__dirname, "./scripts/linux.sh");
 
-      const ascript = spawn('sh', [scriptPath, imagePath]);
-      ascript.on('error', function (e: any) {
+      const ascript = spawn("sh", [scriptPath, imagePath]);
+      ascript.on("error", function(e: any) {
         rej(e);
       });
 
-      ascript.stdout.on('data', function (data: Buffer) {
+      ascript.stdout.on("data", function(data: Buffer) {
         const result = data.toString().trim();
-        if (result === 'no xclip') {
-          const message = 'You need to install xclip command first.';
+        if (result === "no xclip") {
+          const message = "You need to install xclip command first.";
           return rej(message);
         }
 
-        if (result === 'no image') {
-          const message = 'Cannot get image in the clipboard.';
+        if (result === "no image") {
+          const message = "Cannot get image in the clipboard.";
           return rej(message);
         }
 
         const binary = fs.readFileSync(result);
 
         if (!binary) {
-          rej('No temporary image file read.')
+          rej("No temporary image file read.");
         }
 
         res(binary);

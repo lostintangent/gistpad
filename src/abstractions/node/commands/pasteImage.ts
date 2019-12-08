@@ -1,19 +1,22 @@
-import * as vscode from 'vscode';
-import * as config from '../../../config/config';
-import { log } from '../../../logger';
-import { createCommand } from '../../../utils/createCommand';
-import { createUploadMarkup } from '../../../utils/createUploadMarkup';
-import { randomInt } from '../../../utils/randomInt';
-import { pasteImageAsBase64 } from './pasteImageAsBase64';
-import { pasteImageAsFile } from './pasteImageAsFile';
+import * as vscode from "vscode";
+import * as config from "../../../config/config";
+import { log } from "../../../logger";
+import { createCommand } from "../../../utils/createCommand";
+import { createUploadMarkup } from "../../../utils/createUploadMarkup";
+import { randomInt } from "../../../utils/randomInt";
+import { pasteImageAsBase64 } from "./pasteImageAsBase64";
+import { pasteImageAsFile } from "./pasteImageAsFile";
 
-const tryToRemoveUploadingMarkup = async (id: string | number, isUploadAsFile: boolean) => {
+const tryToRemoveUploadingMarkup = async (
+  id: string | number,
+  isUploadAsFile: boolean
+) => {
   try {
     const markup = createUploadMarkup(id, isUploadAsFile);
 
     const editor = vscode.window.activeTextEditor;
     if (!editor) {
-      throw new Error('No active text editor to paste the image.');
+      throw new Error("No active text editor to paste the image.");
     }
 
     editor.edit(edit => {
@@ -22,28 +25,28 @@ const tryToRemoveUploadingMarkup = async (id: string | number, isUploadAsFile: b
 
       const index = text.indexOf(markup);
       if (index === -1) {
-        throw new Error('No upload markup is found.');
+        throw new Error("No upload markup is found.");
       }
 
       const startPos = document.positionAt(index);
       const endPos = document.positionAt(index + markup.length);
       const range = new vscode.Selection(startPos, endPos);
 
-      edit.replace(range, '');
+      edit.replace(range, "");
     });
   } catch (e) {
     log.error(e);
   }
-}
+};
 
 const addUploadingMarkup = async (id: string | number) => {
   const editor = vscode.window.activeTextEditor;
   if (!editor) {
-    throw new Error('No active text editor to paste the image.');
+    throw new Error("No active text editor to paste the image.");
   }
 
-  const uploadSetting = await config.get('pasteScreenshotType');
-  const isUploading = (uploadSetting === 'file');
+  const uploadSetting = await config.get("pasteScreenshotType");
+  const isUploading = uploadSetting === "file";
 
   const markup = createUploadMarkup(id, isUploading);
 
@@ -56,27 +59,25 @@ const addUploadingMarkup = async (id: string | number) => {
       edit.replace(current, markup);
     }
   });
-}
+};
 
-export const pasteImageCommand = createCommand(
-  async () => {
-    const imageType = await config.get('pasteScreenshotType');
-    const isUploadAsFile = (imageType === 'file');
+export const pasteImageCommand = createCommand(async () => {
+  const imageType = await config.get("pasteScreenshotType");
+  const isUploadAsFile = imageType === "file";
 
-    const imageId = randomInt();
-    const addUploadingMarkupPromise = addUploadingMarkup(imageId);
+  const imageId = randomInt();
+  const addUploadingMarkupPromise = addUploadingMarkup(imageId);
 
-    try {
-      if (!isUploadAsFile) {
-        return await pasteImageAsBase64(imageId);
-      }
-
-      return await pasteImageAsFile(imageId);
-    } catch (e) {
-      throw e;
-    } finally {
-      await addUploadingMarkupPromise;
-      await tryToRemoveUploadingMarkup(imageId, isUploadAsFile)
+  try {
+    if (!isUploadAsFile) {
+      return await pasteImageAsBase64(imageId);
     }
+
+    return await pasteImageAsFile(imageId);
+  } catch (e) {
+    throw e;
+  } finally {
+    await addUploadingMarkupPromise;
+    await tryToRemoveUploadingMarkup(imageId, isUploadAsFile);
   }
-)
+});

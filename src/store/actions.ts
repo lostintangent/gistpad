@@ -19,15 +19,15 @@ async function getApi() {
     throw new Error(message);
   }
 
-  const apiUrl = await config.get('apiUrl');
+  const apiurl = await config.get('apiUrl');
 
-  if (!apiUrl) {
+  if (!apiurl) {
     const message = 'No API URL is set.';
     log.error(message);
     throw new Error(message);
   }
 
-  return new Gists({ apiUrl, token });
+  return new Gists({ apiurl, token });
 }
 
 export async function addGistFiles(id: string, fileNames: string[]) {

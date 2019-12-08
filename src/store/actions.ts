@@ -3,7 +3,7 @@ import { ProgressLocation, window } from "vscode";
 import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
 import config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
-import { getGistLabel, openGist, sortGists } from "../utils";
+import { openGist, sortGists } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
 
@@ -145,13 +145,7 @@ export async function listGists(
     []
   );
 
-  if (sortByDescription) {
-    return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
-  } else {
-    return gists.sort(
-      (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
-    );
-  }
+  return sortGists(gists, sortByDescription);
 }
 
 export async function listUserGists(username: string): Promise<Gist[]> {

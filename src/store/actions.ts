@@ -12,13 +12,14 @@ const Gists = require("gists");
 
 async function getApi() {
   const token = await getToken();
-  const apiUrl = await config.get('apiUrl');
 
   if (!token) {
     const message = 'No authentication token found.';
     log.error(message);
     throw new Error(message);
   }
+
+  const apiUrl = await config.get('apiUrl');
 
   if (!apiUrl) {
     const message = 'No API URL is set.';

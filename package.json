@@ -41,7 +41,14 @@
   ],
   "main": "./out/prod/extension.js",
   "contributes": {
-    "commands": [{
+    "keybindings": {
+      "key": "ctrl+shift+p",
+      "mac": "cmd+shift+p",
+      "command": "gistpad.pasteScreenshot",
+      "when": "resourceScheme == gist && resourceLangId == markdown"
+    },
+    "commands": [
+      {
         "command": "gistpad.addActiveFile",
         "title": "Add Active File",
         "category": "GistPad"
@@ -209,7 +216,8 @@
       }
     ],
     "menus": {
-      "commandPalette": [{
+      "commandPalette": [
+        {
           "command": "gistpad.addActiveFile",
           "when": "false"
         },
@@ -290,7 +298,8 @@
           "when": "false"
         }
       ],
-      "view/title": [{
+      "view/title": [
+        {
           "command": "gistpad.newPublicGist",
           "when": "view == gistpad.gists && gistpad:state == SignedIn",
           "group": "navigation@1"
@@ -311,7 +320,8 @@
           "group": "navigation@4"
         }
       ],
-      "view/item/context": [{
+      "view/item/context": [
+        {
           "command": "gistpad.openGist",
           "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
           "group": "base@1"
@@ -382,11 +392,14 @@
           "group": "manage@2"
         }
       ],
-      "explorer/context": [{
-        "command": "gistpad.addFileToGist",
-        "when": "!explorerResourceIsFolder"
-      }],
-      "editor/context": [{
+      "explorer/context": [
+        {
+          "command": "gistpad.addFileToGist",
+          "when": "!explorerResourceIsFolder"
+        }
+      ],
+      "editor/context": [
+        {
           "command": "gistpad.addFileToGist"
         },
         {
@@ -400,7 +413,8 @@
           "when": "resourceScheme == gist && resourceLangId == markdown"
         }
       ],
-      "comments/comment/title": [{
+      "comments/comment/title": [
+        {
           "command": "gistpad.editGistComment",
           "group": "group@1",
           "when": "commentController == gistpad && comment == canEdit"
@@ -411,12 +425,15 @@
           "when": "commentController == gistpad && comment == canEdit"
         }
       ],
-      "comments/comment/context": [{
-        "command": "gistpad.saveGistComment",
-        "group": "inline@2",
-        "when": "commentController == gistpad"
-      }],
-      "comments/commentThread/context": [{
+      "comments/comment/context": [
+        {
+          "command": "gistpad.saveGistComment",
+          "group": "inline@2",
+          "when": "commentController == gistpad"
+        }
+      ],
+      "comments/commentThread/context": [
+        {
           "command": "gistpad.addGistComment",
           "group": "inline",
           "when": "commentController == gistpad && commentThreadIsEmpty && gistpad:state == SignedIn"
@@ -429,21 +446,27 @@
       ]
     },
     "views": {
-      "explorer": [{
-        "id": "gistpad.gists",
-        "name": "Gists"
-      }],
-      "gistpad": [{
-        "id": "gistpad.gists",
-        "name": "Gists"
-      }]
+      "explorer": [
+        {
+          "id": "gistpad.gists",
+          "name": "Gists"
+        }
+      ],
+      "gistpad": [
+        {
+          "id": "gistpad.gists",
+          "name": "Gists"
+        }
+      ]
     },
     "viewsContainers": {
-      "activitybar": [{
-        "id": "gistpad",
-        "title": "GistPad",
-        "icon": "images/activity-bar-icon.svg"
-      }]
+      "activitybar": [
+        {
+          "id": "gistpad",
+          "title": "GistPad",
+          "icon": "images/activity-bar-icon.svg"
+        }
+      ]
     },
     "configuration": {
       "type": "object",

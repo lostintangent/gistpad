@@ -32,6 +32,8 @@ export class Log {
     }
 
     this.channel = channel;
+
+    this.info(`GistPad output channel initialized.`);
   }
 
 }

@@ -4,6 +4,8 @@
 
   ![paste-screenshot](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
 
+- Removed the extension dependencies, and simply document them as being recommended in the readme
+
 ## v0.0.13 (12/07/2019)
 
 - Gists are now sorted by their last update time, not alphabetically (in both the tree view and command palette)

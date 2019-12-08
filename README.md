@@ -12,7 +12,7 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
    > **Linux Users**: Ensure you have the `gnome-keyring` and `libsecret` packages installed as well. These will enable GistPad to read/write your GitHub auth token securely.
 
-   > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. ` https://[YOUR_HOST]/api/v3`).
+   > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
 
 1. Open the `Explorer` tab and expand the `Gists` view. From there, you can open a Gist by ID/URL, or sign-in in wth a GitHub token, in order to view/edit/create/delete Gists.
 
@@ -26,9 +26,9 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
 1. View and reply to comments in a Gist by scrolling to the bottom of a Gist file interacting with the thread
 
-    <img width="450px" src="https://user-images.githubusercontent.com/116461/70117955-a9633280-161b-11ea-88a5-ac8a15a3b7a0.png" />
+   <img width="450px" src="https://user-images.githubusercontent.com/116461/70117955-a9633280-161b-11ea-88a5-ac8a15a3b7a0.png" />
 
-2. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
+1. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
 
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
@@ -59,12 +59,11 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
 
   - `file` (default): the screenshot is `uploaded` as a `.png` file to the gist.
   - `base64`: the screenshot is `base64`-embedded into the gist.
-  
+
 - `Gistpad: Paste Screenshot Output`
 
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
-
 
 ## Contributed Commands (File Explorer)
 
@@ -118,7 +117,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
   - `file` (default): the screenshot is `uploaded` as a `.png` file to the gist.
   - `base64`: the screenshot is `base64`-embedded into the gist.
-  
+
 - `Gistpad: Paste Screenshot Output`
 
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
@@ -142,3 +141,12 @@ Once you've opened a Gist, you can perform the following filesystem operations:
 - Copying/pasting files
 
 > GitHub Gist doesn't support directories, and therefore, this extension doesn't allow you to create them.
+
+## Recommended Extensions
+
+In order to improve the productivity of editing Gists, and make VS Code behave similarly to the GitHub.com experience, the following extensions are recommended, depending on how you expect to use Gists (e.g. markdown files, code snippets):
+
+| Extension           | Stats                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Markdown All-in-One | [![Latest Release](https://vsmarketplacebadge.apphb.com/version-short/yzhang.markdown-all-in-one.svg)](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) [![Installs](https://vsmarketplacebadge.apphb.com/installs/yzhang.markdown-all-in-one.svg)](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) [![Rating](https://vsmarketplacebadge.apphb.com/rating-short/yzhang.markdown-all-in-one.svg)](https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one) |
+| Markdown Checkbox   | [![Latest Release](https://vsmarketplacebadge.apphb.com/version-short/bierner.markdown-checkbox.svg)](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-checkbox) [![Installs](https://vsmarketplacebadge.apphb.com/installs/bierner.markdown-checkbox.svg)](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-checkbox) [![Rating](https://vsmarketplacebadge.apphb.com/rating-short/bierner.markdown-checkbox.svg)](https://marketplace.visualstudio.com/items?itemName=bierner.markdown-checkbox)       |

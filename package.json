@@ -509,9 +509,5 @@
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
     "simple-git": "^1.126.0"
-  },
-  "extensionPack": [
-    "bierner.markdown-checkbox",
-    "yzhang.markdown-all-in-one"
-  ]
+  }
 }

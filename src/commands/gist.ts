@@ -1,5 +1,7 @@
+import { URL } from "url";
 import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, Uri, window } from "vscode";
-import { EXTENSION_ID, FS_SCHEME } from "../constants";
+import { CommandId, EXTENSION_ID, FS_SCHEME } from "../constants";
+import { log } from "../logger";
 import { changeDescription, deleteGist, forkGist, listGists, newGist, refreshGists, starredGists, unstarGist } from "../store/actions";
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
 import { GistNode, StarredGistNode } from "../tree/nodes";
@@ -49,19 +51,65 @@ const CREATE_GIST_ITEMS = [
   { label: STARRED_GIST_ITEM }
 ];
 
-async function openGistInternal(
-  openAsWorkspace: boolean = false,
-  node?: GistNode
-) {
+interface IOpenGistOptions {
+  openAsWorkspace?: boolean;
+  node?: GistNode;
+  gistUrl?: string;
+  gistId?: string;
+}
+const openGistOptionsDefaults: IOpenGistOptions = {
+  openAsWorkspace: false
+} as const;
+
+const openGistById = (id: string, openAsWorkspace: boolean) => {
+  if (openAsWorkspace) {
+    return openGistAsWorkspace(id);
+  }
+
+  return openGist(id, false);
+}
+
+const getGistIdFromUrl = (gistUrl: string) => {
+  const url = new URL(gistUrl);
+  const { pathname } = url;
+
+  const pathnameComponents = pathname.split('/');
+  const id = pathnameComponents[pathnameComponents.length - 1];
+
+  if (!id) {
+    log.error(`No gist id found in "${gistUrl}".`);
+  }
+
+  return id;
+}
+
+async function openGistInternal(options: IOpenGistOptions = {}) {
+  options = {
+    ...openGistOptionsDefaults,
+    ...options,
+  }
+
+  const {
+    node,
+    openAsWorkspace,
+    gistUrl,
+    gistId
+  } = options;
+
+  if (gistUrl || gistId) {
+    const id = (gistId)
+      ? gistId
+      : getGistIdFromUrl(gistUrl!); // (!) since the `gistId` is not set, means the `gistUrl` is set
+
+    return openGistById(id, !!openAsWorkspace);
+  }
+
   let gistItems: GistQuickPickItem[] = [];
 
   if (node) {
-    if (openAsWorkspace) {
-      return openGistAsWorkspace(node.gist.id);
-    } else {
-      return openGist(node.gist.id, false);
-    }
+    return openGistById(node.gist.id, !!openAsWorkspace);
   }
+
   if (await isAuthenticated()) {
     const gists = await listGists();
 
@@ -106,11 +154,8 @@ async function openGistInternal(
       if (GIST_URL_PATTERN.test(gist.id)) {
         gistId = (<any>GIST_URL_PATTERN.exec(gist.id)!).groups.id;
       }
-      if (openAsWorkspace) {
-        return openGistAsWorkspace(gistId);
-      } else {
-        return openGist(gistId, false);
-      }
+
+      openGistById(gistId, !!openAsWorkspace);
     } else {
       switch (gist.label) {
         case SIGN_IN_ITEM:
@@ -290,8 +335,8 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.openGist`,
-      openGistInternal.bind(null, false)
+      CommandId.openGist,
+      openGistInternal
     )
   );
 
@@ -308,7 +353,7 @@ export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.openGistWorkspace`,
-      openGistInternal.bind(null, true)
+      openGistInternal.bind(null, { openAsWorkspace: true })
     )
   );
 

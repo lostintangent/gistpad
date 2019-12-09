@@ -1,7 +1,11 @@
 ## v0.0.15 (12/08/2019)
 
-- Added support for opening image files in a Gist
-  
+- Added support for opening image files in a Gist.
+- Add the ability to open gists with protocol handler:
+
+  - `Using gist URL`: vscode://vsls-contrib.gistfs/open-gist?url=https://gist.github.com/legomushroom/b01737ed99192dab436adea1d6d92975
+  - `Using gist Id`: vscode://vsls-contrib.gistfs/open-gist?id=b01737ed99192dab436adea1d6d92975
+
 ## v0.0.14 (12/07/2019)
 
 - 🖼️ Implement the `Paste Screenshot` command that allows to paste a screenshot from your clipboard into the gist.

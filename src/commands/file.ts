@@ -5,7 +5,7 @@ import {
   ExtensionContext,
   ProgressLocation,
   window,
-  workspace
+  workspace,
 } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { addGistFiles } from "../store/actions";
@@ -25,7 +25,7 @@ export function registerFileCommands(context: ExtensionContext) {
           if (window.activeTextEditor.document.isUntitled) {
             filename = await window.showInputBox({
               prompt: "Enter a name to give to this file",
-              value: "foo.txt"
+              value: "foo.txt",
             });
 
             if (!filename) {
@@ -40,7 +40,7 @@ export function registerFileCommands(context: ExtensionContext) {
           window.withProgress(
             {
               location: ProgressLocation.Notification,
-              title: "Adding files..."
+              title: "Adding files...",
             },
             () => {
               const content = window.activeTextEditor!.document.getText();
@@ -68,7 +68,7 @@ export function registerFileCommands(context: ExtensionContext) {
         const fileName = await window.showInputBox({
           prompt:
             "Enter the files name(s) to seed the Gist with (can be a comma-seperated list)",
-          value: "foo.txt"
+          value: "foo.txt",
         });
         if (!fileName) {
           return;
@@ -92,9 +92,18 @@ export function registerFileCommands(context: ExtensionContext) {
         await ensureAuthenticated();
 
         const contents = await workspace.fs.readFile(
-          fileNameToUri(node.gistId, node.filename)
+          fileNameToUri(node.gistId, node.file.filename!)
         );
         await env.clipboard.writeText(contents.toString());
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.copyFileUrl`,
+      async (node: GistFileNode) => {
+        await env.clipboard.writeText(node.file.raw_url!);
       }
     )
   );
@@ -104,7 +113,9 @@ export function registerFileCommands(context: ExtensionContext) {
       `${EXTENSION_ID}.deleteFile`,
       async (node: GistFileNode) => {
         await ensureAuthenticated();
-        await workspace.fs.delete(fileNameToUri(node.gistId, node.filename));
+        await workspace.fs.delete(
+          fileNameToUri(node.gistId, node.file.filename!)
+        );
       }
     )
   );
@@ -117,7 +128,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
         const newFilename = await window.showInputBox({
           prompt: "Specify the new name for this file",
-          value: node.filename
+          value: node.file.filename,
         });
 
         if (!newFilename) {
@@ -125,7 +136,7 @@ export function registerFileCommands(context: ExtensionContext) {
         }
 
         await workspace.fs.rename(
-          fileNameToUri(node.gistId, node.filename),
+          fileNameToUri(node.gistId, node.file.filename!),
           fileNameToUri(node.gistId, newFilename)
         );
       }

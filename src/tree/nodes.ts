@@ -2,12 +2,12 @@ import * as moment from "moment";
 import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
 import { EXTENSION_ID } from "../constants";
-import { Gist, IFollowedUser } from "../store";
+import { Gist, GistFile, IFollowedUser } from "../store";
 import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
-  getStarredGistLabel
+  getStarredGistLabel,
 } from "../utils";
 
 export abstract class TreeNode extends TreeItem {
@@ -25,7 +25,7 @@ export class OpenGistNode extends TreeNode {
 
     this.command = {
       command: `${EXTENSION_ID}.openGist`,
-      title: "Open Gist.."
+      title: "Open Gist..",
     };
   }
 }
@@ -36,7 +36,7 @@ export class SignInNode extends TreeNode {
 
     this.command = {
       command: `${EXTENSION_ID}.signIn`,
-      title: "Sign in to view your Gists..."
+      title: "Sign in to view your Gists...",
     };
   }
 }
@@ -62,7 +62,7 @@ export class CreateNewGistNode extends TreeNode {
 
     this.command = {
       command: `${EXTENSION_ID}.newPublicGist`,
-      title: "Create new Gist..."
+      title: "Create new Gist...",
     };
   }
 }
@@ -83,17 +83,17 @@ Type: ${gist.public ? "Public" : "Secret"}`;
 }
 
 export class GistFileNode extends TreeNode {
-  constructor(public gistId: string, public filename: string) {
-    super(filename);
+  constructor(public gistId: string, public file: GistFile) {
+    super(file.filename!);
 
     this.iconPath = ThemeIcon.File;
-    this.resourceUri = fileNameToUri(gistId, filename);
+    this.resourceUri = fileNameToUri(gistId, file.filename!);
     this.contextValue = "gists.gist.file";
 
     this.command = {
       command: "vscode.open",
       title: "Open File",
-      arguments: [this.resourceUri]
+      arguments: [this.resourceUri],
     };
   }
 }
@@ -129,7 +129,7 @@ export class FollowedUserGistsNode extends TreeNode {
 
     this.iconPath = {
       dark: path.join(extensionPath, "images/dark/user.svg"),
-      light: path.join(extensionPath, "images/light/user.svg")
+      light: path.join(extensionPath, "images/light/user.svg"),
     };
 
     this.contextValue = "followedUserGists";

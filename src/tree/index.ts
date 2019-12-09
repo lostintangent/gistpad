@@ -6,7 +6,7 @@ import {
   ProviderResult,
   TreeDataProvider,
   TreeItem,
-  window
+  window,
 } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { IStore } from "../store";
@@ -24,7 +24,7 @@ import {
   SignInNode,
   StarredGistNode,
   StarredGistsNode,
-  TreeNode
+  TreeNode,
 } from "./nodes";
 
 class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
@@ -37,11 +37,11 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   constructor(private store: IStore, private extensionPath: string) {
     reaction(
       () => [
-        store.gists.map(gist => [gist.description, gist.updated_at]),
+        store.gists.map((gist) => [gist.description, gist.updated_at]),
         store.starredGists.length,
-        store.followedUsers.map(user => user.isLoading),
+        store.followedUsers.map((user) => user.isLoading),
         store.isLoading,
-        store.isSignedIn
+        store.isSignedIn,
       ],
       () => {
         this._onDidChangeTreeData.fire();
@@ -63,11 +63,11 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         } else {
           const nodes = [
             new GistsNode(this.extensionPath),
-            new StarredGistsNode(this.extensionPath)
+            new StarredGistsNode(this.extensionPath),
           ];
 
           if (this.store.followedUsers.length > 0) {
-            this.store.followedUsers.forEach(user => {
+            this.store.followedUsers.forEach((user) => {
               nodes.push(new FollowedUserGistsNode(user, this.extensionPath));
             });
           }
@@ -79,21 +79,21 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       if (this.store.gists.length === 0) {
         return [new CreateNewGistNode()];
       } else {
-        return this.store.gists.map(gist => new GistNode(gist));
+        return this.store.gists.map((gist) => new GistNode(gist));
       }
     } else if (element instanceof StarredGistsNode) {
       if (this.store.starredGists.length === 0) {
         return [new NoStarredGistsNode()];
       } else {
-        return this.store.starredGists.map(gist => new StarredGistNode(gist));
+        return this.store.starredGists.map((gist) => new StarredGistNode(gist));
       }
     } else if (element instanceof GistNode) {
       return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file.filename!)
+        ([_, file]) => new GistFileNode(element.gist.id, file)
       );
     } else if (element instanceof StarredGistNode) {
       return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file.filename!)
+        ([_, file]) => new GistFileNode(element.gist.id, file)
       );
     } else if (element instanceof FollowedUserGistsNode) {
       if (element.user.isLoading) {
@@ -101,17 +101,17 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       } else if (element.user.gists.length === 0) {
         return [new NoUserGistsNode()];
       } else {
-        return element.user.gists.map(gist => new FollowedUserGistNode(gist));
+        return element.user.gists.map((gist) => new FollowedUserGistNode(gist));
       }
     } else if (element instanceof FollowedUserGistNode) {
       return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file.filename!)
+        ([_, file]) => new GistFileNode(element.gist.id, file)
       );
     }
   }
 
   dispose() {
-    this._disposables.forEach(disposable => disposable.dispose());
+    this._disposables.forEach((disposable) => disposable.dispose());
   }
 }
 
@@ -119,6 +119,6 @@ export function registerTreeProvider(store: IStore, extensionPath: string) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);
   window.createTreeView(`${EXTENSION_ID}.gists`, {
     showCollapseAll: true,
-    treeDataProvider
+    treeDataProvider,
   });
 }

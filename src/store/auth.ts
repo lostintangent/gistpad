@@ -3,12 +3,14 @@ import { commands, env, window } from "vscode";
 import { store } from ".";
 import { EXTENSION_ID } from "../constants";
 import { refreshGists } from "./actions";
+import * as config from "../config/config";
 
 const GitHub = require("github-base");
 
 async function fetchCurrentUser() {
   const token = await getToken();
-  const github = new GitHub({ token });
+  const apiurl = await config.get("apiUrl");
+  const github = new GitHub({ apiurl, token });
   const response = await github.get("/user");
   return response.body.login;
 }

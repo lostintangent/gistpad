@@ -34,8 +34,8 @@ export async function addGistFiles(id: string, fileNames: string[]) {
   const api = await getApi();
 
   const files = fileNames
-    .map(fileName => fileName.trim())
-    .filter(fileName => fileName !== "")
+    .map((fileName) => fileName.trim())
+    .filter((fileName) => fileName !== "")
     .reduce((accumulator, fileName) => {
       return {
         ...accumulator,
@@ -47,7 +47,7 @@ export async function addGistFiles(id: string, fileNames: string[]) {
 
   const response = await api.edit(id, { files });
 
-  const newGists = store.gists.filter(gist => gist.id !== id);
+  const newGists = store.gists.filter((gist) => gist.id !== id);
   newGists.push(response.body);
 
   store.gists = sortGists(newGists);
@@ -59,7 +59,7 @@ export async function changeDescription(id: string, description: string) {
     description
   });
 
-  store.gists.find(gist => gist.id === id)!.description = description;
+  store.gists.find((gist) => gist.id === id)!.description = description;
 }
 
 export async function createGistComment(
@@ -75,7 +75,7 @@ export async function deleteGist(id: string) {
   try {
     const api = await getApi();
     await api.delete(id);
-    store.gists = store.gists.filter(gist => gist.id !== id);
+    store.gists = store.gists.filter((gist) => gist.id !== id);
   } catch (e) {
     window.showErrorMessage(e);
   }
@@ -101,7 +101,7 @@ export async function editGistComment(
 export async function followUser(username: string) {
   const followedUsers = storage.followedUsers;
 
-  if (followedUsers.find(user => user === username)) {
+  if (followedUsers.find((user) => user === username)) {
     window.showInformationMessage("You're already following this user");
     return;
   } else {
@@ -165,8 +165,9 @@ export async function listGists(
 
 export async function listUserGists(username: string): Promise<Gist[]> {
   const api = await getApi();
-  const { body } = await api.list(username);
-  return body.sort(
+  const response = await api.list(username);
+
+  return response.body.sort(
     (a: Gist, b: Gist) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
   );
 }
@@ -207,7 +208,7 @@ export async function refreshGists() {
   store.starredGists = await starredGists();
 
   if (storage.followedUsers.length > 0) {
-    store.followedUsers = storage.followedUsers.map(username => ({
+    store.followedUsers = storage.followedUsers.map((username) => ({
       username,
       gists: [],
       isLoading: true
@@ -232,11 +233,11 @@ export async function starredGists(): Promise<Gist[]> {
 
 export async function unfollowUser(username: string) {
   storage.followedUsers = storage.followedUsers.filter(
-    user => user !== username
+    (user) => user !== username
   );
 
   store.followedUsers = store.followedUsers.filter(
-    user => user.username !== username
+    (user) => user.username !== username
   );
 }
 
@@ -252,7 +253,7 @@ export async function updateGist(
     }
   });
 
-  const newGists = store.gists.filter(gist => gist.id !== id);
+  const newGists = store.gists.filter((gist) => gist.id !== id);
   newGists.push(response.body);
 
   store.gists = sortGists(newGists);
@@ -262,5 +263,5 @@ export async function unstarGist(id: string) {
   const api = await getApi();
   await api.unstar(id);
 
-  store.starredGists = store.starredGists.filter(gist => gist.id !== id);
+  store.starredGists = store.starredGists.filter((gist) => gist.id !== id);
 }

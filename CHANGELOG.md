@@ -1,3 +1,7 @@
+## v0.0.17 (12/12/2019)
+
+- Fixed a bug, that impacted Gist files with special characters in their name (e.g. `*`, `?`)
+- 
 ## v0.0.16 (12/11/2019)
 
 - Added a new `Clone Repository` context menu to gists, that allows you to clone a gist's repository locally

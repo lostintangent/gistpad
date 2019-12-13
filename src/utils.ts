@@ -1,13 +1,20 @@
 import axios from "axios";
 import * as moment from "moment";
 import * as path from "path";
-import { commands, TextDocument, Uri, ViewColumn, window, workspace } from "vscode";
+import {
+  commands,
+  TextDocument,
+  Uri,
+  ViewColumn,
+  window,
+  workspace
+} from "vscode";
 import { FS_SCHEME } from "./constants";
 import { Gist, GistFile } from "./store";
 import { getGist } from "./store/actions";
 
 export function fileNameToUri(gistId: string, filename: string): Uri {
-  return Uri.parse(`${FS_SCHEME}://${gistId}/${filename}`);
+  return Uri.parse(`${FS_SCHEME}://${gistId}/${encodeURIComponent(filename)}`);
 }
 
 export async function getFileContents(file: GistFile) {
@@ -18,7 +25,7 @@ export async function getFileContents(file: GistFile) {
     file.content = (
       await axios.get(file.raw_url!, {
         responseType,
-        transformResponse: data => {
+        transformResponse: (data) => {
           return data;
         }
       })
@@ -38,7 +45,7 @@ export function getGistDetailsFromUri(uri: Uri) {
 export function getGistDescription(gist: Gist): string {
   return `${moment(gist.updated_at).calendar()}${
     gist.public ? "" : " (Secret)"
-    }`;
+  }`;
 }
 
 export function getGistLabel(gist: Gist): string {
@@ -71,7 +78,9 @@ export async function openGist(id: string, isNew: boolean = false) {
   Object.entries(files)
     .reverse()
     .forEach(async ([_, file], index) => {
-      const uri = Uri.parse(`${FS_SCHEME}://${id}/${file.filename}`);
+      const uri = Uri.parse(
+        `${FS_SCHEME}://${id}/${encodeURIComponent(file.filename!)}`
+      );
 
       if (!isNew && path.extname(file.filename!) === ".md") {
         commands.executeCommand("markdown.showPreview", uri);

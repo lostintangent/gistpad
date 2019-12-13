@@ -367,8 +367,17 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_ID}.openGistInBrowser`,
       async (node: GistNode) => {
-        await ensureAuthenticated();
         env.openExternal(Uri.parse(node.gist.html_url));
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.openGistInGistLog`,
+      async (node: GistNode) => {
+        const url = `https://gistlog.co/${node.gist.owner.login}/${node.gist.id}`;
+        env.openExternal(Uri.parse(url));
       }
     )
   );

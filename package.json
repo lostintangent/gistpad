@@ -158,7 +158,12 @@
       },
       {
         "command": "gistpad.openGistInBrowser",
-        "title": "Open Gist in Browser",
+        "title": "Open Gist in GitHub",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openGistInGistLog",
+        "title": "Open Gist in GistLog",
         "category": "GistPad"
       },
       {
@@ -284,6 +289,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.openGistInGistLog",
+          "when": "false"
+        },
+        {
           "command": "gistpad.pasteGistFile",
           "when": "false"
         },
@@ -352,7 +361,12 @@
         {
           "command": "gistpad.openGistInBrowser",
           "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
-          "group": "base@3"
+          "group": "browse@1"
+        },
+        {
+          "command": "gistpad.openGistInGistLog",
+          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "group": "browse@2"
         },
         {
           "command": "gistpad.copyGistUrl",

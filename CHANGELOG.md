@@ -1,6 +1,7 @@
 ## v0.0.16 (12/11/2019)
 
 - Added a new `Clone Repository` context menu to gists, that allows you to clone a gist's repository locally
+- Added a new `Open Gist in GistLog` context menu to gists, that allows you to view a Gist in [GistLog](https://gistlog.co)
 - Introduced a new `gistpad.apiUrl` setting, which allows users to use GitHub Enterprise servers
   
 ## v0.0.15 (12/08/2019)

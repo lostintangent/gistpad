@@ -41,6 +41,7 @@ export interface Gist {
   created_at: string;
   updated_at: string;
   history: GistRevision[];
+  git_pull_url: string;
 }
 
 export interface GistComment {

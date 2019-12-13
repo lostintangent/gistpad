@@ -1,3 +1,8 @@
+## v0.0.16 (12/11/2019)
+
+- Added a new `Clone Repository` context menu to gists, that allows you to clone a gist's repository locally
+- Introduced a new `gistpad.apiUrl` setting, which allows users to use GitHub Enterprise servers
+  
 ## v0.0.15 (12/08/2019)
 
 - Added support for opening image files in a Gist, and viewing their preview
@@ -18,7 +23,6 @@
 ## v0.0.13 (12/07/2019)
 
 - Gists are now sorted by their last update time, not alphabetically (in both the tree view and command palette)
-- Introduced a new `gistpad.apiUrl` setting, which allows users to use GitHub Enterprise servers
 
 ## v0.0.12 (12/02/2019)
 

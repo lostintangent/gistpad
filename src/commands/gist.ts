@@ -1,12 +1,36 @@
 import { URL } from "url";
-import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, Uri, window } from "vscode";
+import {
+  commands,
+  env,
+  ExtensionContext,
+  ProgressLocation,
+  QuickPickItem,
+  Uri,
+  window
+} from "vscode";
 import { CommandId, EXTENSION_ID, FS_SCHEME } from "../constants";
 import { log } from "../logger";
-import { changeDescription, deleteGist, forkGist, listGists, newGist, refreshGists, starredGists, unstarGist } from "../store/actions";
+import {
+  changeDescription,
+  deleteGist,
+  forkGist,
+  listGists,
+  newGist,
+  refreshGists,
+  starredGists,
+  unstarGist
+} from "../store/actions";
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
 import { GistNode, StarredGistNode } from "../tree/nodes";
-import { getGistDescription, getGistLabel, getGistWorkspaceId, getStarredGistLabel, isGistWorkspace, openGist, openGistAsWorkspace } from "../utils";
-
+import {
+  getGistDescription,
+  getGistLabel,
+  getGistWorkspaceId,
+  getStarredGistLabel,
+  isGistWorkspace,
+  openGist,
+  openGistAsWorkspace
+} from "../utils";
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -35,7 +59,7 @@ async function newGistInternal(isPublic: boolean = true) {
   window.withProgress(
     { location: ProgressLocation.Notification, title: "Creating Gist..." },
     () => {
-      const files = fileName.split(",").map(filename => ({ filename }));
+      const files = fileName.split(",").map((filename) => ({ filename }));
       return newGist(files, isPublic, description);
     }
   );
@@ -67,13 +91,13 @@ const openGistById = (id: string, openAsWorkspace: boolean) => {
   }
 
   return openGist(id, false);
-}
+};
 
 const getGistIdFromUrl = (gistUrl: string) => {
   const url = new URL(gistUrl);
   const { pathname } = url;
 
-  const pathnameComponents = pathname.split('/');
+  const pathnameComponents = pathname.split("/");
   const id = pathnameComponents[pathnameComponents.length - 1];
 
   if (!id) {
@@ -81,25 +105,18 @@ const getGistIdFromUrl = (gistUrl: string) => {
   }
 
   return id;
-}
+};
 
 async function openGistInternal(options: IOpenGistOptions = {}) {
   options = {
     ...openGistOptionsDefaults,
-    ...options,
-  }
+    ...options
+  };
 
-  const {
-    node,
-    openAsWorkspace,
-    gistUrl,
-    gistId
-  } = options;
+  const { node, openAsWorkspace, gistUrl, gistId } = options;
 
   if (gistUrl || gistId) {
-    const id = (gistId)
-      ? gistId
-      : getGistIdFromUrl(gistUrl!); // (!) since the `gistId` is not set, means the `gistUrl` is set
+    const id = gistId ? gistId : getGistIdFromUrl(gistUrl!); // (!) since the `gistId` is not set, means the `gistUrl` is set
 
     return openGistById(id, !!openAsWorkspace);
   }
@@ -114,7 +131,7 @@ async function openGistInternal(options: IOpenGistOptions = {}) {
     const gists = await listGists();
 
     if (gists.length > 0) {
-      gistItems = gists.map(gist => {
+      gistItems = gists.map((gist) => {
         return <GistQuickPickItem>{
           label: getGistLabel(gist),
           description: getGistDescription(gist),
@@ -132,7 +149,7 @@ async function openGistInternal(options: IOpenGistOptions = {}) {
   list.placeholder = "Select or specify the Gist you'd like to open";
   list.items = gistItems;
 
-  list.onDidChangeValue(gistId => {
+  list.onDidChangeValue((gistId) => {
     list.items = gistId
       ? [{ label: gistId, id: gistId }, ...gistItems]
       : gistItems;
@@ -180,7 +197,7 @@ async function starredGistsInternal() {
   await ensureAuthenticated();
 
   const gists = await starredGists();
-  const items = gists.map(g => ({
+  const items = gists.map((g) => ({
     label: getStarredGistLabel(g),
     description: g.description,
     id: g.id
@@ -218,6 +235,15 @@ export async function registerGistCommands(context: ExtensionContext) {
           }
           await changeDescription(node.gist.id, description);
         }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.cloneRepository`,
+      async (node: GistNode) => {
+        commands.executeCommand("git.clone", node.gist.git_pull_url);
       }
     )
   );
@@ -270,7 +296,7 @@ export async function registerGistCommands(context: ExtensionContext) {
             );
           }
 
-          const items = gists.map(g => ({
+          const items = gists.map((g) => ({
             label: getGistLabel(g),
             description: g.description,
             id: g.id
@@ -285,7 +311,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
           await deleteGist(gist.id);
 
-          window.visibleTextEditors.forEach(editor => {
+          window.visibleTextEditors.forEach((editor) => {
             if (
               editor.document.uri.scheme === FS_SCHEME &&
               editor.document.uri.authority === gist.id
@@ -334,10 +360,7 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(
-      CommandId.openGist,
-      openGistInternal
-    )
+    commands.registerCommand(CommandId.openGist, openGistInternal)
   );
 
   context.subscriptions.push(

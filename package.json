@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -77,6 +77,11 @@
       {
         "command": "gistpad.changeGistDescription",
         "title": "Change Description",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.cloneRepository",
+        "title": "Clone Repository",
         "category": "GistPad"
       },
       {
@@ -247,6 +252,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.cloneRepository",
+          "when": "false"
+        },
+        {
           "command": "gistpad.copyGistUrl",
           "when": "false"
         },
@@ -348,7 +357,12 @@
         {
           "command": "gistpad.copyGistUrl",
           "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
-          "group": "base@4"
+          "group": "copy@1"
+        },
+        {
+          "command": "gistpad.cloneRepository",
+          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "group": "copy@2"
         },
         {
           "command": "gistpad.addFile",

@@ -1,13 +1,16 @@
 ## v0.0.17 (12/12/2019)
 
+- Added a new `Open Gist in NbViewer` context menu to gists, that allows you to open Gists with Jupyter Notebooks in the [Jupyter Nbviewer](https://nbviewer.jupyter.org/)
+- Introduced a new `Gistpad: Always Show Comments` configuration option, that allows you to specify whether you want to always view comments when you open a Gist file
 - Fixed a bug, that impacted Gist files with special characters in their name (e.g. `*`, `?`)
-- 
+- Fixed a bug with comment threads, that ensure they're always displayed at the bottom of the file, even after making edits
+
 ## v0.0.16 (12/11/2019)
 
 - Added a new `Clone Repository` context menu to gists, that allows you to clone a gist's repository locally
 - Added a new `Open Gist in GistLog` context menu to gists, that allows you to view a Gist in [GistLog](https://gistlog.co)
 - Introduced a new `gistpad.apiUrl` setting, which allows users to use GitHub Enterprise servers
-  
+
 ## v0.0.15 (12/08/2019)
 
 - Added support for opening image files in a Gist, and viewing their preview

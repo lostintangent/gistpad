@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -157,6 +157,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.openGistFile",
+        "title": "Open Gist File",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.openGistInBrowser",
         "title": "Open Gist in GitHub",
         "category": "GistPad"
@@ -164,6 +169,11 @@
       {
         "command": "gistpad.openGistInGistLog",
         "title": "Open Gist in GistLog",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openGistInNbViewer",
+        "title": "Open Gist in NbViewer",
         "category": "GistPad"
       },
       {
@@ -285,11 +295,19 @@
           "when": "false"
         },
         {
+          "command": "gistpad.openGistFile",
+          "when": "false"
+        },
+        {
           "command": "gistpad.openGistInBrowser",
           "when": "false"
         },
         {
           "command": "gistpad.openGistInGistLog",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openGistInNbViewer",
           "when": "false"
         },
         {
@@ -350,17 +368,17 @@
       "view/item/context": [
         {
           "command": "gistpad.openGist",
-          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
           "group": "base@1"
         },
         {
           "command": "gistpad.openGistWorkspace",
-          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
           "group": "base@2"
         },
         {
           "command": "gistpad.openGistInBrowser",
-          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
           "group": "browse@1"
         },
         {
@@ -369,13 +387,18 @@
           "group": "browse@2"
         },
         {
+          "command": "gistpad.openGistInNbViewer",
+          "when": "viewItem == gists.gist.notebook || viewItem == starredGists.gist.notebook || viewItem == followedUser.gist.notebook",
+          "group": "browse@2"
+        },
+        {
           "command": "gistpad.copyGistUrl",
-          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
           "group": "copy@1"
         },
         {
           "command": "gistpad.cloneRepository",
-          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
           "group": "copy@2"
         },
         {
@@ -514,6 +537,16 @@
       "type": "object",
       "title": "GistPad",
       "properties": {
+        "gistpad.alwaysShowComments": {
+          "default": false,
+          "type": "boolean",
+          "description": "Specifies whether the comment thread UI should always be displayed when you open a Gist file."
+        },
+        "gistpad.apiUrl": {
+          "default": "https://api.github.com",
+          "type": "string",
+          "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
+        },
         "gistpad.pasteScreenshotOutput": {
           "default": "markdown",
           "enum": [
@@ -529,11 +562,6 @@
             "base64"
           ],
           "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
-        },
-        "gistpad.apiUrl": {
-          "default": "https://api.github.com",
-          "type": "string",
-          "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
         }
       }
     }

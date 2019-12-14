@@ -11,6 +11,7 @@ import {
   Uri,
   workspace
 } from "vscode";
+import * as config from "../config";
 import { EXTENSION_ID } from "../constants";
 import { GistComment } from "../store";
 import { getGistComments } from "../store/actions";
@@ -50,14 +51,14 @@ const documentComments = new Map<string, CommentThread>();
 export async function registerCommentController() {
   const controller = comments.createCommentController(EXTENSION_ID, "Gist");
   controller.commentingRangeProvider = {
-    provideCommentingRanges: document => {
+    provideCommentingRanges: (document) => {
       if (isGistDocument(document)) {
         return [commentRange(document)];
       }
     }
   };
 
-  workspace.onDidOpenTextDocument(async document => {
+  workspace.onDidOpenTextDocument(async (document) => {
     if (
       isGistDocument(document) &&
       !documentComments.has(document.uri.toString())
@@ -74,9 +75,19 @@ export async function registerCommentController() {
       const currentUser = getCurrentUser();
 
       thread.comments = comments.map(
-        comment => new GistCodeComment(comment, gistId, thread, currentUser)
+        (comment) => new GistCodeComment(comment, gistId, thread, currentUser)
       );
-      thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
+
+      const alwaysShowComments = await config.get("alwaysShowComments");
+      thread.collapsibleState = alwaysShowComments
+        ? CommentThreadCollapsibleState.Expanded
+        : CommentThreadCollapsibleState.Collapsed;
+
+      workspace.onDidChangeTextDocument((e) => {
+        if (e.document === document) {
+          thread.range = commentRange(document);
+        }
+      });
 
       documentComments.set(document.uri.toString(), thread);
     }

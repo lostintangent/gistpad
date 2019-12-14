@@ -81,9 +81,6 @@ interface IOpenGistOptions {
   gistUrl?: string;
   gistId?: string;
 }
-const openGistOptionsDefaults: IOpenGistOptions = {
-  openAsWorkspace: false
-} as const;
 
 const openGistById = (id: string, openAsWorkspace: boolean) => {
   if (openAsWorkspace) {
@@ -107,26 +104,20 @@ const getGistIdFromUrl = (gistUrl: string) => {
   return id;
 };
 
-async function openGistInternal(options: IOpenGistOptions = {}) {
-  options = {
-    ...openGistOptionsDefaults,
-    ...options
-  };
-
+async function openGistInternal(
+  options: IOpenGistOptions = { openAsWorkspace: false }
+) {
   const { node, openAsWorkspace, gistUrl, gistId } = options;
 
   if (gistUrl || gistId) {
     const id = gistId ? gistId : getGistIdFromUrl(gistUrl!); // (!) since the `gistId` is not set, means the `gistUrl` is set
 
     return openGistById(id, !!openAsWorkspace);
-  }
-
-  let gistItems: GistQuickPickItem[] = [];
-
-  if (node) {
+  } else if (node) {
     return openGistById(node.gist.id, !!openAsWorkspace);
   }
 
+  let gistItems: GistQuickPickItem[] = [];
   if (await isAuthenticated()) {
     const gists = await listGists();
 
@@ -360,7 +351,9 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(CommandId.openGist, openGistInternal)
+    commands.registerCommand(CommandId.openGist, (node?: GistNode) => {
+      openGistInternal({ node });
+    })
   );
 
   context.subscriptions.push(
@@ -384,8 +377,20 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
+      `${EXTENSION_ID}.openGistInNbViewer`,
+      async (node: GistNode) => {
+        const url = `https://nbviewer.jupyter.org/gist/${node.gist.owner.login}/${node.gist.id}`;
+        env.openExternal(Uri.parse(url));
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
       `${EXTENSION_ID}.openGistWorkspace`,
-      openGistInternal.bind(null, { openAsWorkspace: true })
+      (node?: GistNode) => {
+        openGistInternal({ node, openAsWorkspace: true });
+      }
     )
   );
 

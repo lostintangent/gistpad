@@ -46,11 +46,11 @@ Paste screenshots from your clipboard into the gist:
 
 ![paste-screenshot](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
 
- - From the editor's context menu: `Paste Screenshot` command (this only appears within GistPad-managed markdown files).
- - From command palette: `GistPad: Paste Screenshot` command.
- - Keyboard shortcut:
-   - Windows/Linux: `ctrl + shift + v`
-   - Mac OSx: `cmd + shift + v`
+- From the editor's context menu: `Paste Screenshot` command (this only appears within GistPad-managed markdown files).
+- From command palette: `GistPad: Paste Screenshot` command.
+- Keyboard shortcut:
+  - Windows/Linux: `ctrl + shift + v`
+  - Mac OSx: `cmd + shift + v`
 
 By default the screenshot gets uploaded as a `.png` file to the gist and the link is added to the gist as `Markdown` image markup. The behaviour can be changed using the follow settings:
 
@@ -110,7 +110,9 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 ## Configuration Settings
 
-- `Gistpad: Api Url` - Specified the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
+- `GistPad: Always Show Comments` - Specifies whether to always show the comment thread UI whenever you open a Gist file. Defaults to `false`.
+
+- `Gistpad: Api Url` - Specifies the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
 
 - `Gistpad: Paste Screenshot Type`:
 
@@ -126,8 +128,8 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `Paste Screenshot` command:
 
-   - Windows/Linux: `ctrl + shift + v`
-   - Mac OSx: `cmd + shift + v`
+  - Windows/Linux: `ctrl + shift + v`
+  - Mac OSx: `cmd + shift + v`
 
 ## Supported Filesystem Operations
 

@@ -1,9 +1,9 @@
 import * as keytarType from "keytar";
 import { commands, env, window } from "vscode";
 import { store } from ".";
+import * as config from "../config";
 import { EXTENSION_ID } from "../constants";
 import { refreshGists } from "./actions";
-import * as config from "../config/config";
 
 const GitHub = require("github-base");
 
@@ -60,7 +60,7 @@ export async function getToken() {
     await keytar.getPassword(SERVICE, ACCOUNT),
     new Promise((res, rej) => {
       setTimeout(() => {
-        rej('Token retrieval took too long.');
+        rej("Token retrieval took too long.");
       }, 5000);
     })
   ]);

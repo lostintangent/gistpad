@@ -4,14 +4,15 @@ import {
   env,
   ExtensionContext,
   ProgressLocation,
+  Uri,
   window,
-  workspace,
+  workspace
 } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { addGistFiles } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
-import { fileNameToUri } from "../utils";
+import { fileNameToUri, openGistFile } from "../utils";
 
 export function registerFileCommands(context: ExtensionContext) {
   context.subscriptions.push(
@@ -25,7 +26,7 @@ export function registerFileCommands(context: ExtensionContext) {
           if (window.activeTextEditor.document.isUntitled) {
             filename = await window.showInputBox({
               prompt: "Enter a name to give to this file",
-              value: "foo.txt",
+              value: "foo.txt"
             });
 
             if (!filename) {
@@ -40,7 +41,7 @@ export function registerFileCommands(context: ExtensionContext) {
           window.withProgress(
             {
               location: ProgressLocation.Notification,
-              title: "Adding files...",
+              title: "Adding files..."
             },
             () => {
               const content = window.activeTextEditor!.document.getText();
@@ -68,7 +69,7 @@ export function registerFileCommands(context: ExtensionContext) {
         const fileName = await window.showInputBox({
           prompt:
             "Enter the files name(s) to seed the Gist with (can be a comma-seperated list)",
-          value: "foo.txt",
+          value: "foo.txt"
         });
         if (!fileName) {
           return;
@@ -122,13 +123,22 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
+      `${EXTENSION_ID}.openGistFile`,
+      async (uri: Uri) => {
+        openGistFile(uri);
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
       `${EXTENSION_ID}.renameFile`,
       async (node: GistFileNode) => {
         await ensureAuthenticated();
 
         const newFilename = await window.showInputBox({
           prompt: "Specify the new name for this file",
-          value: node.file.filename,
+          value: node.file.filename
         });
 
         if (!newFilename) {

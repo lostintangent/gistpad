@@ -1,17 +1,19 @@
-import * as vscode from 'vscode';
-import * as config from '../config/config';
-import { createUploadMarkup } from './createUploadMarkup';
+import * as vscode from "vscode";
+import * as config from "../config";
+import { createUploadMarkup } from "./createUploadMarkup";
 
-
-export const pasteImageMarkup = async (imageMarkup: string, imageMarkupId: string | number) => {
+export const pasteImageMarkup = async (
+  imageMarkup: string,
+  imageMarkupId: string | number
+) => {
   const editor = vscode.window.activeTextEditor;
 
   if (!editor) {
-    throw new Error('No active text editor to paste the image.');
+    throw new Error("No active text editor to paste the image.");
   }
 
-  const uploadSetting = await config.get('pasteScreenshotType');
-  const isUploading = (uploadSetting === 'file');
+  const uploadSetting = await config.get("pasteScreenshotType");
+  const isUploading = uploadSetting === "file";
 
   await editor.edit(async (edit) => {
     const { document, selection } = editor;
@@ -32,4 +34,4 @@ export const pasteImageMarkup = async (imageMarkup: string, imageMarkupId: strin
 
     edit.replace(range, imageMarkup);
   });
-}
+};

@@ -72,15 +72,17 @@ export function isGistWorkspace() {
   );
 }
 
+export function isNotebookGist(gist: Gist) {
+  return Object.keys(gist.files).some((file) => file.endsWith("ipynb"));
+}
+
 export async function openGist(id: string, isNew: boolean = false) {
   const { files } = await getGist(id);
 
   Object.entries(files)
     .reverse()
     .forEach(async ([_, file], index) => {
-      const uri = Uri.parse(
-        `${FS_SCHEME}://${id}/${encodeURIComponent(file.filename!)}`
-      );
+      const uri = fileNameToUri(id, file.filename!);
 
       if (!isNew && path.extname(file.filename!) === ".md") {
         commands.executeCommand("markdown.showPreview", uri);
@@ -92,6 +94,26 @@ export async function openGist(id: string, isNew: boolean = false) {
         });
       }
     });
+}
+
+export async function openGistFile(uri: Uri) {
+  const extension = path
+    .extname(uri.toString())
+    .toLocaleLowerCase()
+    .substr(1);
+  let commandName;
+  switch (extension) {
+    case "md":
+      commandName = "markdown.showPreview";
+      break;
+    //case "ipynb":
+    //  commandName = "python.datascience.opennotebook";
+    //  break;
+    default:
+      commandName = "vscode.open";
+  }
+
+  commands.executeCommand(commandName, uri);
 }
 
 export function openGistAsWorkspace(id: string) {

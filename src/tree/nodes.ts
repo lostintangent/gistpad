@@ -8,6 +8,7 @@ import {
   getGistDescription,
   getGistLabel,
   getStarredGistLabel,
+  isNotebookGist
 } from "../utils";
 
 export abstract class TreeNode extends TreeItem {
@@ -25,7 +26,7 @@ export class OpenGistNode extends TreeNode {
 
     this.command = {
       command: `${EXTENSION_ID}.openGist`,
-      title: "Open Gist..",
+      title: "Open Gist.."
     };
   }
 }
@@ -36,7 +37,7 @@ export class SignInNode extends TreeNode {
 
     this.command = {
       command: `${EXTENSION_ID}.signIn`,
-      title: "Sign in to view your Gists...",
+      title: "Sign in to view your Gists..."
     };
   }
 }
@@ -62,7 +63,7 @@ export class CreateNewGistNode extends TreeNode {
 
     this.command = {
       command: `${EXTENSION_ID}.newPublicGist`,
-      title: "Create new Gist...",
+      title: "Create new Gist..."
     };
   }
 }
@@ -79,6 +80,10 @@ Created: ${moment(gist.created_at).calendar()}
 Type: ${gist.public ? "Public" : "Secret"}`;
 
     this.contextValue = "gists.gist";
+
+    if (isNotebookGist(gist)) {
+      this.contextValue += ".notebook";
+    }
   }
 }
 
@@ -91,9 +96,9 @@ export class GistFileNode extends TreeNode {
     this.contextValue = "gists.gist.file";
 
     this.command = {
-      command: "vscode.open",
-      title: "Open File",
-      arguments: [this.resourceUri],
+      command: "gistpad.openGistFile",
+      title: "Open Gist File",
+      arguments: [this.resourceUri]
     };
   }
 }
@@ -120,6 +125,10 @@ export class StarredGistNode extends TreeNode {
     this.description = gist.description;
     this.tooltip = `${this.label} - ${this.description}`;
     this.contextValue = "starredGists.gist";
+
+    if (isNotebookGist(gist)) {
+      this.contextValue += ".notebook";
+    }
   }
 }
 
@@ -129,7 +138,7 @@ export class FollowedUserGistsNode extends TreeNode {
 
     this.iconPath = {
       dark: path.join(extensionPath, "images/dark/user.svg"),
-      light: path.join(extensionPath, "images/light/user.svg"),
+      light: path.join(extensionPath, "images/light/user.svg")
     };
 
     this.contextValue = "followedUserGists";
@@ -153,5 +162,9 @@ Updated: ${moment(gist.updated_at).calendar()}
 Created: ${moment(gist.created_at).calendar()}`;
 
     this.contextValue = "followedUser.gist";
+
+    if (isNotebookGist(gist)) {
+      this.contextValue += ".notebook";
+    }
   }
 }

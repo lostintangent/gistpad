@@ -1,7 +1,7 @@
 import { observable } from "mobx";
 import { ProgressLocation, window } from "vscode";
 import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
-import * as config from "../config/config";
+import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { log } from "../logger";
 import { openGist, sortGists } from "../utils";

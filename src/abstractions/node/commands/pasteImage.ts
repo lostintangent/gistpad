@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import * as config from "../../../config/config";
+import * as config from "../../../config";
 import { log } from "../../../logger";
 import { createCommand } from "../../../utils/createCommand";
 import { createUploadMarkup } from "../../../utils/createUploadMarkup";
@@ -19,7 +19,7 @@ const tryToRemoveUploadingMarkup = async (
       throw new Error("No active text editor to paste the image.");
     }
 
-    editor.edit(edit => {
+    editor.edit((edit) => {
       const { document } = editor;
       const text = document.getText();
 
@@ -50,7 +50,7 @@ const addUploadingMarkup = async (id: string | number) => {
 
   const markup = createUploadMarkup(id, isUploading);
 
-  await editor.edit(edit => {
+  await editor.edit((edit) => {
     const current = editor.selection;
 
     if (current.isEmpty) {

@@ -46,6 +46,7 @@ async function attemptGitLogin(): Promise<boolean> {
     return false;
   }
 
+  // See here for more details: https://git-scm.com/docs/git-credential
   const command = `git credential fill
 protocol=https
 host=github.com
@@ -53,15 +54,7 @@ host=github.com
 `;
 
   try {
-    const response = execSync(command, { encoding: "utf8" });
-    // This will return something that looks like the following...
-    //
-    // protocol=https
-    // host=github.com
-    // path=
-    // username=<your-user>
-    // password=<authentication-token>
-
+    const response = execSync(command, { encoding: "utf8", timeout: 1000 });
     const token = response.split("password=")[1].trim();
     if (token.length > 0) {
       await keytar.setPassword(SERVICE, ACCOUNT, token);
@@ -90,6 +83,10 @@ export async function ensureAuthenticated() {
   }
 }
 
+async function deleteToken() {
+  await keytar.deletePassword(SERVICE, ACCOUNT);
+}
+
 export async function getToken() {
   const token = await keytar.getPassword(SERVICE, ACCOUNT);
   return token;
@@ -101,7 +98,6 @@ export async function initializeAuth() {
   const isSignedIn = await isAuthenticated();
   if (isSignedIn || (await attemptGitLogin())) {
     await markUserAsSignedIn();
-    await refreshGists();
   }
 }
 
@@ -110,10 +106,21 @@ export async function isAuthenticated() {
   return token !== null;
 }
 
-async function markUserAsSignedIn() {
-  store.login = await fetchCurrentUser();
-  store.isSignedIn = true;
-  commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
+async function markUserAsSignedIn(notifyUserOfInvalidToken: boolean = false) {
+  try {
+    store.login = await fetchCurrentUser();
+    store.isSignedIn = true;
+    commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
+    await refreshGists();
+  } catch (e) {
+    if (notifyUserOfInvalidToken) {
+      window.showErrorMessage(
+        "The specified token isn't valid, please check it and try again."
+      );
+
+      await deleteToken();
+    }
+  }
 }
 
 function markUserAsSignedOut() {
@@ -130,14 +137,11 @@ export async function signIn() {
   });
   if (token) {
     await keytar.setPassword(SERVICE, ACCOUNT, token);
-    await markUserAsSignedIn();
-    await refreshGists();
-  } else {
-    throw new Error("Authentication required");
+    await markUserAsSignedIn(true);
   }
 }
 
 export async function signout() {
-  await keytar.deletePassword(SERVICE, ACCOUNT);
+  await deleteToken();
   markUserAsSignedOut();
 }

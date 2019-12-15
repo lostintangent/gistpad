@@ -40,28 +40,19 @@ async function testToken(token: string) {
   const github = new GitHub({ apiurl, token });
   try {
     const response = await github.get("/user");
-    console.log("GP Headers: %o", response.rawHeaders);
     const scopeHeaderIndex = response.rawHeaders.indexOf(SCOPE_HEADER);
     if (scopeHeaderIndex === -1) {
-      console.log("GP No Index");
       return false;
     }
-
-    console.log("GP Header Index: %o", scopeHeaderIndex);
 
     const tokenScopes = response.rawHeaders[scopeHeaderIndex + 1];
-
-    console.log("GP Scopes: %o", tokenScopes);
     if (!tokenScopes.includes(GIST_SCOPE)) {
-      console.log("GP No Scope");
       return false;
     }
 
-    console.log("GP Logging In: %o", response.body.login);
     store.login = response.body.login;
     return true;
   } catch (e) {
-    console.log("GP Error: %o", e);
     return false;
   }
 }

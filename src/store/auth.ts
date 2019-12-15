@@ -40,6 +40,7 @@ const STATE_CONTEXT_KEY = `${EXTENSION_ID}:state`;
 const STATE_SIGNED_IN = "SignedIn";
 const STATE_SIGNED_OUT = "SignedOut";
 
+// TODO: Support SSO when using username and password vs. just a token
 async function attemptGitLogin(): Promise<boolean> {
   const gitSSO = await config.get("gitSSO");
   if (!gitSSO) {
@@ -117,9 +118,9 @@ async function markUserAsSignedIn(notifyUserOfInvalidToken: boolean = false) {
       window.showErrorMessage(
         "The specified token isn't valid, please check it and try again."
       );
-
-      await deleteToken();
     }
+
+    await deleteToken();
   }
 }
 

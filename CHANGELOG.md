@@ -1,6 +1,9 @@
-## v0.0.19 (12/15/2019)
+## v0.0.20 (12/15/2019)
 
 - Introduced support for SSO with the `git` CLI, when you've authenticated with github.com. To disable this, you can set the new `GistPad: Git SSO` setting to `false`.
+
+## v0.0.19 (12/15/2019)
+
 - Added the `Open Profile in GitHub` context menu to the `Your Gists` tree node, which allows opening your Gist profile page
 - Added the `Open GistLog Feed` context menu to the `Your Gists` tree node, which allows opening your GistLog feed page
 

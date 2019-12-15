@@ -48,14 +48,16 @@ async function attemptGitLogin(): Promise<boolean> {
   }
 
   // See here for more details: https://git-scm.com/docs/git-credential
-  const command = `git credential fill
-protocol=https
+  const input = `protocol=https
 host=github.com
 
 `;
 
   try {
-    const response = execSync(command, { encoding: "utf8", timeout: 1000 });
+    const response = execSync("git credential fill", {
+      input,
+      encoding: "utf8"
+    });
     const token = response.split("password=")[1].trim();
     if (token.length > 0) {
       await keytar.setPassword(SERVICE, ACCOUNT, token);

@@ -8,14 +8,6 @@ import { refreshGists } from "./actions";
 
 const GitHub = require("github-base");
 
-async function fetchCurrentUser() {
-  const token = await getToken();
-  const apiurl = await config.get("apiUrl");
-  const github = new GitHub({ apiurl, token });
-  const response = await github.get("/user");
-  return response.body.login;
-}
-
 export function getCurrentUser() {
   return store.login;
 }
@@ -40,6 +32,40 @@ const STATE_CONTEXT_KEY = `${EXTENSION_ID}:state`;
 const STATE_SIGNED_IN = "SignedIn";
 const STATE_SIGNED_OUT = "SignedOut";
 
+const SCOPE_HEADER = "X-OAuth-Scopes";
+const GIST_SCOPE = "gist";
+
+async function testToken(token: string) {
+  const apiurl = await config.get("apiUrl");
+  const github = new GitHub({ apiurl, token });
+  try {
+    const response = await github.get("/user");
+    console.log("GP Headers: %o", response.rawHeaders);
+    const scopeHeaderIndex = response.rawHeaders.indexOf(SCOPE_HEADER);
+    if (scopeHeaderIndex === -1) {
+      console.log("GP No Index");
+      return false;
+    }
+
+    console.log("GP Header Index: %o", scopeHeaderIndex);
+
+    const tokenScopes = response.rawHeaders[scopeHeaderIndex + 1];
+
+    console.log("GP Scopes: %o", tokenScopes);
+    if (!tokenScopes.includes(GIST_SCOPE)) {
+      console.log("GP No Scope");
+      return false;
+    }
+
+    console.log("GP Logging In: %o", response.body.login);
+    store.login = response.body.login;
+    return true;
+  } catch (e) {
+    console.log("GP Error: %o", e);
+    return false;
+  }
+}
+
 // TODO: Support SSO when using username and password vs. just a token
 async function attemptGitLogin(): Promise<boolean> {
   const gitSSO = await config.get("gitSSO");
@@ -59,7 +85,7 @@ host=github.com
       encoding: "utf8"
     });
     const token = response.split("password=")[1].trim();
-    if (token.length > 0) {
+    if (token.length > 0 && (await testToken(token))) {
       await keytar.setPassword(SERVICE, ACCOUNT, token);
       return true;
     }
@@ -109,21 +135,10 @@ export async function isAuthenticated() {
   return token !== null;
 }
 
-async function markUserAsSignedIn(notifyUserOfInvalidToken: boolean = false) {
-  try {
-    store.login = await fetchCurrentUser();
-    store.isSignedIn = true;
-    commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
-    await refreshGists();
-  } catch (e) {
-    if (notifyUserOfInvalidToken) {
-      window.showErrorMessage(
-        "The specified token isn't valid, please check it and try again."
-      );
-    }
-
-    await deleteToken();
-  }
+async function markUserAsSignedIn() {
+  store.isSignedIn = true;
+  commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
+  await refreshGists();
 }
 
 function markUserAsSignedOut() {
@@ -139,8 +154,14 @@ export async function signIn() {
     value
   });
   if (token) {
-    await keytar.setPassword(SERVICE, ACCOUNT, token);
-    await markUserAsSignedIn(true);
+    if (await testToken(token)) {
+      await keytar.setPassword(SERVICE, ACCOUNT, token);
+      await markUserAsSignedIn();
+    } else {
+      window.showErrorMessage(
+        "The specified token isn't valid or doesn't inlcude the gist scope. Please check it and try again."
+      );
+    }
   }
 }
 

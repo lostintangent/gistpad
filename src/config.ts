@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 
 const CONFIG_SECTION = "gistpad";
 
-export async function get(key: "alwaysShowComments"): Promise<boolean>;
+export async function get(key: "showCommentThread"): Promise<string>;
 export async function get(
   key: "pasteScreenshotOutput"
 ): Promise<"markdown" | "html">;

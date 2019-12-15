@@ -78,10 +78,15 @@ export async function registerCommentController() {
         (comment) => new GistCodeComment(comment, gistId, thread, currentUser)
       );
 
-      const alwaysShowComments = await config.get("alwaysShowComments");
-      thread.collapsibleState = alwaysShowComments
-        ? CommentThreadCollapsibleState.Expanded
-        : CommentThreadCollapsibleState.Collapsed;
+      const showCommentThread = await config.get("showCommentThread");
+      if (
+        showCommentThread === "always" ||
+        (showCommentThread === "whenNotEmpty" && thread.comments.length > 0)
+      ) {
+        thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
+      } else {
+        thread.collapsibleState = CommentThreadCollapsibleState.Collapsed;
+      }
 
       workspace.onDidChangeTextDocument((e) => {
         if (e.document === document) {

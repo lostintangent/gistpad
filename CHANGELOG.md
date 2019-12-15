@@ -1,14 +1,22 @@
+## v0.0.18 (12/14/2019)
+
+- Introduced support for creating [GistLog](https://gistlog.co) posts via a new `GistPad: New GistLog` command
+
+     ![GistLog](https://user-images.githubusercontent.com/116461/70856110-fdc3a900-1e8a-11ea-8e26-2c3917e11db0.gif)
+     
+- Added a new `Open Gist in GistLog` context menu to gists, that allows you to view an existing Gist on [GistLog](https://gistlog.co)
+- Exposed the `New Public Gist`, `New Secret Gist` and `New GistLog` commands via the context menu on the `Your Gists` tree node
+- Introduced a new `Gistpad: Show Comment Thread` configuration option, that allows you to configure when the Gist comment thread UI is displayed.
+
 ## v0.0.17 (12/12/2019)
 
 - Added a new `Open Gist in NbViewer` context menu to gists, that allows you to open Gists with Jupyter Notebooks in the [Jupyter Nbviewer](https://nbviewer.jupyter.org/)
-- Introduced a new `Gistpad: Always Show Comments` configuration option, that allows you to specify whether you want to always view comments when you open a Gist file
 - Fixed a bug, that impacted Gist files with special characters in their name (e.g. `*`, `?`)
 - Fixed a bug with comment threads, that ensure they're always displayed at the bottom of the file, even after making edits
 
 ## v0.0.16 (12/11/2019)
 
 - Added a new `Clone Repository` context menu to gists, that allows you to clone a gist's repository locally
-- Added a new `Open Gist in GistLog` context menu to gists, that allows you to view a Gist in [GistLog](https://gistlog.co)
 - Introduced a new `gistpad.apiUrl` setting, which allows users to use GitHub Enterprise servers
 
 ## v0.0.15 (12/08/2019)

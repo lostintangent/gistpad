@@ -96,21 +96,23 @@ export async function openGist(id: string, isNew: boolean = false) {
     });
 }
 
-export async function openGistFile(uri: Uri) {
+export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
   const extension = path
     .extname(uri.toString())
     .toLocaleLowerCase()
     .substr(1);
-  let commandName;
-  switch (extension) {
-    case "md":
-      commandName = "markdown.showPreview";
-      break;
-    //case "ipynb":
-    //  commandName = "python.datascience.opennotebook";
-    //  break;
-    default:
-      commandName = "vscode.open";
+
+  let commandName = "vscode.open";
+
+  if (allowPreview) {
+    switch (extension) {
+      case "md":
+        commandName = "markdown.showPreview";
+        break;
+      //case "ipynb":
+      //  commandName = "python.datascience.opennotebook";
+      //  break;
+    }
   }
 
   commands.executeCommand(commandName, uri);

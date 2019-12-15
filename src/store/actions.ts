@@ -200,6 +200,8 @@ export async function newGist(
   if (openAfterCreation) {
     openGist(gist.body.id, true);
   }
+
+  return gist.body;
 }
 
 export async function refreshGists() {

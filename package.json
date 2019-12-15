@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -28,6 +28,7 @@
     "onCommand:gistpad.forkGist",
     "onCommand:gistpad.newPublicGist",
     "onCommand:gistpad.newSecretGist",
+    "onCommand:gistpad.newGistLog",
     "onCommand:gistpad.openGist",
     "onCommand:gistpad.openGistWorkspace",
     "onCommand:gistpad.pasteGistFile",
@@ -141,6 +142,11 @@
           "dark": "images/dark/add.svg",
           "light": "images/light/add.svg"
         }
+      },
+      {
+        "command": "gistpad.newGistLog",
+        "title": "New GistLog",
+        "category": "GistPad"
       },
       {
         "command": "gistpad.newSecretGist",
@@ -367,6 +373,21 @@
       ],
       "view/item/context": [
         {
+          "command": "gistpad.newPublicGist",
+          "when": "viewItem == gists",
+          "group": "new@1"
+        },
+        {
+          "command": "gistpad.newSecretGist",
+          "when": "viewItem == gists",
+          "group": "new@2"
+        },
+        {
+          "command": "gistpad.newGistLog",
+          "when": "viewItem == gists",
+          "group": "new@3"
+        },
+        {
           "command": "gistpad.openGist",
           "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
           "group": "base@1"
@@ -537,11 +558,6 @@
       "type": "object",
       "title": "GistPad",
       "properties": {
-        "gistpad.alwaysShowComments": {
-          "default": false,
-          "type": "boolean",
-          "description": "Specifies whether the comment thread UI should always be displayed when you open a Gist file."
-        },
         "gistpad.apiUrl": {
           "default": "https://api.github.com",
           "type": "string",
@@ -562,6 +578,16 @@
             "base64"
           ],
           "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
+        },
+        "gistpad.showCommentThread": {
+          "default": "whenNotEmpty",
+          "type": "string",
+          "enum": [
+            "always",
+            "never",
+            "whenNotEmpty"
+          ],
+          "description": "Specifies when to display the comment thread when you open a Gist file."
         }
       }
     }

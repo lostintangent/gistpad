@@ -346,6 +346,7 @@ export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_ID}.newPublicGist`, newPublicGist)
   );
+
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_ID}.newSecretGist`, newSecretGist)
   );
@@ -361,16 +362,6 @@ export async function registerGistCommands(context: ExtensionContext) {
       `${EXTENSION_ID}.openGistInBrowser`,
       async (node: GistNode) => {
         env.openExternal(Uri.parse(node.gist.html_url));
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(
-      `${EXTENSION_ID}.openGistInGistLog`,
-      async (node: GistNode) => {
-        const url = `https://gistlog.co/${node.gist.owner.login}/${node.gist.id}`;
-        env.openExternal(Uri.parse(url));
       }
     )
   );

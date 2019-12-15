@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad and code snippet manager. Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
+GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad, code snippet manager and [blog](#gistlog). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -38,13 +38,15 @@ Gist comments are exposed within the editor at the bottom of any opened Gist fil
 
 <img src="https://user-images.githubusercontent.com/116461/70118599-42467d80-161d-11ea-85eb-7f4cc6e4006b.gif" width="700px" />
 
-If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments.
+If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments. In order to control the behavior of how Gist comment threads are displayed, refer to the `GistPad: Show Comment Thread` config setting.
 
-## Paste Screenshots
+## Pasting Images
 
-Paste screenshots from your clipboard into the gist:
+In order to make it easy to author markdown files, that include images, you can copy images into your clipboard and then paste them directly into a gist file:
 
 ![paste-screenshot](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
+
+In order to paste an image into a gist file, use one of the following methods:
 
 - From the editor's context menu: `Paste Screenshot` command (this only appears within GistPad-managed markdown files).
 - From command palette: `GistPad: Paste Screenshot` command.
@@ -63,6 +65,12 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
 
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
+
+## GistLog
+
+In addition to being able to use Gists to share code snippets/files, you can also use it as a mini-blog, thanks to integration with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new Gist that includes two files: `blog.md` and `gistlog.yml`.
+
+The `blog.md` file will be automatically opened for editing, and as soon as you're ready to publish your post, open `gistlog.yml` and set the `published` property to `true`. Then, right-click your Gist and select the `Open Gist in GistLog` menu. This will open your browser to the URL that you can share with others, in order to read your new post.
 
 ## Contributed Commands (File Explorer)
 
@@ -110,19 +118,23 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 ## Configuration Settings
 
-- `GistPad: Always Show Comments` - Specifies whether to always show the comment thread UI whenever you open a Gist file. Defaults to `false`.
-
 - `Gistpad: Api Url` - Specifies the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
 
-- `Gistpad: Paste Screenshot Type`:
+- `Gistpad: Paste Screenshot Type`: Specifies how to handle image pastes. Can be set to one of the following values:
 
-  - `file` (default): the screenshot is `uploaded` as a `.png` file to the gist.
-  - `base64`: the screenshot is `base64`-embedded into the gist.
+  - `file` _(default)_: The pasted image is uploaded as a `.png` file to the gist, and a URL reference is added to the markdown file.
+  - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
 
-- `Gistpad: Paste Screenshot Output`
+- `Gistpad: Paste Screenshot Output`: Specifies the format to use when referencing the pasted image from a Gist file. Can be set to one of the following values:
 
-  - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
+  - `markdown` _(default)_: the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
+
+- `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
+
+  - `always`: Always display the comment thread whenever you open a Gist file. You can manually collapse it as needed.
+  - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.
+  - `whenNotEmpty` _(default)_: Automatically display the comment thread whenever there are actually comments in a Gist file. Otherwise, leave it collapsed.
 
 ## Shortcuts
 

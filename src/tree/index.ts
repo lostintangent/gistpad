@@ -6,7 +6,7 @@ import {
   ProviderResult,
   TreeDataProvider,
   TreeItem,
-  window,
+  window
 } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { IStore } from "../store";
@@ -24,7 +24,7 @@ import {
   SignInNode,
   StarredGistNode,
   StarredGistsNode,
-  TreeNode,
+  TreeNode
 } from "./nodes";
 
 class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
@@ -41,7 +41,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         store.starredGists.length,
         store.followedUsers.map((user) => user.isLoading),
         store.isLoading,
-        store.isSignedIn,
+        store.isSignedIn
       ],
       () => {
         this._onDidChangeTreeData.fire();
@@ -62,8 +62,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
           return [new LoadingNode()];
         } else {
           const nodes = [
-            new GistsNode(this.extensionPath),
-            new StarredGistsNode(this.extensionPath),
+            new GistsNode(this.store.login, this.extensionPath),
+            new StarredGistsNode(this.extensionPath)
           ];
 
           if (this.store.followedUsers.length > 0) {
@@ -119,6 +119,6 @@ export function registerTreeProvider(store: IStore, extensionPath: string) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);
   window.createTreeView(`${EXTENSION_ID}.gists`, {
     showCollapseAll: true,
-    treeDataProvider,
+    treeDataProvider
   });
 }

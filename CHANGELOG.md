@@ -1,9 +1,14 @@
+## v0.0.19 (12/15/2019)
+
+- Added the `Open Profile in GitHub` context menu to the `Your Gists` tree node, which allows opening your Gist profile page
+- Added the `Open GistLog Feed` context menu to the `Your Gists` tree node, which allows opening your GistLog feed page
+
 ## v0.0.18 (12/14/2019)
 
 - Introduced support for creating [GistLog](https://gistlog.co) posts via a new `GistPad: New GistLog` command
 
-     ![GistLog](https://user-images.githubusercontent.com/116461/70856110-fdc3a900-1e8a-11ea-8e26-2c3917e11db0.gif)
-     
+  ![GistLog](https://user-images.githubusercontent.com/116461/70856110-fdc3a900-1e8a-11ea-8e26-2c3917e11db0.gif)
+
 - Added a new `Open Gist in GistLog` context menu to gists, that allows you to view an existing Gist on [GistLog](https://gistlog.co)
 - Exposed the `New Public Gist`, `New Secret Gist` and `New GistLog` commands via the context menu on the `Your Gists` tree node
 - Introduced a new `Gistpad: Show Comment Thread` configuration option, that allows you to configure when the Gist comment thread UI is displayed.

@@ -168,6 +168,16 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.openProfile",
+        "title": "Open Profile in GitHub",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openGistLogFeed",
+        "title": "Open Feed in GistLog",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.openGistInBrowser",
         "title": "Open Gist in GitHub",
         "category": "GistPad"
@@ -313,6 +323,14 @@
           "when": "false"
         },
         {
+          "command": "gistpad.openProfile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openGistLogFeed",
+          "when": "false"
+        },
+        {
           "command": "gistpad.openGistInNbViewer",
           "when": "false"
         },
@@ -347,6 +365,42 @@
         {
           "command": "gistpad.unfollowUser",
           "when": "false"
+        },
+        {
+          "command": "gistpad.followUser",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.deleteFile",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.newPublicGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.newSecretGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.forkGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.starredGists",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.newGistLog",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.deleteGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.pasteScreenshot",
+          "when": "gistpad:state == SignedIn"
         }
       ],
       "view/title": [
@@ -386,6 +440,16 @@
           "command": "gistpad.newGistLog",
           "when": "viewItem == gists",
           "group": "new@3"
+        },
+        {
+          "command": "gistpad.openProfile",
+          "when": "viewItem == gists",
+          "group": "open@1"
+        },
+        {
+          "command": "gistpad.openGistLogFeed",
+          "when": "viewItem == gists",
+          "group": "open@2"
         },
         {
           "command": "gistpad.openGist",

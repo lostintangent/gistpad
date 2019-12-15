@@ -49,7 +49,7 @@ export class LoadingNode extends TreeNode {
 }
 
 export class GistsNode extends TreeNode {
-  constructor(extensionPath: string) {
+  constructor(public login: string, extensionPath: string) {
     super("Your Gists", TreeItemCollapsibleState.Expanded);
 
     this.iconPath = path.join(extensionPath, "images/gist.svg");

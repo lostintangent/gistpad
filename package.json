@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -626,6 +626,11 @@
           "default": "https://api.github.com",
           "type": "string",
           "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
+        },
+        "gistpad.gitSSO": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether to enable single sign-in (SSO) with the Git CLI, when you've already authenticated with github.com."
         },
         "gistpad.pasteScreenshotOutput": {
           "default": "markdown",

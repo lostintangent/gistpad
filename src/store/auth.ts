@@ -1,3 +1,4 @@
+import { execSync } from "child_process";
 import * as keytarType from "keytar";
 import { commands, env, window } from "vscode";
 import { store } from ".";
@@ -39,6 +40,40 @@ const STATE_CONTEXT_KEY = `${EXTENSION_ID}:state`;
 const STATE_SIGNED_IN = "SignedIn";
 const STATE_SIGNED_OUT = "SignedOut";
 
+async function attemptGitLogin(): Promise<boolean> {
+  const gitSSO = await config.get("gitSSO");
+  if (!gitSSO) {
+    return false;
+  }
+
+  const command = `git credential fill
+protocol=https
+host=github.com
+
+`;
+
+  try {
+    const response = execSync(command, { encoding: "utf8" });
+    // This will return something that looks like the following...
+    //
+    // protocol=https
+    // host=github.com
+    // path=
+    // username=<your-user>
+    // password=<authentication-token>
+
+    const token = response.split("password=")[1].trim();
+    if (token.length > 0) {
+      await keytar.setPassword(SERVICE, ACCOUNT, token);
+      return true;
+    }
+
+    return false;
+  } catch (e) {
+    return false;
+  }
+}
+
 const TOKEN_RESPONSE = "Enter token";
 export async function ensureAuthenticated() {
   const password = await getToken();
@@ -56,17 +91,7 @@ export async function ensureAuthenticated() {
 }
 
 export async function getToken() {
-  const getTokenTask = Promise.race([
-    await keytar.getPassword(SERVICE, ACCOUNT),
-    new Promise((res, rej) => {
-      setTimeout(() => {
-        rej("Token retrieval took too long.");
-      }, 5000);
-    })
-  ]);
-
-  const token = await getTokenTask;
-
+  const token = await keytar.getPassword(SERVICE, ACCOUNT);
   return token;
 }
 
@@ -74,14 +99,15 @@ export async function initializeAuth() {
   markUserAsSignedOut();
 
   const isSignedIn = await isAuthenticated();
-  if (isSignedIn) {
+  if (isSignedIn || (await attemptGitLogin())) {
     await markUserAsSignedIn();
     await refreshGists();
   }
 }
 
 export async function isAuthenticated() {
-  return (await getToken()) !== null;
+  const token = await getToken();
+  return token !== null;
 }
 
 async function markUserAsSignedIn() {

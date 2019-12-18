@@ -1,7 +1,7 @@
 ## v0.0.22 (12/18/2019)
 
 - Updated the `Delete Gist` command, to automatically close all opened editors that were associated with the deleted gist
-- Fixed a bug with the `Gists` tree view sometimes not rendering properly
+- Fixed a bug where the `Gists` tree view sometimes not rendering properly
 
 ## v0.0.21 (12/15/2019)
 

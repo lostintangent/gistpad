@@ -1,6 +1,5 @@
-## v0.0.22 (12/17/2019)
+## v0.0.22 (12/18/2019)
 
-- Introduced the concept of a "Gist Sandbox", which is a Gist that allows you to run a web front-end sansbox in it
 - Updated the `Delete Gist` command, to automatically close all opened editors that were associated with the deleted gist
 - Fixed a bug with the `Gists` tree view sometimes not rendering properly
 

@@ -195,7 +195,7 @@ export async function newGist(
     files
   });
 
-  store.gists.push(gist.body);
+  store.gists.unshift(gist.body);
 
   if (openAfterCreation) {
     openGist(gist.body.id, true);

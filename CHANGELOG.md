@@ -1,7 +1,13 @@
+## v0.0.22 (12/17/2019)
+
+- Introduced the concept of a "Gist Sandbox", which is a Gist that allows you to run a web front-end sansbox in it
+- Updated the `Delete Gist` command, to automatically close all opened editors that were associated with the deleted gist
+- Fixed a bug with the `Gists` tree view sometimes not rendering properly
+
 ## v0.0.21 (12/15/2019)
 
 - Improving auth reliability, by detecting whether or not a specified token includes the `gist` scope or not.
-  
+
 ## v0.0.20 (12/15/2019)
 
 - Introduced support for SSO with the `git` CLI, when you've authenticated with github.com. To disable this, you can set the new `GistPad: Git SSO` setting to `false`.

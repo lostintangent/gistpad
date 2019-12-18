@@ -7,6 +7,7 @@ import { registerFollowCommands } from "./follow";
 import { registerGistCommands } from "./gist";
 import { registerGistLogCommands } from "./gistLog";
 import { registerPasteImageCommands } from "./pasteImage";
+import { registerSandboxCommands } from "./sandbox";
 
 export function registerCommands(context: ExtensionContext) {
   registerAuthCommands(context);
@@ -17,4 +18,5 @@ export function registerCommands(context: ExtensionContext) {
   registerGistLogCommands(context);
   registerFileCommands(context);
   registerPasteImageCommands(context);
+  registerSandboxCommands(context);
 }

@@ -11,7 +11,7 @@ import { registerTreeProvider } from "./tree";
 
 export async function activate(context: vscode.ExtensionContext) {
   try {
-    log.setLoggingChannel(vscode.window.createOutputChannel('GistPad'));
+    log.setLoggingChannel(vscode.window.createOutputChannel("GistPad"));
 
     initializeAuth();
     initializeProtocolHander();

@@ -116,9 +116,21 @@ export async function initializeAuth() {
   markUserAsSignedOut();
 
   const isSignedIn = await isAuthenticated();
-  if (isSignedIn || (await attemptGitLogin())) {
-    await markUserAsSignedIn();
+  if (isSignedIn) {
+    const currentToken = (await getToken())!;
+    const tokenStillValid = await testToken(currentToken);
+    if (!tokenStillValid) {
+      await deleteToken();
+      return;
+    }
+  } else {
+    const gitSSO = await attemptGitLogin();
+    if (!gitSSO) {
+      return;
+    }
   }
+
+  await markUserAsSignedIn();
 }
 
 export async function isAuthenticated() {

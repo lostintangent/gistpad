@@ -121,4 +121,9 @@ export function registerTreeProvider(store: IStore, extensionPath: string) {
     showCollapseAll: true,
     treeDataProvider
   });
+
+  window.createTreeView(`${EXTENSION_ID}.gists.explorer`, {
+    showCollapseAll: true,
+    treeDataProvider
+  });
 }

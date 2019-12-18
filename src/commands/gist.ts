@@ -8,7 +8,7 @@ import {
   Uri,
   window
 } from "vscode";
-import { CommandId, EXTENSION_ID, FS_SCHEME } from "../constants";
+import { CommandId, EXTENSION_ID } from "../constants";
 import { log } from "../logger";
 import {
   changeDescription,
@@ -23,6 +23,7 @@ import {
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
 import { GistNode, StarredGistNode } from "../tree/nodes";
 import {
+  closeGistFiles,
   getGistDescription,
   getGistLabel,
   getGistWorkspaceId,
@@ -266,6 +267,7 @@ export async function registerGistCommands(context: ExtensionContext) {
           }
 
           await deleteGist(node.gist.id);
+          await closeGistFiles(node.gist);
         } else if (isGistWorkspace()) {
           const response = await window.showInformationMessage(
             "Are you sure you want to delete this Gist?",
@@ -301,16 +303,7 @@ export async function registerGistCommands(context: ExtensionContext) {
           }
 
           await deleteGist(gist.id);
-
-          window.visibleTextEditors.forEach((editor) => {
-            if (
-              editor.document.uri.scheme === FS_SCHEME &&
-              editor.document.uri.authority === gist.id
-            ) {
-              editor.hide();
-            }
-          });
-
+          await closeGistFiles(gists.find((gist) => gist.id === gist.id)!);
           await window.showInformationMessage("Gist deleted!");
         }
       }

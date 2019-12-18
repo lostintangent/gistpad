@@ -28,6 +28,7 @@
     "onCommand:gistpad.forkGist",
     "onCommand:gistpad.newPublicGist",
     "onCommand:gistpad.newSecretGist",
+    "onCommand:gistpad.newSandbox",
     "onCommand:gistpad.newGistLog",
     "onCommand:gistpad.openGist",
     "onCommand:gistpad.openGistWorkspace",
@@ -146,6 +147,11 @@
       {
         "command": "gistpad.newGistLog",
         "title": "New GistLog",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.newSandbox",
+        "title": "New Sandbox",
         "category": "GistPad"
       },
       {
@@ -395,6 +401,10 @@
           "when": "gistpad:state == SignedIn"
         },
         {
+          "command": "gistpad.newSandbox",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
           "command": "gistpad.deleteGist",
           "when": "gistpad:state == SignedIn"
         },
@@ -437,9 +447,14 @@
           "group": "new@2"
         },
         {
-          "command": "gistpad.newGistLog",
+          "command": "gistpad.newSandbox",
           "when": "viewItem == gists",
           "group": "new@3"
+        },
+        {
+          "command": "gistpad.newGistLog",
+          "when": "viewItem == gists",
+          "group": "new@4"
         },
         {
           "command": "gistpad.openProfile",
@@ -598,7 +613,7 @@
     "views": {
       "explorer": [
         {
-          "id": "gistpad.gists",
+          "id": "gistpad.gists.explorer",
           "name": "Gists"
         }
       ],
@@ -684,8 +699,10 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
+    "@types/debounce": "^1.2.0",
     "@types/moment": "^2.13.0",
     "axios": "^0.19.0",
+    "debounce": "^1.2.0",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "mobx": "^5.14.2",

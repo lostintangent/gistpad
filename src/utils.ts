@@ -9,12 +9,28 @@ import {
   window,
   workspace
 } from "vscode";
+import { closeWebviewPanel, openSandbox } from "./commands/sandbox";
 import { FS_SCHEME } from "./constants";
 import { Gist, GistFile } from "./store";
 import { getGist } from "./store/actions";
 
 export function fileNameToUri(gistId: string, filename: string): Uri {
   return Uri.parse(`${FS_SCHEME}://${gistId}/${encodeURIComponent(filename)}`);
+}
+
+export async function closeGistFiles(gist: Gist) {
+  window.visibleTextEditors.forEach((editor) => {
+    if (
+      editor.document.uri.scheme === FS_SCHEME &&
+      editor.document.uri.authority === gist.id
+    ) {
+      editor.hide();
+    }
+  });
+
+  if (isSandboxGist(gist)) {
+    closeWebviewPanel(gist.id);
+  }
 }
 
 export async function getFileContents(file: GistFile) {
@@ -76,24 +92,32 @@ export function isNotebookGist(gist: Gist) {
   return Object.keys(gist.files).some((file) => file.endsWith("ipynb"));
 }
 
+export function isSandboxGist(gist: Gist) {
+  return Object.keys(gist.files).some((file) => file === "sandbox.json");
+}
+
 export async function openGist(id: string, isNew: boolean = false) {
-  const { files } = await getGist(id);
+  const gist = await getGist(id);
 
-  Object.entries(files)
-    .reverse()
-    .forEach(async ([_, file], index) => {
-      const uri = fileNameToUri(id, file.filename!);
+  if (isSandboxGist(gist)) {
+    await openSandbox(gist);
+  } else {
+    Object.entries(gist.files)
+      .reverse()
+      .forEach(async ([_, file], index) => {
+        const uri = fileNameToUri(id, file.filename!);
 
-      if (!isNew && path.extname(file.filename!) === ".md") {
-        commands.executeCommand("markdown.showPreview", uri);
-      } else {
-        // TODO: Improve the view column arrangement for more than 2 files
-        await window.showTextDocument(uri, {
-          preview: false,
-          viewColumn: ViewColumn.Beside
-        });
-      }
-    });
+        if (!isNew && path.extname(file.filename!) === ".md") {
+          commands.executeCommand("markdown.showPreview", uri);
+        } else {
+          // TODO: Improve the view column arrangement for more than 2 files
+          await window.showTextDocument(uri, {
+            preview: false,
+            viewColumn: ViewColumn.Beside
+          });
+        }
+      });
+  }
 }
 
 export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
@@ -130,7 +154,9 @@ export function sortGists(gists: Gist[], sortByDescription: boolean = false) {
     return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
   } else {
     return gists.sort(
-      (a, b) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
+      (a, b) =>
+        Date.parse(b.updated_at || b.created_at) -
+        Date.parse(a.updated_at || a.created_at)
     );
   }
 }

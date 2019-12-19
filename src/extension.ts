@@ -10,19 +10,14 @@ import { initializeStorage } from "./store/storage";
 import { registerTreeProvider } from "./tree";
 
 export async function activate(context: vscode.ExtensionContext) {
-  try {
-    log.setLoggingChannel(vscode.window.createOutputChannel("GistPad"));
+  log.setLoggingChannel(vscode.window.createOutputChannel("GistPad"));
 
-    initializeAuth();
-    initializeProtocolHander();
+  initializeAuth();
+  initializeProtocolHander();
 
-    registerCommands(context);
-    registerFileSystemProvider(store);
-    registerTreeProvider(store, context.extensionPath);
-    registerCommentController();
-    initializeStorage(context);
-  } catch (e) {
-    log.error(e);
-    vscode.window.showErrorMessage(e);
-  }
+  registerCommands(context);
+  registerFileSystemProvider(store);
+  registerTreeProvider(store, context.extensionPath);
+  registerCommentController();
+  initializeStorage(context);
 }

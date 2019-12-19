@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad, code snippet manager, knowledge base and [blog](#gistlog). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
+GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad, code snippet manager, knowledge base, [playground](#playground) and [blog](#gistlog). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -65,6 +65,10 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
 
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
+
+## Sandboxes
+
+![Sandbox](https://user-images.githubusercontent.com/116461/71032506-57fe7d00-20ca-11ea-9de0-ee8974617e62.gif)
 
 ## GistLog
 

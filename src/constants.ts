@@ -4,5 +4,5 @@ export const UNTITLED_SCHEME = "untitled";
 export const ZERO_WIDTH_SPACE = "‎‎\u200B";
 
 export const CommandId = {
-    openGist: `${EXTENSION_ID}.openGist`
+  openGist: `${EXTENSION_ID}.openGist`
 } as const;

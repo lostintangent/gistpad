@@ -416,22 +416,22 @@
       "view/title": [
         {
           "command": "gistpad.newPublicGist",
-          "when": "view == gistpad.gists && gistpad:state == SignedIn",
+          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
           "group": "navigation@1"
         },
         {
           "command": "gistpad.newSecretGist",
-          "when": "view == gistpad.gists && gistpad:state == SignedIn",
+          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
           "group": "navigation@2"
         },
         {
           "command": "gistpad.followUser",
-          "when": "view == gistpad.gists && gistpad:state == SignedIn",
+          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
           "group": "navigation@3"
         },
         {
           "command": "gistpad.refreshGists",
-          "when": "view == gistpad.gists && gistpad:state == SignedIn",
+          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
           "group": "navigation@4"
         }
       ],

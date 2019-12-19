@@ -1,7 +1,12 @@
 ## v0.0.22 (12/18/2019)
 
+- Introduced the concept of a "Gist Sandbox", which allows you to do rapid prototyping of web front-end code, that's backed by a Gist
+
+     ![Sandbox](https://user-images.githubusercontent.com/116461/71032506-57fe7d00-20ca-11ea-9de0-ee8974617e62.gif)
+
 - Updated the `Delete Gist` command, to automatically close all opened editors that were associated with the deleted gist
 - Fixed a bug where the `Gists` tree view sometimes not rendering properly
+- Fixed a bug in the `Open Gist as Workspace` command that would open the Gist files multiple times
 
 ## v0.0.21 (12/15/2019)
 

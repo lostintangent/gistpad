@@ -4,6 +4,7 @@ import { commands, env, window } from "vscode";
 import { store } from ".";
 import * as config from "../config";
 import { EXTENSION_ID } from "../constants";
+import { getGistWorkspaceId, isGistWorkspace, openGist } from "../utils";
 import { refreshGists } from "./actions";
 
 const GitHub = require("github-base");
@@ -142,6 +143,11 @@ async function markUserAsSignedIn() {
   store.isSignedIn = true;
   commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
   await refreshGists();
+
+  if (isGistWorkspace()) {
+    const gistId = getGistWorkspaceId();
+    openGist(gistId, false);
+  }
 }
 
 function markUserAsSignedOut() {

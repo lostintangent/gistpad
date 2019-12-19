@@ -18,7 +18,6 @@ import { ensureAuthenticated } from "../store/auth";
 import {
   getFileContents,
   getGistDetailsFromUri,
-  openGist,
   uriToFileName
 } from "../utils";
 
@@ -28,7 +27,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
 
-    let gist = this.store.gists.find(gist => gist.id === gistId);
+    let gist = this.store.gists.find((gist) => gist.id === gistId);
     if (!gist) {
       gist = await getGist(gistId);
     }
@@ -67,7 +66,15 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
   async readFile(uri: Uri): Promise<Uint8Array> {
     const file = await this.getFileFromUri(uri);
-    const contents = await getFileContents(file);
+    let contents = await getFileContents(file);
+
+    if (
+      !file.type!.startsWith("image") &&
+      contents.trim() === ZERO_WIDTH_SPACE
+    ) {
+      contents = "";
+    }
+
     return Buffer.from(contents);
   }
 
@@ -78,11 +85,10 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
       // TODO: Check to see if the file list is truncated, and if
       // so, retrieve the full contents from the service.
-      const files = Object.keys(gist.files).map(file => [file, FileType.File]);
-
-      setTimeout(() => {
-        openGist(gistId, false);
-      }, 500);
+      const files = Object.keys(gist.files).map((file) => [
+        file,
+        FileType.File
+      ]);
 
       // @ts-ignore
       return files;

@@ -66,35 +66,37 @@ export async function registerCommentController() {
       const { gistId } = getGistDetailsFromUri(document.uri);
       const comments = await getGistComments(gistId);
 
-      const thread = controller.createCommentThread(
-        document.uri,
-        commentRange(document),
-        []
-      );
+      if (comments.length > 0) {
+        const thread = controller.createCommentThread(
+          document.uri,
+          commentRange(document),
+          []
+        );
 
-      const currentUser = getCurrentUser();
+        const currentUser = getCurrentUser();
 
-      thread.comments = comments.map(
-        (comment) => new GistCodeComment(comment, gistId, thread, currentUser)
-      );
+        thread.comments = comments.map(
+          (comment) => new GistCodeComment(comment, gistId, thread, currentUser)
+        );
 
-      const showCommentThread = await config.get("showCommentThread");
-      if (
-        showCommentThread === "always" ||
-        (showCommentThread === "whenNotEmpty" && thread.comments.length > 0)
-      ) {
-        thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
-      } else {
-        thread.collapsibleState = CommentThreadCollapsibleState.Collapsed;
-      }
-
-      workspace.onDidChangeTextDocument((e) => {
-        if (e.document === document) {
-          thread.range = commentRange(document);
+        const showCommentThread = await config.get("showCommentThread");
+        if (
+          showCommentThread === "always" ||
+          (showCommentThread === "whenNotEmpty" && thread.comments.length > 0)
+        ) {
+          thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
+        } else {
+          thread.collapsibleState = CommentThreadCollapsibleState.Collapsed;
         }
-      });
 
-      documentComments.set(document.uri.toString(), thread);
+        workspace.onDidChangeTextDocument((e) => {
+          if (e.document === document) {
+            thread.range = commentRange(document);
+          }
+        });
+
+        documentComments.set(document.uri.toString(), thread);
+      }
     }
   });
 }

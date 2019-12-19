@@ -1,6 +1,6 @@
 ## v0.0.22 (12/18/2019)
 
-- Introduced the concept of a "Gist Playground", which allows you to do rapid prototyping of web front-end code, that's backed by a Gist
+- Introduced the concept of a Gist "Web layground", which allows you to do rapid prototyping of web front-end code, that's backed by a Gist
 
   ![Playground](https://user-images.githubusercontent.com/116461/71032506-57fe7d00-20ca-11ea-9de0-ee8974617e62.gif)
 

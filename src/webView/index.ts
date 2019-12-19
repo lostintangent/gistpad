@@ -1,7 +1,7 @@
 import * as vscode from "vscode";
 
-const STYLE_ID = "gistpad-sandbox-style";
-export class SandboxWebView {
+const STYLE_ID = "gistpad-playground-style";
+export class PlaygroundWebview {
   private html: string = "";
   private javascript: string = "";
   private css: string = "";

@@ -28,7 +28,7 @@
     "onCommand:gistpad.forkGist",
     "onCommand:gistpad.newPublicGist",
     "onCommand:gistpad.newSecretGist",
-    "onCommand:gistpad.newSandbox",
+    "onCommand:gistpad.newPlayground",
     "onCommand:gistpad.newGistLog",
     "onCommand:gistpad.openGist",
     "onCommand:gistpad.openGistWorkspace",
@@ -150,8 +150,8 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.newSandbox",
-        "title": "New Sandbox",
+        "command": "gistpad.newPlayground",
+        "title": "New Web Playground",
         "category": "GistPad"
       },
       {
@@ -401,7 +401,7 @@
           "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.newSandbox",
+          "command": "gistpad.newPlayground",
           "when": "gistpad:state == SignedIn"
         },
         {
@@ -447,14 +447,14 @@
           "group": "new@2"
         },
         {
-          "command": "gistpad.newSandbox",
+          "command": "gistpad.newPlayground",
           "when": "viewItem == gists",
-          "group": "new@3"
+          "group": "newAdvanced@1"
         },
         {
           "command": "gistpad.newGistLog",
           "when": "viewItem == gists",
-          "group": "new@4"
+          "group": "newAdvanced@2"
         },
         {
           "command": "gistpad.openProfile",

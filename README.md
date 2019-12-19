@@ -18,17 +18,17 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
    <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
-   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide SSO, assuming you're using HTTPS-based auth, and your login session includes the `gist` scope *(SSH-based auth isn't supported)*. Otherwise, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
+   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide SSO, assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_. Otherwise, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
 
-2. Add local files/snippets to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Add Document to Gist`, `Add Selection to Gist` or `Paste Gist File` ([details](#contributed-commands-editor))
+1. Add local files/snippets to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Add Document to Gist`, `Add Selection to Gist` or `Paste Gist File` ([details](#contributed-commands-editor))
 
    <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
-3. View and reply to comments in a Gist by scrolling to the bottom of a Gist file and interacting with the thread (including embedded code snippets!)
+1. View and reply to comments in a Gist by scrolling to the bottom of a Gist file and interacting with the thread (including embedded code snippets!)
 
    <img width="450px" src="https://user-images.githubusercontent.com/116461/70117955-a9633280-161b-11ea-88a5-ac8a15a3b7a0.png" />
 
-4. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
+1. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
 
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
@@ -66,9 +66,9 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
-## Sandboxes
+## Playgrounds
 
-![Sandbox](https://user-images.githubusercontent.com/116461/71032506-57fe7d00-20ca-11ea-9de0-ee8974617e62.gif)
+![Playgrounds](https://user-images.githubusercontent.com/116461/71032506-57fe7d00-20ca-11ea-9de0-ee8974617e62.gif)
 
 ## GistLog
 

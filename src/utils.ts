@@ -9,7 +9,7 @@ import {
   window,
   workspace
 } from "vscode";
-import { closeWebviewPanel, openSandbox } from "./commands/sandbox";
+import { closeWebviewPanel, openPlayground } from "./commands/playground";
 import { FS_SCHEME } from "./constants";
 import { Gist, GistFile } from "./store";
 import { getGist } from "./store/actions";
@@ -28,7 +28,7 @@ export async function closeGistFiles(gist: Gist) {
     }
   });
 
-  if (isSandboxGist(gist)) {
+  if (isPlaygroundGist(gist)) {
     closeWebviewPanel(gist.id);
   }
 }
@@ -92,15 +92,15 @@ export function isNotebookGist(gist: Gist) {
   return Object.keys(gist.files).some((file) => file.endsWith("ipynb"));
 }
 
-export function isSandboxGist(gist: Gist) {
-  return Object.keys(gist.files).some((file) => file === "sandbox.json");
+export function isPlaygroundGist(gist: Gist) {
+  return Object.keys(gist.files).some((file) => file === "playground.json");
 }
 
 export async function openGist(id: string, isNew: boolean = false) {
   const gist = await getGist(id);
 
-  if (isSandboxGist(gist)) {
-    await openSandbox(gist);
+  if (isPlaygroundGist(gist)) {
+    await openPlayground(gist);
   } else {
     Object.entries(gist.files)
       .reverse()

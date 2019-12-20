@@ -2,26 +2,32 @@ import { debounce } from "debounce";
 import * as path from "path";
 import * as typescript from "typescript";
 import * as vscode from "vscode";
+import * as config from "../config";
 import { EXTENSION_ID } from "../constants";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import { closeGistFiles, fileNameToUri } from "../utils";
 import { PlaygroundWebview } from "../webView";
 
-const playgroundFiles = [
-  {
-    filename: "index.html"
-  },
-  {
-    filename: "index.js"
-  },
-  {
-    filename: "index.css"
-  },
-  {
-    filename: "playground.json"
-  }
-];
+async function generateNewPlaygroundFiles() {
+  const playgroundScriptLanguage = await config.get("playgroundScriptLanguage");
+  const scriptFileName =
+    playgroundScriptLanguage === "javascript" ? "index.js" : "index.ts";
+  return [
+    {
+      filename: "index.html"
+    },
+    {
+      filename: scriptFileName
+    },
+    {
+      filename: "index.css"
+    },
+    {
+      filename: "playground.json"
+    }
+  ];
+}
 
 const playgroundRegistry = new Map<string, vscode.WebviewPanel>();
 
@@ -142,7 +148,13 @@ export async function registerPlaygroundCommands(
             location: vscode.ProgressLocation.Notification,
             title: "Creating Playground..."
           },
-          () => newGist(playgroundFiles, true, description, false)
+          async () =>
+            newGist(
+              await generateNewPlaygroundFiles(),
+              true,
+              description,
+              false
+            )
         );
 
         openPlayground(gist);

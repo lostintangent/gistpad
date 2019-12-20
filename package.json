@@ -73,6 +73,14 @@
           ],
           "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
         },
+        "gistpad.playgroundScriptLanguage": {
+          "default": "javascript",
+          "enum": [
+            "javascript",
+            "typescript"
+          ],
+          "description": "Specifies the default scripting language to use when creating new web playgrounds."
+        },
         "gistpad.showCommentThread": {
           "default": "whenNotEmpty",
           "type": "string",

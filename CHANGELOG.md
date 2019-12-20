@@ -1,7 +1,9 @@
 ## v0.0.23 (12/18/2019)
 
-- Added support for TypeScript to web playgrounds. Simply rename the `index.js` file to `index.ts` and the code will be transparently compiled for you as you code.
-  
+- Added support for TypeScript to web playgrounds. Simply rename the `index.js` file to `index.ts` and the code will be transparently compiled for you as you code. Additionally, you can set the `GistPad: Playground Script Language` setting to `typescript` in order to create an `index.ts` file for all new playgrounds.
+
+  ![TS](https://user-images.githubusercontent.com/116461/71221927-414f5600-2283-11ea-81a7-2331fc85185b.gif)
+
 ## v0.0.22 (12/18/2019)
 
 - Introduced the concept of a Gist "Web Playground", which allows you to do rapid prototyping of web front-end code, that's backed by a Gist

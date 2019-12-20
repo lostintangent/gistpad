@@ -10,6 +10,9 @@ export async function get(
 export async function get(
   key: "pasteScreenshotType"
 ): Promise<"file" | "base64">;
+export async function get(
+  key: "playgroundScriptLanguage"
+): Promise<"javascript" | "typescript">;
 export async function get(key: "showCommentThread"): Promise<string>;
 export async function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

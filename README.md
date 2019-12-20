@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad, code snippet manager, knowledge base, [playground](#playground) and [blog](#gistlog). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
+GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad, code snippet manager, knowledge base, [playground](#playgrounds) and [blog](#gistlog). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -66,15 +66,15 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
-## Playground
+## Playgrounds
 
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript, you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
 ![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
-Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist.
+Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you done with a playground, simply clone the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist.
 
-When you done with a playground, simply clone the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist.
+If you'd prefer to write TypeScript instead of JavaScript, simply rename the `index.js` file to `index.ts`, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript`, and all new playgrounds will include an `index.ts` file by default.
 
 ## GistLog
 
@@ -146,7 +146,12 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `markdown` _(default)_: the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
-- `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
+* `GistPad: Playground Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
+
+  - `javascript` _(default)_: Will result in an `index.js` file being created whenever you create a new web playground.
+  - `typescript`: Will result in an `index.ts` file being created whenever you create a new web playground.
+
+* `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
 
   - `always`: Always display the comment thread whenever you open a Gist file. You can manually collapse it as needed.
   - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.

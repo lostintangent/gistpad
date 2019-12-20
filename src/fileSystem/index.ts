@@ -7,6 +7,7 @@ import {
   FileSystemError,
   FileSystemProvider,
   FileType,
+  ProgressLocation,
   Uri,
   window,
   workspace
@@ -174,7 +175,10 @@ export class GistFileSystemProvider implements FileSystemProvider {
         "Fork this Gist"
       );
       if (response === "Fork this Gist") {
-        await forkGist(gistId);
+        await window.withProgress(
+          { location: ProgressLocation.Notification, title: "Forking Gist..." },
+          () => forkGist(gistId)
+        );
       }
     }
   }

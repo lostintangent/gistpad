@@ -1,4 +1,6 @@
 import { debounce } from "debounce";
+import * as path from "path";
+import * as typescript from "typescript";
 import * as vscode from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { Gist } from "../store";
@@ -29,6 +31,23 @@ export async function closeWebviewPanel(gistId: string) {
   }
 }
 
+function isPlaygroundScriptDocument(gist: Gist, document: vscode.TextDocument) {
+  if (gist.id !== document.uri.authority) {
+    return false;
+  }
+
+  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
+  return extension === ".js" || extension === ".ts";
+}
+
+function getScriptContent(document: vscode.TextDocument) {
+  let content = document.getText();
+  if (path.extname(document.uri.toString()).toLocaleLowerCase() === ".ts") {
+    content = typescript.transpile(content);
+  }
+  return content;
+}
+
 export async function openPlayground(gist: Gist) {
   await vscode.commands.executeCommand("workbench.action.closeAllEditors");
   await vscode.commands.executeCommand("vscode.setEditorLayout", {
@@ -38,32 +57,36 @@ export async function openPlayground(gist: Gist) {
     ]
   });
 
-  const htmlDocument = await vscode.workspace.openTextDocument(
-    fileNameToUri(gist.id, "index.html")
+  const htmlEditor = await vscode.window.showTextDocument(
+    fileNameToUri(gist.id, "index.html"),
+    {
+      preview: false,
+      viewColumn: vscode.ViewColumn.One,
+      preserveFocus: true
+    }
   );
-  await vscode.window.showTextDocument(htmlDocument, {
-    preview: false,
-    viewColumn: vscode.ViewColumn.One,
-    preserveFocus: true
-  });
 
-  const jsDocument = await vscode.workspace.openTextDocument(
-    fileNameToUri(gist.id, "index.js")
-  );
-  await vscode.window.showTextDocument(jsDocument, {
-    preview: false,
-    viewColumn: vscode.ViewColumn.Two,
-    preserveFocus: false
-  });
+  const scriptFile = Object.keys(gist.files).includes("index.ts")
+    ? "index.ts"
+    : "index.js";
 
-  const cssDocument = await vscode.workspace.openTextDocument(
-    fileNameToUri(gist.id, "index.css")
+  const jsEditor = await vscode.window.showTextDocument(
+    fileNameToUri(gist.id, scriptFile),
+    {
+      preview: false,
+      viewColumn: vscode.ViewColumn.Two,
+      preserveFocus: false
+    }
   );
-  await vscode.window.showTextDocument(cssDocument, {
-    preview: false,
-    viewColumn: vscode.ViewColumn.Three,
-    preserveFocus: true
-  });
+
+  const cssEditor = await vscode.window.showTextDocument(
+    fileNameToUri(gist.id, "index.css"),
+    {
+      preview: false,
+      viewColumn: vscode.ViewColumn.Three,
+      preserveFocus: true
+    }
+  );
 
   const webViewPanel = vscode.window.createWebviewPanel(
     "gistpad.playgroundPreview",
@@ -82,28 +105,21 @@ export async function openPlayground(gist: Gist) {
   const htmlView = new PlaygroundWebview(webViewPanel.webview);
 
   vscode.workspace.onDidChangeTextDocument(
-    debounce((e) => {
-      const newContent = e.document.getText();
-      if (e.document === htmlDocument) {
-        htmlView.updateHTML(newContent);
-      } else if (e.document === jsDocument) {
-        htmlView.updateJavaScript(newContent);
-      } else {
-        htmlView.updateCSS(newContent);
+    debounce(({ document }) => {
+      if (document.uri === htmlEditor.document.uri) {
+        htmlView.updateHTML(document.getText());
+      } else if (isPlaygroundScriptDocument(gist, document)) {
+        htmlView.updateJavaScript(getScriptContent(document));
+      } else if (document.uri === cssEditor.document.uri) {
+        htmlView.updateCSS(document.getText());
       }
     }),
     500
   );
 
-  vscode.workspace.onDidCloseTextDocument((e) => {
-    if (e === htmlDocument || e === jsDocument || e === cssDocument) {
-      closeGistFiles(gist);
-    }
-  });
-
-  htmlView.updateHTML(htmlDocument.getText());
-  htmlView.updateJavaScript(jsDocument.getText());
-  htmlView.updateCSS(cssDocument.getText());
+  htmlView.updateHTML(htmlEditor.document.getText());
+  htmlView.updateJavaScript(getScriptContent(jsEditor.document));
+  htmlView.updateCSS(cssEditor.document.getText());
 }
 
 export async function registerPlaygroundCommands(

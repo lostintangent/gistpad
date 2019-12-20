@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -26,28 +26,64 @@
     "onCommand:gistpad.deleteGist",
     "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
+    "onCommand:gistpad.newGistLog",
     "onCommand:gistpad.newPublicGist",
     "onCommand:gistpad.newSecretGist",
     "onCommand:gistpad.newPlayground",
-    "onCommand:gistpad.newGistLog",
     "onCommand:gistpad.openGist",
     "onCommand:gistpad.openGistWorkspace",
     "onCommand:gistpad.pasteGistFile",
+    "onCommand:gistpad.pasteScreenshot",
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
-    "onCommand:gistpad.pasteScreenshot",
     "onFileSystem:gist",
     "onView:gistpad.gists",
     "*"
   ],
   "main": "./out/prod/extension.js",
   "contributes": {
-    "keybindings": {
-      "key": "ctrl+shift+v",
-      "mac": "cmd+shift+v",
-      "command": "gistpad.pasteScreenshot",
-      "when": "resourceScheme == gist && resourceLangId == markdown"
+    "configuration": {
+      "type": "object",
+      "title": "GistPad",
+      "properties": {
+        "gistpad.apiUrl": {
+          "default": "https://api.github.com",
+          "type": "string",
+          "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
+        },
+        "gistpad.gitSSO": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether to enable single sign-in (SSO) with the Git CLI, when you've already authenticated with github.com."
+        },
+        "gistpad.pasteScreenshotOutput": {
+          "default": "markdown",
+          "enum": [
+            "markdown",
+            "html"
+          ],
+          "description": "Specify the image tag for the paste image command as Markdown or HTML"
+        },
+        "gistpad.pasteScreenshotType": {
+          "default": "file",
+          "enum": [
+            "file",
+            "base64"
+          ],
+          "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
+        },
+        "gistpad.showCommentThread": {
+          "default": "whenNotEmpty",
+          "type": "string",
+          "enum": [
+            "always",
+            "never",
+            "whenNotEmpty"
+          ],
+          "description": "Specifies when to display the comment thread when you open a Gist file."
+        }
+      }
     },
     "commands": [
       {
@@ -262,6 +298,12 @@
         "category": "GistPad"
       }
     ],
+    "keybindings": {
+      "key": "ctrl+shift+v",
+      "mac": "cmd+shift+v",
+      "command": "gistpad.pasteScreenshot",
+      "when": "resourceScheme == gist && resourceLangId == markdown"
+    },
     "menus": {
       "commandPalette": [
         {
@@ -374,10 +416,6 @@
         },
         {
           "command": "gistpad.followUser",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.deleteFile",
           "when": "gistpad:state == SignedIn"
         },
         {
@@ -632,48 +670,6 @@
           "icon": "images/activity-bar-icon.svg"
         }
       ]
-    },
-    "configuration": {
-      "type": "object",
-      "title": "GistPad",
-      "properties": {
-        "gistpad.apiUrl": {
-          "default": "https://api.github.com",
-          "type": "string",
-          "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
-        },
-        "gistpad.gitSSO": {
-          "default": true,
-          "type": "boolean",
-          "description": "Specifies whether to enable single sign-in (SSO) with the Git CLI, when you've already authenticated with github.com."
-        },
-        "gistpad.pasteScreenshotOutput": {
-          "default": "markdown",
-          "enum": [
-            "markdown",
-            "html"
-          ],
-          "description": "Specify the image tag for the paste image command as Markdown or HTML"
-        },
-        "gistpad.pasteScreenshotType": {
-          "default": "file",
-          "enum": [
-            "file",
-            "base64"
-          ],
-          "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
-        },
-        "gistpad.showCommentThread": {
-          "default": "whenNotEmpty",
-          "type": "string",
-          "enum": [
-            "always",
-            "never",
-            "whenNotEmpty"
-          ],
-          "description": "Specifies when to display the comment thread when you open a Gist file."
-        }
-      }
     }
   },
   "scripts": {
@@ -691,7 +687,7 @@
     "copy-webpack-plugin": "^5.0.5",
     "ts-loader": "^6.2.1",
     "tslint": "^5.8.0",
-    "typescript": "^3.1.4",
+    "typescript": "^3.7.3",
     "vscode": "^1.1.25",
     "vscode-nls-dev": "^3.3.1",
     "webpack": "^4.41.2",

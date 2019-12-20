@@ -1,5 +1,5 @@
 import { observable } from "mobx";
-import { ProgressLocation, window } from "vscode";
+import { window } from "vscode";
 import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
@@ -122,20 +122,11 @@ export async function followUser(username: string) {
 }
 
 export async function forkGist(id: string) {
-  try {
-    const api = await getApi();
+  const api = await getApi();
 
-    window.withProgress(
-      { location: ProgressLocation.Notification, title: "Forking Gist..." },
-      async () => {
-        const gist = await api.fork(id);
-        store.gists.push(gist.body);
-        openGist(gist.body.id);
-      }
-    );
-  } catch (e) {
-    window.showErrorMessage(e);
-  }
+  const gist = await api.fork(id);
+  store.gists.unshift(gist.body);
+  openGist(gist.body.id);
 }
 
 export async function getGist(id: string): Promise<Gist> {

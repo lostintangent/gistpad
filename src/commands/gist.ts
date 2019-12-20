@@ -331,7 +331,10 @@ export async function registerGistCommands(context: ExtensionContext) {
           }
         }
 
-        await forkGist(gistId!);
+        await window.withProgress(
+          { location: ProgressLocation.Notification, title: "Forking Gist..." },
+          () => forkGist(gistId!)
+        );
       }
     )
   );

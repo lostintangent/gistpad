@@ -1,8 +1,12 @@
+## v0.0.23 (12/18/2019)
+
+- Added support for TypeScript to web playgrounds. Simply rename the `index.js` file to `index.ts` and the code will be transparently compiled for you as you code.
+  
 ## v0.0.22 (12/18/2019)
 
 - Introduced the concept of a Gist "Web Playground", which allows you to do rapid prototyping of web front-end code, that's backed by a Gist
 
-  ![Playground](https://user-images.githubusercontent.com/116461/71146928-fe867300-21db-11ea-9244-9d1e865ddfba.gif)
+  ![Playground](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
 - Updated the `Delete Gist` command, to automatically close all opened editors that were associated with the deleted gist
 - Fixed a bug where the `Gists` tree view sometimes not rendering properly

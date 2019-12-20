@@ -70,7 +70,7 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
 
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript, you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
-![Playgrounds](https://user-images.githubusercontent.com/116461/71146928-fe867300-21db-11ea-9244-9d1e865ddfba.gif)
+![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
 Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist.
 

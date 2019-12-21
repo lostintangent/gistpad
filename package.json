@@ -219,7 +219,7 @@
       },
       {
         "command": "gistpad.openGist",
-        "title": "Open Gist Files",
+        "title": "Open Gist",
         "category": "GistPad"
       },
       {

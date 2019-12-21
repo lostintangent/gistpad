@@ -1,3 +1,8 @@
+## v0.0.24 (12/21/2019)
+
+- Added support for web playgrounds without HTML and/or CSS files. If you don't need them (e.g. because you're primarily using playgrounds for JS dev), then you can delete the files from the playground and everything will still work. Additionally, you can set the `GistPad > Playground: Include Stylesheet` or `GistPad > PlayGround: Include Markup` settings to `false` in order to suppress these files from future playgrounds.
+- Fixed markdown files to open in edit mode by default as opposed to preview mode.
+
 ## v0.0.23 (12/18/2019)
 
 - Added support for TypeScript to web playgrounds. Simply rename the `index.js` file to `index.ts` and the code will be transparently compiled for you as you code. Additionally, you can set the `GistPad: Playground Script Language` setting to `typescript` in order to create an `index.ts` file for all new playgrounds.

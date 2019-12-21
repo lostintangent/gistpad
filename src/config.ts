@@ -10,8 +10,12 @@ export async function get(
 export async function get(
   key: "pasteScreenshotType"
 ): Promise<"file" | "base64">;
+export async function get(key: "playground.includeMarkup"): Promise<boolean>;
 export async function get(
-  key: "playgroundScriptLanguage"
+  key: "playground.includeStylesheet"
+): Promise<boolean>;
+export async function get(
+  key: "playground.scriptLanguage"
 ): Promise<"javascript" | "typescript">;
 export async function get(key: "showCommentThread"): Promise<string>;
 export async function get(key: any) {

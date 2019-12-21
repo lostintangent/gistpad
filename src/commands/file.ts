@@ -125,7 +125,7 @@ export function registerFileCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_ID}.openGistFile`,
       async (uri: Uri) => {
-        openGistFile(uri);
+        openGistFile(uri, false);
       }
     )
   );

@@ -107,15 +107,15 @@ export async function openGist(id: string, isNew: boolean = false) {
       .forEach(async ([_, file], index) => {
         const uri = fileNameToUri(id, file.filename!);
 
-        if (!isNew && path.extname(file.filename!) === ".md") {
-          commands.executeCommand("markdown.showPreview", uri);
-        } else {
-          // TODO: Improve the view column arrangement for more than 2 files
-          await window.showTextDocument(uri, {
-            preview: false,
-            viewColumn: ViewColumn.Beside
-          });
-        }
+        //if (!isNew && path.extname(file.filename!) === ".md") {
+        //  commands.executeCommand("markdown.showPreview", uri);
+        //} else {
+        // TODO: Improve the view column arrangement for more than 2 files
+        await window.showTextDocument(uri, {
+          preview: false,
+          viewColumn: ViewColumn.Beside
+        });
+        //}
       });
   }
 }

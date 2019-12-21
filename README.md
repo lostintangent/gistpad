@@ -76,6 +76,8 @@ Since the playground is backed by a Gist, your changes are saved and shareable w
 
 If you'd prefer to write TypeScript instead of JavaScript, simply rename the `index.js` file to `index.ts`, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript`, and all new playgrounds will include an `index.ts` file by default.
 
+Finally, if you don't want/need HTML and/or CSS as part of your playgrounds, you can simply delete those files. If you want to supress these files when creating new playgrounds (e.g. because you're using React with "CSS in JS"), then you can set the `GistPad > Playground: Include Stylesheet` and/or `GistPad > Playground: Include Markup` settings to `false`.
+
 ## GistLog
 
 In addition to being able to use Gists to share code snippets/files, you can also use it as a mini-blog, thanks to integration with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new Gist that includes two files: `blog.md` and `gistlog.yml`.
@@ -146,7 +148,11 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `markdown` _(default)_: the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
-* `GistPad: Playground Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
+* `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds.
+
+* `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`index.css`) when creating new web playgrounds.
+
+* `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `javascript` _(default)_: Will result in an `index.js` file being created whenever you create a new web playground.
   - `typescript`: Will result in an `index.ts` file being created whenever you create a new web playground.

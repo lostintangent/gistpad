@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.23",
+  "version": "0.0.24",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -73,7 +73,17 @@
           ],
           "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
         },
-        "gistpad.playgroundScriptLanguage": {
+        "gistpad.playground.includeMarkup": {
+          "default": "true",
+          "type": "boolean",
+          "description": "Specifies whether to include a markup file (index.html) when creating new web playgrounds."
+        },
+        "gistpad.playground.includeStylesheet": {
+          "default": "true",
+          "type": "boolean",
+          "description": "Specifies whether to include a stylesheet file (index.css) when creating new web playgrounds."
+        },
+        "gistpad.playground.scriptLanguage": {
           "default": "javascript",
           "enum": [
             "javascript",

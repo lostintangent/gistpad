@@ -9,25 +9,11 @@ import { newGist } from "../store/actions";
 import { closeGistFiles, fileNameToUri } from "../utils";
 import { PlaygroundWebview } from "../webView";
 
-async function generateNewPlaygroundFiles() {
-  const playgroundScriptLanguage = await config.get("playgroundScriptLanguage");
-  const scriptFileName =
-    playgroundScriptLanguage === "javascript" ? "index.js" : "index.ts";
-  return [
-    {
-      filename: "index.html"
-    },
-    {
-      filename: scriptFileName
-    },
-    {
-      filename: "index.css"
-    },
-    {
-      filename: "playground.json"
-    }
-  ];
-}
+const MARKUP_FILE = "index.html";
+const PLAYGROUND_FILE = "playground.json";
+const SCRIPT_FILE = "index.js";
+const SCRIPT_FILE_TYPESCRIPT = "index.ts";
+const STYLESHEET_FILE = "index.css";
 
 const playgroundRegistry = new Map<string, vscode.WebviewPanel>();
 
@@ -35,6 +21,43 @@ export async function closeWebviewPanel(gistId: string) {
   if (playgroundRegistry.has(gistId)) {
     playgroundRegistry.get(gistId)!.dispose();
   }
+}
+
+async function generateNewPlaygroundFiles() {
+  const scriptLanguage = await config.get("playground.scriptLanguage");
+  const scriptFileName =
+    scriptLanguage === "javascript" ? SCRIPT_FILE : SCRIPT_FILE_TYPESCRIPT;
+
+  const files = [
+    {
+      filename: scriptFileName
+    },
+    {
+      filename: PLAYGROUND_FILE
+    }
+  ];
+
+  if (await config.get("playground.includeStylesheet")) {
+    files.unshift({
+      filename: STYLESHEET_FILE
+    });
+  }
+
+  if (await config.get("playground.includeMarkup")) {
+    files.unshift({
+      filename: MARKUP_FILE
+    });
+  }
+
+  return files;
+}
+
+function getScriptContent(document: vscode.TextDocument) {
+  let content = document.getText();
+  if (path.extname(document.uri.toString()).toLocaleLowerCase() === ".ts") {
+    content = typescript.transpile(content);
+  }
+  return content;
 }
 
 function isPlaygroundScriptDocument(gist: Gist, document: vscode.TextDocument) {
@@ -46,86 +69,122 @@ function isPlaygroundScriptDocument(gist: Gist, document: vscode.TextDocument) {
   return extension === ".js" || extension === ".ts";
 }
 
-function getScriptContent(document: vscode.TextDocument) {
-  let content = document.getText();
-  if (path.extname(document.uri.toString()).toLocaleLowerCase() === ".ts") {
-    content = typescript.transpile(content);
-  }
-  return content;
-}
-
-export async function openPlayground(gist: Gist) {
-  await vscode.commands.executeCommand("workbench.action.closeAllEditors");
-  await vscode.commands.executeCommand("vscode.setEditorLayout", {
+const EDITOR_LAYOUT = {
+  oneByOne: {
+    orientation: 0,
+    groups: [{}, {}]
+  },
+  oneByTwo: {
+    orientation: 0,
+    groups: [
+      { orientation: 1, groups: [{}, {}], size: 0.5 },
+      { groups: [{}], size: 0.5 }
+    ]
+  },
+  twoByTwo: {
     groups: [
       { groups: [{}, {}], size: 0.5 },
       { groups: [{}, {}], size: 0.5 }
     ]
-  });
+  }
+};
 
-  const htmlEditor = await vscode.window.showTextDocument(
-    fileNameToUri(gist.id, "index.html"),
-    {
-      preview: false,
-      viewColumn: vscode.ViewColumn.One,
-      preserveFocus: true
-    }
-  );
+export async function openPlayground(gist: Gist) {
+  const includesMarkup = Object.keys(gist.files).includes(MARKUP_FILE);
+  const includesStylesheet = Object.keys(gist.files).includes(STYLESHEET_FILE);
 
-  const scriptFile = Object.keys(gist.files).includes("index.ts")
-    ? "index.ts"
-    : "index.js";
+  const scriptFile = Object.keys(gist.files).includes(SCRIPT_FILE_TYPESCRIPT)
+    ? SCRIPT_FILE_TYPESCRIPT
+    : SCRIPT_FILE;
+
+  let editorLayout: any;
+  if (includesMarkup && includesStylesheet) {
+    editorLayout = EDITOR_LAYOUT.twoByTwo;
+  } else if (includesMarkup || includesStylesheet) {
+    editorLayout = EDITOR_LAYOUT.oneByTwo;
+  } else {
+    editorLayout = EDITOR_LAYOUT.oneByOne;
+  }
+
+  await vscode.commands.executeCommand("workbench.action.closeAllEditors");
+  await vscode.commands.executeCommand("vscode.setEditorLayout", editorLayout);
+
+  const availableViewColumns = [
+    vscode.ViewColumn.One,
+    vscode.ViewColumn.Two,
+    vscode.ViewColumn.Three,
+    vscode.ViewColumn.Four
+  ];
+
+  let htmlEditor: vscode.TextEditor;
+  if (includesMarkup) {
+    htmlEditor = await vscode.window.showTextDocument(
+      fileNameToUri(gist.id, MARKUP_FILE),
+      {
+        preview: false,
+        viewColumn: availableViewColumns.shift(),
+        preserveFocus: true
+      }
+    );
+  }
 
   const jsEditor = await vscode.window.showTextDocument(
     fileNameToUri(gist.id, scriptFile),
     {
       preview: false,
-      viewColumn: vscode.ViewColumn.Two,
+      viewColumn: availableViewColumns.shift(),
       preserveFocus: false
     }
   );
 
-  const cssEditor = await vscode.window.showTextDocument(
-    fileNameToUri(gist.id, "index.css"),
-    {
-      preview: false,
-      viewColumn: vscode.ViewColumn.Three,
-      preserveFocus: true
-    }
-  );
+  let cssEditor: vscode.TextEditor;
+  if (includesStylesheet) {
+    cssEditor = await vscode.window.showTextDocument(
+      fileNameToUri(gist.id, STYLESHEET_FILE),
+      {
+        preview: false,
+        viewColumn: availableViewColumns.shift(),
+        preserveFocus: true
+      }
+    );
+  }
 
   const webViewPanel = vscode.window.createWebviewPanel(
     "gistpad.playgroundPreview",
     "Preview",
-    { viewColumn: vscode.ViewColumn.Four, preserveFocus: true },
+    { viewColumn: availableViewColumns.shift()!, preserveFocus: true },
     { enableScripts: true }
   );
-
-  webViewPanel.onDidDispose(() => {
-    playgroundRegistry.delete(gist.id);
-    closeGistFiles(gist);
-  });
 
   playgroundRegistry.set(gist.id, webViewPanel);
 
   const htmlView = new PlaygroundWebview(webViewPanel.webview);
 
-  vscode.workspace.onDidChangeTextDocument(
+  const documentChangeDisposeable = vscode.workspace.onDidChangeTextDocument(
     debounce(({ document }) => {
-      if (document.uri === htmlEditor.document.uri) {
+      if (includesMarkup && document.uri === htmlEditor.document.uri) {
         htmlView.updateHTML(document.getText());
       } else if (isPlaygroundScriptDocument(gist, document)) {
         htmlView.updateJavaScript(getScriptContent(document));
-      } else if (document.uri === cssEditor.document.uri) {
+      } else if (
+        includesStylesheet &&
+        document.uri === cssEditor!.document.uri
+      ) {
         htmlView.updateCSS(document.getText());
       }
     }),
     500
   );
 
-  htmlView.updateHTML(htmlEditor.document.getText());
+  webViewPanel.onDidDispose(() => {
+    documentChangeDisposeable.dispose();
+    playgroundRegistry.delete(gist.id);
+    closeGistFiles(gist);
+  });
+
+  htmlView.updateHTML(includesMarkup ? htmlEditor!.document.getText() : "");
   htmlView.updateJavaScript(getScriptContent(jsEditor.document));
-  htmlView.updateCSS(cssEditor.document.getText());
+  htmlView.updateCSS(includesStylesheet ? cssEditor!.document.getText() : "");
 }
 
 export async function registerPlaygroundCommands(

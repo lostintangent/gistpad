@@ -8,6 +8,7 @@ import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import { closeGistFiles, fileNameToUri } from "../utils";
 import { PlaygroundWebview } from "../webView";
+import { addPlaygroundDependecyCommand } from "./playgroundDependencies";
 
 const MARKUP_FILE = "index.html";
 const PLAYGROUND_FILE = "playground.json";
@@ -69,6 +70,15 @@ function isPlaygroundScriptDocument(gist: Gist, document: vscode.TextDocument) {
   return extension === ".js" || extension === ".ts";
 }
 
+function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
+  if (gist.id !== document.uri.authority) {
+    return false;
+  }
+
+  const fileName = path.basename(document.uri.toString().toLowerCase());
+  return fileName === "playground.json";
+}
+
 const EDITOR_LAYOUT = {
   oneByOne: {
     orientation: 0,
@@ -128,11 +138,21 @@ export async function openPlayground(gist: Gist) {
     );
   }
 
+  const jsViewColumn = availableViewColumns.shift();
+  const manifestEditor = await vscode.window.showTextDocument(
+    fileNameToUri(gist.id, PLAYGROUND_FILE),
+    {
+      preview: false,
+      viewColumn: jsViewColumn,
+      preserveFocus: false
+    }
+  );
+
   const jsEditor = await vscode.window.showTextDocument(
     fileNameToUri(gist.id, scriptFile),
     {
       preview: false,
-      viewColumn: availableViewColumns.shift(),
+      viewColumn: jsViewColumn,
       preserveFocus: false
     }
   );
@@ -166,6 +186,8 @@ export async function openPlayground(gist: Gist) {
         htmlView.updateHTML(document.getText());
       } else if (isPlaygroundScriptDocument(gist, document)) {
         htmlView.updateJavaScript(getScriptContent(document));
+      } else if (isPlaygroundManifestFile(gist, document)) {
+        htmlView.updateLibraryDependencies(document.getText());
       } else if (
         includesStylesheet &&
         document.uri === cssEditor!.document.uri
@@ -182,6 +204,7 @@ export async function openPlayground(gist: Gist) {
     closeGistFiles(gist);
   });
 
+  htmlView.updateLibraryDependencies(manifestEditor?.document.getText() || "");
   htmlView.updateHTML(includesMarkup ? htmlEditor!.document.getText() : "");
   htmlView.updateJavaScript(getScriptContent(jsEditor.document));
   htmlView.updateCSS(includesStylesheet ? cssEditor!.document.getText() : "");
@@ -218,6 +241,13 @@ export async function registerPlaygroundCommands(
 
         openPlayground(gist);
       }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_ID}.addPlaygroundDependency`,
+      addPlaygroundDependecyCommand
     )
   );
 }

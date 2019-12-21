@@ -1,10 +1,14 @@
+import { IPlaygroundJSON } from "src/interfaces/IPlaygroundJSON";
 import * as vscode from "vscode";
+import { getPlaygroundJson } from "../commands/playgroundDependencies";
 
 const STYLE_ID = "gistpad-playground-style";
 export class PlaygroundWebview {
   private html: string = "";
   private javascript: string = "";
   private css: string = "";
+
+  private manifest: IPlaygroundJSON | undefined;
 
   constructor(private webview: vscode.Webview) {
     webview.onDidReceiveMessage(({ command, value }) => {
@@ -15,6 +19,11 @@ export class PlaygroundWebview {
       }
     });
 
+    this.rebuildWebview();
+  }
+
+  public updateLibraryDependencies(playgroundText: string) {
+    this.manifest = getPlaygroundJson(playgroundText);
     this.rebuildWebview();
   }
 
@@ -33,6 +42,24 @@ export class PlaygroundWebview {
     this.webview.postMessage({ command: "updateCSS", value: css });
   }
 
+  private renderLibraryDependencies() {
+    if (!this.manifest) {
+      return "";
+    }
+
+    const { dependencies } = this.manifest;
+
+    if (!dependencies) {
+      return "";
+    }
+
+    const result = Object.entries(dependencies).map(([_, libraryLink]) => {
+      return `<script src="${libraryLink}"></script>`;
+    });
+
+    return result.join("");
+  }
+
   private rebuildWebview() {
     this.webview.html = `<html>
   <head>
@@ -42,6 +69,7 @@ export class PlaygroundWebview {
     <style id="${STYLE_ID}">
       ${this.css}
     </style>
+    ${this.renderLibraryDependencies()}
     <script>
       document.getElementById("_defaultStyles").remove();
 

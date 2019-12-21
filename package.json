@@ -314,6 +314,11 @@
         "command": "gistpad.pasteScreenshot",
         "title": "Paste Screenshot",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.addPlaygroundDependency",
+        "title": "Add a library",
+        "category": "GistPad"
       }
     ],
     "keybindings": {

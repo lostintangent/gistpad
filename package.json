@@ -263,6 +263,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.pasteScreenshot",
+        "title": "Paste Screenshot",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.refreshGists",
         "title": "Refresh Gists",
         "category": "GistPad",
@@ -296,6 +301,24 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.sortGistsAlphabetically",
+        "title": "Sort Gists Alphabetically",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/sort-alphabetical.svg",
+          "light": "images/light/sort-alphabetical.svg"
+        }
+      },
+      {
+        "command": "gistpad.sortGistsByUpdatedTime",
+        "title": "Sort Gists by Updated Time",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/sort-time.svg",
+          "light": "images/light/sort-time.svg"
+        }
+      },
+      {
         "command": "gistpad.starredGists",
         "title": "Starred Gists",
         "category": "GistPad"
@@ -308,11 +331,6 @@
       {
         "command": "gistpad.unstarGist",
         "title": "Unstar Gist",
-        "category": "GistPad"
-      },
-      {
-        "command": "gistpad.pasteScreenshot",
-        "title": "Paste Screenshot",
         "category": "GistPad"
       }
     ],
@@ -421,6 +439,14 @@
           "when": "false"
         },
         {
+          "command": "gistpad.sortGistsAlphabetically",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.sortGistsByUpdatedTime",
+          "when": "false"
+        },
+        {
           "command": "gistpad.signIn",
           "when": "gistpad:state != SignedIn"
         },
@@ -481,8 +507,13 @@
           "group": "navigation@2"
         },
         {
-          "command": "gistpad.followUser",
-          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
+          "command": "gistpad.sortGistsAlphabetically",
+          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn && gistpad:sortOrder == updatedTime",
+          "group": "navigation@3"
+        },
+        {
+          "command": "gistpad.sortGistsByUpdatedTime",
+          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn && gistpad:sortOrder == alphabetical",
           "group": "navigation@3"
         },
         {

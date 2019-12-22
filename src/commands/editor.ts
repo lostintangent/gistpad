@@ -62,7 +62,7 @@ async function newGistWithFile(
 
 async function promptForGistSelection(filename: string, contents: string) {
   const gists = await listGists();
-  const gistItems = gists.map(gist => {
+  const gistItems = gists.map((gist) => {
     return <GistQuickPickItem>{
       label: getGistLabel(gist),
       description: getGistDescription(gist),
@@ -153,7 +153,7 @@ export function registerEditorCommands(context: ExtensionContext) {
         await ensureAuthenticated();
 
         const gists = await listGists();
-        const gistItems = gists.map(gist => ({
+        const gistItems = gists.map((gist) => ({
           label: getGistLabel(gist),
           description: getGistDescription(gist),
           id: gist.id
@@ -166,7 +166,7 @@ export function registerEditorCommands(context: ExtensionContext) {
           return;
         }
 
-        const gist = gists.find(gist => gist.id === selectedGist!.id);
+        const gist = gists.find((gist) => gist.id === selectedGist!.id);
 
         const fileItems = Object.keys(gist!.files);
 

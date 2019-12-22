@@ -1,3 +1,7 @@
+## v0.0.25 (?)
+
+- Added the ability to sort Gists alphabetically, in addition to the default sort behavior of updated time.
+  
 ## v0.0.24 (12/21/2019)
 
 - Added support for web playgrounds without HTML and/or CSS files. If you don't need them (e.g. because you're primarily using playgrounds for JS dev), then you can delete the files from the playground and everything will still work. Additionally, you can set the `GistPad > Playground: Include Stylesheet` or `GistPad > PlayGround: Include Markup` settings to `false` in order to suppress these files from future playgrounds.

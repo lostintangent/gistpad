@@ -50,7 +50,7 @@ export async function addGistFiles(id: string, fileNames: string[]) {
   const newGists = store.gists.filter((gist) => gist.id !== id);
   newGists.push(response.body);
 
-  store.gists = sortGists(newGists);
+  store.gists = newGists;
 }
 
 export async function changeDescription(id: string, description: string) {
@@ -141,9 +141,7 @@ export async function getGistComments(id: string): Promise<GistComment[]> {
   return response.body;
 }
 
-export async function listGists(
-  sortByDescription: boolean = false
-): Promise<Gist[]> {
+export async function listGists(): Promise<Gist[]> {
   const api = await getApi();
   const { pages } = await api.all();
   const gists: Gist[] = await pages.reduce(
@@ -151,7 +149,7 @@ export async function listGists(
     []
   );
 
-  return sortGists(gists, sortByDescription);
+  return sortGists(gists);
 }
 
 export async function listUserGists(username: string): Promise<Gist[]> {
@@ -249,7 +247,7 @@ export async function updateGist(
   const newGists = store.gists.filter((gist) => gist.id !== id);
   newGists.push(response.body);
 
-  store.gists = sortGists(newGists);
+  store.gists = newGists;
 }
 
 export async function unstarGist(id: string) {

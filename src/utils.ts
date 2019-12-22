@@ -11,7 +11,7 @@ import {
 } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
 import { FS_SCHEME } from "./constants";
-import { Gist, GistFile } from "./store";
+import { Gist, GistFile, SortOrder, store } from "./store";
 import { getGist } from "./store/actions";
 
 export function fileNameToUri(gistId: string, filename: string): Uri {
@@ -149,8 +149,8 @@ export function openGistAsWorkspace(id: string) {
   commands.executeCommand("vscode.openFolder", uri, false);
 }
 
-export function sortGists(gists: Gist[], sortByDescription: boolean = false) {
-  if (sortByDescription) {
+export function sortGists(gists: Gist[]) {
+  if (store.sortOrder === SortOrder.alphabetical) {
     return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
   } else {
     return gists.sort(

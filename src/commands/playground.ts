@@ -158,7 +158,9 @@ export async function openPlayground(gist: Gist) {
 
   playgroundRegistry.set(gist.id, webViewPanel);
 
-  const htmlView = new PlaygroundWebview(webViewPanel.webview);
+  const output = vscode.window.createOutputChannel("GistPad Playground");
+  const htmlView = new PlaygroundWebview(webViewPanel.webview, output);
+  output.show(false);
 
   const documentChangeDisposeable = vscode.workspace.onDidChangeTextDocument(
     debounce(({ document }) => {
@@ -173,13 +175,15 @@ export async function openPlayground(gist: Gist) {
         htmlView.updateCSS(document.getText());
       }
     }),
-    500
+    800
   );
 
   webViewPanel.onDidDispose(() => {
     documentChangeDisposeable.dispose();
     playgroundRegistry.delete(gist.id);
     closeGistFiles(gist);
+    output.dispose();
+    vscode.commands.executeCommand("workbench.action.closePanel");
   });
 
   htmlView.updateHTML(includesMarkup ? htmlEditor!.document.getText() : "");

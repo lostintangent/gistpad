@@ -6,12 +6,20 @@ export class PlaygroundWebview {
   private javascript: string = "";
   private css: string = "";
 
-  constructor(private webview: vscode.Webview) {
+  constructor(private webview: vscode.Webview, output: vscode.OutputChannel) {
     webview.onDidReceiveMessage(({ command, value }) => {
-      if (command === "alert") {
-        if (value) {
-          vscode.window.showInformationMessage(value);
-        }
+      switch (command) {
+        case "alert":
+          if (value) {
+            vscode.window.showInformationMessage(value);
+          }
+          break;
+        case "clear":
+          output.clear();
+          break;
+        case "log":
+          output.appendLine(value);
+          break;
       }
     });
 
@@ -57,6 +65,20 @@ export class PlaygroundWebview {
       window.alert = (message) => {
         vscode.postMessage({
           command: "alert",
+          value: message
+        });
+      };
+
+      console.clear = () => {
+        vscode.postMessage({
+          command: "clear",
+          value: ""
+        });
+      };
+
+      console.log = (message) => {
+        vscode.postMessage({
+          command: "log",
           value: message
         });
       };

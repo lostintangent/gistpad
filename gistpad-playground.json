@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "GistPad schema for the playground.json file",
+  "type": "object",
+  "definitions": {
+    "dependency": {
+      "description": "Dependencies.",
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "properties": {
+        "react": {
+          "type": "string",
+          "enum": ["https://google.com", "https://microsoft.com"]
+        }
+      }
+    }
+  },
+  "properties": {
+    "dependencies": {
+      "$ref": "#/definitions/dependency"
+    }
+  }
+}

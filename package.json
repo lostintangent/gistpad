@@ -472,6 +472,10 @@
         {
           "command": "gistpad.pasteScreenshot",
           "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.addPlaygroundDependency",
+          "when": "resourceScheme == gist && resourceFilename == playground.json"
         }
       ],
       "view/title": [
@@ -637,6 +641,10 @@
         {
           "command": "gistpad.pasteScreenshot",
           "when": "resourceScheme == gist && resourceLangId == markdown"
+        },
+        {
+          "command": "gistpad.addPlaygroundDependency",
+          "when": "resourceScheme == gist && resourceFilename == playground.json"
         }
       ],
       "comments/comment/title": [
@@ -693,7 +701,13 @@
           "icon": "images/activity-bar-icon.svg"
         }
       ]
-    }
+    },
+    "jsonValidation": [
+      {
+        "fileMatch": "playground.json",
+        "url": "http://localhost/gistpad.json"
+      }
+    ]
   },
   "scripts": {
     "vscode:prepublish": "npm run build:webpack",

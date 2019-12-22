@@ -103,8 +103,7 @@
         }
       }
     },
-    "commands": [
-      {
+    "commands": [{
         "command": "gistpad.addActiveFile",
         "title": "Add Active File",
         "category": "GistPad"
@@ -328,8 +327,7 @@
       "when": "resourceScheme == gist && resourceLangId == markdown"
     },
     "menus": {
-      "commandPalette": [
-        {
+      "commandPalette": [{
           "command": "gistpad.addActiveFile",
           "when": "false"
         },
@@ -478,8 +476,7 @@
           "when": "resourceScheme == gist && resourceFilename == playground.json"
         }
       ],
-      "view/title": [
-        {
+      "view/title": [{
           "command": "gistpad.newPublicGist",
           "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
           "group": "navigation@1"
@@ -500,8 +497,7 @@
           "group": "navigation@4"
         }
       ],
-      "view/item/context": [
-        {
+      "view/item/context": [{
           "command": "gistpad.newPublicGist",
           "when": "viewItem == gists",
           "group": "new@1"
@@ -622,14 +618,11 @@
           "group": "manage@2"
         }
       ],
-      "explorer/context": [
-        {
-          "command": "gistpad.addFileToGist",
-          "when": "!explorerResourceIsFolder"
-        }
-      ],
-      "editor/context": [
-        {
+      "explorer/context": [{
+        "command": "gistpad.addFileToGist",
+        "when": "!explorerResourceIsFolder"
+      }],
+      "editor/context": [{
           "command": "gistpad.addFileToGist"
         },
         {
@@ -647,8 +640,7 @@
           "when": "resourceScheme == gist && resourceFilename == playground.json"
         }
       ],
-      "comments/comment/title": [
-        {
+      "comments/comment/title": [{
           "command": "gistpad.editGistComment",
           "group": "group@1",
           "when": "commentController == gistpad && comment == canEdit"
@@ -659,15 +651,12 @@
           "when": "commentController == gistpad && comment == canEdit"
         }
       ],
-      "comments/comment/context": [
-        {
-          "command": "gistpad.saveGistComment",
-          "group": "inline@2",
-          "when": "commentController == gistpad"
-        }
-      ],
-      "comments/commentThread/context": [
-        {
+      "comments/comment/context": [{
+        "command": "gistpad.saveGistComment",
+        "group": "inline@2",
+        "when": "commentController == gistpad"
+      }],
+      "comments/commentThread/context": [{
           "command": "gistpad.addGistComment",
           "group": "inline",
           "when": "commentController == gistpad && commentThreadIsEmpty && gistpad:state == SignedIn"
@@ -680,34 +669,26 @@
       ]
     },
     "views": {
-      "explorer": [
-        {
-          "id": "gistpad.gists.explorer",
-          "name": "Gists"
-        }
-      ],
-      "gistpad": [
-        {
-          "id": "gistpad.gists",
-          "name": "Gists"
-        }
-      ]
+      "explorer": [{
+        "id": "gistpad.gists.explorer",
+        "name": "Gists"
+      }],
+      "gistpad": [{
+        "id": "gistpad.gists",
+        "name": "Gists"
+      }]
     },
     "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "gistpad",
-          "title": "GistPad",
-          "icon": "images/activity-bar-icon.svg"
-        }
-      ]
+      "activitybar": [{
+        "id": "gistpad",
+        "title": "GistPad",
+        "icon": "images/activity-bar-icon.svg"
+      }]
     },
-    "jsonValidation": [
-      {
-        "fileMatch": "playground.json",
-        "url": "http://localhost/gistpad.json"
-      }
-    ]
+    "jsonValidation": [{
+      "fileMatch": "playground.json",
+      "url": "./gistpad-playground.json"
+    }]
   },
   "scripts": {
     "vscode:prepublish": "npm run build:webpack",

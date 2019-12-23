@@ -279,6 +279,10 @@ export async function openPlayground(gist: Gist) {
         htmlView.updateJavaScript(document, runOnEdit);
       } else if (isPlaygroundManifestFile(gist, document)) {
         htmlView.updateManifest(document.getText(), runOnEdit);
+
+        // TODO: Only update the JS if the manifest change
+        // actually impacts it (e.g. adding/removing react)
+        htmlView.updateJavaScript(document, runOnEdit);
       } else if (
         includesStylesheet &&
         document.uri === cssEditor!.document.uri

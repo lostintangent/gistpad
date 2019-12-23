@@ -85,11 +85,11 @@ Since the playground is backed by a Gist, your changes are saved and shareable w
 
 ### TypeScript
 
-If you'd prefer to write TypeScript instead of JavaScript, simply rename the `index.js` file to `index.ts`, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
+If you'd prefer to write TypeScript instead of JavaScript, simply rename the `index.js` file to `index.ts` (or `index.tsx`) within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
 
 ### React
 
-If you set the `GistPad: Playground Script Language` setting to `javascriptreact` or `typescriptreact`, then all new playgrounds will automatically include the following libraries, and will automatically compile JSX for you: `react` and `react-dom`. Additionally, if you manually add the `react` library to your gist's `playground.json` file, then even `*.js` files can include JSX, since it will be automatically compiled.
+If you set the `GistPad: Playground Script Language` setting to `javascriptreact` or `typescriptreact`, then all new playgrounds will automatically include the `react` and `react-dom` libraries, and will automatically compile JSX for you. Additionally, if you manually add the `react` library to your gist's `playground.json` file, then even `*.js` files can include JSX, since it will be automatically compiled.
 
 ## GistLog
 

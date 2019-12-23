@@ -686,6 +686,7 @@
     "watch": "tsc -watch -p ./",
     "build:webpack": "webpack --config ./webpack/webpack.node.config.js",
     "watch:webpack": "webpack --watch --progress --config ./webpack/webpack.node.config.js",
+    "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "test": "npm run compile && node ./node_modules/vscode/bin/test"
   },

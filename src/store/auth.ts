@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execGitCredentialFill } from "@abstractions/gitCredentialFill";
 import * as keytarType from "keytar";
 import { commands, env, window } from "vscode";
 import { store } from ".";
@@ -65,19 +65,9 @@ async function attemptGitLogin(): Promise<boolean> {
     return false;
   }
 
-  // See here for more details: https://git-scm.com/docs/git-credential
-  const input = `protocol=https
-host=github.com
-
-`;
-
   try {
-    const response = execSync("git credential fill", {
-      input,
-      encoding: "utf8"
-    });
-    const token = response.split("password=")[1].trim();
-    if (token.length > 0 && (await testToken(token))) {
+    const token = execGitCredentialFill();
+    if (token && token.length > 0 && (await testToken(token))) {
       await keytar.setPassword(SERVICE, ACCOUNT, token);
       return true;
     }

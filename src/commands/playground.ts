@@ -11,9 +11,22 @@ import { PlaygroundWebview } from "../webView";
 
 const MARKUP_FILE = "index.html";
 const PLAYGROUND_FILE = "playground.json";
-const SCRIPT_FILE = "index.js";
-const SCRIPT_FILE_TYPESCRIPT = "index.ts";
 const STYLESHEET_FILE = "index.css";
+
+const ScriptLanguage = {
+  javascript: ".js",
+  javascriptreact: ".jsx",
+  typescript: ".ts",
+  typescriptreact: ".tsx"
+};
+
+const TYPESCRIPT_EXTENSIONS = [
+  ScriptLanguage.javascriptreact,
+  ScriptLanguage.typescript,
+  ScriptLanguage.typescriptreact
+];
+
+const SCRIPT_EXTENSIONS = [ScriptLanguage.javascript, ...TYPESCRIPT_EXTENSIONS];
 
 const playgroundRegistry = new Map<string, vscode.WebviewPanel>();
 
@@ -25,8 +38,7 @@ export async function closeWebviewPanel(gistId: string) {
 
 async function generateNewPlaygroundFiles() {
   const scriptLanguage = await config.get("playground.scriptLanguage");
-  const scriptFileName =
-    scriptLanguage === "javascript" ? SCRIPT_FILE : SCRIPT_FILE_TYPESCRIPT;
+  const scriptFileName = `index${ScriptLanguage[scriptLanguage]}`;
 
   const files = [
     {
@@ -54,8 +66,12 @@ async function generateNewPlaygroundFiles() {
 
 function getScriptContent(document: vscode.TextDocument) {
   let content = document.getText();
-  if (path.extname(document.uri.toString()).toLocaleLowerCase() === ".ts") {
-    content = typescript.transpile(content);
+  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
+  if (TYPESCRIPT_EXTENSIONS.includes(extension)) {
+    content = typescript.transpile(content, {
+      experimentalDecorators: true,
+      jsx: typescript.JsxEmit.React
+    });
   }
   return content;
 }
@@ -66,7 +82,7 @@ function isPlaygroundScriptDocument(gist: Gist, document: vscode.TextDocument) {
   }
 
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  return extension === ".js" || extension === ".ts";
+  return SCRIPT_EXTENSIONS.includes(extension);
 }
 
 const EDITOR_LAYOUT = {
@@ -93,9 +109,9 @@ export async function openPlayground(gist: Gist) {
   const includesMarkup = Object.keys(gist.files).includes(MARKUP_FILE);
   const includesStylesheet = Object.keys(gist.files).includes(STYLESHEET_FILE);
 
-  const scriptFile = Object.keys(gist.files).includes(SCRIPT_FILE_TYPESCRIPT)
-    ? SCRIPT_FILE_TYPESCRIPT
-    : SCRIPT_FILE;
+  const scriptFile = Object.keys(gist.files).find((file) =>
+    SCRIPT_EXTENSIONS.includes(path.extname(file))
+  );
 
   let editorLayout: any;
   if (includesMarkup && includesStylesheet) {
@@ -129,7 +145,7 @@ export async function openPlayground(gist: Gist) {
   }
 
   const jsEditor = await vscode.window.showTextDocument(
-    fileNameToUri(gist.id, scriptFile),
+    fileNameToUri(gist.id, scriptFile!),
     {
       preview: false,
       viewColumn: availableViewColumns.shift(),

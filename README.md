@@ -155,7 +155,9 @@ In addition to the `Gists` view, this extension also provides the following comm
 * `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `javascript` _(default)_: Will result in an `index.js` file being created whenever you create a new web playground.
+  - `javascriptreact`: Will result in an `index.jsx` file being created whenever you create a new web playground.
   - `typescript`: Will result in an `index.ts` file being created whenever you create a new web playground.
+  - `typescriptreact`: Will result in an `index.tsx` file being created whenever you create a new web playground.
 
 * `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
 

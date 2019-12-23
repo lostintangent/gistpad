@@ -1,3 +1,11 @@
+## v0.0.26 (12/21/2019)
+
+- Added support for `console.log` in web playgrounds. When you open a playground, it will create a new `GistPad Playground` output pane and any calls to `console.log` within your playground will be written to it.
+
+  ![console](https://user-images.githubusercontent.com/116461/71329302-49540380-24d8-11ea-900c-afbf84b50da9.gif)
+
+- Added support for `.jsx` and `.tsx` files. If you rename your `index.js` file to one of these extensions, then you can include JSX in the file and it will be automatically compiled. Additionally, the `GistPad > Playground: Script Language` setting now supports two new values: `javascriptreact` and `typescriptreact`.
+
 ## v0.0.25 (12/21/2019)
 
 - Added the ability to sort Gists alphabetically, in addition to the default sort behavior of updated time.

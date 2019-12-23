@@ -33,7 +33,7 @@ const STATE_CONTEXT_KEY = `${EXTENSION_ID}:state`;
 const STATE_SIGNED_IN = "SignedIn";
 const STATE_SIGNED_OUT = "SignedOut";
 
-const SCOPE_HEADER = "X-OAuth-Scopes";
+const SCOPE_HEADER = "x-oauth-scopes";
 const GIST_SCOPE = "gist";
 
 async function testToken(token: string) {
@@ -41,7 +41,9 @@ async function testToken(token: string) {
   const github = new GitHub({ apiurl, token });
   try {
     const response = await github.get("/user");
-    const scopeHeaderIndex = response.rawHeaders.indexOf(SCOPE_HEADER);
+    const scopeHeaderIndex = response.rawHeaders.findIndex(
+      (item: string) => item.toLowerCase() === SCOPE_HEADER
+    );
     if (scopeHeaderIndex === -1) {
       return false;
     }

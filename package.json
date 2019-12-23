@@ -4,6 +4,10 @@
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
   "version": "0.0.25",
+  "extensionKind": [
+    "web",
+    "workspace"
+  ],
   "icon": "images/icon.png",
   "repository": {
     "type": "git",

@@ -76,7 +76,7 @@ const libraryFilesToPickerOptions = (files: string[]) => {
   return result;
 };
 
-const defaultPlaygroundJSON = {
+export const defaultPlaygroundJSON = {
   libraries: [] as string[]
 } as const;
 

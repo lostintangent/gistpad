@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { getPlaygroundJson } from "../commands/addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "../commands/cdnjs";
+import { getScriptContent } from "../commands/playground";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 
 const STYLE_ID = "gistpad-playground-style";
@@ -31,8 +32,8 @@ export class PlaygroundWebview {
     this.rebuildWebview();
   }
 
-  public async updateLibraryDependencies(playgroundText: string) {
-    this.manifest = getPlaygroundJson(playgroundText);
+  public async updateManifest(playgroundJsonFile: string) {
+    this.manifest = getPlaygroundJson(playgroundJsonFile);
     await this.rebuildWebview();
   }
 
@@ -41,8 +42,8 @@ export class PlaygroundWebview {
     await this.rebuildWebview();
   }
 
-  public async updateJavaScript(javascript: string) {
-    this.javascript = javascript;
+  public async updateJavaScript(textDocument: vscode.TextDocument) {
+    this.javascript = getScriptContent(textDocument, this.manifest);
     await this.rebuildWebview();
   }
 

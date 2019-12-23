@@ -1,9 +1,10 @@
 import { debounce } from "debounce";
 import * as path from "path";
+import { IPlaygroundJSON } from "src/interfaces/IPlaygroundJSON";
 import * as typescript from "typescript";
 import * as vscode from "vscode";
 import * as config from "../config";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_ID, PLAYGROUND_JSON_FILE } from "../constants";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import { closeGistFiles, fileNameToUri } from "../utils";
@@ -12,7 +13,6 @@ import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
 const MARKUP_FILE = "index.html";
-const PLAYGROUND_FILE = "playground.json";
 const STYLESHEET_FILE = "index.css";
 
 const ScriptLanguage = {
@@ -47,7 +47,7 @@ async function generateNewPlaygroundFiles() {
       filename: scriptFileName
     },
     {
-      filename: PLAYGROUND_FILE
+      filename: PLAYGROUND_JSON_FILE
     }
   ];
 
@@ -66,13 +66,21 @@ async function generateNewPlaygroundFiles() {
   return files;
 }
 
-function getScriptContent(document: vscode.TextDocument) {
+export function getScriptContent(
+  document: vscode.TextDocument,
+  manifest: IPlaygroundJSON | undefined
+) {
   let content = document.getText();
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
   if (TYPESCRIPT_EXTENSIONS.includes(extension)) {
+    const jsx =
+      manifest && manifest.libraries.includes("react")
+        ? typescript.JsxEmit.React
+        : void 0;
+
     content = typescript.transpile(content, {
       experimentalDecorators: true,
-      jsx: typescript.JsxEmit.React
+      jsx
     });
   }
   return content;
@@ -93,7 +101,7 @@ function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
   }
 
   const fileName = path.basename(document.uri.toString().toLowerCase());
-  return fileName === "playground.json";
+  return fileName === PLAYGROUND_JSON_FILE;
 }
 
 const EDITOR_LAYOUT = {
@@ -157,7 +165,7 @@ export async function openPlayground(gist: Gist) {
 
   const jsViewColumn = availableViewColumns.shift();
   const manifestEditor = await vscode.window.showTextDocument(
-    fileNameToUri(gist.id, PLAYGROUND_FILE),
+    fileNameToUri(gist.id, PLAYGROUND_JSON_FILE),
     {
       preview: false,
       viewColumn: jsViewColumn,
@@ -204,9 +212,9 @@ export async function openPlayground(gist: Gist) {
       if (includesMarkup && document.uri === htmlEditor.document.uri) {
         htmlView.updateHTML(document.getText());
       } else if (isPlaygroundScriptDocument(gist, document)) {
-        htmlView.updateJavaScript(getScriptContent(document));
+        htmlView.updateJavaScript(document);
       } else if (isPlaygroundManifestFile(gist, document)) {
-        htmlView.updateLibraryDependencies(document.getText());
+        htmlView.updateManifest(document.getText());
       } else if (
         includesStylesheet &&
         document.uri === cssEditor!.document.uri
@@ -225,9 +233,9 @@ export async function openPlayground(gist: Gist) {
     vscode.commands.executeCommand("workbench.action.closePanel");
   });
 
-  htmlView.updateLibraryDependencies(manifestEditor?.document.getText() || "");
+  htmlView.updateManifest(manifestEditor?.document.getText() || "");
   htmlView.updateHTML(includesMarkup ? htmlEditor!.document.getText() : "");
-  htmlView.updateJavaScript(getScriptContent(jsEditor.document));
+  htmlView.updateJavaScript(jsEditor.document);
   htmlView.updateCSS(includesStylesheet ? cssEditor!.document.getText() : "");
 }
 

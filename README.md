@@ -91,6 +91,8 @@ If you'd prefer to write TypeScript instead of JavaScript, simply rename the `in
 
 If you set the `GistPad: Playground Script Language` setting to `javascriptreact` or `typescriptreact`, then all new playgrounds will automatically include the `react` and `react-dom` libraries, and will automatically compile JSX for you. Additionally, if you manually add the `react` library to your gist's `playground.json` file, then even `*.js` files can include JSX, since it will be automatically compiled.
 
+![React](https://user-images.githubusercontent.com/116461/71385501-eaa48d80-259c-11ea-9b53-51d925ca3428.gif)
+
 ## GistLog
 
 In addition to being able to use Gists to share code snippets/files, you can also use it as a mini-blog, thanks to integration with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new Gist that includes two files: `blog.md` and `gistlog.yml`.

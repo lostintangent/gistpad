@@ -87,7 +87,9 @@
           "default": "javascript",
           "enum": [
             "javascript",
-            "typescript"
+            "javascriptreact",
+            "typescript",
+            "typescriptreact"
           ],
           "description": "Specifies the default scripting language to use when creating new web playgrounds."
         },

@@ -16,7 +16,7 @@ export async function get(
 ): Promise<boolean>;
 export async function get(
   key: "playground.scriptLanguage"
-): Promise<"javascript" | "typescript">;
+): Promise<"javascript" | "javascriptreact" | "typescript" | "typescriptreact">;
 export async function get(key: "showCommentThread"): Promise<string>;
 export async function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

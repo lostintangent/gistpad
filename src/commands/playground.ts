@@ -13,9 +13,22 @@ import { getCDNJSLibraries } from "./cdnjs";
 
 const MARKUP_FILE = "index.html";
 const PLAYGROUND_FILE = "playground.json";
-const SCRIPT_FILE = "index.js";
-const SCRIPT_FILE_TYPESCRIPT = "index.ts";
 const STYLESHEET_FILE = "index.css";
+
+const ScriptLanguage = {
+  javascript: ".js",
+  javascriptreact: ".jsx",
+  typescript: ".ts",
+  typescriptreact: ".tsx"
+};
+
+const TYPESCRIPT_EXTENSIONS = [
+  ScriptLanguage.javascriptreact,
+  ScriptLanguage.typescript,
+  ScriptLanguage.typescriptreact
+];
+
+const SCRIPT_EXTENSIONS = [ScriptLanguage.javascript, ...TYPESCRIPT_EXTENSIONS];
 
 const playgroundRegistry = new Map<string, vscode.WebviewPanel>();
 
@@ -27,8 +40,7 @@ export async function closeWebviewPanel(gistId: string) {
 
 async function generateNewPlaygroundFiles() {
   const scriptLanguage = await config.get("playground.scriptLanguage");
-  const scriptFileName =
-    scriptLanguage === "javascript" ? SCRIPT_FILE : SCRIPT_FILE_TYPESCRIPT;
+  const scriptFileName = `index${ScriptLanguage[scriptLanguage]}`;
 
   const files = [
     {
@@ -56,8 +68,12 @@ async function generateNewPlaygroundFiles() {
 
 function getScriptContent(document: vscode.TextDocument) {
   let content = document.getText();
-  if (path.extname(document.uri.toString()).toLocaleLowerCase() === ".ts") {
-    content = typescript.transpile(content);
+  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
+  if (TYPESCRIPT_EXTENSIONS.includes(extension)) {
+    content = typescript.transpile(content, {
+      experimentalDecorators: true,
+      jsx: typescript.JsxEmit.React
+    });
   }
   return content;
 }
@@ -68,7 +84,7 @@ function isPlaygroundScriptDocument(gist: Gist, document: vscode.TextDocument) {
   }
 
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  return extension === ".js" || extension === ".ts";
+  return SCRIPT_EXTENSIONS.includes(extension);
 }
 
 function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
@@ -104,9 +120,9 @@ export async function openPlayground(gist: Gist) {
   const includesMarkup = Object.keys(gist.files).includes(MARKUP_FILE);
   const includesStylesheet = Object.keys(gist.files).includes(STYLESHEET_FILE);
 
-  const scriptFile = Object.keys(gist.files).includes(SCRIPT_FILE_TYPESCRIPT)
-    ? SCRIPT_FILE_TYPESCRIPT
-    : SCRIPT_FILE;
+  const scriptFile = Object.keys(gist.files).find((file) =>
+    SCRIPT_EXTENSIONS.includes(path.extname(file))
+  );
 
   let editorLayout: any;
   if (includesMarkup && includesStylesheet) {
@@ -150,7 +166,7 @@ export async function openPlayground(gist: Gist) {
   );
 
   const jsEditor = await vscode.window.showTextDocument(
-    fileNameToUri(gist.id, scriptFile),
+    fileNameToUri(gist.id, scriptFile!),
     {
       preview: false,
       viewColumn: jsViewColumn,
@@ -179,7 +195,9 @@ export async function openPlayground(gist: Gist) {
 
   playgroundRegistry.set(gist.id, webViewPanel);
 
-  const htmlView = new PlaygroundWebview(webViewPanel.webview);
+  const output = vscode.window.createOutputChannel("GistPad Playground");
+  const htmlView = new PlaygroundWebview(webViewPanel.webview, output);
+  output.show(false);
 
   const documentChangeDisposeable = vscode.workspace.onDidChangeTextDocument(
     debounce(({ document }) => {
@@ -196,13 +214,15 @@ export async function openPlayground(gist: Gist) {
         htmlView.updateCSS(document.getText());
       }
     }),
-    500
+    800
   );
 
   webViewPanel.onDidDispose(() => {
     documentChangeDisposeable.dispose();
     playgroundRegistry.delete(gist.id);
     closeGistFiles(gist);
+    output.dispose();
+    vscode.commands.executeCommand("workbench.action.closePanel");
   });
 
   htmlView.updateLibraryDependencies(manifestEditor?.document.getText() || "");

@@ -55,6 +55,10 @@ export class PlaygroundWebview {
     }
 
     const result = Object.entries(libraries).map(async ([_, libraryLink]) => {
+      if (!libraryLink || !libraryLink.trim()) {
+        return "";
+      }
+
       const isUrl = libraryLink.match(
         /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
       );

@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { getPlaygroundJson } from "../commands/addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "../commands/cdnjs";
 import { getScriptContent } from "../commands/playground";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
@@ -9,7 +8,6 @@ export class PlaygroundWebview {
   private html: string = "";
   private javascript: string = "";
   private css: string = "";
-
   private manifest: IPlaygroundJSON | undefined;
 
   constructor(private webview: vscode.Webview, output: vscode.OutputChannel) {
@@ -28,12 +26,10 @@ export class PlaygroundWebview {
           break;
       }
     });
-
-    this.rebuildWebview();
   }
 
-  public async updateManifest(playgroundJsonFile: string) {
-    this.manifest = getPlaygroundJson(playgroundJsonFile);
+  public async updateManifest(manifest: string) {
+    this.manifest = JSON.parse(manifest);
     await this.rebuildWebview();
   }
 
@@ -63,39 +59,28 @@ export class PlaygroundWebview {
       return "";
     }
 
-    const result = Object.entries(libraries).map(async ([_, libraryLink]) => {
-      if (!libraryLink || !libraryLink.trim()) {
+    const result = libraries.map(async (libraryURL) => {
+      if (!libraryURL || (libraryURL && !libraryURL.trim())) {
         return "";
       }
 
-      const isUrl = libraryLink.match(
+      const isUrl = libraryURL.match(
         /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
       );
 
       if (isUrl) {
-        return `<script src="${libraryLink}"></script>`;
+        return `<script src="${libraryURL}"></script>`;
       }
 
       const libraries = await getCDNJSLibraries();
-      const library = libraries.find((lib) => {
-        return lib.name === libraryLink;
-      });
+      const library = libraries.find((lib) => lib.name === libraryURL);
 
       if (library) {
         return `<script src="${library.latest}"></script>`;
       }
-
-      return `<script>
-        const vscode = acquireVsCodeApi();
-        vscode.postMessage({
-          command: "alert",
-          value: 'The library "${libraryLink}" not found.'
-        });
-      </script>`;
     });
 
     const scripts = (await Promise.all(result)).join("");
-
     return scripts;
   }
 

@@ -54,12 +54,10 @@ const includesReactLibraries = (libraries: string[]) => {
 
 const getManifestContent = (gist: Gist) => {
   const manifest = gist.files[PLAYGROUND_JSON_FILE].content!;
-
   if (includesReactFiles(gist)) {
     const parsedManifest = JSON.parse(manifest);
-
     if (!includesReactLibraries(parsedManifest.libraries)) {
-      parsedManifest.libraries.push(REACT_LIBRARIES);
+      parsedManifest.libraries.push(...REACT_LIBRARIES);
       parsedManifest.libraries = [...new Set(parsedManifest.libraries)];
 
       const content = JSON.stringify(parsedManifest, null, 2);
@@ -122,10 +120,15 @@ export function getScriptContent(
 
   const includesJsx = manifest && manifest.libraries.includes("react");
   if (TYPESCRIPT_EXTENSIONS.includes(extension) || includesJsx) {
-    content = typescript.transpile(content, {
-      experimentalDecorators: true,
-      jsx: includesJsx ? typescript.JsxEmit.React : void 0
-    });
+    const compilerOptions: typescript.CompilerOptions = {
+      experimentalDecorators: true
+    };
+
+    if (includesJsx || REACT_EXTENSIONS.includes(extension)) {
+      compilerOptions.jsx = typescript.JsxEmit.React;
+    }
+
+    content = typescript.transpile(content, compilerOptions);
   }
   return content;
 }

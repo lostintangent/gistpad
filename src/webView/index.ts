@@ -1,6 +1,7 @@
-import { IPlaygroundJSON } from "src/interfaces/IPlaygroundJSON";
 import * as vscode from "vscode";
-import { getPlaygroundJson } from "../commands/playgroundDependencies";
+import { getPlaygroundJson } from "../commands/addPlaygroundLibraryCommand";
+import { getCDNJSLibraries } from "../commands/cdnjs";
+import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 
 const STYLE_ID = "gistpad-playground-style";
 export class PlaygroundWebview {
@@ -22,19 +23,19 @@ export class PlaygroundWebview {
     this.rebuildWebview();
   }
 
-  public updateLibraryDependencies(playgroundText: string) {
+  public async updateLibraryDependencies(playgroundText: string) {
     this.manifest = getPlaygroundJson(playgroundText);
-    this.rebuildWebview();
+    await this.rebuildWebview();
   }
 
-  public updateHTML(html: string) {
+  public async updateHTML(html: string) {
     this.html = html;
-    this.rebuildWebview();
+    await this.rebuildWebview();
   }
 
-  public updateJavaScript(javascript: string) {
+  public async updateJavaScript(javascript: string) {
     this.javascript = javascript;
-    this.rebuildWebview();
+    await this.rebuildWebview();
   }
 
   public updateCSS(css: string) {
@@ -42,25 +43,52 @@ export class PlaygroundWebview {
     this.webview.postMessage({ command: "updateCSS", value: css });
   }
 
-  private renderLibraryDependencies() {
+  private async renderLibraryDependencies() {
     if (!this.manifest) {
       return "";
     }
 
-    const { dependencies } = this.manifest;
+    const { libraries } = this.manifest;
 
-    if (!dependencies) {
+    if (!libraries) {
       return "";
     }
 
-    const result = Object.entries(dependencies).map(([_, libraryLink]) => {
-      return `<script src="${libraryLink}"></script>`;
+    const result = Object.entries(libraries).map(async ([_, libraryLink]) => {
+      const isUrl = libraryLink.match(
+        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+      );
+
+      if (isUrl) {
+        return `<script src="${libraryLink}"></script>`;
+      }
+
+      const libraries = await getCDNJSLibraries();
+      const library = libraries.find((lib) => {
+        return lib.name === libraryLink;
+      });
+
+      if (library) {
+        return `<script src="${library.latest}"></script>`;
+      }
+
+      return `<script>
+        const vscode = acquireVsCodeApi();
+        vscode.postMessage({
+          command: "alert",
+          value: 'The library "${libraryLink}" not found.'
+        });
+      </script>`;
     });
 
-    return result.join("");
+    const scripts = (await Promise.all(result)).join("");
+
+    return scripts;
   }
 
-  private rebuildWebview() {
+  private async rebuildWebview() {
+    const libraryScripts = await this.renderLibraryDependencies();
+
     this.webview.html = `<html>
   <head>
     <style>
@@ -69,7 +97,7 @@ export class PlaygroundWebview {
     <style id="${STYLE_ID}">
       ${this.css}
     </style>
-    ${this.renderLibraryDependencies()}
+    ${libraryScripts}
     <script>
       document.getElementById("_defaultStyles").remove();
 

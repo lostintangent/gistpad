@@ -1,29 +1,26 @@
-import axios from "axios";
 import * as vscode from "vscode";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
-import { log } from "../logger";
+import {
+  getCDNJSLibraries,
+  getLibraryVersions,
+  ICDNJSLibrarayVersion,
+  ICDNJSLibrary
+} from "./cdnjs";
 
-const LIBRARIES_URL = "https://api.cdnjs.com/libraries";
-
-interface ICDNJSLibrary {
-  name: string;
-  latest: string;
-}
-
-const getLibraries = async () => {
-  try {
-    const libraries = await axios.get<{ results: ICDNJSLibrary[] }>(
-      LIBRARIES_URL,
-      {
-        responseType: "json"
-      }
-    );
-
-    return libraries.data.results;
-  } catch (e) {
-    throw new Error("Cannot get the libraries.");
-  }
-};
+const SUPPORTED_DEFAULT_LIBRARIES = [
+  "react",
+  "react-dom",
+  "vue",
+  "angular",
+  "redux",
+  "mobx",
+  "jquery",
+  "backone",
+  "ember",
+  "polymer",
+  "mithril",
+  "aurelia"
+];
 
 const librariesToPickerList = (libraries: ICDNJSLibrary[]) => {
   const result = libraries.map((library) => {
@@ -34,43 +31,6 @@ const librariesToPickerList = (libraries: ICDNJSLibrary[]) => {
   });
 
   return result;
-};
-
-interface ICDNJSLibrarayVersion {
-  version: string;
-  files: string[];
-}
-
-interface ICDNJSLibrarayManifest {
-  name: string;
-  description: string;
-  filename: string;
-  assets: ICDNJSLibrarayVersion[];
-}
-
-const getLibraryVersions = async (libraryName: string) => {
-  try {
-    const libraries = await axios.get<ICDNJSLibrarayManifest>(
-      `https://api.cdnjs.com/libraries/${libraryName}`,
-      {
-        responseType: "json"
-      }
-    );
-
-    const packageManifest = libraries.data;
-
-    return [
-      {
-        version: "latest",
-        files: [packageManifest.filename]
-      },
-      ...packageManifest.assets
-    ];
-  } catch (e) {
-    log.error(e);
-
-    return [];
-  }
 };
 
 const libraryVersionsToPickerOptions = (versions: ICDNJSLibrarayVersion[]) => {
@@ -117,7 +77,7 @@ const libraryFilesToPickerOptions = (files: string[]) => {
 };
 
 const defaultPlaygroundJSON = {
-  dependencies: {}
+  libraries: [] as string[]
 } as const;
 
 export const getPlaygroundJson = (text: string): IPlaygroundJSON => {
@@ -146,7 +106,8 @@ const addDependencyLink = async (libraryName: string, libraryUrl: string) => {
 
     const playgroundJSON = getPlaygroundJson(text);
 
-    playgroundJSON.dependencies[libraryName] = libraryUrl;
+    playgroundJSON.libraries.push(libraryUrl);
+    playgroundJSON.libraries = [...new Set(playgroundJSON.libraries)];
 
     const startPos = document.positionAt(0);
     const endPos = document.positionAt(text.length);
@@ -156,8 +117,16 @@ const addDependencyLink = async (libraryName: string, libraryUrl: string) => {
   });
 };
 
-export const addPlaygroundDependecyCommand = async () => {
-  const libraries = await getLibraries();
+const createLatestUrl = (libraryNameAnswer: any) => {
+  const { name, latest } = libraryNameAnswer.library;
+
+  const result = SUPPORTED_DEFAULT_LIBRARIES.indexOf(name) > -1 ? name : latest;
+
+  return result;
+};
+
+export const addPlaygroundLibraryCommand = async () => {
+  const libraries = await getCDNJSLibraries();
 
   const libraryNameAnswer = await vscode.window.showQuickPick(
     librariesToPickerList(libraries),
@@ -201,7 +170,7 @@ export const addPlaygroundDependecyCommand = async () => {
 
   const libraryUrl =
     libraryVersionAnswer.label === "latest"
-      ? libraryNameAnswer.library.latest
+      ? createLatestUrl(libraryNameAnswer)
       : createLibraryUrl(
           libraryNameAnswer.library.name,
           libraryVersionAnswer.label,

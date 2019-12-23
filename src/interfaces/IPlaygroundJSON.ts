@@ -1,3 +1,3 @@
 export interface IPlaygroundJSON {
-  dependencies: { [key: string]: string };
+  libraries: string[];
 }

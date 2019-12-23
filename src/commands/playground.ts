@@ -8,7 +8,8 @@ import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import { closeGistFiles, fileNameToUri } from "../utils";
 import { PlaygroundWebview } from "../webView";
-import { addPlaygroundDependecyCommand } from "./playgroundDependencies";
+import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
+import { getCDNJSLibraries } from "./cdnjs";
 
 const MARKUP_FILE = "index.html";
 const PLAYGROUND_FILE = "playground.json";
@@ -246,8 +247,10 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.addPlaygroundDependency`,
-      addPlaygroundDependecyCommand
+      `${EXTENSION_ID}.addPlaygroundLibrary`,
+      addPlaygroundLibraryCommand
     )
   );
+  // warm up libraries
+  await getCDNJSLibraries();
 }

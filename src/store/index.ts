@@ -66,6 +66,12 @@ export interface IStore {
   isLoading: boolean;
   isSignedIn: boolean;
   login: string;
+  sortOrder: SortOrder;
+}
+
+export enum SortOrder {
+  alphabetical = "alphabetical",
+  updatedTime = "updatedTime"
 }
 
 export const store: IStore = observable({
@@ -74,5 +80,6 @@ export const store: IStore = observable({
   followedUsers: [],
   isLoading: false,
   isSignedIn: false,
-  login: ""
+  login: "",
+  sortOrder: SortOrder.updatedTime
 });

@@ -10,6 +10,7 @@ import {
 } from "vscode";
 import { CommandId, EXTENSION_ID } from "../constants";
 import { log } from "../logger";
+import { SortOrder, store } from "../store";
 import {
   changeDescription,
   deleteGist,
@@ -291,7 +292,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
           const items = gists.map((g) => ({
             label: getGistLabel(g),
-            description: g.description,
+            description: getGistDescription(g),
             id: g.id
           }));
 
@@ -383,6 +384,18 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_ID}.refreshGists`, refreshGists)
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_ID}.sortGistsAlphabetically`, () => {
+      store.sortOrder = SortOrder.alphabetical;
+    })
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_ID}.sortGistsByUpdatedTime`, () => {
+      store.sortOrder = SortOrder.updatedTime;
+    })
   );
 
   context.subscriptions.push(

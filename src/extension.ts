@@ -12,12 +12,12 @@ import { registerTreeProvider } from "./tree";
 export async function activate(context: vscode.ExtensionContext) {
   log.setLoggingChannel(vscode.window.createOutputChannel("GistPad"));
 
-  initializeAuth();
   initializeProtocolHander();
-
-  registerCommands(context);
   registerFileSystemProvider(store);
+  registerCommands(context);
   registerTreeProvider(store, context.extensionPath);
   registerCommentController();
+
   initializeStorage(context);
+  initializeAuth();
 }

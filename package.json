@@ -23,6 +23,7 @@
   "activationEvents": [
     "onCommand:gistpad.addFileToGist",
     "onCommand:gistpad.addSelectionToGist",
+    "onCommand:gistpad.addPlaygroundLibrary",
     "onCommand:gistpad.deleteGist",
     "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
@@ -342,7 +343,7 @@
       },
       {
         "command": "gistpad.addPlaygroundLibrary",
-        "title": "Add library",
+        "title": "Add Library",
         "category": "GistPad"
       }
     ],

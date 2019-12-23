@@ -72,11 +72,24 @@ If you're building web applications, and want to create a quick playground envir
 
 ![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
+The playground also provides an output window in order to view any logs written via the `console.log` API. You can bring up the output window, as well as run the playground or open the Chrome Developer Tools, by clicking the respective command icon in the editor toolbar.
+
+<img width="503" src="https://user-images.githubusercontent.com/116461/71384593-0a38b780-2597-11ea-8bba-73f784f6ec76.png" />
+
+If you need to add any JavaScript libraries to your playground, simply open the gist's `playground.json` file, and add one of the following to the `libraries` property:
+
+- A URL that points at the JavaScript library you'd like to include. In order to simplify this, you can right-click the file as select `Add Library`. This will provide an interactive prompt for selecting a library from [CDNJS](https://cdnjs.com).
+- The name of a well-known library (e.g. React, Vue). In order to simplify this, you'll recieve auto-completion for these libraries as you edit the `libraries` property.
+
 Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you done with a playground, simply clone the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist.
 
-If you'd prefer to write TypeScript instead of JavaScript, simply rename the `index.js` file to `index.ts`, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript`, and all new playgrounds will include an `index.ts` file by default.
+### TypeScript
 
-Finally, if you don't want/need HTML and/or CSS as part of your playgrounds, you can simply delete those files. If you want to supress these files when creating new playgrounds (e.g. because you're using React with "CSS in JS"), then you can set the `GistPad > Playground: Include Stylesheet` and/or `GistPad > Playground: Include Markup` settings to `false`.
+If you'd prefer to write TypeScript instead of JavaScript, simply rename the `index.js` file to `index.ts`, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
+
+### React
+
+If you set the `GistPad: Playground Script Language` setting to `javascriptreact` or `typescriptreact`, then all new playgrounds will automatically include the following libraries, and will automatically compile JSX for you: `react` and `react-dom`. Additionally, if you manually add the `react` library to your gist's `playground.json` file, then even `*.js` files can include JSX, since it will be automatically compiled.
 
 ## GistLog
 
@@ -122,15 +135,17 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: New Gist (Secret)` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
-- `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a Gist workspace open, it will delete that and then close the folde
+- `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
 
-- `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
+* `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a Gist workspace open, it will delete that and then close the folde
 
-- `GistPad: Fork Gist` - Forks the currently opened Gist, and then opens it as a virtual workspace.
+* `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
 
-- `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
+* `GistPad: Fork Gist` - Forks the currently opened Gist, and then opens it as a virtual workspace.
 
-- `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
+* `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
+
+* `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
 
 ## Configuration Settings
 

@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.25",
+  "version": "0.0.26",
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
@@ -74,6 +74,15 @@
           ],
           "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
         },
+        "gistpad.playground.autoRun": {
+          "default": "onEdit",
+          "enum": [
+            "onEdit",
+            "onSave",
+            "never"
+          ],
+          "description": "Specifies when to automatically run the code for a playground."
+        },
         "gistpad.playground.includeMarkup": {
           "default": "true",
           "type": "boolean",
@@ -93,6 +102,11 @@
             "typescriptreact"
           ],
           "description": "Specifies the default scripting language to use when creating new web playgrounds."
+        },
+        "gistpad.playground.showConsole": {
+          "default": "false",
+          "type": "boolean",
+          "description": "Specifies whether to automatically show the console when opening a playground."
         },
         "gistpad.showCommentThread": {
           "default": "whenNotEmpty",
@@ -231,6 +245,24 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.openPlaygroundConsole",
+        "title": "Open Playground Console",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/console.svg",
+          "light": "images/light/console.svg"
+        }
+      },
+      {
+        "command": "gistpad.openPlaygroundDeveloperTools",
+        "title": "Open Playground Dev Tools",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/dev-tools.svg",
+          "light": "images/light/dev-tools.svg"
+        }
+      },
+      {
         "command": "gistpad.openProfile",
         "title": "Open Profile in GitHub",
         "category": "GistPad"
@@ -288,6 +320,15 @@
         "command": "gistpad.replyGistComment",
         "title": "Reply",
         "enablement": "!commentIsEmpty"
+      },
+      {
+        "command": "gistpad.runPlayground",
+        "title": "Run Playground",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/run.svg",
+          "light": "images/light/run.svg"
+        }
       },
       {
         "command": "gistpad.saveGistComment",
@@ -418,6 +459,18 @@
         {
           "command": "gistpad.openGistInGistLog",
           "when": "false"
+        },
+        {
+          "command": "gistpad.openPlaygroundConsole",
+          "when": "gistpad:inPlayground"
+        },
+        {
+          "command": "gistpad.openPlaygroundDeveloperTools",
+          "when": "gistpad:inPlayground"
+        },
+        {
+          "command": "gistpad.runPlayground",
+          "when": "gistpad:inPlayground"
         },
         {
           "command": "gistpad.openProfile",
@@ -684,6 +737,28 @@
         {
           "command": "gistpad.addPlaygroundLibrary",
           "when": "resourceScheme == gist && resourceFilename == playground.json"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "gistpad.runPlayground",
+          "when": "gistpad:inPlayground",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gistpad.openPlaygroundConsole",
+          "when": "gistpad:inPlayground",
+          "group": "navigation@2"
+        },
+        {
+          "command": "gistpad.openPlaygroundDeveloperTools",
+          "when": "gistpad:inPlayground",
+          "group": "navigation@3"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "command": "gistpad.addFileToGist"
         }
       ],
       "comments/comment/title": [

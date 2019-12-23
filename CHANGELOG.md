@@ -1,10 +1,18 @@
 ## v0.0.26 (12/21/2019)
 
+- Introduced the concept of playground libraries, which allow you to easily include JavaScript libraries into a playground. In order to simplify React-based playgrounds, `react` and `react-dom` will be automatically injected into React-based playgrounds.
+
 - Added support for `console.log` in web playgrounds. When you open a playground, it will create a new `GistPad Playground` output pane and any calls to `console.log` within your playground will be written to it.
 
   ![console](https://user-images.githubusercontent.com/116461/71329302-49540380-24d8-11ea-900c-afbf84b50da9.gif)
 
 - Added support for `.jsx` and `.tsx` files. If you rename your `index.js` file to one of these extensions, then you can include JSX in the file and it will be automatically compiled. Additionally, the `GistPad > Playground: Script Language` setting now supports two new values: `javascriptreact` and `typescriptreact`.
+
+- Added the `GistPad > Playground: Auto Run` setting, which allows you to control when playground code is run.
+
+- Added editor commands for running playgrounds, and opening the dev tools for the currently active playground. _Note: These commands onl appear when you're actively editing a playground_.
+
+- Added the `Add Document to Gist` command to the editor's context menu (e.g. when you right-click the editor tab)
 
 ## v0.0.25 (12/21/2019)
 

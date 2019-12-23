@@ -148,18 +148,26 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `markdown` _(default)_: the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
-* `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds.
+* `GistPad > Playground: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
 
-* `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`index.css`) when creating new web playgrounds.
+  - `onEdit` _(default)_: Will re-run the playground automatically as you type.
+  - `onSave`: Will re-run the playground when you save a file.
+  - `never`: Don't automatically re-run the playground, and instead, only run it when the `GistPad: Run Playground` command is executed.
 
-* `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
+- `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds.
+
+- `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`index.css`) when creating new web playgrounds.
+
+- `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `javascript` _(default)_: Will result in an `index.js` file being created whenever you create a new web playground.
   - `javascriptreact`: Will result in an `index.jsx` file being created whenever you create a new web playground.
   - `typescript`: Will result in an `index.ts` file being created whenever you create a new web playground.
   - `typescriptreact`: Will result in an `index.tsx` file being created whenever you create a new web playground.
 
-* `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
+- `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground.
+
+- `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
 
   - `always`: Always display the comment thread whenever you open a Gist file. You can manually collapse it as needed.
   - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.

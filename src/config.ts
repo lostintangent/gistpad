@@ -10,6 +10,9 @@ export async function get(
 export async function get(
   key: "pasteScreenshotType"
 ): Promise<"file" | "base64">;
+export async function get(
+  key: "playground.autoRun"
+): Promise<"onEdit" | "onSave" | "never">;
 export async function get(key: "playground.includeMarkup"): Promise<boolean>;
 export async function get(
   key: "playground.includeStylesheet"
@@ -17,6 +20,7 @@ export async function get(
 export async function get(
   key: "playground.scriptLanguage"
 ): Promise<"javascript" | "javascriptreact" | "typescript" | "typescriptreact">;
+export async function get(key: "playground.showConsole"): Promise<boolean>;
 export async function get(key: "showCommentThread"): Promise<string>;
 export async function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

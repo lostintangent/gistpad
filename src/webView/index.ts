@@ -3,7 +3,6 @@ import { getCDNJSLibraries } from "../commands/cdnjs";
 import { getScriptContent } from "../commands/playground";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 
-const STYLE_ID = "gistpad-playground-style";
 export class PlaygroundWebview {
   private html: string = "";
   private javascript: string = "";
@@ -28,24 +27,39 @@ export class PlaygroundWebview {
     });
   }
 
-  public async updateManifest(manifest: string) {
+  public async updateManifest(manifest: string, rebuild = false) {
     this.manifest = JSON.parse(manifest);
-    await this.rebuildWebview();
+
+    if (rebuild) {
+      await this.rebuildWebview();
+    }
   }
 
-  public async updateHTML(html: string) {
+  public async updateHTML(html: string, rebuild = false) {
     this.html = html;
-    await this.rebuildWebview();
+
+    if (rebuild) {
+      await this.rebuildWebview();
+    }
   }
 
-  public async updateJavaScript(textDocument: vscode.TextDocument) {
+  public async updateJavaScript(
+    textDocument: vscode.TextDocument,
+    rebuild = false
+  ) {
     this.javascript = getScriptContent(textDocument, this.manifest);
-    await this.rebuildWebview();
+
+    if (rebuild) {
+      await this.rebuildWebview();
+    }
   }
 
-  public updateCSS(css: string) {
+  public updateCSS(css: string, rebuild = false) {
     this.css = css;
-    this.webview.postMessage({ command: "updateCSS", value: css });
+
+    if (rebuild) {
+      this.webview.postMessage({ command: "updateCSS", value: css });
+    }
   }
 
   private async renderLibraryDependencies() {
@@ -84,15 +98,17 @@ export class PlaygroundWebview {
     return scripts;
   }
 
-  private async rebuildWebview() {
+  public async rebuildWebview() {
     const libraryScripts = await this.renderLibraryDependencies();
+
+    const styleId = `gistpad-playground-style-${Math.random()}`;
 
     this.webview.html = `<html>
   <head>
     <style>
       body { background-color: white; }
     </style>
-    <style id="${STYLE_ID}">
+    <style id="${styleId}">
       ${this.css}
     </style>
     ${libraryScripts}
@@ -100,7 +116,7 @@ export class PlaygroundWebview {
       document.getElementById("_defaultStyles").remove();
 
       const vscode = acquireVsCodeApi();
-      const style = document.getElementById("${STYLE_ID}");
+      const style = document.getElementById("${styleId}");
   
       window.addEventListener("message", ({ data }) => {    
         if (data.command === "updateCSS") {

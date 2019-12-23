@@ -4,7 +4,7 @@ import { IPlaygroundJSON } from "src/interfaces/IPlaygroundJSON";
 import * as typescript from "typescript";
 import * as vscode from "vscode";
 import * as config from "../config";
-import { EXTENSION_ID, PLAYGROUND_JSON_FILE } from "../constants";
+import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import { closeGistFiles, fileNameToUri } from "../utils";
@@ -30,11 +30,18 @@ const REACT_EXTENSIONS = [
 const TYPESCRIPT_EXTENSIONS = [ScriptLanguage.typescript, ...REACT_EXTENSIONS];
 const SCRIPT_EXTENSIONS = [ScriptLanguage.javascript, ...TYPESCRIPT_EXTENSIONS];
 
-const playgroundRegistry = new Map<string, vscode.WebviewPanel>();
+interface IPlayground {
+  gistId: string;
+  webView: PlaygroundWebview;
+  webViewPanel: vscode.WebviewPanel;
+  console: vscode.OutputChannel;
+}
+
+let activePlayground: IPlayground | null;
 
 export async function closeWebviewPanel(gistId: string) {
-  if (playgroundRegistry.has(gistId)) {
-    playgroundRegistry.get(gistId)!.dispose();
+  if (activePlayground && activePlayground.gistId === gistId) {
+    activePlayground.webViewPanel.dispose();
   }
 }
 
@@ -172,6 +179,8 @@ const EDITOR_LAYOUT = {
 };
 
 export async function openPlayground(gist: Gist) {
+  vscode.commands.executeCommand("setContext", "gistpad:inPlayground", true);
+
   const includesMarkup = Object.keys(gist.files).includes(MARKUP_FILE);
   const includesStylesheet = Object.keys(gist.files).includes(STYLESHEET_FILE);
 
@@ -238,48 +247,90 @@ export async function openPlayground(gist: Gist) {
     { enableScripts: true }
   );
 
-  playgroundRegistry.set(gist.id, webViewPanel);
-
   const output = vscode.window.createOutputChannel("GistPad Playground");
   const htmlView = new PlaygroundWebview(webViewPanel.webview, output);
-  output.show(false);
 
-  const documentChangeDisposeable = vscode.workspace.onDidChangeTextDocument(
+  if (await config.get("playground.showConsole")) {
+    output.show(false);
+  }
+
+  const autoRun = await config.get("playground.autoRun");
+  const runOnEdit = autoRun === "onEdit";
+
+  const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     debounce(({ document }) => {
       if (includesMarkup && document.uri === htmlEditor.document.uri) {
-        htmlView.updateHTML(document.getText());
+        htmlView.updateHTML(document.getText(), runOnEdit);
       } else if (isPlaygroundScriptDocument(gist, document)) {
         // If the user renamed the script file (e.g. from *.js to *.jsx)
         // than we need to update the manifest in case new libraries
         // need to be injected into the wevview (e.g. "react").
         if (jsEditor.document.uri.toString() !== document.uri.toString()) {
-          htmlView.updateManifest(getManifestContent(gist));
+          // TODO: Clean up this logic
+          const oldFile =
+            gist.files[path.basename(jsEditor.document.uri.toString())];
+          if (oldFile) {
+            gist.files[path.basename(document.uri.toString())] = oldFile;
+            delete gist.files[path.basename(jsEditor.document.uri.toString())];
+
+            htmlView.updateManifest(getManifestContent(gist), runOnEdit);
+          }
         }
-        htmlView.updateJavaScript(document);
+        htmlView.updateJavaScript(document, runOnEdit);
       } else if (isPlaygroundManifestFile(gist, document)) {
-        htmlView.updateManifest(document.getText());
+        htmlView.updateManifest(document.getText(), runOnEdit);
       } else if (
         includesStylesheet &&
         document.uri === cssEditor!.document.uri
       ) {
-        htmlView.updateCSS(document.getText());
+        htmlView.updateCSS(document.getText(), runOnEdit);
       }
-    }),
-    800
+    }, 100)
   );
 
+  let documentSaveDisposeable: vscode.Disposable;
+  if (!runOnEdit && autoRun === "onSave") {
+    documentSaveDisposeable = vscode.workspace.onDidSaveTextDocument(
+      async (document) => {
+        if (
+          document.uri.scheme === FS_SCHEME &&
+          document.uri.authority === activePlayground?.gistId
+        ) {
+          await htmlView.rebuildWebview();
+        }
+      }
+    );
+  }
+
   webViewPanel.onDidDispose(() => {
-    documentChangeDisposeable.dispose();
-    playgroundRegistry.delete(gist.id);
+    documentChangeDisposable.dispose();
+
+    if (documentSaveDisposeable) {
+      documentSaveDisposeable.dispose();
+    }
+
+    activePlayground = null;
+
     closeGistFiles(gist);
     output.dispose();
+
     vscode.commands.executeCommand("workbench.action.closePanel");
+    vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false);
   });
 
   htmlView.updateManifest(getManifestContent(gist));
   htmlView.updateHTML(includesMarkup ? htmlEditor!.document.getText() : "");
   htmlView.updateJavaScript(jsEditor.document);
   htmlView.updateCSS(includesStylesheet ? cssEditor!.document.getText() : "");
+
+  activePlayground = {
+    gistId: gist.id,
+    webView: htmlView,
+    webViewPanel,
+    console: output
+  };
+
+  await htmlView.rebuildWebview();
 }
 
 export async function registerPlaygroundCommands(
@@ -322,6 +373,40 @@ export async function registerPlaygroundCommands(
       addPlaygroundLibraryCommand
     )
   );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_ID}.openPlaygroundConsole`,
+      () => {
+        if (activePlayground) {
+          activePlayground.console.show();
+        }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_ID}.openPlaygroundDeveloperTools`,
+      () => {
+        vscode.commands.executeCommand(
+          "workbench.action.webview.openDeveloperTools"
+        );
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_ID}.runPlayground`,
+      async () => {
+        if (activePlayground) {
+          await activePlayground.webView.rebuildWebview();
+        }
+      }
+    )
+  );
+
   // warm up libraries
   await getCDNJSLibraries();
 }

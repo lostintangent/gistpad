@@ -48,6 +48,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
     const file = await this.getFileFromUri(source);
     await updateGist(gistId, newFileName, {
+      filename: newFileName,
       content: file.content!
     });
   }
@@ -167,6 +168,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
     try {
       await updateGist(gistId, file.filename!, {
+        filename: file.filename,
         content: file.content
       });
     } catch (e) {

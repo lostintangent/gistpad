@@ -22,12 +22,12 @@ const ScriptLanguage = {
   typescriptreact: ".tsx"
 };
 
-const TYPESCRIPT_EXTENSIONS = [
+const REACT_EXTENSIONS = [
   ScriptLanguage.javascriptreact,
-  ScriptLanguage.typescript,
   ScriptLanguage.typescriptreact
 ];
 
+const TYPESCRIPT_EXTENSIONS = [ScriptLanguage.typescript, ...REACT_EXTENSIONS];
 const SCRIPT_EXTENSIONS = [ScriptLanguage.javascript, ...TYPESCRIPT_EXTENSIONS];
 
 const playgroundRegistry = new Map<string, vscode.WebviewPanel>();
@@ -38,16 +38,63 @@ export async function closeWebviewPanel(gistId: string) {
   }
 }
 
+const isReactFile = (fileName: string) => {
+  return REACT_EXTENSIONS.includes(path.extname(fileName));
+};
+
+const REACT_LIBRARIES = ["react", "react-dom"];
+
+const includesReactFiles = (gist: Gist) => {
+  return Object.keys(gist.files).some(isReactFile);
+};
+
+const includesReactLibraries = (libraries: string[]) => {
+  return REACT_LIBRARIES.every((library) => libraries.includes(library));
+};
+
+const getManifestContent = (gist: Gist) => {
+  const manifest = gist.files[PLAYGROUND_JSON_FILE].content!;
+
+  if (includesReactFiles(gist)) {
+    const parsedManifest = JSON.parse(manifest);
+
+    if (!includesReactLibraries(parsedManifest.libraries)) {
+      parsedManifest.libraries.push(REACT_LIBRARIES);
+      parsedManifest.libraries = [...new Set(parsedManifest.libraries)];
+
+      const content = JSON.stringify(parsedManifest, null, 2);
+
+      vscode.workspace.fs.writeFile(
+        fileNameToUri(gist.id, PLAYGROUND_JSON_FILE),
+        Buffer.from(content)
+      );
+
+      return content;
+    }
+  }
+
+  return manifest;
+};
+
 async function generateNewPlaygroundFiles() {
   const scriptLanguage = await config.get("playground.scriptLanguage");
   const scriptFileName = `index${ScriptLanguage[scriptLanguage]}`;
+
+  const manifest = {
+    libraries: <string[]>[]
+  };
+
+  if (isReactFile(scriptFileName)) {
+    manifest.libraries.push(...REACT_LIBRARIES);
+  }
 
   const files = [
     {
       filename: scriptFileName
     },
     {
-      filename: PLAYGROUND_JSON_FILE
+      filename: PLAYGROUND_JSON_FILE,
+      content: JSON.stringify(manifest, null, 2)
     }
   ];
 
@@ -72,15 +119,12 @@ export function getScriptContent(
 ) {
   let content = document.getText();
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  if (TYPESCRIPT_EXTENSIONS.includes(extension)) {
-    const jsx =
-      manifest && manifest.libraries.includes("react")
-        ? typescript.JsxEmit.React
-        : void 0;
 
+  const includesJsx = manifest && manifest.libraries.includes("react");
+  if (TYPESCRIPT_EXTENSIONS.includes(extension) || includesJsx) {
     content = typescript.transpile(content, {
       experimentalDecorators: true,
-      jsx
+      jsx: includesJsx ? typescript.JsxEmit.React : void 0
     });
   }
   return content;
@@ -163,21 +207,11 @@ export async function openPlayground(gist: Gist) {
     );
   }
 
-  const jsViewColumn = availableViewColumns.shift();
-  const manifestEditor = await vscode.window.showTextDocument(
-    fileNameToUri(gist.id, PLAYGROUND_JSON_FILE),
-    {
-      preview: false,
-      viewColumn: jsViewColumn,
-      preserveFocus: false
-    }
-  );
-
   const jsEditor = await vscode.window.showTextDocument(
     fileNameToUri(gist.id, scriptFile!),
     {
       preview: false,
-      viewColumn: jsViewColumn,
+      viewColumn: availableViewColumns.shift(),
       preserveFocus: false
     }
   );
@@ -212,6 +246,12 @@ export async function openPlayground(gist: Gist) {
       if (includesMarkup && document.uri === htmlEditor.document.uri) {
         htmlView.updateHTML(document.getText());
       } else if (isPlaygroundScriptDocument(gist, document)) {
+        // If the user renamed the script file (e.g. from *.js to *.jsx)
+        // than we need to update the manifest in case new libraries
+        // need to be injected into the wevview (e.g. "react").
+        if (jsEditor.document.uri.toString() !== document.uri.toString()) {
+          htmlView.updateManifest(getManifestContent(gist));
+        }
         htmlView.updateJavaScript(document);
       } else if (isPlaygroundManifestFile(gist, document)) {
         htmlView.updateManifest(document.getText());
@@ -233,7 +273,7 @@ export async function openPlayground(gist: Gist) {
     vscode.commands.executeCommand("workbench.action.closePanel");
   });
 
-  htmlView.updateManifest(manifestEditor?.document.getText() || "");
+  htmlView.updateManifest(getManifestContent(gist));
   htmlView.updateHTML(includesMarkup ? htmlEditor!.document.getText() : "");
   htmlView.updateJavaScript(jsEditor.document);
   htmlView.updateCSS(includesStylesheet ? cssEditor!.document.getText() : "");

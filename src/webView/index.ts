@@ -1,10 +1,16 @@
 import * as vscode from "vscode";
+import { getPlaygroundJson } from "../commands/addPlaygroundLibraryCommand";
+import { getCDNJSLibraries } from "../commands/cdnjs";
+import { getScriptContent } from "../commands/playground";
+import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 
 const STYLE_ID = "gistpad-playground-style";
 export class PlaygroundWebview {
   private html: string = "";
   private javascript: string = "";
   private css: string = "";
+
+  private manifest: IPlaygroundJSON | undefined;
 
   constructor(private webview: vscode.Webview, output: vscode.OutputChannel) {
     webview.onDidReceiveMessage(({ command, value }) => {
@@ -26,14 +32,19 @@ export class PlaygroundWebview {
     this.rebuildWebview();
   }
 
-  public updateHTML(html: string) {
-    this.html = html;
-    this.rebuildWebview();
+  public async updateManifest(playgroundJsonFile: string) {
+    this.manifest = getPlaygroundJson(playgroundJsonFile);
+    await this.rebuildWebview();
   }
 
-  public updateJavaScript(javascript: string) {
-    this.javascript = javascript;
-    this.rebuildWebview();
+  public async updateHTML(html: string) {
+    this.html = html;
+    await this.rebuildWebview();
+  }
+
+  public async updateJavaScript(textDocument: vscode.TextDocument) {
+    this.javascript = getScriptContent(textDocument, this.manifest);
+    await this.rebuildWebview();
   }
 
   public updateCSS(css: string) {
@@ -41,7 +52,56 @@ export class PlaygroundWebview {
     this.webview.postMessage({ command: "updateCSS", value: css });
   }
 
-  private rebuildWebview() {
+  private async renderLibraryDependencies() {
+    if (!this.manifest) {
+      return "";
+    }
+
+    const { libraries } = this.manifest;
+
+    if (!libraries) {
+      return "";
+    }
+
+    const result = Object.entries(libraries).map(async ([_, libraryLink]) => {
+      if (!libraryLink || !libraryLink.trim()) {
+        return "";
+      }
+
+      const isUrl = libraryLink.match(
+        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+      );
+
+      if (isUrl) {
+        return `<script src="${libraryLink}"></script>`;
+      }
+
+      const libraries = await getCDNJSLibraries();
+      const library = libraries.find((lib) => {
+        return lib.name === libraryLink;
+      });
+
+      if (library) {
+        return `<script src="${library.latest}"></script>`;
+      }
+
+      return `<script>
+        const vscode = acquireVsCodeApi();
+        vscode.postMessage({
+          command: "alert",
+          value: 'The library "${libraryLink}" not found.'
+        });
+      </script>`;
+    });
+
+    const scripts = (await Promise.all(result)).join("");
+
+    return scripts;
+  }
+
+  private async rebuildWebview() {
+    const libraryScripts = await this.renderLibraryDependencies();
+
     this.webview.html = `<html>
   <head>
     <style>
@@ -50,6 +110,7 @@ export class PlaygroundWebview {
     <style id="${STYLE_ID}">
       ${this.css}
     </style>
+    ${libraryScripts}
     <script>
       document.getElementById("_defaultStyles").remove();
 

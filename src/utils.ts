@@ -10,7 +10,7 @@ import {
   workspace
 } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
-import { FS_SCHEME } from "./constants";
+import { FS_SCHEME, PLAYGROUND_JSON_FILE } from "./constants";
 import { Gist, GistFile, SortOrder, store } from "./store";
 import { getGist } from "./store/actions";
 
@@ -93,7 +93,7 @@ export function isNotebookGist(gist: Gist) {
 }
 
 export function isPlaygroundGist(gist: Gist) {
-  return Object.keys(gist.files).some((file) => file === "playground.json");
+  return Object.keys(gist.files).some((file) => file === PLAYGROUND_JSON_FILE);
 }
 
 export async function openGist(id: string, isNew: boolean = false) {

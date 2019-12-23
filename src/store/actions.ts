@@ -1,8 +1,9 @@
 import { observable } from "mobx";
 import { window } from "vscode";
 import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
+import { defaultPlaygroundJSON } from "../commands/addPlaygroundLibraryCommand";
 import * as config from "../config";
-import { ZERO_WIDTH_SPACE } from "../constants";
+import { PLAYGROUND_JSON_FILE, ZERO_WIDTH_SPACE } from "../constants";
 import { log } from "../logger";
 import { openGist, sortGists } from "../utils";
 import { getToken } from "./auth";
@@ -161,6 +162,29 @@ export async function listUserGists(username: string): Promise<Gist[]> {
   );
 }
 
+const getFileContent = (gistFile: GistFile, isReact: boolean) => {
+  if (gistFile.filename === PLAYGROUND_JSON_FILE) {
+    const defaultContent = { ...defaultPlaygroundJSON };
+    if (isReact) {
+      defaultContent.libraries.push("react");
+      defaultContent.libraries = [...new Set(defaultContent.libraries)];
+    }
+
+    return gistFile.content || JSON.stringify(defaultContent, null, 2);
+  }
+
+  return gistFile.content || ZERO_WIDTH_SPACE;
+};
+
+const includesReactFiles = (gistFiles: GistFile[]) => {
+  const reactFile = gistFiles.find((gistFile) => {
+    const filename = gistFile.filename!.trim();
+    return filename.endsWith(".jsx") || filename.endsWith(".tsx");
+  });
+
+  return !!reactFile;
+};
+
 export async function newGist(
   gistFiles: GistFile[],
   isPublic: boolean,
@@ -169,11 +193,13 @@ export async function newGist(
 ) {
   const api = await getApi();
 
+  const isReact = includesReactFiles(gistFiles);
+
   const files = gistFiles.reduce((accumulator, gistFile) => {
     return {
       ...accumulator,
       [gistFile.filename!.trim()]: {
-        content: gistFile.content || ZERO_WIDTH_SPACE
+        content: getFileContent(gistFile, isReact)
       }
     };
   }, {});

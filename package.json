@@ -7,7 +7,7 @@
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/vsls-contrib/gistpad.git"
+    "url": "https://github.com/vsls-contrib/gistpad"
   },
   "engines": {
     "vscode": "^1.40.0"

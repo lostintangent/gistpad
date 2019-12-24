@@ -247,7 +247,9 @@ export async function registerGistCommands(context: ExtensionContext) {
       async (node: GistNode) => {
         // Note: The "html_url" property doesn't include the Gist's owner
         // in it, and the API doesn't support that URL format
-        const url = `https://gist.github.com/${node.gist.owner}/${node.gist.id}`;
+        const url = `https://gist.github.com/${node.gist.owner!.login}/${
+          node.gist.id
+        }`;
         env.clipboard.writeText(url);
       }
     )

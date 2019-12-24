@@ -13,7 +13,7 @@ import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
 const MARKUP_FILE = "index.html";
-const STYLESHEET_FILE = "index.css";
+const STYLESHEET_FILE = "style.css";
 
 const ScriptLanguage = {
   javascript: ".js",
@@ -60,6 +60,10 @@ const includesReactLibraries = (libraries: string[]) => {
 };
 
 const getManifestContent = (gist: Gist) => {
+  if (!gist.files[PLAYGROUND_JSON_FILE]) {
+    return "";
+  }
+
   const manifest = gist.files[PLAYGROUND_JSON_FILE].content!;
   if (includesReactFiles(gist)) {
     const parsedManifest = JSON.parse(manifest);
@@ -83,7 +87,7 @@ const getManifestContent = (gist: Gist) => {
 
 async function generateNewPlaygroundFiles() {
   const scriptLanguage = await config.get("playground.scriptLanguage");
-  const scriptFileName = `index${ScriptLanguage[scriptLanguage]}`;
+  const scriptFileName = `script${ScriptLanguage[scriptLanguage]}`;
 
   const manifest = {
     libraries: <string[]>[]
@@ -248,7 +252,17 @@ export async function openPlayground(gist: Gist) {
   );
 
   const output = vscode.window.createOutputChannel("GistPad Playground");
-  const htmlView = new PlaygroundWebview(webViewPanel.webview, output);
+
+  // In order to provide CodePen interop,
+  // we'll look for an optional "scripts"
+  // file, which includes the list of external
+  // scripts that were added to the pen.
+  let scripts: string | undefined;
+  if (gist.files["scripts"]) {
+    scripts = gist.files["scripts"].content;
+  }
+
+  const htmlView = new PlaygroundWebview(webViewPanel.webview, output, scripts);
 
   if (await config.get("playground.showConsole")) {
     output.show(false);

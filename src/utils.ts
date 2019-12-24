@@ -93,7 +93,10 @@ export function isNotebookGist(gist: Gist) {
 }
 
 export function isPlaygroundGist(gist: Gist) {
-  return Object.keys(gist.files).some((file) => file === PLAYGROUND_JSON_FILE);
+  const gistFiles = Object.keys(gist.files);
+  return (
+    gistFiles.includes(PLAYGROUND_JSON_FILE) || gistFiles.includes("index.html")
+  );
 }
 
 export async function openGist(id: string, isNew: boolean = false) {

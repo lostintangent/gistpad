@@ -9,7 +9,11 @@ export class PlaygroundWebview {
   private css: string = "";
   private manifest: IPlaygroundJSON | undefined;
 
-  constructor(private webview: vscode.Webview, output: vscode.OutputChannel) {
+  constructor(
+    private webview: vscode.Webview,
+    output: vscode.OutputChannel,
+    private scripts: string = ""
+  ) {
     webview.onDidReceiveMessage(({ command, value }) => {
       switch (command) {
         case "alert":
@@ -28,10 +32,18 @@ export class PlaygroundWebview {
   }
 
   public async updateManifest(manifest: string, rebuild = false) {
-    this.manifest = JSON.parse(manifest);
+    if (!manifest) {
+      return;
+    }
 
-    if (rebuild) {
-      await this.rebuildWebview();
+    try {
+      this.manifest = JSON.parse(manifest);
+
+      if (rebuild) {
+        await this.rebuildWebview();
+      }
+    } catch (e) {
+      // The user might have typed invalid JSON
     }
   }
 
@@ -63,17 +75,21 @@ export class PlaygroundWebview {
   }
 
   private async renderLibraryDependencies() {
-    if (!this.manifest) {
+    if (!this.manifest && !this.scripts) {
       return "";
     }
 
-    const { libraries } = this.manifest;
+    const scripts = this.scripts;
 
-    if (!libraries) {
-      return "";
+    if (
+      !this.manifest ||
+      !this.manifest!.libraries ||
+      this.manifest!.libraries.length === 0
+    ) {
+      return scripts;
     }
 
-    const result = libraries.map(async (libraryURL) => {
+    const result = this.manifest!.libraries.map(async (libraryURL) => {
       if (!libraryURL || (libraryURL && !libraryURL.trim())) {
         return "";
       }
@@ -94,8 +110,9 @@ export class PlaygroundWebview {
       }
     });
 
-    const scripts = (await Promise.all(result)).join("");
-    return scripts;
+    const libraryScripts = (await Promise.all(result)).join("");
+    return `${scripts}
+${libraryScripts}`;
   }
 
   public async rebuildWebview() {

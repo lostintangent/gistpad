@@ -1,8 +1,12 @@
+## v0.0.27 (12/21/2019)
+
+- Added support for opening CodePens that have been exported to Gists
+  
 ## v0.0.26 (12/21/2019)
 
 - Introduced the concept of "playground libraries", which allow you to include JavaScript libraries into a playground, by simply adding their URL to the `libraries` property in the playground's `playground.json` file.
 
-- Added support for `.jsx` and `.tsx` files within a playground. If you rename your `index.js` file to one of these extensions, then you can include JSX in the file and it will be automatically compiled. Additionally, the `GistPad > Playground: Script Language` setting now supports two new values: `javascriptreact` and `typescriptreact`. Finally, in order to simplify React-based playgrounds, the `react` and `react-dom` libraries will be automatically injected into React-based playgrounds.
+- Added support for `.jsx` and `.tsx` files within a playground. If you rename your `script.js` file to one of these extensions, then you can include JSX in the file and it will be automatically compiled. Additionally, the `GistPad > Playground: Script Language` setting now supports two new values: `javascriptreact` and `typescriptreact`. Finally, in order to simplify React-based playgrounds, the `react` and `react-dom` libraries will be automatically injected into React-based playgrounds.
 
 - Added support for `console.log` in web playgrounds. When you open a playground, it will create a new `GistPad Playground` output pane and any calls to `console.log` within your playground will be written to it. By default, the console isn't automatically displayed, but you can either manually open it, or run the `GistPad: Open Playground Console` command.
 
@@ -23,7 +27,7 @@
 
 ## v0.0.23 (12/18/2019)
 
-- Added support for TypeScript to web playgrounds. Simply rename the `index.js` file to `index.ts` and the code will be transparently compiled for you as you code. Additionally, you can set the `GistPad: Playground Script Language` setting to `typescript` in order to create an `index.ts` file for all new playgrounds.
+- Added support for TypeScript to web playgrounds. Simply rename the `script.js` file to `script.ts` and the code will be transparently compiled for you as you code. Additionally, you can set the `GistPad: Playground Script Language` setting to `typescript` in order to create an `script.ts` file for all new playgrounds.
 
   ![TS](https://user-images.githubusercontent.com/116461/71221927-414f5600-2283-11ea-81a7-2331fc85185b.gif)
 

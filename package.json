@@ -95,7 +95,7 @@
         "gistpad.playground.includeStylesheet": {
           "default": "true",
           "type": "boolean",
-          "description": "Specifies whether to include a stylesheet file (index.css) when creating new web playgrounds."
+          "description": "Specifies whether to include a stylesheet file (style.css) when creating new web playgrounds."
         },
         "gistpad.playground.scriptLanguage": {
           "default": "javascript",

@@ -85,13 +85,17 @@ Since the playground is backed by a Gist, your changes are saved and shareable w
 
 ### TypeScript
 
-If you'd prefer to write TypeScript instead of JavaScript, simply rename the `index.js` file to `index.ts` (or `index.tsx`) within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
+If you'd prefer to write TypeScript instead of JavaScript, simply rename the `script.js` file to `index.ts` (or `index.tsx`) within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
 
 ### React
 
 If you set the `GistPad: Playground Script Language` setting to `javascriptreact` or `typescriptreact`, then all new playgrounds will automatically include the `react` and `react-dom` libraries, and will automatically compile JSX for you. Additionally, if you manually add the `react` library to your gist's `playground.json` file, then even `*.js` files can include JSX, since it will be automatically compiled.
 
 ![React](https://user-images.githubusercontent.com/116461/71385501-eaa48d80-259c-11ea-9b53-51d925ca3428.gif)
+
+### CodePem
+
+If you export a pen to a [GitHub Gist](https://blog.codepen.io/documentation/features/exporting-pens/#save-as-github-gist-2), and then refresh the `Gists` tree in VS Code, you'll be able to see the pen and then can open/edit it like any other playground.
 
 ## GistLog
 
@@ -173,14 +177,14 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds.
 
-- `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`index.css`) when creating new web playgrounds.
+- `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds.
 
 - `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
 
-  - `javascript` _(default)_: Will result in an `index.js` file being created whenever you create a new web playground.
-  - `javascriptreact`: Will result in an `index.jsx` file being created whenever you create a new web playground.
-  - `typescript`: Will result in an `index.ts` file being created whenever you create a new web playground.
-  - `typescriptreact`: Will result in an `index.tsx` file being created whenever you create a new web playground.
+  - `javascript` _(default)_: Will result in an `script.js` file being created whenever you create a new web playground.
+  - `javascriptreact`: Will result in an `script.jsx` file being created whenever you create a new web playground.
+  - `typescript`: Will result in an `script.ts` file being created whenever you create a new web playground.
+  - `typescriptreact`: Will result in an `script.tsx` file being created whenever you create a new web playground.
 
 - `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground.
 

@@ -8,7 +8,7 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
 ## Getting Started
 
-1. Install this extension from the marketplace
+1. Install this extension from the marketplace and then reload VS Code
 
    > **Linux Users**: Ensure you have the `gnome-keyring` and `libsecret` packages installed as well. These will enable GistPad to read/write your GitHub auth token securely.
 

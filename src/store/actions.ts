@@ -12,13 +12,6 @@ const Gists = require("gists");
 
 async function getApi() {
   const token = await getToken();
-
-  if (!token) {
-    const message = "No authentication token found.";
-    log.error(message);
-    throw new Error(message);
-  }
-
   const apiurl = await config.get("apiUrl");
 
   if (!apiurl) {

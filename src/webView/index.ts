@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
 import { getScriptContent } from "../commands/playground";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
+import { Gist } from "../store";
 
 export class PlaygroundWebview {
   private html: string = "";
@@ -12,6 +13,7 @@ export class PlaygroundWebview {
   constructor(
     private webview: vscode.Webview,
     output: vscode.OutputChannel,
+    private gist: Gist,
     private scripts: string = ""
   ) {
     webview.onDidReceiveMessage(({ command, value }) => {
@@ -118,10 +120,12 @@ ${libraryScripts}`;
   public async rebuildWebview() {
     const libraryScripts = await this.renderLibraryDependencies();
 
+    const baseUrl = `https://gist.github.com/${this.gist.owner.login}/${this.gist.id}/raw/`;
     const styleId = `gistpad-playground-style-${Math.random()}`;
 
     this.webview.html = `<html>
   <head>
+    <base href="${baseUrl}" />
     <style>
       body { background-color: white; }
     </style>

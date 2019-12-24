@@ -1,3 +1,8 @@
+## v0.0.28 (12/24/2019)
+
+- Added support for playgrounds that omit a script file, which is neccessary for CodePen interop (e.g. [Loading Liquid Animation](https://codepen.io/prathameshkoshti/pen/MWYmzeM))
+- Added support for playgrounds to include relative URLs in their `index.html` file
+  
 ## v0.0.27 (12/23/2019)
 
 - Added support for opening CodePens that have been exported to Gists

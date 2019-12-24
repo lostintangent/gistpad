@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.27",
+  "version": "0.0.28",
   "extensionKind": [
     "ui",
     "workspace"
@@ -629,67 +629,67 @@
         },
         {
           "command": "gistpad.openGist",
-          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
           "group": "base@1"
         },
         {
           "command": "gistpad.openGistWorkspace",
-          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
           "group": "base@2"
         },
         {
           "command": "gistpad.openGistInBrowser",
-          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
           "group": "browse@1"
         },
         {
           "command": "gistpad.openGistInGistLog",
-          "when": "viewItem == gists.gist || viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist$/",
           "group": "browse@2"
         },
         {
           "command": "gistpad.openGistInNbViewer",
-          "when": "viewItem == gists.gist.notebook || viewItem == starredGists.gist.notebook || viewItem == followedUser.gist.notebook",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.notebook$/",
           "group": "browse@2"
         },
         {
           "command": "gistpad.copyGistUrl",
-          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
           "group": "copy@1"
         },
         {
           "command": "gistpad.cloneRepository",
-          "when": "viewItem =~ /gists.gist/ || viewItem =~ /starredGists.gist/ || viewItem =~ /followedUser.gist/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
           "group": "copy@2"
         },
         {
           "command": "gistpad.addFile",
-          "when": "viewItem == gists.gist",
+          "when": "viewItem =~ /^gists.gist(.notebook)?$/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.addActiveFile",
-          "when": "viewItem == gists.gist",
+          "when": "viewItem =~ /^gists.gist(.notebook)?$/",
           "group": "manage@2"
         },
         {
           "command": "gistpad.changeGistDescription",
-          "when": "viewItem == gists.gist",
+          "when": "viewItem =~ /^gists.gist(.notebook)?$/",
           "group": "manage@3"
         },
         {
           "command": "gistpad.deleteGist",
-          "when": "viewItem == gists.gist",
+          "when": "viewItem =~ /^gists.gist(.notebook)?$/",
           "group": "manage@4"
         },
         {
           "command": "gistpad.forkGist",
-          "when": "viewItem == starredGists.gist || viewItem == followedUser.gist",
+          "when": "viewItem =~ /^(starredGists|followedUser).gist(.notebook)?$/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.unstarGist",
-          "when": "viewItem == starredGists.gist",
+          "when": "viewItem =~ /^starredGists.gist(.notebook)?$/",
           "group": "manage@2"
         },
         {

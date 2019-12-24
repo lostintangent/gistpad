@@ -192,10 +192,16 @@ export async function openPlayground(gist: Gist) {
     SCRIPT_EXTENSIONS.includes(path.extname(file))
   );
 
+  const includedFiles = [
+    includesMarkup,
+    includesStylesheet,
+    !!scriptFile
+  ].filter((file) => file).length;
+
   let editorLayout: any;
-  if (includesMarkup && includesStylesheet) {
+  if (includedFiles === 3) {
     editorLayout = EDITOR_LAYOUT.twoByTwo;
-  } else if (includesMarkup || includesStylesheet) {
+  } else if (includedFiles === 2) {
     editorLayout = EDITOR_LAYOUT.oneByTwo;
   } else {
     editorLayout = EDITOR_LAYOUT.oneByOne;
@@ -223,14 +229,17 @@ export async function openPlayground(gist: Gist) {
     );
   }
 
-  const jsEditor = await vscode.window.showTextDocument(
-    fileNameToUri(gist.id, scriptFile!),
-    {
-      preview: false,
-      viewColumn: availableViewColumns.shift(),
-      preserveFocus: false
-    }
-  );
+  let jsEditor: vscode.TextEditor | undefined;
+  if (scriptFile) {
+    jsEditor = await vscode.window.showTextDocument(
+      fileNameToUri(gist.id, scriptFile!),
+      {
+        preview: false,
+        viewColumn: availableViewColumns.shift(),
+        preserveFocus: false
+      }
+    );
+  }
 
   let cssEditor: vscode.TextEditor;
   if (includesStylesheet) {
@@ -262,7 +271,12 @@ export async function openPlayground(gist: Gist) {
     scripts = gist.files["scripts"].content;
   }
 
-  const htmlView = new PlaygroundWebview(webViewPanel.webview, output, scripts);
+  const htmlView = new PlaygroundWebview(
+    webViewPanel.webview,
+    output,
+    gist,
+    scripts
+  );
 
   if (await config.get("playground.showConsole")) {
     output.show(false);
@@ -279,7 +293,10 @@ export async function openPlayground(gist: Gist) {
         // If the user renamed the script file (e.g. from *.js to *.jsx)
         // than we need to update the manifest in case new libraries
         // need to be injected into the wevview (e.g. "react").
-        if (jsEditor.document.uri.toString() !== document.uri.toString()) {
+        if (
+          jsEditor &&
+          jsEditor.document.uri.toString() !== document.uri.toString()
+        ) {
           // TODO: Clean up this logic
           const oldFile =
             gist.files[path.basename(jsEditor.document.uri.toString())];
@@ -294,9 +311,11 @@ export async function openPlayground(gist: Gist) {
       } else if (isPlaygroundManifestFile(gist, document)) {
         htmlView.updateManifest(document.getText(), runOnEdit);
 
-        // TODO: Only update the JS if the manifest change
-        // actually impacts it (e.g. adding/removing react)
-        htmlView.updateJavaScript(jsEditor.document, runOnEdit);
+        if (jsEditor) {
+          // TODO: Only update the JS if the manifest change
+          // actually impacts it (e.g. adding/removing react)
+          htmlView.updateJavaScript(jsEditor.document, runOnEdit);
+        }
       } else if (
         includesStylesheet &&
         document.uri === cssEditor!.document.uri
@@ -338,8 +357,11 @@ export async function openPlayground(gist: Gist) {
 
   htmlView.updateManifest(getManifestContent(gist));
   htmlView.updateHTML(includesMarkup ? htmlEditor!.document.getText() : "");
-  htmlView.updateJavaScript(jsEditor.document);
   htmlView.updateCSS(includesStylesheet ? cssEditor!.document.getText() : "");
+
+  if (jsEditor) {
+    htmlView.updateJavaScript(jsEditor.document);
+  }
 
   activePlayground = {
     gistId: gist.id,

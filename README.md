@@ -99,6 +99,10 @@ If you export a pen to a [GitHub Gist](https://blog.codepen.io/documentation/fea
 
 ![CodePen](https://user-images.githubusercontent.com/116461/71393589-171ed080-25c2-11ea-8138-ba075daf7d37.gif)
 
+### Additional Resources
+
+You can add any additional files to your gist, and then reference them from your HTML, CSS, JavaScript files. If you right-click the gist file, and select `Copy URL`, you'll get the absolute URL for that file and can reference from from your playground code. Additionally, you can reference files using a relative path, and they'll be resolved to the file in your gist (e.g. `<img src="image.png" />`).
+
 ## GistLog
 
 In addition to being able to use Gists to share code snippets/files, you can also use it as a mini-blog, thanks to integration with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new Gist that includes two files: `blog.md` and `gistlog.yml`.

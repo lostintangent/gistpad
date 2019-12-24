@@ -245,8 +245,10 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_ID}.copyGistUrl`,
       async (node: GistNode) => {
-        await ensureAuthenticated();
-        env.clipboard.writeText(node.gist.html_url);
+        // Note: The "html_url" property doesn't include the Gist's owner
+        // in it, and the API doesn't support that URL format
+        const url = `https://gist.github.com/${node.gist.owner}/${node.gist.id}`;
+        env.clipboard.writeText(url);
       }
     )
   );

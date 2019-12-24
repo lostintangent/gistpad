@@ -1,8 +1,10 @@
-## v0.0.27 (12/21/2019)
+## v0.0.27 (12/23/2019)
 
 - Added support for opening CodePens that have been exported to Gists
-  
-## v0.0.26 (12/21/2019)
+
+  ![CodePen](https://user-images.githubusercontent.com/116461/71393589-171ed080-25c2-11ea-8138-ba075daf7d37.gif)
+
+## v0.0.26 (12/22/2019)
 
 - Introduced the concept of "playground libraries", which allow you to include JavaScript libraries into a playground, by simply adding their URL to the `libraries` property in the playground's `playground.json` file.
 

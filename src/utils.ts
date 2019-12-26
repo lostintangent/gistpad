@@ -94,8 +94,17 @@ export function isNotebookGist(gist: Gist) {
 
 export function isPlaygroundGist(gist: Gist) {
   const gistFiles = Object.keys(gist.files);
+
+  // 1) GistPad-native playgrounds
+  // 2) CodePen/Bl.ocks.org/etc. playgrounds, which could have just an HTML file or just a script file.
+  //    In the case where they only have a script file, it's very likely they'd also have a "scripts"
+  //    file, which is hold they'd inject 3rd-party libraries. To make this more reliable, I also
+  //    always check for a markdown file, which would alwats exist
   return (
-    gistFiles.includes(PLAYGROUND_JSON_FILE) || gistFiles.includes("index.html")
+    gistFiles.includes(PLAYGROUND_JSON_FILE) ||
+    gistFiles.includes("index.html") || gistFiles.includes("index.pug") ||
+    (gistFiles.includes("scripts") &&
+      gistFiles.some((file) => path.extname(file) === ".markdown"))
   );
 }
 

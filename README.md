@@ -85,7 +85,15 @@ Since the playground is backed by a Gist, your changes are saved and shareable w
 
 ### TypeScript
 
-If you'd prefer to write TypeScript instead of JavaScript, simply rename the `script.js` file to `index.ts` (or `index.tsx`) within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad: Playground Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
+If you'd prefer to write [TypeScript](https://www.typescriptlang.org/) instead of JavaScript, simply rename the `script.js` file to `index.ts` (or `index.tsx`) within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad > Playground: Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
+
+### SCSS
+
+If you'd prefer to write [SCSS](https://sass-lang.com/) instead of CSS, simply rename the `style.css` file to `style.scss` within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use SCSS, then set the `GistPad > Playground: Stylesheet Language` setting to `scss`, and all new playgrounds will include an `style.scss` file by default.
+
+### Pug
+
+If you'd prefer to write [Pug](https://pugjs.org/api/getting-started.html) instead of HTML, simply rename the `index.html` file to `index.pug` within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use SCSS, then set the `GistPad > Playground: Markup Language` setting to `pug`, and all new playgrounds will include an `index.pug` file by default.
 
 ### React
 
@@ -185,12 +193,22 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds.
 
+- `GistPad > Playground: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
+
+  - `html` _(default)_: Will result in an `index.html` file being created whenever you create a new web playground.
+  - `pug`: Will result in an `index.pug` file being created whenever you create a new web playground.
+
 - `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `javascript` _(default)_: Will result in an `script.js` file being created whenever you create a new web playground.
   - `javascriptreact`: Will result in an `script.jsx` file being created whenever you create a new web playground.
   - `typescript`: Will result in an `script.ts` file being created whenever you create a new web playground.
   - `typescriptreact`: Will result in an `script.tsx` file being created whenever you create a new web playground.
+
+- `GistPad > Playground: Stylesheet Language` - Specifies the default stylesheet language to use when creating new web playgrounds. Can be set to one of the following values:
+
+  - `css` _(default)_: Will result in an `style.css` file being created whenever you create a new web playground.
+  - `scss`: Will result in an `style.scss` file being created whenever you create a new web playground.
 
 - `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground.
 

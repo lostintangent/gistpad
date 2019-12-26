@@ -18,8 +18,14 @@ export async function get(
   key: "playground.includeStylesheet"
 ): Promise<boolean>;
 export async function get(
+  key: "playground.markupLanguage"
+): Promise<"html" | "pug">;
+export async function get(
   key: "playground.scriptLanguage"
 ): Promise<"javascript" | "javascriptreact" | "typescript" | "typescriptreact">;
+export async function get(
+  key: "playground.stylesheetLanguage"
+): Promise<"css" | "scss">;
 export async function get(key: "playground.showConsole"): Promise<boolean>;
 export async function get(key: "showCommentThread"): Promise<string>;
 export async function get(key: any) {

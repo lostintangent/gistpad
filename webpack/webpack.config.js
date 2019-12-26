@@ -27,7 +27,9 @@ const config = {
   devtool: "source-map",
   externals: {
     vscode: "commonjs vscode", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/
-    electron: "electron" // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/,
+    electron: "electron", // the vscode-module is created on-the-fly and must be excluded. Add other modules that cannot be webpack'ed, 📖 -> https://webpack.js.org/configuration/externals/,
+    "uglify-js": "commonjs uglify-js", // Pug relies on uglify-js, which doesn't play nice with Webpack. Fortunately we don't need it, so we exclude it from the bundle
+    "aws-sdk": "commonjs aws-sdk" // This comes from the Sass dependency, and is an optional dependency that we don't need
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader

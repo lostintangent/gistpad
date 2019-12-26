@@ -14,7 +14,8 @@ export class PlaygroundWebview {
     private webview: vscode.Webview,
     output: vscode.OutputChannel,
     private gist: Gist,
-    private scripts: string = ""
+    private scripts: string = "",
+    private styles: string = ""
   ) {
     webview.onDidReceiveMessage(({ command, value }) => {
       switch (command) {
@@ -132,6 +133,7 @@ ${libraryScripts}`;
     <style id="${styleId}">
       ${this.css}
     </style>
+    ${this.styles}
     ${libraryScripts}
     <script>
       document.getElementById("_defaultStyles").remove();

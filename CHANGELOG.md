@@ -1,11 +1,20 @@
+## v0.0.29 (12/26/2019)
+
+- Added support for SCSS and Pug to playgrounds, so that you can use them as alternatives to CSS and HTML (respectively). Additionally, introduced a new `GistPad > Playground: Stylesheet Language` and `GistPad > Playground: Markup Language` settings, which allows you to configure `pug` and/or `scss` as the default stylesheet/markup languages can for all new playgrounds.
+
+- Improved the CodePen interop with playgrounds by adding support for pens that...
+  - Omit an HTML file (e.g. [ZIM Tree Puzzle](https://gist.github.com/lostintangent/5916cb2b62bbfcdcda0ac108a479bfd2))
+  - Reference external stylesheets (e.g. [Hotel Reservation Design](https://codepen.io/FlorinPop17/pen/eYmWRdm))
+  - Use Babel as their scripting language. _Note: Babel support is provided by simply transpiling the Babel code with TypeScript, so there may be some subtle interop problems._
+  
 ## v0.0.28 (12/24/2019)
 
-- Added support for playgrounds that omit a script file, which is neccessary for CodePen interop (e.g. [Loading Liquid Animation](https://codepen.io/prathameshkoshti/pen/MWYmzeM))
 - Added support for playgrounds to include relative URLs in their `index.html` file
-  
+- Improved the CodePen interop with playgrounds by adding support for pens that omit a script file, which is neccessary for CodePen interop (e.g. [Loading Liquid Animation](https://codepen.io/prathameshkoshti/pen/MWYmzeM)
+
 ## v0.0.27 (12/23/2019)
 
-- Added support for opening CodePens that have been exported to Gists
+- Added initial support for opening CodePens that have been exported to Gists
 
   ![CodePen](https://user-images.githubusercontent.com/116461/71393589-171ed080-25c2-11ea-8138-ba075daf7d37.gif)
 

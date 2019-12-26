@@ -97,6 +97,14 @@
           "type": "boolean",
           "description": "Specifies whether to include a stylesheet file (style.css) when creating new web playgrounds."
         },
+        "gistpad.playground.markupLanguage": {
+          "default": "html",
+          "enum": [
+            "html",
+            "pug"
+          ],
+          "description": "Specifies the default markup language to use when creating new web playgrounds."
+        },
         "gistpad.playground.scriptLanguage": {
           "default": "javascript",
           "enum": [
@@ -106,6 +114,14 @@
             "typescriptreact"
           ],
           "description": "Specifies the default scripting language to use when creating new web playgrounds."
+        },
+        "gistpad.playground.stylesheetLanguage": {
+          "default": "css",
+          "enum": [
+            "css",
+            "scss"
+          ],
+          "description": "Specifies the default stylesheet language to use when creating new web playgrounds."
         },
         "gistpad.playground.showConsole": {
           "default": "false",
@@ -825,6 +841,14 @@
         "fileMatch": "playground.json",
         "url": "https://gist.githubusercontent.com/legomushroom/e6ef081dc3f466b6228acac5ee9b620d/raw/gistpad-schema.json"
       }
+    ],
+    "languages": [
+      {
+        "id": "typescriptreact",
+        "filenames": [
+          "script.babel"
+        ]
+      }
     ]
   },
   "scripts": {
@@ -853,12 +877,16 @@
   "dependencies": {
     "@types/debounce": "^1.2.0",
     "@types/moment": "^2.13.0",
+    "@types/pug": "^2.0.4",
+    "@types/sass": "^1.16.0",
     "axios": "^0.19.0",
     "debounce": "^1.2.0",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
+    "pug": "^2.0.4",
+    "sass": "^1.24.0",
     "simple-git": "^1.126.0"
   },
   "bugs": {

@@ -1,10 +1,12 @@
 import { debounce } from "debounce";
 import * as path from "path";
-import { IPlaygroundJSON } from "src/interfaces/IPlaygroundJSON";
+import * as pug from "pug";
+import * as sass from "sass";
 import * as typescript from "typescript";
 import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
+import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import { closeGistFiles, fileNameToUri } from "../utils";
@@ -12,17 +14,29 @@ import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
-const MARKUP_FILE = "index.html";
-const STYLESHEET_FILE = "style.css";
+const MarkupLanguage = {
+  html: ".html",
+  pug: ".pug"
+};
+
+const MARKUP_EXTENSIONS = [MarkupLanguage.html, MarkupLanguage.pug];
+
+const StylesheetLanguage = {
+  css: ".css",
+  scss: ".scss"
+};
+
+const STYLESHEET_EXTENSIONS = [StylesheetLanguage.css, StylesheetLanguage.scss];
 
 const ScriptLanguage = {
+  babel: ".babel",
   javascript: ".js",
   javascriptreact: ".jsx",
   typescript: ".ts",
   typescriptreact: ".tsx"
 };
-
 const REACT_EXTENSIONS = [
+  ScriptLanguage.babel,
   ScriptLanguage.javascriptreact,
   ScriptLanguage.typescriptreact
 ];
@@ -108,14 +122,22 @@ async function generateNewPlaygroundFiles() {
   ];
 
   if (await config.get("playground.includeStylesheet")) {
+    const stylesheetLanguage = await config.get(
+      "playground.stylesheetLanguage"
+    );
+    const stylesheetFileName = `style${StylesheetLanguage[stylesheetLanguage]}`;
+
     files.unshift({
-      filename: STYLESHEET_FILE
+      filename: stylesheetFileName
     });
   }
 
   if (await config.get("playground.includeMarkup")) {
+    const markupLanguage = await config.get("playground.markupLanguage");
+    const markupFileName = `index${MarkupLanguage[markupLanguage]}`;
+
     files.unshift({
-      filename: MARKUP_FILE
+      filename: markupFileName
     });
   }
 
@@ -144,13 +166,26 @@ export function getScriptContent(
   return content;
 }
 
-function isPlaygroundScriptDocument(gist: Gist, document: vscode.TextDocument) {
-  if (gist.id !== document.uri.authority) {
-    return false;
+function getMarkupContent(document: vscode.TextDocument) {
+  let content = document.getText();
+  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
+
+  if (extension === MarkupLanguage.pug) {
+    content = pug.render(content);
   }
 
+  return content;
+}
+
+async function getStylesheetContent(document: vscode.TextDocument) {
+  let content = document.getText();
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  return SCRIPT_EXTENSIONS.includes(extension);
+
+  if (extension === StylesheetLanguage.scss) {
+    content = sass.renderSync({ data: content }).css.toString();
+  }
+
+  return content;
 }
 
 function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
@@ -182,21 +217,35 @@ const EDITOR_LAYOUT = {
   }
 };
 
+const getGistFileOfType = (gist: Gist, extensions: string[]) => {
+  return Object.keys(gist.files).find((file) =>
+    extensions.includes(path.extname(file))
+  );
+};
+
+function isPlaygroundDocument(
+  gist: Gist,
+  document: vscode.TextDocument,
+  extensions: string[]
+) {
+  if (gist.id !== document.uri.authority) {
+    return false;
+  }
+
+  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
+  return extensions.includes(extension);
+}
+
 export async function openPlayground(gist: Gist) {
   vscode.commands.executeCommand("setContext", "gistpad:inPlayground", true);
 
-  const includesMarkup = Object.keys(gist.files).includes(MARKUP_FILE);
-  const includesStylesheet = Object.keys(gist.files).includes(STYLESHEET_FILE);
+  const markupFile = getGistFileOfType(gist, MARKUP_EXTENSIONS);
+  const stylesheetFile = getGistFileOfType(gist, STYLESHEET_EXTENSIONS);
+  const scriptFile = getGistFileOfType(gist, SCRIPT_EXTENSIONS);
 
-  const scriptFile = Object.keys(gist.files).find((file) =>
-    SCRIPT_EXTENSIONS.includes(path.extname(file))
-  );
-
-  const includedFiles = [
-    includesMarkup,
-    includesStylesheet,
-    !!scriptFile
-  ].filter((file) => file).length;
+  const includedFiles = [!!markupFile, !!stylesheetFile, !!scriptFile].filter(
+    (file) => file
+  ).length;
 
   let editorLayout: any;
   if (includedFiles === 3) {
@@ -218,9 +267,9 @@ export async function openPlayground(gist: Gist) {
   ];
 
   let htmlEditor: vscode.TextEditor;
-  if (includesMarkup) {
+  if (markupFile) {
     htmlEditor = await vscode.window.showTextDocument(
-      fileNameToUri(gist.id, MARKUP_FILE),
+      fileNameToUri(gist.id, markupFile),
       {
         preview: false,
         viewColumn: availableViewColumns.shift(),
@@ -242,9 +291,9 @@ export async function openPlayground(gist: Gist) {
   }
 
   let cssEditor: vscode.TextEditor;
-  if (includesStylesheet) {
+  if (stylesheetFile) {
     cssEditor = await vscode.window.showTextDocument(
-      fileNameToUri(gist.id, STYLESHEET_FILE),
+      fileNameToUri(gist.id, stylesheetFile),
       {
         preview: false,
         viewColumn: availableViewColumns.shift(),
@@ -270,12 +319,17 @@ export async function openPlayground(gist: Gist) {
   if (gist.files["scripts"]) {
     scripts = gist.files["scripts"].content;
   }
+  let styles: string | undefined;
+  if (gist.files["styles"]) {
+    styles = gist.files["styles"].content;
+  }
 
   const htmlView = new PlaygroundWebview(
     webViewPanel.webview,
     output,
     gist,
-    scripts
+    scripts,
+    styles
   );
 
   if (await config.get("playground.showConsole")) {
@@ -286,10 +340,10 @@ export async function openPlayground(gist: Gist) {
   const runOnEdit = autoRun === "onEdit";
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
-    debounce(({ document }) => {
-      if (includesMarkup && document.uri === htmlEditor.document.uri) {
-        htmlView.updateHTML(document.getText(), runOnEdit);
-      } else if (isPlaygroundScriptDocument(gist, document)) {
+    debounce(async ({ document }) => {
+      if (isPlaygroundDocument(gist, document, MARKUP_EXTENSIONS)) {
+        htmlView.updateHTML(getMarkupContent(document), runOnEdit);
+      } else if (isPlaygroundDocument(gist, document, SCRIPT_EXTENSIONS)) {
         // If the user renamed the script file (e.g. from *.js to *.jsx)
         // than we need to update the manifest in case new libraries
         // need to be injected into the wevview (e.g. "react").
@@ -316,11 +370,8 @@ export async function openPlayground(gist: Gist) {
           // actually impacts it (e.g. adding/removing react)
           htmlView.updateJavaScript(jsEditor.document, runOnEdit);
         }
-      } else if (
-        includesStylesheet &&
-        document.uri === cssEditor!.document.uri
-      ) {
-        htmlView.updateCSS(document.getText(), runOnEdit);
+      } else if (isPlaygroundDocument(gist, document, STYLESHEET_EXTENSIONS)) {
+        htmlView.updateCSS(await getStylesheetContent(document), runOnEdit);
       }
     }, 100)
   );
@@ -356,8 +407,12 @@ export async function openPlayground(gist: Gist) {
   });
 
   htmlView.updateManifest(getManifestContent(gist));
-  htmlView.updateHTML(includesMarkup ? htmlEditor!.document.getText() : "");
-  htmlView.updateCSS(includesStylesheet ? cssEditor!.document.getText() : "");
+  htmlView.updateHTML(
+    !!markupFile ? getMarkupContent(htmlEditor!.document) : ""
+  );
+  htmlView.updateCSS(
+    !!stylesheetFile ? await getStylesheetContent(cssEditor!.document) : ""
+  );
 
   if (jsEditor) {
     htmlView.updateJavaScript(jsEditor.document);

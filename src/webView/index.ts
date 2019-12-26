@@ -77,49 +77,58 @@ export class PlaygroundWebview {
     }
   }
 
-  private async renderLibraryDependencies() {
-    if (!this.manifest && !this.scripts) {
-      return "";
-    }
-
-    const scripts = this.scripts;
+  private async resolveLibraries() {
+    const libraryReferences = {
+      scripts: this.scripts,
+      styles: this.styles
+    };
 
     if (
       !this.manifest ||
-      !this.manifest!.libraries ||
-      this.manifest!.libraries.length === 0
+      !this.manifest.libraries ||
+      this.manifest.libraries.length === 0
     ) {
-      return scripts;
+      return libraryReferences;
     }
 
-    const result = this.manifest!.libraries.map(async (libraryURL) => {
-      if (!libraryURL || (libraryURL && !libraryURL.trim())) {
-        return "";
-      }
+    await Promise.all(
+      this.manifest!.libraries.map(async (library) => {
+        if (!library || (library && !library.trim())) {
+          return;
+        }
 
-      const isUrl = libraryURL.match(
-        /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
-      );
+        const isUrl = library.match(
+          /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
+        );
 
-      if (isUrl) {
-        return `<script src="${libraryURL}"></script>`;
-      }
+        if (isUrl) {
+          if (library.endsWith(".css")) {
+            libraryReferences.styles += `<link rel="stylesheet" href="${library}" />`;
+          } else {
+            libraryReferences.scripts += `<script src="${library}"></script>`;
+          }
 
-      const libraries = await getCDNJSLibraries();
-      const library = libraries.find((lib) => lib.name === libraryURL);
+          return;
+        }
 
-      if (library) {
-        return `<script src="${library.latest}"></script>`;
-      }
-    });
+        const libraries = await getCDNJSLibraries();
+        const libraryEntry = libraries.find((lib) => lib.name === library);
 
-    const libraryScripts = (await Promise.all(result)).join("");
-    return `${scripts}
-${libraryScripts}`;
+        if (libraryEntry) {
+          if (libraryEntry.latest.endsWith(".css")) {
+            libraryReferences.styles += `<link rel="stylesheet" href="${libraryEntry.latest}" />`;
+          } else {
+            libraryReferences.scripts += `<script src="${libraryEntry.latest}"></script>`;
+          }
+        }
+      })
+    );
+
+    return libraryReferences;
   }
 
   public async rebuildWebview() {
-    const libraryScripts = await this.renderLibraryDependencies();
+    const { scripts, styles } = await this.resolveLibraries();
 
     const baseUrl = `https://gist.github.com/${this.gist.owner.login}/${this.gist.id}/raw/`;
     const styleId = `gistpad-playground-style-${Math.random()}`;
@@ -130,11 +139,11 @@ ${libraryScripts}`;
     <style>
       body { background-color: white; }
     </style>
+    ${styles}
     <style id="${styleId}">
       ${this.css}
     </style>
-    ${this.styles}
-    ${libraryScripts}
+    ${scripts}
     <script>
       document.getElementById("_defaultStyles").remove();
 

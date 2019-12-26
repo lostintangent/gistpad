@@ -26,6 +26,7 @@ const librariesToPickerList = (libraries: ICDNJSLibrary[]) => {
   const result = libraries.map((library) => {
     return {
       label: library.name,
+      description: library.description,
       library
     };
   });

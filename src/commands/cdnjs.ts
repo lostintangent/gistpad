@@ -5,6 +5,7 @@ export const LIBRARIES_URL = "https://api.cdnjs.com/libraries";
 
 export interface ICDNJSLibrary {
   name: string;
+  description: string;
   latest: string;
 }
 export interface ICDNJSLibrarayVersion {
@@ -24,7 +25,7 @@ let libraries: ICDNJSLibrary[] | undefined;
 const getLibrariesInternal = async (): Promise<ICDNJSLibrary[]> => {
   try {
     const librariesResponse = await axios.get<{ results: ICDNJSLibrary[] }>(
-      LIBRARIES_URL,
+      `${LIBRARIES_URL}?fields=description`,
       {
         responseType: "json"
       }

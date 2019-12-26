@@ -1,3 +1,8 @@
+## v0.0.30 (12/26/2019)
+
+- Added support for referencing external stylsheets in a playground's `playground.json` file. Simply add a URL for a CSS file to the `libraries` property, and it will be injected into the preview.
+- Added the library's description to the CDNJS library picklist, when executing the `GistPad: Add Library` command.
+
 ## v0.0.29 (12/26/2019)
 
 - Added support for SCSS and Pug to playgrounds, so that you can use them as alternatives to CSS and HTML (respectively). Additionally, introduced a new `GistPad > Playground: Stylesheet Language` and `GistPad > Playground: Markup Language` settings, which allows you to configure `pug` and/or `scss` as the default stylesheet/markup languages can for all new playgrounds.

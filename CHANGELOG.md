@@ -1,9 +1,9 @@
-## v0.0.30 (12/26/2019)
+## v0.0.30 (12/27/2019)
 
 - Added support for referencing external stylsheets in a playground's `playground.json` file. Simply add a URL for a CSS file to the `styles` property, and it will be injected into the preview before your playground's custom styles.
-  
+
 - Added the `Add Playground Script` and `Add Playground Stylesheet` commands to the tree view, to make it easy to add new libraries to a playground without needing to actually open the `playground.json` file. Additionally, these commands now allow you to directly paste a URL, in addition to selecting a library from CDNJS
-  
+
 - Added the `Copy File to Gist` context menu to gist file node's in the tree view, which allows easily moving files between gists
 
 ## v0.0.29 (12/26/2019)
@@ -29,7 +29,7 @@
 
 ## v0.0.26 (12/22/2019)
 
-- Introduced the concept of "playground libraries", which allow you to include JavaScript libraries into a playground, by simply adding their URL to the `libraries` property in the playground's `playground.json` file.
+- Introduced the concept of "playground libraries", which allow you to include JavaScript libraries into a playground, by simply adding their URL to the `scripts` property in the playground's `playground.json` file.
 
 - Added support for `.jsx` and `.tsx` files within a playground. If you rename your `script.js` file to one of these extensions, then you can include JSX in the file and it will be automatically compiled. Additionally, the `GistPad > Playground: Script Language` setting now supports two new values: `javascriptreact` and `typescriptreact`. Finally, in order to simplify React-based playgrounds, the `react` and `react-dom` libraries will be automatically injected into React-based playgrounds.
 

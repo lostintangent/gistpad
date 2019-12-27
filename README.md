@@ -72,7 +72,7 @@ If you're building web applications, and want to create a quick playground envir
 
 ![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
-If you need to add any external JavaScript libraries (e.g. `react`) or stylesheets (e.g. `font-awesome`) to your playground, simply right-click the gist in the `Gists` tree, and click `Add Playground Script` or `Add Playground Stylesheet` menu item. This will allow you to select a library from CDNJS or paste a custom library URL. Behind the scenes, these commands update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually.
+If you need to add any external JavaScript libraries (e.g. `react`) or stylesheets (e.g. `font-awesome`) to your playground, simply right-click the gist in the `Gists` tree, and click `Add Playground Script` or `Add Playground Stylesheet` menu item. This will allow you to select a library from CDNJS or paste a custom library URL. Since Gist files provide an internet-accessible URL, you can use Gists as re-usable snippets for plaugrounds, and add references to them by right-clicking a gist file in the `Gists` tree, select `Copy File URL`, and then add it as a script/stylesheet reference to the appropriate playground. Behind the scenes, these commands update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually.
 
 ![Libraries](https://user-images.githubusercontent.com/116461/71530143-2a20f180-289d-11ea-940b-4ec60cabb0fd.gif)
 

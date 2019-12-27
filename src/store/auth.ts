@@ -1,6 +1,6 @@
 import { execGitCredentialFill } from "@abstractions/gitCredentialFill";
+import { performSignInFlow } from "@abstractions/signIn";
 import * as keytarType from "keytar";
-import * as vscode from "vscode";
 import { commands, window } from "vscode";
 import { store } from ".";
 import * as config from "../config";
@@ -37,7 +37,7 @@ const STATE_SIGNED_OUT = "SignedOut";
 const SCOPE_HEADER = "x-oauth-scopes";
 const GIST_SCOPE = "gist";
 
-export async function testToken(token: string) {
+async function testToken(token: string) {
   const apiurl = await config.get("apiUrl");
   const github = new GitHub({ apiurl, token });
   try {
@@ -132,7 +132,7 @@ export async function isAuthenticated() {
   return token !== null;
 }
 
-export async function markUserAsSignedIn() {
+async function markUserAsSignedIn() {
   store.isSignedIn = true;
   commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
   await refreshGists();
@@ -150,29 +150,18 @@ function markUserAsSignedOut() {
 }
 
 export async function signIn() {
-  const callableUri = await vscode.env.asExternalUri(
-    vscode.Uri.parse(
-      `${vscode.env.uriScheme}://vsls-contrib.gistfs/did-authenticate`
-    )
-  );
-  console.log("callable uri is " + callableUri);
-  await vscode.env.openExternal(callableUri);
+  const token = await performSignInFlow();
 
-  // const value = await env.clipboard.readText();
-  // const token = await window.showInputBox({
-  //   prompt: "Enter your GitHub token",
-  //   value
-  // });
-  // if (token) {
-  //   if (await testToken(token)) {
-  //     await keytar.setPassword(SERVICE, ACCOUNT, token);
-  //     await markUserAsSignedIn();
-  //   } else {
-  //     window.showErrorMessage(
-  //       "The specified token isn't valid or doesn't inlcude the gist scope. Please check it and try again."
-  //     );
-  //   }
-  // }
+  if (token) {
+    if (await testToken(token)) {
+      await keytar.setPassword(SERVICE, ACCOUNT, token);
+      await markUserAsSignedIn();
+    } else {
+      window.showErrorMessage(
+        "The specified token isn't valid or doesn't inlcude the gist scope. Please check it and try again."
+      );
+    }
+  }
 }
 
 export async function signout() {

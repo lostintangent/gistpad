@@ -1,6 +1,7 @@
 import { execGitCredentialFill } from "@abstractions/gitCredentialFill";
+import { performSignInFlow } from "@abstractions/signIn";
 import * as keytarType from "keytar";
-import { commands, env, window } from "vscode";
+import { commands, window } from "vscode";
 import { store } from ".";
 import * as config from "../config";
 import { EXTENSION_ID } from "../constants";
@@ -149,11 +150,8 @@ function markUserAsSignedOut() {
 }
 
 export async function signIn() {
-  const value = await env.clipboard.readText();
-  const token = await window.showInputBox({
-    prompt: "Enter your GitHub token",
-    value
-  });
+  const token = await performSignInFlow();
+
   if (token) {
     if (await testToken(token)) {
       await keytar.setPassword(SERVICE, ACCOUNT, token);

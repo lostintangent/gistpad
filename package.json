@@ -285,7 +285,7 @@
       },
       {
         "command": "gistpad.openGistInCodePen",
-        "title": "Open Playground in CodePen",
+        "title": "Export Playground to CodePen",
         "category": "GistPad"
       },
       {

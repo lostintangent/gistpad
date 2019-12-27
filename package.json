@@ -868,7 +868,7 @@
     "jsonValidation": [
       {
         "fileMatch": "playground.json",
-        "url": "https://gist.githubusercontent.com/lostintangent/21727eab0d79c7b9fd0dde92df7b1f50/raw/a8a3fa5a375ac59a6c36672a172eefb8c919885b/schema.json"
+        "url": "https://gist.githubusercontent.com/lostintangent/21727eab0d79c7b9fd0dde92df7b1f50/raw/schema.json"
       }
     ],
     "languages": [

@@ -18,9 +18,9 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
    <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
-   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide SSO, assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_. Otherwise, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
+   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_. Otherwise, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
 
-1. Add local files/snippets to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Add Document to Gist`, `Add Selection to Gist` or `Paste Gist File` ([details](#contributed-commands-editor))
+1. Add local files/snippets to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File` ([details](#contributed-commands-editor))
 
    <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
@@ -72,14 +72,13 @@ If you're building web applications, and want to create a quick playground envir
 
 ![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
+If you need to add any external JavaScript libraries (e.g. `react`) or stylesheets (e.g. `font-awesome`) to your playground, simply right-click the gist in the `Gists` tree, and click `Add Playground Script` or `Add Playground Stylesheet` menu item. This will allow you to select a library from CDNJS or paste a custom library URL. Behind the scenes, these commands update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually.
+
+![Libraries](https://user-images.githubusercontent.com/116461/71530143-2a20f180-289d-11ea-940b-4ec60cabb0fd.gif)
+
 The playground also provides an output window in order to view any logs written via the `console.log` API. You can bring up the output window, as well as run the playground or open the Chrome Developer Tools, by clicking the respective command icon in the editor toolbar.
 
 <img width="503" src="https://user-images.githubusercontent.com/116461/71384593-0a38b780-2597-11ea-8bba-73f784f6ec76.png" />
-
-If you need to add any JavaScript libraries to your playground, simply open the gist's `playground.json` file, and add one of the following to the `libraries` property:
-
-- A URL that points at the JavaScript library you'd like to include. In order to simplify this, you can right-click the file as select `Add Library`. This will provide an interactive prompt for selecting a library from [CDNJS](https://cdnjs.com).
-- The name of a well-known library (e.g. React, Vue). In order to simplify this, you'll recieve auto-completion for these libraries as you edit the `libraries` property.
 
 Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you done with a playground, simply clone the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist.
 

@@ -19,6 +19,7 @@ const SUPPORTED_DEFAULT_LIBRARIES = [
   "angular.js",
   "d3",
   "ember.js",
+  "font-awesome",
   "jquery",
   "react",
   "react-dom",
@@ -145,18 +146,20 @@ export const addPlaygroundLibraryCommand = async (
 ) => {
   const libraries = await getCDNJSLibraries();
   const libraryPickListItems = librariesToPickList(libraries);
+
   const list = vscode.window.createQuickPick();
   list.placeholder = "Select the library you'd like to add to the playground";
   list.items = libraryPickListItems;
 
-  list.onDidChangeValue((gistId) => {
-    list.items = gistId
-      ? [{ label: gistId }, ...libraryPickListItems]
-      : libraryPickListItems;
+  list.onDidChangeValue((value) => {
+    list.items =
+      value && value.match(URI_PATTERN)
+        ? [{ label: value }, ...libraryPickListItems]
+        : libraryPickListItems;
   });
 
   const clipboardValue = await vscode.env.clipboard.readText();
-  if (clipboardValue && clipboardValue.startsWith("http")) {
+  if (clipboardValue && clipboardValue.match(URI_PATTERN)) {
     list.value = clipboardValue;
     list.items = [{ label: clipboardValue }, ...libraryPickListItems];
   }

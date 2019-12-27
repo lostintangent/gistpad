@@ -2,6 +2,7 @@ import { URLSearchParams } from "url";
 import * as vscode from "vscode";
 import { CommandId } from "./constants";
 import { log } from "./logger";
+import { initializeAuth } from "./store/auth";
 
 const getQuery = (uri: vscode.Uri): URLSearchParams => {
   const query = new URLSearchParams(uri.query);
@@ -26,7 +27,7 @@ const openGist = async (uri: vscode.Uri) => {
 
   await vscode.commands.executeCommand(CommandId.openGist, {
     ...options,
-    openAsWorkspace,
+    openAsWorkspace
   });
 };
 
@@ -36,7 +37,9 @@ export class GistPadProtocolHandler implements vscode.UriHandler {
       case "/open-gist": {
         return await openGist(uri);
       }
-
+      case "/did-authenticate": {
+        await initializeAuth();
+      }
       default: {
         break;
       }

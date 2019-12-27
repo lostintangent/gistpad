@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
-import { getScriptContent } from "../commands/playground";
+import {
+  getScriptContent,
+  PlaygroundLibraryType
+} from "../commands/playground";
+import { URI_PATTERN } from "../constants";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { Gist } from "../store";
 
@@ -77,61 +81,56 @@ export class PlaygroundWebview {
     }
   }
 
-  private async resolveLibraries() {
-    const libraryReferences = {
-      scripts: this.scripts,
-      styles: this.styles
-    };
+  private async resolveLibraries(libraryType: PlaygroundLibraryType) {
+    let libraries = this[libraryType];
 
     if (
       !this.manifest ||
-      !this.manifest.libraries ||
-      this.manifest.libraries.length === 0
+      !this.manifest[libraryType] ||
+      this.manifest[libraryType].length === 0
     ) {
-      return libraryReferences;
+      return libraries;
     }
 
     await Promise.all(
-      this.manifest!.libraries.map(async (library) => {
+      this.manifest![libraryType].map(async (library) => {
         if (!library || (library && !library.trim())) {
           return;
         }
 
-        const isUrl = library.match(
-          /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/
-        );
+        const appendLibrary = (url: string) => {
+          if (libraryType === PlaygroundLibraryType.style) {
+            libraries += `<link rel="stylesheet" href="${url}" />`;
+          } else {
+            libraries += `<script src="${url}"></script>`;
+          }
+        };
 
+        const isUrl = library.match(URI_PATTERN);
         if (isUrl) {
-          if (library.endsWith(".css")) {
-            libraryReferences.styles += `<link rel="stylesheet" href="${library}" />`;
-          } else {
-            libraryReferences.scripts += `<script src="${library}"></script>`;
+          appendLibrary(library);
+        } else {
+          const libraries = await getCDNJSLibraries();
+          const libraryEntry = libraries.find((lib) => lib.name === library);
+
+          if (!libraryEntry) {
+            return;
           }
 
-          return;
-        }
-
-        const libraries = await getCDNJSLibraries();
-        const libraryEntry = libraries.find((lib) => lib.name === library);
-
-        if (libraryEntry) {
-          if (libraryEntry.latest.endsWith(".css")) {
-            libraryReferences.styles += `<link rel="stylesheet" href="${libraryEntry.latest}" />`;
-          } else {
-            libraryReferences.scripts += `<script src="${libraryEntry.latest}"></script>`;
-          }
+          appendLibrary(libraryEntry.latest);
         }
       })
     );
 
-    return libraryReferences;
+    return libraries;
   }
 
   public async rebuildWebview() {
-    const { scripts, styles } = await this.resolveLibraries();
-
     const baseUrl = `https://gist.github.com/${this.gist.owner.login}/${this.gist.id}/raw/`;
     const styleId = `gistpad-playground-style-${Math.random()}`;
+
+    const scripts = await this.resolveLibraries(PlaygroundLibraryType.script);
+    const styles = await this.resolveLibraries(PlaygroundLibraryType.style);
 
     this.webview.html = `<html>
   <head>

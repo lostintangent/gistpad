@@ -1,9 +1,10 @@
 ## v0.0.30 (12/26/2019)
 
-- Added the `Add Playground Library` command to the tree view, to make it easy to add new libraries without needing to actually open the `playground.json` file.
-- Added support for referencing external stylsheets in a playground's `playground.json` file. Simply add a URL for a CSS file to the `libraries` property, and it will be injected into the preview.
-- Added the `Add File to Gist` command to the tree view, which allows easily moving files between gists
-- Added the library's description to the CDNJS library picklist, when executing the `GistPad: Add Playground Library` command.
+- Added support for referencing external stylsheets in a playground's `playground.json` file. Simply add a URL for a CSS file to the `styles` property, and it will be injected into the preview before your playground's custom styles.
+  
+- Added the `Add Playground Script` and `Add Playground Stylesheet` commands to the tree view, to make it easy to add new libraries to a playground without needing to actually open the `playground.json` file. Additionally, these commands now allow you to directly paste a URL, in addition to selecting a library from CDNJS
+  
+- Added the `Copy File to Gist` context menu to gist file node's in the tree view, which allows easily moving files between gists
 
 ## v0.0.29 (12/26/2019)
 

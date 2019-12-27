@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "extensionKind": [
     "ui",
     "workspace"
@@ -27,7 +27,8 @@
   "activationEvents": [
     "onCommand:gistpad.addFileToGist",
     "onCommand:gistpad.addSelectionToGist",
-    "onCommand:gistpad.addPlaygroundLibrary",
+    "onCommand:gistpad.addPlaygroundScript",
+    "onCommand:gistpad.addPlaygroundStylesheet",
     "onCommand:gistpad.deleteGist",
     "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
@@ -153,7 +154,7 @@
       },
       {
         "command": "gistpad.addFileToGist",
-        "title": "Add File to Gist",
+        "title": "Copy File to Gist",
         "category": "GistPad"
       },
       {
@@ -403,8 +404,13 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.addPlaygroundLibrary",
-        "title": "Add Playground Library",
+        "command": "gistpad.addPlaygroundScript",
+        "title": "Add Playground Script",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.addPlaygroundStylesheet",
+        "title": "Add Playground Stylesheet",
         "category": "GistPad"
       }
     ],
@@ -433,7 +439,11 @@
           "when": "false"
         },
         {
-          "command": "gistpad.addPlaygroundLibrary",
+          "command": "gistpad.addPlaygroundScript",
+          "when": "resourceScheme == gist && resourceFilename == playground.json"
+        },
+        {
+          "command": "gistpad.addPlaygroundStylesheet",
           "when": "resourceScheme == gist && resourceFilename == playground.json"
         },
         {
@@ -709,9 +719,14 @@
           "group": "manage@2"
         },
         {
-          "command": "gistpad.addPlaygroundLibrary",
+          "command": "gistpad.addPlaygroundScript",
           "when": "viewItem =~ /^gists.gist.playground$/",
           "group": "playground@1"
+        },
+        {
+          "command": "gistpad.addPlaygroundStylesheet",
+          "when": "viewItem =~ /^gists.gist.playground$/",
+          "group": "playground@2"
         },
         {
           "command": "gistpad.unfollowUser",
@@ -765,7 +780,11 @@
           "when": "resourceScheme == gist && resourceLangId == markdown"
         },
         {
-          "command": "gistpad.addPlaygroundLibrary",
+          "command": "gistpad.addPlaygroundScript",
+          "when": "resourceScheme == gist && resourceFilename == playground.json"
+        },
+        {
+          "command": "gistpad.addPlaygroundStylesheet",
           "when": "resourceScheme == gist && resourceFilename == playground.json"
         }
       ],

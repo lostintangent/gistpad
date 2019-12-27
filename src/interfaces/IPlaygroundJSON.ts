@@ -1,3 +1,4 @@
 export interface IPlaygroundJSON {
-  libraries: string[];
+  scripts: string[];
+  styles: string[];
 }

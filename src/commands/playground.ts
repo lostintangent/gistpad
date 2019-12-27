@@ -14,6 +14,11 @@ import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
+export enum PlaygroundLibraryType {
+  script = "scripts",
+  style = "styles"
+}
+
 const MarkupLanguage = {
   html: ".html",
   pug: ".pug"
@@ -24,6 +29,11 @@ const MARKUP_EXTENSIONS = [MarkupLanguage.html, MarkupLanguage.pug];
 const StylesheetLanguage = {
   css: ".css",
   scss: ".scss"
+};
+
+export const DEFAULT_MANIFEST = {
+  scripts: [] as string[],
+  styles: [] as string[]
 };
 
 const STYLESHEET_EXTENSIONS = [StylesheetLanguage.css, StylesheetLanguage.scss];
@@ -63,14 +73,14 @@ const isReactFile = (fileName: string) => {
   return REACT_EXTENSIONS.includes(path.extname(fileName));
 };
 
-const REACT_LIBRARIES = ["react", "react-dom"];
+const REACT_SCRIPTS = ["react", "react-dom"];
 
 const includesReactFiles = (gist: Gist) => {
   return Object.keys(gist.files).some(isReactFile);
 };
 
-const includesReactLibraries = (libraries: string[]) => {
-  return REACT_LIBRARIES.every((library) => libraries.includes(library));
+const includesReactScripts = (scripts: string[]) => {
+  return REACT_SCRIPTS.every((script) => scripts.includes(script));
 };
 
 const getManifestContent = (gist: Gist) => {
@@ -81,9 +91,9 @@ const getManifestContent = (gist: Gist) => {
   const manifest = gist.files[PLAYGROUND_JSON_FILE].content!;
   if (includesReactFiles(gist)) {
     const parsedManifest = JSON.parse(manifest);
-    if (!includesReactLibraries(parsedManifest.libraries)) {
-      parsedManifest.libraries.push(...REACT_LIBRARIES);
-      parsedManifest.libraries = [...new Set(parsedManifest.libraries)];
+    if (!includesReactScripts(parsedManifest.scripts)) {
+      parsedManifest.scripts.push(...REACT_SCRIPTS);
+      parsedManifest.scripts = [...new Set(parsedManifest.scripts)];
 
       const content = JSON.stringify(parsedManifest, null, 2);
 
@@ -104,11 +114,11 @@ async function generateNewPlaygroundFiles() {
   const scriptFileName = `script${ScriptLanguage[scriptLanguage]}`;
 
   const manifest = {
-    libraries: <string[]>[]
+    ...DEFAULT_MANIFEST
   };
 
   if (isReactFile(scriptFileName)) {
-    manifest.libraries.push(...REACT_LIBRARIES);
+    manifest.scripts.push(...REACT_SCRIPTS);
   }
 
   const files = [
@@ -151,7 +161,7 @@ export function getScriptContent(
   let content = document.getText();
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
 
-  const includesJsx = manifest && manifest.libraries.includes("react");
+  const includesJsx = manifest && manifest.scripts.includes("react");
   if (TYPESCRIPT_EXTENSIONS.includes(extension) || includesJsx) {
     const compilerOptions: typescript.CompilerOptions = {
       experimentalDecorators: true
@@ -345,8 +355,8 @@ export async function openPlayground(gist: Gist) {
         htmlView.updateHTML(getMarkupContent(document), runOnEdit);
       } else if (isPlaygroundDocument(gist, document, SCRIPT_EXTENSIONS)) {
         // If the user renamed the script file (e.g. from *.js to *.jsx)
-        // than we need to update the manifest in case new libraries
-        // need to be injected into the wevview (e.g. "react").
+        // than we need to update the manifest in case new scripts
+        // need to be injected into the webview (e.g. "react").
         if (
           jsEditor &&
           jsEditor.document.uri.toString() !== document.uri.toString()
@@ -464,8 +474,15 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.addPlaygroundLibrary`,
-      addPlaygroundLibraryCommand
+      `${EXTENSION_ID}.addPlaygroundScript`,
+      addPlaygroundLibraryCommand.bind(null, PlaygroundLibraryType.script)
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_ID}.addPlaygroundStylesheet`,
+      addPlaygroundLibraryCommand.bind(null, PlaygroundLibraryType.style)
     )
   );
 
@@ -502,6 +519,6 @@ export async function registerPlaygroundCommands(
     )
   );
 
-  // warm up libraries
+  // Warm up the local CDNJS cache
   await getCDNJSLibraries();
 }

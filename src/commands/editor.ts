@@ -11,6 +11,7 @@ import {
 import { EXTENSION_ID, UNTITLED_SCHEME } from "../constants";
 import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
+import { GistFileNode } from "../tree/nodes";
 import {
   fileNameToUri,
   getFileContents,
@@ -104,21 +105,32 @@ export function registerEditorCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.addFileToGist`,
-      async (fileUri: Uri) => {
+      async (nodeOrUri: GistFileNode | Uri) => {
         await ensureAuthenticated();
 
         let filename: string | undefined;
         let contents: string | undefined;
-        if (fileUri.scheme === UNTITLED_SCHEME) {
-          filename = await askForFileName();
-          if (!filename) {
-            return;
-          }
 
-          contents = await window.activeTextEditor!.document.getText();
+        if (nodeOrUri instanceof GistFileNode) {
+          // The command is being called as a response to
+          // right-clicking a file node in the Gists tree
+          filename = nodeOrUri.file.filename!;
+          contents = await getFileContents(nodeOrUri.file);
         } else {
-          filename = path.basename(fileUri.toString());
-          contents = (await workspace.fs.readFile(fileUri)).toString();
+          // The command is being called as a response
+          // to right-clicking a file in the explorer
+          // tree or right-clicking an editor window
+          if (nodeOrUri.scheme === UNTITLED_SCHEME) {
+            filename = await askForFileName();
+            if (!filename) {
+              return;
+            }
+
+            contents = await window.activeTextEditor!.document.getText();
+          } else {
+            filename = path.basename(nodeOrUri.toString());
+            contents = (await workspace.fs.readFile(nodeOrUri)).toString();
+          }
         }
 
         promptForGistSelection(filename, contents);

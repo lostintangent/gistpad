@@ -91,7 +91,11 @@ Type: ${gist.public ? "Public" : "Secret"}`;
 }
 
 export class GistFileNode extends TreeNode {
-  constructor(public gistId: string, public file: GistFile) {
+  constructor(
+    public gistId: string,
+    public file: GistFile,
+    private isReadOnly = true
+  ) {
     super(file.filename!);
 
     this.iconPath = ThemeIcon.File;
@@ -103,6 +107,10 @@ export class GistFileNode extends TreeNode {
       title: "Open Gist File",
       arguments: [this.resourceUri]
     };
+
+    if (this.isReadOnly) {
+      this.contextValue += ".readonly";
+    }
   }
 }
 

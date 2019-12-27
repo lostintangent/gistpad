@@ -153,7 +153,7 @@
       },
       {
         "command": "gistpad.addFileToGist",
-        "title": "Add Document to Gist",
+        "title": "Add File to Gist",
         "category": "GistPad"
       },
       {
@@ -184,12 +184,12 @@
       },
       {
         "command": "gistpad.copyFileContents",
-        "title": "Copy Contents",
+        "title": "Copy File Contents",
         "category": "GistPad"
       },
       {
         "command": "gistpad.copyFileUrl",
-        "title": "Copy URL",
+        "title": "Copy File URL",
         "category": "GistPad"
       },
       {
@@ -720,23 +720,28 @@
         },
         {
           "command": "gistpad.copyFileUrl",
-          "when": "viewItem == gists.gist.file",
+          "when": "viewItem =~ /^gists.gist.file(.readonly)?$/",
           "group": "base@1"
         },
         {
           "command": "gistpad.copyFileContents",
-          "when": "viewItem == gists.gist.file",
+          "when": "viewItem =~ /^gists.gist.file(.readonly)?$/",
           "group": "base@2"
+        },
+        {
+          "command": "gistpad.addFileToGist",
+          "when": "viewItem =~ /^gists.gist.file(.readonly)?$/",
+          "group": "base@3"
         },
         {
           "command": "gistpad.renameFile",
           "when": "viewItem == gists.gist.file",
-          "group": "manage@1"
+          "group": "manage@2"
         },
         {
           "command": "gistpad.deleteFile",
           "when": "viewItem == gists.gist.file",
-          "group": "manage@2"
+          "group": "manage@3"
         }
       ],
       "explorer/context": [

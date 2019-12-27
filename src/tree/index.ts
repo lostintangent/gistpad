@@ -91,7 +91,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       }
     } else if (element instanceof GistNode) {
       return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file)
+        ([_, file]) => new GistFileNode(element.gist.id, file, false)
       );
     } else if (element instanceof StarredGistNode) {
       return Object.entries(element.gist.files).map(

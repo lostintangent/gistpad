@@ -2,6 +2,7 @@
 
 - Added the `Add Playground Library` command to the tree view, to make it easy to add new libraries without needing to actually open the `playground.json` file.
 - Added support for referencing external stylsheets in a playground's `playground.json` file. Simply add a URL for a CSS file to the `libraries` property, and it will be injected into the preview.
+- Added the `Add File to Gist` command to the tree view, which allows easily moving files between gists
 - Added the library's description to the CDNJS library picklist, when executing the `GistPad: Add Playground Library` command.
 
 ## v0.0.29 (12/26/2019)

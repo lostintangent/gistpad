@@ -1,6 +1,7 @@
 import { execGitCredentialFill } from "@abstractions/gitCredentialFill";
 import * as keytarType from "keytar";
-import { commands, env, window } from "vscode";
+import * as vscode from "vscode";
+import { commands, window } from "vscode";
 import { store } from ".";
 import * as config from "../config";
 import { EXTENSION_ID } from "../constants";
@@ -36,7 +37,7 @@ const STATE_SIGNED_OUT = "SignedOut";
 const SCOPE_HEADER = "x-oauth-scopes";
 const GIST_SCOPE = "gist";
 
-async function testToken(token: string) {
+export async function testToken(token: string) {
   const apiurl = await config.get("apiUrl");
   const github = new GitHub({ apiurl, token });
   try {
@@ -131,7 +132,7 @@ export async function isAuthenticated() {
   return token !== null;
 }
 
-async function markUserAsSignedIn() {
+export async function markUserAsSignedIn() {
   store.isSignedIn = true;
   commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
   await refreshGists();
@@ -149,21 +150,29 @@ function markUserAsSignedOut() {
 }
 
 export async function signIn() {
-  const value = await env.clipboard.readText();
-  const token = await window.showInputBox({
-    prompt: "Enter your GitHub token",
-    value
-  });
-  if (token) {
-    if (await testToken(token)) {
-      await keytar.setPassword(SERVICE, ACCOUNT, token);
-      await markUserAsSignedIn();
-    } else {
-      window.showErrorMessage(
-        "The specified token isn't valid or doesn't inlcude the gist scope. Please check it and try again."
-      );
-    }
-  }
+  const callableUri = await vscode.env.asExternalUri(
+    vscode.Uri.parse(
+      `${vscode.env.uriScheme}://vsls-contrib.gistfs/did-authenticate`
+    )
+  );
+  console.log("callable uri is " + callableUri);
+  await vscode.env.openExternal(callableUri);
+
+  // const value = await env.clipboard.readText();
+  // const token = await window.showInputBox({
+  //   prompt: "Enter your GitHub token",
+  //   value
+  // });
+  // if (token) {
+  //   if (await testToken(token)) {
+  //     await keytar.setPassword(SERVICE, ACCOUNT, token);
+  //     await markUserAsSignedIn();
+  //   } else {
+  //     window.showErrorMessage(
+  //       "The specified token isn't valid or doesn't inlcude the gist scope. Please check it and try again."
+  //     );
+  //   }
+  // }
 }
 
 export async function signout() {

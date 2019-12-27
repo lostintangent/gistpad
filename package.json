@@ -44,6 +44,7 @@
     "onCommand:gistpad.starredGists",
     "onFileSystem:gist",
     "onView:gistpad.gists",
+    "onUri",
     "*"
   ],
   "main": "./out/prod/extension.js",

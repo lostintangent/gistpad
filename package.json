@@ -284,6 +284,11 @@
         }
       },
       {
+        "command": "gistpad.openGistInCodePen",
+        "title": "Open Playground in CodePen",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.openProfile",
         "title": "Open Profile in GitHub",
         "category": "GistPad"
@@ -399,11 +404,6 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.pasteScreenshot",
-        "title": "Paste Screenshot",
-        "category": "GistPad"
-      },
-      {
         "command": "gistpad.addPlaygroundScript",
         "title": "Add Playground Script",
         "category": "GistPad"
@@ -516,6 +516,10 @@
         },
         {
           "command": "gistpad.openGistInNbViewer",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openGistInCodePen",
           "when": "false"
         },
         {
@@ -676,6 +680,11 @@
         {
           "command": "gistpad.openGistInNbViewer",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.notebook$/",
+          "group": "browse@2"
+        },
+        {
+          "command": "gistpad.openGistInCodePen",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.playground$/",
           "group": "browse@2"
         },
         {

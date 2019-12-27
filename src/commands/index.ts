@@ -1,5 +1,6 @@
 import { ExtensionContext } from "vscode";
 import { registerAuthCommands } from "./auth";
+import { registerCodePenCommands } from "./codepen";
 import { registerCommentCommands } from "./comments";
 import { registerEditorCommands } from "./editor";
 import { registerFileCommands } from "./file";
@@ -19,4 +20,5 @@ export function registerCommands(context: ExtensionContext) {
   registerFileCommands(context);
   registerPasteImageCommands(context);
   registerPlaygroundCommands(context);
+  registerCodePenCommands(context);
 }

@@ -1,0 +1,17 @@
+<form action="https://codepen.io/pen/define" method="POST">
+  <input type="hidden" name="data" />
+</form>
+
+<script>
+  const data = window.location.search.replace("?pen=", "");
+
+  if (data) {
+    const encodedData = decodeURIComponent(data).replace(/"/g, "&quot;");
+
+    document
+      .querySelector("input[type='hidden']")
+      .setAttribute("value", encodedData);
+
+    document.querySelector("form").submit();
+  }
+</script>

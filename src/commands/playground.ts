@@ -19,6 +19,13 @@ export enum PlaygroundLibraryType {
   style = "styles"
 }
 
+export enum PlaygroundFileType {
+  markup,
+  script,
+  stylesheet,
+  manifest
+}
+
 const MarkupLanguage = {
   html: ".html",
   pug: ".pug"
@@ -83,7 +90,7 @@ const includesReactScripts = (scripts: string[]) => {
   return REACT_SCRIPTS.every((script) => scripts.includes(script));
 };
 
-const getManifestContent = (gist: Gist) => {
+export const getManifestContent = (gist: Gist) => {
   if (!gist.files[PLAYGROUND_JSON_FILE]) {
     return "";
   }
@@ -227,7 +234,20 @@ const EDITOR_LAYOUT = {
   }
 };
 
-const getGistFileOfType = (gist: Gist, extensions: string[]) => {
+export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
+  let extensions: string[];
+  switch (fileType) {
+    case PlaygroundFileType.markup:
+      extensions = MARKUP_EXTENSIONS;
+      break;
+    case PlaygroundFileType.script:
+      extensions = SCRIPT_EXTENSIONS;
+      break;
+    case PlaygroundFileType.stylesheet:
+      extensions = STYLESHEET_EXTENSIONS;
+      break;
+  }
+
   return Object.keys(gist.files).find((file) =>
     extensions.includes(path.extname(file))
   );
@@ -249,9 +269,9 @@ function isPlaygroundDocument(
 export async function openPlayground(gist: Gist) {
   vscode.commands.executeCommand("setContext", "gistpad:inPlayground", true);
 
-  const markupFile = getGistFileOfType(gist, MARKUP_EXTENSIONS);
-  const stylesheetFile = getGistFileOfType(gist, STYLESHEET_EXTENSIONS);
-  const scriptFile = getGistFileOfType(gist, SCRIPT_EXTENSIONS);
+  const markupFile = getGistFileOfType(gist, PlaygroundFileType.markup);
+  const stylesheetFile = getGistFileOfType(gist, PlaygroundFileType.stylesheet);
+  const scriptFile = getGistFileOfType(gist, PlaygroundFileType.script);
 
   const includedFiles = [!!markupFile, !!stylesheetFile, !!scriptFile].filter(
     (file) => file

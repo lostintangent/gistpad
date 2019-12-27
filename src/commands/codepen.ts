@@ -137,7 +137,7 @@ async function exportGist(gist: Gist) {
 export function registerCodePenCommands(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.openGistInCodePen`,
+      `${EXTENSION_ID}.exportGistToCodePen`,
       async (node: GistNode) => {
         const cleanup = await vscode.window.withProgress(
           {

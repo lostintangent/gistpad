@@ -284,7 +284,7 @@
         }
       },
       {
-        "command": "gistpad.openGistInCodePen",
+        "command": "gistpad.exportGistToCodePen",
         "title": "Export Playground to CodePen",
         "category": "GistPad"
       },
@@ -519,7 +519,7 @@
           "when": "false"
         },
         {
-          "command": "gistpad.openGistInCodePen",
+          "command": "gistpad.exportGistToCodePen",
           "when": "false"
         },
         {
@@ -683,8 +683,8 @@
           "group": "browse@2"
         },
         {
-          "command": "gistpad.openGistInCodePen",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.playground$/",
+          "command": "gistpad.exportGistToCodePen",
+          "when": "viewItem == gists.gist.playground",
           "group": "browse@2"
         },
         {

@@ -404,7 +404,7 @@
       },
       {
         "command": "gistpad.addPlaygroundLibrary",
-        "title": "Add Library",
+        "title": "Add Playground Library",
         "category": "GistPad"
       }
     ],
@@ -431,6 +431,10 @@
         {
           "command": "gistpad.addGistComment",
           "when": "false"
+        },
+        {
+          "command": "gistpad.addPlaygroundLibrary",
+          "when": "resourceScheme == gist && resourceFilename == playground.json"
         },
         {
           "command": "gistpad.addSelectionToGist",
@@ -579,10 +583,6 @@
         {
           "command": "gistpad.pasteScreenshot",
           "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.addPlaygroundLibrary",
-          "when": "resourceScheme == gist && resourceFilename == playground.json"
         }
       ],
       "view/title": [
@@ -645,17 +645,17 @@
         },
         {
           "command": "gistpad.openGist",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
           "group": "base@1"
         },
         {
           "command": "gistpad.openGistWorkspace",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
           "group": "base@2"
         },
         {
           "command": "gistpad.openGistInBrowser",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
           "group": "browse@1"
         },
         {
@@ -670,43 +670,48 @@
         },
         {
           "command": "gistpad.copyGistUrl",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
           "group": "copy@1"
         },
         {
           "command": "gistpad.cloneRepository",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.notebook)?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
           "group": "copy@2"
         },
         {
           "command": "gistpad.addFile",
-          "when": "viewItem =~ /^gists.gist(.notebook)?$/",
+          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.addActiveFile",
-          "when": "viewItem =~ /^gists.gist(.notebook)?$/",
+          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
           "group": "manage@2"
         },
         {
           "command": "gistpad.changeGistDescription",
-          "when": "viewItem =~ /^gists.gist(.notebook)?$/",
+          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
           "group": "manage@3"
         },
         {
           "command": "gistpad.deleteGist",
-          "when": "viewItem =~ /^gists.gist(.notebook)?$/",
+          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
           "group": "manage@4"
         },
         {
           "command": "gistpad.forkGist",
-          "when": "viewItem =~ /^(starredGists|followedUser).gist(.notebook)?$/",
+          "when": "viewItem =~ /^(starredGists|followedUser).gist/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.unstarGist",
-          "when": "viewItem =~ /^starredGists.gist(.notebook)?$/",
+          "when": "viewItem =~ /^starredGists.gist/",
           "group": "manage@2"
+        },
+        {
+          "command": "gistpad.addPlaygroundLibrary",
+          "when": "viewItem =~ /^gists.gist.playground$/",
+          "group": "playground@1"
         },
         {
           "command": "gistpad.unfollowUser",
@@ -839,7 +844,7 @@
     "jsonValidation": [
       {
         "fileMatch": "playground.json",
-        "url": "https://gist.githubusercontent.com/legomushroom/e6ef081dc3f466b6228acac5ee9b620d/raw/gistpad-schema.json"
+        "url": "https://gist.githubusercontent.com/lostintangent/21727eab0d79c7b9fd0dde92df7b1f50/raw/a8a3fa5a375ac59a6c36672a172eefb8c919885b/schema.json"
       }
     ],
     "languages": [

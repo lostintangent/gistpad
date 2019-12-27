@@ -1,17 +1,19 @@
 ## v0.0.30 (12/26/2019)
 
+- Added the `Add Playground Library` command to the tree view, to make it easy to add new libraries without needing to actually open the `playground.json` file.
 - Added support for referencing external stylsheets in a playground's `playground.json` file. Simply add a URL for a CSS file to the `libraries` property, and it will be injected into the preview.
-- Added the library's description to the CDNJS library picklist, when executing the `GistPad: Add Library` command.
+- Added the library's description to the CDNJS library picklist, when executing the `GistPad: Add Playground Library` command.
 
 ## v0.0.29 (12/26/2019)
 
 - Added support for SCSS and Pug to playgrounds, so that you can use them as alternatives to CSS and HTML (respectively). Additionally, introduced a new `GistPad > Playground: Stylesheet Language` and `GistPad > Playground: Markup Language` settings, which allows you to configure `pug` and/or `scss` as the default stylesheet/markup languages can for all new playgrounds.
 
 - Improved the CodePen interop with playgrounds by adding support for pens that...
+
   - Omit an HTML file (e.g. [ZIM Tree Puzzle](https://gist.github.com/lostintangent/5916cb2b62bbfcdcda0ac108a479bfd2))
   - Reference external stylesheets (e.g. [Hotel Reservation Design](https://codepen.io/FlorinPop17/pen/eYmWRdm))
   - Use Babel as their scripting language. _Note: Babel support is provided by simply transpiling the Babel code with TypeScript, so there may be some subtle interop problems._
-  
+
 ## v0.0.28 (12/24/2019)
 
 - Added support for playgrounds to include relative URLs in their `index.html` file

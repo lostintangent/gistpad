@@ -51,7 +51,7 @@ interface IPlayground {
   console: vscode.OutputChannel;
 }
 
-let activePlayground: IPlayground | null;
+export let activePlayground: IPlayground | null;
 
 export async function closeWebviewPanel(gistId: string) {
   if (activePlayground && activePlayground.gistId === gistId) {

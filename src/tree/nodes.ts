@@ -8,7 +8,8 @@ import {
   getGistDescription,
   getGistLabel,
   getStarredGistLabel,
-  isNotebookGist
+  isNotebookGist,
+  isPlaygroundGist
 } from "../utils";
 
 export abstract class TreeNode extends TreeItem {
@@ -83,6 +84,8 @@ Type: ${gist.public ? "Public" : "Secret"}`;
 
     if (isNotebookGist(gist)) {
       this.contextValue += ".notebook";
+    } else if (isPlaygroundGist(gist)) {
+      this.contextValue += ".playground";
     }
   }
 }
@@ -128,6 +131,8 @@ export class StarredGistNode extends TreeNode {
 
     if (isNotebookGist(gist)) {
       this.contextValue += ".notebook";
+    } else if (isPlaygroundGist(gist)) {
+      this.contextValue += ".playground";
     }
   }
 }
@@ -165,6 +170,8 @@ Created: ${moment(gist.created_at).calendar()}`;
 
     if (isNotebookGist(gist)) {
       this.contextValue += ".notebook";
+    } else if (isPlaygroundGist(gist)) {
+      this.contextValue += ".playground";
     }
   }
 }

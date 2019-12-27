@@ -1,54 +1,58 @@
 import * as vscode from "vscode";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
+import { GistNode } from "../tree/nodes";
+import { fileNameToUri } from "../utils";
 import {
   getCDNJSLibraries,
   getLibraryVersions,
   ICDNJSLibrarayVersion,
   ICDNJSLibrary
 } from "./cdnjs";
+import { activePlayground } from "./playground";
 
 const SUPPORTED_DEFAULT_LIBRARIES = [
+  "angular.js",
+  "d3",
+  "ember.js",
+  "jquery",
   "react",
   "react-dom",
-  "vue",
-  "angular",
   "redux",
   "mobx",
-  "jquery",
-  "backone",
-  "ember",
   "polymer",
-  "mithril",
-  "aurelia"
+  "vue"
 ];
 
-const librariesToPickerList = (libraries: ICDNJSLibrary[]) => {
-  const result = libraries.map((library) => {
+const librariesToPickList = (libraries: ICDNJSLibrary[]) => {
+  return libraries.map((library) => {
     return {
       label: library.name,
       description: library.description,
       library
     };
   });
-
-  return result;
 };
 
-const libraryVersionsToPickerOptions = (versions: ICDNJSLibrarayVersion[]) => {
-  const result = versions.map((version) => {
+const libraryVersionsToPickList = (versions: ICDNJSLibrarayVersion[]) => {
+  return versions.map((version) => {
     return {
       label: version.version,
       version
     };
   });
-
-  return result;
 };
 
-const libraryToVersionsPickerList = async (libraryName: string) => {
+const libraryToVersionsPickList = async (libraryName: string) => {
   const versions = await getLibraryVersions(libraryName);
+  return libraryVersionsToPickList(versions);
+};
 
-  return libraryVersionsToPickerOptions(versions);
+const libraryFilesToPickList = (files: string[]) => {
+  return files.map((file) => {
+    return {
+      label: file
+    };
+  });
 };
 
 const createLibraryUrl = (
@@ -67,19 +71,9 @@ const filterOutCommonJsFiles = (versions: string[]) => {
   return result;
 };
 
-const libraryFilesToPickerOptions = (files: string[]) => {
-  const result = files.map((file) => {
-    return {
-      label: file
-    };
-  });
-
-  return result;
-};
-
 export const defaultPlaygroundJSON = {
   libraries: [] as string[]
-} as const;
+};
 
 export const getPlaygroundJson = (text: string): IPlaygroundJSON => {
   try {
@@ -90,65 +84,84 @@ export const getPlaygroundJson = (text: string): IPlaygroundJSON => {
       ...json
     };
   } catch {
-    return { ...defaultPlaygroundJSON };
+    return defaultPlaygroundJSON;
   }
 };
 
-const addDependencyLink = async (libraryName: string, libraryUrl: string) => {
-  const editor = vscode.window.activeTextEditor;
+const addDependencyLink = async (
+  libraryUrl: string,
+  node?: GistNode | vscode.Uri
+) => {
+  if (node && node instanceof GistNode) {
+    const uri = fileNameToUri(node.gist.id, "playground.json");
 
-  if (!editor) {
-    throw new Error("No active text editor to paste the image.");
-  }
-
-  await editor.edit(async (edit) => {
-    const { document } = editor;
-    const text = document.getText();
-
-    const playgroundJSON = getPlaygroundJson(text);
+    let playgroundJSON;
+    try {
+      const content = (await vscode.workspace.fs.readFile(uri)).toString();
+      playgroundJSON = getPlaygroundJson(content);
+    } catch (e) {
+      playgroundJSON = defaultPlaygroundJSON;
+    }
 
     playgroundJSON.libraries.push(libraryUrl);
     playgroundJSON.libraries = [...new Set(playgroundJSON.libraries)];
 
-    const startPos = document.positionAt(0);
-    const endPos = document.positionAt(text.length);
-    const range = new vscode.Selection(startPos, endPos);
+    const updatedContent = JSON.stringify(playgroundJSON, null, 2);
+    vscode.workspace.fs.writeFile(uri, Buffer.from(updatedContent));
 
-    edit.replace(range, JSON.stringify(playgroundJSON, null, 2));
-  });
+    if (activePlayground && activePlayground.gistId === node.gist.id) {
+      activePlayground.webView.updateManifest(updatedContent, true);
+    }
+    return;
+  } else if (vscode.window.activeTextEditor) {
+    await vscode.window.activeTextEditor.edit(async (edit) => {
+      const { document } = vscode.window.activeTextEditor!;
+      const text = document.getText();
+      const playgroundJSON = getPlaygroundJson(text);
+
+      playgroundJSON.libraries.push(libraryUrl);
+      playgroundJSON.libraries = [...new Set(playgroundJSON.libraries)];
+
+      const range = new vscode.Range(
+        document.positionAt(0),
+        document.positionAt(text.length)
+      );
+
+      edit.replace(range, JSON.stringify(playgroundJSON, null, 2));
+    });
+  }
 };
 
-const createLatestUrl = (libraryNameAnswer: any) => {
-  const { name, latest } = libraryNameAnswer.library;
-
-  const result = SUPPORTED_DEFAULT_LIBRARIES.indexOf(name) > -1 ? name : latest;
-
-  return result;
+const createLatestUrl = (libraryAnswer: any) => {
+  const { name, latest } = libraryAnswer.library;
+  return SUPPORTED_DEFAULT_LIBRARIES.indexOf(name) > -1 ? name : latest;
 };
 
-export const addPlaygroundLibraryCommand = async () => {
+export const addPlaygroundLibraryCommand = async (
+  nodeOrUri?: GistNode | vscode.Uri
+) => {
   const libraries = await getCDNJSLibraries();
 
-  const libraryNameAnswer = await vscode.window.showQuickPick(
-    librariesToPickerList(libraries),
+  const libraryAnswer = await vscode.window.showQuickPick(
+    librariesToPickList(libraries),
     {
-      placeHolder: "Select a library to add"
+      placeHolder: "Select the library you'd like to add to the playground"
     }
   );
 
-  if (!libraryNameAnswer) {
-    throw new Error("No library selected.");
+  if (!libraryAnswer) {
+    return;
   }
 
   const libraryVersionAnswer = await vscode.window.showQuickPick(
-    await libraryToVersionsPickerList(libraryNameAnswer.label),
+    await libraryToVersionsPickList(libraryAnswer.label),
     {
-      placeHolder: "Select library version"
+      placeHolder: "Select the library version you'd like to use"
     }
   );
 
   if (!libraryVersionAnswer) {
-    throw new Error("No library version selected.");
+    return;
   }
 
   const libraryFiles = filterOutCommonJsFiles(
@@ -158,7 +171,7 @@ export const addPlaygroundLibraryCommand = async () => {
   const fileAnswer =
     libraryFiles.length > 1
       ? await vscode.window.showQuickPick(
-          await libraryFilesToPickerOptions(libraryFiles),
+          await libraryFilesToPickList(libraryFiles),
           {
             placeHolder: "Select file version"
           }
@@ -166,17 +179,17 @@ export const addPlaygroundLibraryCommand = async () => {
       : { label: libraryFiles[0] };
 
   if (!fileAnswer) {
-    throw new Error("No library file selected.");
+    return;
   }
 
   const libraryUrl =
     libraryVersionAnswer.label === "latest"
-      ? createLatestUrl(libraryNameAnswer)
+      ? createLatestUrl(libraryAnswer)
       : createLibraryUrl(
-          libraryNameAnswer.library.name,
+          libraryAnswer.library.name,
           libraryVersionAnswer.label,
           fileAnswer.label
         );
 
-  await addDependencyLink(libraryNameAnswer.label, libraryUrl);
+  await addDependencyLink(libraryUrl, nodeOrUri);
 };

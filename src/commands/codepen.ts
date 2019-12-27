@@ -1,4 +1,5 @@
 import * as path from "path";
+import { updateGist } from "src/store/actions";
 import * as vscode from "vscode";
 import { EXTENSION_ID, URI_PATTERN } from "../constants";
 import { GistNode } from "../tree/nodes";
@@ -7,6 +8,7 @@ import { getCDNJSLibraries } from "./cdnjs";
 import { getGistFileOfType, PlaygroundFileType } from "./playground";
 
 const CODEPEN_URI = "https://vsls-contrib.github.io/gistpad/codepen.html";
+const MARKER_FILE = ".codepen";
 
 interface PenDefinition {
   title: string;
@@ -132,10 +134,22 @@ export function registerCodePenCommands(context: vscode.ExtensionContext) {
           }
         }
 
-        const definition = encodeURIComponent(JSON.stringify(data));
-        vscode.env.openExternal(
-          vscode.Uri.parse(`${CODEPEN_URI}?pen=${definition}`)
+        await updateGist(gist.id, MARKER_FILE, {
+          filename: MARKER_FILE,
+          content: JSON.stringify(data)
+        });
+
+        const definitionUrl = encodeURIComponent(
+          `https://gist.githubusercontent.com/${gist.owner.login}/${gist.id}/raw/${MARKER_FILE}`
         );
+
+        await vscode.env.openExternal(
+          vscode.Uri.parse(`${CODEPEN_URI}?pen=${definitionUrl}`)
+        );
+
+        setTimeout(async () => {
+          await updateGist(gist.id, MARKER_FILE, null);
+        }, 5000);
       }
     )
   );

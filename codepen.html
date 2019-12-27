@@ -6,12 +6,22 @@
   const data = window.location.search.replace("?pen=", "");
 
   if (data) {
-    const encodedData = decodeURIComponent(data).replace(/"/g, "&quot;");
+    const metadataUrl = decodeURIComponent(data);
 
-    document
-      .querySelector("input[type='hidden']")
-      .setAttribute("value", encodedData);
+    const xhr = new XMLHttpRequest();
+    xhr.open("GET", metadataUrl);
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        const data = xhr.response.replace(/"/g, "&quot;");
 
-    document.querySelector("form").submit();
+        document
+          .querySelector("input[type='hidden']")
+          .setAttribute("value", data);
+
+        document.querySelector("form").submit();
+      }
+    };
+
+    xhr.send();
   }
 </script>

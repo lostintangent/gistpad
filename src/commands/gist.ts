@@ -264,7 +264,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
         if (node) {
           const response = await window.showInformationMessage(
-            "Are you sure you want to delete this Gist?",
+            `Are you sure you want to delete the "${node.label}" Gist?`,
             DELETE_RESPONSE
           );
           if (response !== DELETE_RESPONSE) {
@@ -275,7 +275,7 @@ export async function registerGistCommands(context: ExtensionContext) {
           await closeGistFiles(node.gist);
         } else if (isGistWorkspace()) {
           const response = await window.showInformationMessage(
-            "Are you sure you want to delete this Gist?",
+            "Are you sure you want to delete the opened Gist?",
             DELETE_RESPONSE
           );
           if (response !== DELETE_RESPONSE) {

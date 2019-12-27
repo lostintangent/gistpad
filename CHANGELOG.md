@@ -1,3 +1,7 @@
+## v0.0.31 (12/27/2019)
+
+- Added the `Export to CodePen` menu item to the `Gists` tree, which allows you to develop a playground locally, and then export it to CodePen in order to share with the community.
+  
 ## v0.0.30 (12/27/2019)
 
 - Added support for referencing external stylsheets in a playground's `playground.json` file. Simply add a URL for a CSS file to the `styles` property, and it will be injected into the preview before your playground's custom styles.

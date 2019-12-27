@@ -6,7 +6,7 @@ import { fileNameToUri } from "../utils";
 import { getCDNJSLibraries } from "./cdnjs";
 import { getGistFileOfType, PlaygroundFileType } from "./playground";
 
-const CODEPEN_URI = "https://lostintangent.github.io/GistPadCodePen/index.html";
+const CODEPEN_URI = "https://vsls-contrib.github.io/gistpad/codepen.html";
 
 interface PenDefinition {
   title: string;

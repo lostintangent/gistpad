@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.33",
+  "version": "0.0.34",
   "extensionKind": [
     "ui",
     "web",
@@ -850,7 +850,7 @@
         {
           "id": "gistpad",
           "title": "GistPad",
-          "icon": "images/activity-bar-icon.svg"
+          "icon": "images/icon-activity.svg"
         }
       ]
     },

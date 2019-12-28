@@ -6,6 +6,7 @@
   "version": "0.0.32",
   "extensionKind": [
     "ui",
+    "web",
     "workspace"
   ],
   "icon": "images/icon.png",

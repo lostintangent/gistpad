@@ -1,7 +1,5 @@
 import { debounce } from "debounce";
 import * as path from "path";
-import * as pug from "pug";
-import * as sass from "sass";
 import * as typescript from "typescript";
 import * as vscode from "vscode";
 import * as config from "../config";
@@ -188,6 +186,7 @@ function getMarkupContent(document: vscode.TextDocument) {
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
 
   if (extension === MarkupLanguage.pug) {
+    const pug = require('pug');
     content = pug.render(content);
   }
 
@@ -199,6 +198,7 @@ async function getStylesheetContent(document: vscode.TextDocument) {
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
 
   if (extension === StylesheetLanguage.scss) {
+    const sass = require('sass');
     content = sass.renderSync({ data: content }).css.toString();
   }
 

@@ -116,7 +116,7 @@ export class GistFileNode extends TreeNode {
 
 export class StarredGistsNode extends TreeNode {
   constructor(extensionPath: string) {
-    super("Starred Gists", TreeItemCollapsibleState.Expanded);
+    super("Starred Gists", TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = path.join(extensionPath, "images/star.svg");
     this.contextValue = "starredGists";

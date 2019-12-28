@@ -13,6 +13,7 @@ export async function get(
 export async function get(
   key: "playground.autoRun"
 ): Promise<"onEdit" | "onSave" | "never">;
+export async function get(key: "playground.autoSave"): Promise<boolean>;
 export async function get(key: "playground.includeMarkup"): Promise<boolean>;
 export async function get(
   key: "playground.includeStylesheet"

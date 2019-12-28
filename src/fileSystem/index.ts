@@ -171,7 +171,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
         filename: file.filename,
         content: file.content
       });
-    } catch {
+    } catch (e) {
       // TODO: Check the Gist owner vs. current owner and fail
       // based on that, as opposed to requiring a hit to the server.
       const response = await window.showInformationMessage(

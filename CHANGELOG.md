@@ -1,3 +1,11 @@
+## v0.0.34
+
+- The `Starred Gists` node is now hidden in the tree view, if you don't have any starred gists. Additionally, this node is collapsed by default, when it is displayed.
+   
+## v0.0.33 (12/28/2019) 
+
+- Introduced auto-save behavior for playgrounds, that will automatically save your playground files every 30s, to ensure you don't lose any work. Additionally, introduced the `GistPad > Playground: Auto Save` setting, to disable auto-save behavior if desired.
+  
 ## v0.0.32 (12/27/2019)
 
 - Added the `Export Playground to CodePen` menu item to the `Gists` tree, which allows you to develop a playground locally, and then export it to CodePen in order to share with the community.

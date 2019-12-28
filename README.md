@@ -186,7 +186,9 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `markdown` _(default)_: the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
-* `GistPad > Playground: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
+- `GistPad > Playground: Auto Save` - Specifies whether to automatically save your playground files (every 30s). If you've already set the `Files: Auto Save` setting to `afterDelay`, then that setting will be respected. 
+
+- `GistPad > Playground: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
 
   - `onEdit` _(default)_: Will re-run the playground automatically as you type.
   - `onSave`: Will re-run the playground when you save a file.

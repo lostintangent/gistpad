@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.32",
+  "version": "0.0.33",
   "extensionKind": [
     "ui",
     "web",
@@ -89,6 +89,11 @@
             "never"
           ],
           "description": "Specifies when to automatically run the code for a playground."
+        },
+        "gistpad.playground.autoSave": {
+          "default": "true",
+          "type": "boolean",
+          "description": "Specifies whether to automatically save your playground files (every 30s)."
         },
         "gistpad.playground.includeMarkup": {
           "default": "true",

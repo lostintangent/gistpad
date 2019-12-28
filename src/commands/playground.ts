@@ -459,22 +459,6 @@ export async function openPlayground(gist: Gist) {
     );
   }
 
-  webViewPanel.onDidDispose(() => {
-    documentChangeDisposable.dispose();
-
-    if (documentSaveDisposeable) {
-      documentSaveDisposeable.dispose();
-    }
-
-    activePlayground = null;
-
-    closeGistFiles(gist);
-    output.dispose();
-
-    vscode.commands.executeCommand("workbench.action.closePanel");
-    vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false);
-  });
-
   htmlView.updateManifest(getManifestContent(gist));
 
   htmlView.updateHTML(
@@ -499,6 +483,40 @@ export async function openPlayground(gist: Gist) {
   };
 
   await htmlView.rebuildWebview();
+
+  const autoSave = vscode.workspace
+    .getConfiguration("files")
+    .get<string>("autoSave");
+  let autoSaveInterval: NodeJS.Timer | undefined;
+  if (autoSave !== "afterDelay" && (await config.get("playground.autoSave"))) {
+    autoSaveInterval = setInterval(async () => {
+      for (const document of vscode.workspace.textDocuments) {
+        if (document.isDirty && document.uri.scheme === FS_SCHEME) {
+          await document.save();
+        }
+      }
+    }, 30000);
+  }
+
+  webViewPanel.onDidDispose(() => {
+    documentChangeDisposable.dispose();
+
+    if (documentSaveDisposeable) {
+      documentSaveDisposeable.dispose();
+    }
+
+    activePlayground = null;
+
+    closeGistFiles(gist);
+    output.dispose();
+
+    if (autoSaveInterval) {
+      clearInterval(autoSaveInterval);
+    }
+
+    vscode.commands.executeCommand("workbench.action.closePanel");
+    vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false);
+  });
 }
 
 export async function registerPlaygroundCommands(

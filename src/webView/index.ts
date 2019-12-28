@@ -66,7 +66,12 @@ export class PlaygroundWebview {
     textDocument: vscode.TextDocument,
     rebuild = false
   ) {
-    this.javascript = getScriptContent(textDocument, this.manifest);
+    const content = getScriptContent(textDocument, this.manifest);
+    if (content === null) {
+      return;
+    }
+
+    this.javascript = content;
 
     if (rebuild) {
       await this.rebuildWebview();

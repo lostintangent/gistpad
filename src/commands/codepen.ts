@@ -22,6 +22,7 @@ interface PenDefinition {
   js_pre_processor?: string;
   css_external?: string;
   js_external?: string;
+  tags: string[];
 }
 
 function resolveLibraries(libraries: string[]) {
@@ -47,7 +48,8 @@ function resolveLibraries(libraries: string[]) {
 async function exportGist(gist: Gist) {
   const data: PenDefinition = {
     title: gist.description,
-    description: gist.description
+    description: gist.description,
+    tags: ["gistpad"]
   };
 
   const markupFile = getGistFileOfType(gist, PlaygroundFileType.markup);

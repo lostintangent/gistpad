@@ -1,6 +1,5 @@
 import { debounce } from "debounce";
 import * as path from "path";
-import * as typescript from "typescript";
 import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
@@ -11,7 +10,6 @@ import { closeGistFiles, fileNameToUri } from "../utils";
 import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
-
 export enum PlaygroundLibraryType {
   script = "scripts",
   style = "styles"
@@ -162,13 +160,18 @@ async function generateNewPlaygroundFiles() {
 export function getScriptContent(
   document: vscode.TextDocument,
   manifest: IPlaygroundJSON | undefined
-) {
+): string | null {
   let content = document.getText();
+  if (content.trim() === "") {
+    return content;
+  }
+
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
 
   const includesJsx = manifest && manifest.scripts.includes("react");
   if (TYPESCRIPT_EXTENSIONS.includes(extension) || includesJsx) {
-    const compilerOptions: typescript.CompilerOptions = {
+    const typescript = require("typescript");
+    const compilerOptions: any = {
       experimentalDecorators: true
     };
 
@@ -176,33 +179,62 @@ export function getScriptContent(
       compilerOptions.jsx = typescript.JsxEmit.React;
     }
 
-    content = typescript.transpile(content, compilerOptions);
+    try {
+      return typescript.transpile(content, compilerOptions);
+    } catch (e) {
+      // Something failed when trying to transpile Pug,
+      // so don't attempt to return anything
+      return null;
+    }
+  } else {
+    return content;
   }
-  return content;
 }
 
-function getMarkupContent(document: vscode.TextDocument) {
+function getMarkupContent(document: vscode.TextDocument): string | null {
   let content = document.getText();
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
+  if (content.trim() === "") {
+    return content;
+  }
 
+  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
   if (extension === MarkupLanguage.pug) {
-    const pug = require('pug');
-    content = pug.render(content);
-  }
+    const pug = require("pug");
 
-  return content;
+    try {
+      // Something failed when trying to transpile Pug,
+      // so don't attempt to return anything
+      return pug.render(content);
+    } catch (e) {
+      return null;
+    }
+  } else {
+    return content;
+  }
 }
 
-async function getStylesheetContent(document: vscode.TextDocument) {
+async function getStylesheetContent(
+  document: vscode.TextDocument
+): Promise<string | null> {
   let content = document.getText();
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-
-  if (extension === StylesheetLanguage.scss) {
-    const sass = require('sass');
-    content = sass.renderSync({ data: content }).css.toString();
+  if (content.trim() === "") {
+    return content;
   }
 
-  return content;
+  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
+  if (extension === StylesheetLanguage.scss) {
+    const sass = require("sass");
+
+    try {
+      return sass.renderSync({ data: content }).css.toString();
+    } catch (e) {
+      // Something failed when trying to transpile SCSS,
+      // so don't attempt to return anything
+      return null;
+    }
+  } else {
+    return content;
+  }
 }
 
 function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
@@ -372,7 +404,11 @@ export async function openPlayground(gist: Gist) {
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     debounce(async ({ document }) => {
       if (isPlaygroundDocument(gist, document, MARKUP_EXTENSIONS)) {
-        htmlView.updateHTML(getMarkupContent(document), runOnEdit);
+        const content = getMarkupContent(document);
+
+        if (content !== null) {
+          htmlView.updateHTML(content, runOnEdit);
+        }
       } else if (isPlaygroundDocument(gist, document, SCRIPT_EXTENSIONS)) {
         // If the user renamed the script file (e.g. from *.js to *.jsx)
         // than we need to update the manifest in case new scripts
@@ -401,7 +437,10 @@ export async function openPlayground(gist: Gist) {
           htmlView.updateJavaScript(jsEditor.document, runOnEdit);
         }
       } else if (isPlaygroundDocument(gist, document, STYLESHEET_EXTENSIONS)) {
-        htmlView.updateCSS(await getStylesheetContent(document), runOnEdit);
+        const content = await getStylesheetContent(document);
+        if (content !== null) {
+          htmlView.updateCSS(content, runOnEdit);
+        }
       }
     }, 100)
   );
@@ -437,11 +476,15 @@ export async function openPlayground(gist: Gist) {
   });
 
   htmlView.updateManifest(getManifestContent(gist));
+
   htmlView.updateHTML(
-    !!markupFile ? getMarkupContent(htmlEditor!.document) : ""
+    !!markupFile ? getMarkupContent(htmlEditor!.document) || "" : ""
   );
+
   htmlView.updateCSS(
-    !!stylesheetFile ? await getStylesheetContent(cssEditor!.document) : ""
+    !!stylesheetFile
+      ? (await getStylesheetContent(cssEditor!.document)) || ""
+      : ""
   );
 
   if (jsEditor) {

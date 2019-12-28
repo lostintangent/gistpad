@@ -166,10 +166,12 @@ export class GistFileSystemProvider implements FileSystemProvider {
     file.content = newContent;
     file.size = newContent.length;
 
-    updateGist(gistId, file.filename!, {
-      filename: file.filename,
-      content: file.content
-    }).catch(async (e) => {
+    try {
+      await updateGist(gistId, file.filename!, {
+        filename: file.filename,
+        content: file.content
+      });
+    } catch {
       // TODO: Check the Gist owner vs. current owner and fail
       // based on that, as opposed to requiring a hit to the server.
       const response = await window.showInformationMessage(
@@ -182,7 +184,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
           () => forkGist(gistId)
         );
       }
-    });
+    }
   }
 
   // Unimplemented members

@@ -1,30 +1,12 @@
-import {
-  Disposable,
-  Event,
-  EventEmitter,
-  FileChangeEvent,
-  FileStat,
-  FileSystemError,
-  FileSystemProvider,
-  FileType,
-  ProgressLocation,
-  Uri,
-  window,
-  workspace
-} from "vscode";
-import { FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
+import { commands, Disposable, Event, EventEmitter, FileChangeEvent, FileStat, FileSystemError, FileSystemProvider, FileType, ProgressLocation, Uri, window, workspace } from "vscode";
+import { EXTENSION_ID, FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
 import { GistFile, IStore } from "../store";
 import { forkGist, getGist, updateGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
-import {
-  getFileContents,
-  getGistDetailsFromUri,
-  stringToByteArray,
-  uriToFileName
-} from "../utils";
+import { getFileContents, getGistDetailsFromUri, openGistAsWorkspace, stringToByteArray, uriToFileName } from "../utils";
 
 export class GistFileSystemProvider implements FileSystemProvider {
-  constructor(private store: IStore) {}
+  constructor(private store: IStore) { }
 
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
@@ -84,6 +66,13 @@ export class GistFileSystemProvider implements FileSystemProvider {
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
     if (uri.path === "/") {
       const { gistId } = getGistDetailsFromUri(uri);
+      if (gistId == 'new') {
+        const gist = await commands.executeCommand<any>(`${EXTENSION_ID}.newSecretGist`);
+        openGistAsWorkspace(gist.id);
+      } else if (gistId == 'playground') {
+        await commands.executeCommand(`${EXTENSION_ID}.newPlayground`, /*openAsWorkspace*/ true);
+      }
+
       const gist = await getGist(gistId);
 
       // TODO: Check to see if the file list is truncated, and if
@@ -198,7 +187,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     uri: Uri,
     options: { recursive: boolean; excludes: string[] }
   ): Disposable {
-    return new Disposable(() => {});
+    return new Disposable(() => { });
   }
 }
 

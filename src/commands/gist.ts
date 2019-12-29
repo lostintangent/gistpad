@@ -59,7 +59,7 @@ async function newGistInternal(isPublic: boolean = true) {
     prompt: "Enter an optional description for the new Gist"
   });
 
-  window.withProgress(
+  return window.withProgress(
     { location: ProgressLocation.Notification, title: "Creating Gist..." },
     () => {
       const files = fileName.split(",").map((filename) => ({ filename }));

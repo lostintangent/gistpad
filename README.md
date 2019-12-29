@@ -72,15 +72,27 @@ If you're building web applications, and want to create a quick playground envir
 
 ![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
+Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you done with a playground, simply clone the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist.
+
+### External Libraries
+
 If you need to add any external JavaScript libraries (e.g. `react`) or stylesheets (e.g. `font-awesome`) to your playground, simply right-click the gist in the `Gists` tree, and click `Add Playground Script` or `Add Playground Stylesheet` menu item. This will allow you to select a library from CDNJS or paste a custom library URL. Since Gist files provide an internet-accessible URL, you can use Gists as re-usable snippets for plaugrounds, and add references to them by right-clicking a gist file in the `Gists` tree, select `Copy File URL`, and then add it as a script/stylesheet reference to the appropriate playground. Behind the scenes, these commands update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually.
 
 ![Libraries](https://user-images.githubusercontent.com/116461/71530143-2a20f180-289d-11ea-940b-4ec60cabb0fd.gif)
 
-The playground also provides an output window in order to view any logs written via the `console.log` API. You can bring up the output window, as well as run the playground or open the Chrome Developer Tools, by clicking the respective command icon in the editor toolbar.
+## Console Window
+
+The playground also provides an output window in order to view any logs written via the `console.log` API. You can bring up the output window, as well as run the playground or open the Chrome Developer Tools, by clicking the respective command icon in the editor toolbar. If you'd like to always open the console when creating/opening playgrounds, you can set the `GistPad > Playground: Show Console` setting to `true`.
 
 <img width="503" src="https://user-images.githubusercontent.com/116461/71384593-0a38b780-2597-11ea-8bba-73f784f6ec76.png" />
 
-Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you done with a playground, simply clone the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist.
+Additionally, if you create a playground that depends on the console, you can set the `showConsole` property in the playground's `playground.json` file to `true`. Then, when you or someone else opens this playground, the console will be automatically opened, regardless whether the end-user has configured it to show by default.
+
+### Layout
+
+By default, when you create a playground, it will open in a "Split Left" layout, which vertically stacks the code editors on the left, and allows the preview window to occupy the fully IDE height on the right. However, if you want to change the layout, you can run the `GistPad: Change Playout Layout` command and select `Grid`, `Split Right`, or `Split Top`. 
+
+Additionally, if you create a playground, that looks best in a specific layout, you can set the `layout` property in the playground's `playground.json` file to either: `grid`, `splitLeft`, `splitRight`, or `splitTop`. Then, when you or someone else opens this playground, it will be opened with the specified layout, as opposed to the user's configured default layout.
 
 ### TypeScript
 
@@ -102,11 +114,11 @@ If you set the `GistPad: Playground Script Language` setting to `javascriptreact
 
 ### CodePen
 
-If you export a pen to a [GitHub Gist](https://blog.codepen.io/documentation/features/exporting-pens/#save-as-github-gist-2), and then refresh the `Gists` tree in VS Code, you'll be able to see the pen and then can open/edit it like any other playground.
+If you export a pen to a [GitHub Gist](https://blog.codepen.io/documentation/features/exporting-pens/#save-as-github-gist-2), and then refresh the `Gists` tree in VS Code, you'll be able to see the pen and then can open/edit it like any other playground. This allows you to easily fork someone's pen and work on it within VS Code.
 
 ![CodePen](https://user-images.githubusercontent.com/116461/71393589-171ed080-25c2-11ea-8138-ba075daf7d37.gif)
 
-Additionally, if you develop a playground locally, and want to export it to CodePen (e.g. in order to share it with the community), you can right-click the gist and select `Export Playground to CodePen`.
+Additionally, if you develop a playground locally, and want to export it to CodePen (e.g. in order to share it with the community), you can right-click the gist and select `Export Playground to CodePen`. This allows you to develop within VS Code, and then share it when you're done. When a playground is exported to CodePen, it's tagged with `gistpad` so that the community can [see](https://aka.ms/gistpad-codepen) the pens being created with it.
 
 ![Export](https://user-images.githubusercontent.com/116461/71533903-39f60100-28b0-11ea-9e16-891a110c7074.gif)
 
@@ -197,6 +209,13 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds. Defaults to `true`.
 
 - `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds. Defaults to `true`.
+
+- `GistPad > Playground: Layout` - Specifies how to layout the editor windows when opening a playground. Can be set to one of the following values:
+
+  - `grid`: Opens a 2x2 grid of editors, with the editors and preview window occupying an equal amount of space.
+  - `splitLeft` _(default)_: Opens a split-level layout, with the editors vertically stacked on the left, and the preview occupying the full IDE height on the right.
+  - `splitRight`: Opens a split-level layout, with the editors vertically stacked on the right, and the preview occupying the full IDE height on the left.
+  - `splitTop` _(default)_: Opens a split-level layout, with the editors horizontally stacked on the top, and the preview occupying the full IDE width on the bottom.
 
 - `GistPad > Playground: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
 

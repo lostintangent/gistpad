@@ -108,13 +108,13 @@ const addDependencyLink = async (
       playgroundJSON = DEFAULT_MANIFEST;
     }
 
-    playgroundJSON[libraryType].push(libraryUrl);
+    playgroundJSON[libraryType]!.push(libraryUrl);
     playgroundJSON[libraryType] = [...new Set(playgroundJSON[libraryType])];
 
     const updatedContent = JSON.stringify(playgroundJSON, null, 2);
     vscode.workspace.fs.writeFile(uri, Buffer.from(updatedContent));
 
-    if (activePlayground && activePlayground.gistId === node.gist.id) {
+    if (activePlayground && activePlayground.gist.id === node.gist.id) {
       activePlayground.webView.updateManifest(updatedContent, true);
     }
     return;
@@ -124,7 +124,7 @@ const addDependencyLink = async (
       const text = document.getText();
       const playgroundJSON = getPlaygroundJson(text);
 
-      playgroundJSON[libraryType].push(libraryUrl);
+      playgroundJSON[libraryType]!.push(libraryUrl);
       playgroundJSON[libraryType] = [...new Set(playgroundJSON[libraryType])];
 
       const range = new vscode.Range(

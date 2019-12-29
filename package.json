@@ -95,6 +95,16 @@
           "type": "boolean",
           "description": "Specifies whether to automatically save your playground files (every 30s)."
         },
+        "gistpad.playground.layout": {
+          "default": "splitLeft",
+          "enum": [
+            "grid",
+            "splitLeft",
+            "splitRight",
+            "splitTop"
+          ],
+          "description": "Specifies how to layout the editor windows when opening a playground."
+        },
         "gistpad.playground.includeMarkup": {
           "default": true,
           "type": "boolean",
@@ -179,6 +189,12 @@
         "command": "gistpad.changeGistDescription",
         "title": "Change Description",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.changePlaygroundLayout",
+        "title": "Change Playground Layout",
+        "category": "GistPad",
+        "icon": "$(project)"
       },
       {
         "command": "gistpad.cloneRepository",
@@ -438,6 +454,10 @@
         {
           "command": "gistpad.changeGistDescription",
           "when": "false"
+        },
+        {
+          "command": "gistpad.changePlaygroundLayout",
+          "when": "gistpad:inPlayground"
         },
         {
           "command": "gistpad.cloneRepository",
@@ -806,6 +826,11 @@
           "command": "gistpad.openPlaygroundDeveloperTools",
           "when": "gistpad:inPlayground",
           "group": "navigation@3"
+        },
+        {
+          "command": "gistpad.changePlaygroundLayout",
+          "when": "gistpad:inPlayground",
+          "group": "navigation@4"
         }
       ],
       "editor/title/context": [
@@ -912,6 +937,7 @@
     "@types/pug": "^2.0.4",
     "@types/sass": "^1.16.0",
     "axios": "^0.19.0",
+    "case": "^1.6.2",
     "debounce": "^1.2.0",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",

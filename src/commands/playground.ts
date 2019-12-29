@@ -6,7 +6,12 @@ import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
-import { byteArrayToString, closeGistFiles, fileNameToUri, stringToByteArray } from "../utils";
+import {
+  byteArrayToString,
+  closeGistFiles,
+  fileNameToUri,
+  stringToByteArray
+} from "../utils";
 import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
@@ -58,7 +63,7 @@ const TYPESCRIPT_EXTENSIONS = [ScriptLanguage.typescript, ...REACT_EXTENSIONS];
 const SCRIPT_EXTENSIONS = [ScriptLanguage.javascript, ...TYPESCRIPT_EXTENSIONS];
 
 interface IPlayground {
-  gistId: string;
+  gist: Gist;
   webView: PlaygroundWebview;
   webViewPanel: vscode.WebviewPanel;
   console: vscode.OutputChannel;
@@ -67,7 +72,7 @@ interface IPlayground {
 export let activePlayground: IPlayground | null;
 
 export async function closeWebviewPanel(gistId: string) {
-  if (activePlayground && activePlayground.gistId === gistId) {
+  if (activePlayground && activePlayground.gist.id === gistId) {
     activePlayground.webViewPanel.dispose();
   }
 }
@@ -168,7 +173,8 @@ export function getScriptContent(
 
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
 
-  const includesJsx = manifest && manifest.scripts.includes("react");
+  const includesJsx =
+    manifest && manifest.scripts && manifest.scripts.includes("react");
   if (TYPESCRIPT_EXTENSIONS.includes(extension) || includesJsx) {
     const typescript = require("typescript");
     const compilerOptions: any = {
@@ -246,25 +252,61 @@ function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
   return fileName === PLAYGROUND_JSON_FILE;
 }
 
-const EDITOR_LAYOUT = {
-  oneByOne: {
-    orientation: 0,
+enum EditorLayoutOrientation {
+  horizontal = 0,
+  vertical = 1
+}
+
+const EditorLayouts = {
+  splitOne: {
+    orientation: EditorLayoutOrientation.horizontal,
     groups: [{}, {}]
   },
-  oneByTwo: {
-    orientation: 0,
+  splitTwo: {
+    orientation: EditorLayoutOrientation.horizontal,
     groups: [
-      { orientation: 1, groups: [{}, {}], size: 0.5 },
+      {
+        orientation: EditorLayoutOrientation.vertical,
+        groups: [{}, {}],
+        size: 0.5
+      },
       { groups: [{}], size: 0.5 }
     ]
   },
-  twoByTwo: {
+  splitThree: {
+    orientation: EditorLayoutOrientation.horizontal,
     groups: [
-      { groups: [{}, {}], size: 0.5 },
-      { groups: [{}, {}], size: 0.5 }
+      {
+        orientation: EditorLayoutOrientation.vertical,
+        groups: [{}, {}, {}],
+        size: 0.5
+      },
+      { groups: [{}], size: 0.5 }
+    ]
+  },
+  grid: {
+    orientation: EditorLayoutOrientation.horizontal,
+    groups: [
+      {
+        orientation: EditorLayoutOrientation.vertical,
+        groups: [{}, {}],
+        size: 0.5
+      },
+      {
+        orientation: EditorLayoutOrientation.vertical,
+        groups: [{}, {}],
+        size: 0.5
+      }
     ]
   }
 };
+
+enum PlaygroundLayout {
+  grid = "grid",
+  splitLeft = "splitLeft",
+  splitRight = "splitRight",
+  splitTop = "splitTop"
+}
 
 export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
   let extensions: string[];
@@ -299,8 +341,6 @@ function isPlaygroundDocument(
 }
 
 export async function openPlayground(gist: Gist) {
-  vscode.commands.executeCommand("setContext", "gistpad:inPlayground", true);
-
   const markupFile = getGistFileOfType(gist, PlaygroundFileType.markup);
   const stylesheetFile = getGistFileOfType(gist, PlaygroundFileType.stylesheet);
   const scriptFile = getGistFileOfType(gist, PlaygroundFileType.script);
@@ -309,24 +349,48 @@ export async function openPlayground(gist: Gist) {
     (file) => file
   ).length;
 
+  const manifestContent = getManifestContent(gist);
+  let manifest: IPlaygroundJSON;
+  try {
+    manifest = JSON.parse(manifestContent);
+  } catch (e) {
+    manifest = {};
+  }
+
+  const playgroundLayout =
+    manifest.layout || (await config.get("playground.layout"));
+
   let editorLayout: any;
   if (includedFiles === 3) {
-    editorLayout = EDITOR_LAYOUT.twoByTwo;
+    editorLayout =
+      playgroundLayout === PlaygroundLayout.grid
+        ? EditorLayouts.grid
+        : EditorLayouts.splitThree;
   } else if (includedFiles === 2) {
-    editorLayout = EDITOR_LAYOUT.oneByTwo;
+    editorLayout = EditorLayouts.splitTwo;
   } else {
-    editorLayout = EDITOR_LAYOUT.oneByOne;
+    editorLayout = EditorLayouts.splitOne;
+  }
+
+  let currentViewColumn = vscode.ViewColumn.One;
+  let previewViewColumn = includedFiles + 1;
+  if (playgroundLayout === PlaygroundLayout.splitRight) {
+    editorLayout = {
+      ...editorLayout,
+      groups: [...editorLayout.groups].reverse()
+    };
+
+    currentViewColumn = vscode.ViewColumn.Two;
+    previewViewColumn = vscode.ViewColumn.One;
+  } else if (playgroundLayout === PlaygroundLayout.splitTop) {
+    editorLayout = {
+      ...editorLayout,
+      orientation: EditorLayoutOrientation.vertical
+    };
   }
 
   await vscode.commands.executeCommand("workbench.action.closeAllEditors");
   await vscode.commands.executeCommand("vscode.setEditorLayout", editorLayout);
-
-  const availableViewColumns = [
-    vscode.ViewColumn.One,
-    vscode.ViewColumn.Two,
-    vscode.ViewColumn.Three,
-    vscode.ViewColumn.Four
-  ];
 
   let htmlEditor: vscode.TextEditor;
   if (markupFile) {
@@ -334,7 +398,19 @@ export async function openPlayground(gist: Gist) {
       fileNameToUri(gist.id, markupFile),
       {
         preview: false,
-        viewColumn: availableViewColumns.shift(),
+        viewColumn: currentViewColumn++,
+        preserveFocus: true
+      }
+    );
+  }
+
+  let cssEditor: vscode.TextEditor;
+  if (stylesheetFile) {
+    cssEditor = await vscode.window.showTextDocument(
+      fileNameToUri(gist.id, stylesheetFile),
+      {
+        preview: false,
+        viewColumn: currentViewColumn++,
         preserveFocus: true
       }
     );
@@ -346,20 +422,8 @@ export async function openPlayground(gist: Gist) {
       fileNameToUri(gist.id, scriptFile!),
       {
         preview: false,
-        viewColumn: availableViewColumns.shift(),
+        viewColumn: currentViewColumn++,
         preserveFocus: false
-      }
-    );
-  }
-
-  let cssEditor: vscode.TextEditor;
-  if (stylesheetFile) {
-    cssEditor = await vscode.window.showTextDocument(
-      fileNameToUri(gist.id, stylesheetFile),
-      {
-        preview: false,
-        viewColumn: availableViewColumns.shift(),
-        preserveFocus: true
       }
     );
   }
@@ -367,7 +431,7 @@ export async function openPlayground(gist: Gist) {
   const webViewPanel = vscode.window.createWebviewPanel(
     "gistpad.playgroundPreview",
     "Preview",
-    { viewColumn: availableViewColumns.shift()!, preserveFocus: true },
+    { viewColumn: previewViewColumn, preserveFocus: true },
     { enableScripts: true }
   );
 
@@ -394,7 +458,7 @@ export async function openPlayground(gist: Gist) {
     styles
   );
 
-  if (await config.get("playground.showConsole")) {
+  if ((await config.get("playground.showConsole")) || manifest.showConsole) {
     output.show(false);
   }
 
@@ -451,7 +515,7 @@ export async function openPlayground(gist: Gist) {
       async (document) => {
         if (
           document.uri.scheme === FS_SCHEME &&
-          document.uri.authority === activePlayground?.gistId
+          document.uri.authority === activePlayground?.gist.id
         ) {
           await htmlView.rebuildWebview();
         }
@@ -459,7 +523,7 @@ export async function openPlayground(gist: Gist) {
     );
   }
 
-  htmlView.updateManifest(getManifestContent(gist));
+  htmlView.updateManifest(manifestContent);
 
   htmlView.updateHTML(
     !!markupFile ? getMarkupContent(htmlEditor!.document) || "" : ""
@@ -476,13 +540,19 @@ export async function openPlayground(gist: Gist) {
   }
 
   activePlayground = {
-    gistId: gist.id,
+    gist,
     webView: htmlView,
     webViewPanel,
     console: output
   };
 
   await htmlView.rebuildWebview();
+
+  await vscode.commands.executeCommand(
+    "setContext",
+    "gistpad:inPlayground",
+    true
+  );
 
   const autoSave = vscode.workspace
     .getConfiguration("files")
@@ -595,6 +665,29 @@ export async function registerPlaygroundCommands(
       async () => {
         if (activePlayground) {
           await activePlayground.webView.rebuildWebview();
+        }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_ID}.changePlaygroundLayout`,
+      async () => {
+        const { capital } = require("case");
+        const items = Object.keys(PlaygroundLayout).map((layout) => {
+          return { label: capital(layout), layout };
+        });
+        const result = await vscode.window.showQuickPick(items, {
+          placeHolder: "Specify the layout to use for playgrounds"
+        });
+
+        if (result) {
+          await vscode.workspace
+            .getConfiguration("gistpad")
+            .update("playground.layout", result.layout, true);
+
+          openPlayground(activePlayground!.gist);
         }
       }
     )

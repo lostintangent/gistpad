@@ -92,13 +92,13 @@ export class PlaygroundWebview {
     if (
       !this.manifest ||
       !this.manifest[libraryType] ||
-      this.manifest[libraryType].length === 0
+      this.manifest[libraryType]!.length === 0
     ) {
       return libraries;
     }
 
     await Promise.all(
-      this.manifest![libraryType].map(async (library) => {
+      this.manifest![libraryType]!.map(async (library) => {
         if (!library || (library && !library.trim())) {
           return;
         }

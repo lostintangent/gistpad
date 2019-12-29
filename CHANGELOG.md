@@ -1,3 +1,8 @@
+## v0.0.35 (12/29/2019)
+
+- Added the `Change Playground Layout` command, as well as the `GistPad > Playground: Layout` setting, to allow developers to control the layout of the playground editors.
+- Added the `showConsole` and `layout` options to the `playground.json` file, to allow playgrounds to define whether they require specific layout/console behavior.
+
 ## v0.0.34 (12/28/2019)
 
 - Introduced the `Duplicate Gist` command to the `Gists` tree view, which allows you to create new gists, based on the contents of an existing one.

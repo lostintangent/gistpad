@@ -10,6 +10,7 @@ import {
   byteArrayToString,
   closeGistFiles,
   fileNameToUri,
+  openGistAsWorkspace,
   stringToByteArray
 } from "../utils";
 import { PlaygroundWebview } from "../webView";
@@ -595,7 +596,7 @@ export async function registerPlaygroundCommands(
   context.subscriptions.push(
     vscode.commands.registerCommand(
       `${EXTENSION_ID}.newPlayground`,
-      async () => {
+      async (openAsWorkspace: boolean = false) => {
         const description = await vscode.window.showInputBox({
           prompt: "Enter the description of the playground"
         });
@@ -618,7 +619,11 @@ export async function registerPlaygroundCommands(
             )
         );
 
-        openPlayground(gist);
+        if (openAsWorkspace) {
+          openGistAsWorkspace(gist.id);
+        } else {
+          openPlayground(gist);
+        }
       }
     )
   );

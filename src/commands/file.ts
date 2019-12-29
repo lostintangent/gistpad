@@ -12,7 +12,12 @@ import { EXTENSION_ID } from "../constants";
 import { addGistFiles } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
-import { fileNameToUri, openGistFile } from "../utils";
+import {
+  byteArrayToString,
+  fileNameToUri,
+  openGistFile,
+  stringToByteArray
+} from "../utils";
 
 export function registerFileCommands(context: ExtensionContext) {
   context.subscriptions.push(
@@ -47,7 +52,7 @@ export function registerFileCommands(context: ExtensionContext) {
               const content = window.activeTextEditor!.document.getText();
               return workspace.fs.writeFile(
                 fileNameToUri(node.gist.id, filename!),
-                Buffer.from(content!)
+                stringToByteArray(content!)
               );
             }
           );
@@ -90,12 +95,10 @@ export function registerFileCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_ID}.copyFileContents`,
       async (node: GistFileNode) => {
-        await ensureAuthenticated();
-
         const contents = await workspace.fs.readFile(
           fileNameToUri(node.gistId, node.file.filename!)
         );
-        await env.clipboard.writeText(contents.toString());
+        await env.clipboard.writeText(byteArrayToString(contents));
       }
     )
   );
@@ -112,10 +115,22 @@ export function registerFileCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.deleteFile`,
-      async (node: GistFileNode) => {
+      async (targetNode: GistFileNode, multiSelectNodes?: GistFileNode[]) => {
         await ensureAuthenticated();
-        await workspace.fs.delete(
-          fileNameToUri(node.gistId, node.file.filename!)
+
+        window.withProgress(
+          {
+            title: "Deleting file(s)...",
+            location: ProgressLocation.Notification
+          },
+          async () => {
+            const fileNodes = multiSelectNodes || [targetNode];
+            for (const fileNode of fileNodes) {
+              await workspace.fs.delete(
+                fileNameToUri(fileNode.gistId, fileNode.file.filename!)
+              );
+            }
+          }
         );
       }
     )

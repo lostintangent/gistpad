@@ -1,38 +1,12 @@
 import { URL } from "url";
-import {
-  commands,
-  env,
-  ExtensionContext,
-  ProgressLocation,
-  QuickPickItem,
-  Uri,
-  window
-} from "vscode";
+import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, Uri, window } from "vscode";
 import { CommandId, EXTENSION_ID } from "../constants";
 import { log } from "../logger";
 import { SortOrder, store } from "../store";
-import {
-  changeDescription,
-  deleteGist,
-  forkGist,
-  listGists,
-  newGist,
-  refreshGists,
-  starredGists,
-  unstarGist
-} from "../store/actions";
+import { changeDescription, deleteGist, forkGist, listGists, newGist, refreshGists, starredGists, unstarGist } from "../store/actions";
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
 import { GistNode, StarredGistNode } from "../tree/nodes";
-import {
-  closeGistFiles,
-  getGistDescription,
-  getGistLabel,
-  getGistWorkspaceId,
-  getStarredGistLabel,
-  isGistWorkspace,
-  openGist,
-  openGistAsWorkspace
-} from "../utils";
+import { closeGistFiles, getGistDescription, getGistLabel, getGistWorkspaceId, getStarredGistLabel, isGistWorkspace, openGist, openGistAsWorkspace } from "../utils";
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -259,20 +233,27 @@ export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.deleteGist`,
-      async (node?: GistNode) => {
+      async (targetNode?: GistNode, multiSelectNodes?: GistNode[]) => {
         await ensureAuthenticated();
 
-        if (node) {
+        if (targetNode) {
+          const suffix = multiSelectNodes
+            ? "selected gists"
+            : `"${targetNode.label}" gist`;
+
           const response = await window.showInformationMessage(
-            `Are you sure you want to delete the "${node.label}" Gist?`,
+            `Are you sure you want to delete the ${suffix}?`,
             DELETE_RESPONSE
           );
           if (response !== DELETE_RESPONSE) {
             return;
           }
 
-          await deleteGist(node.gist.id);
-          await closeGistFiles(node.gist);
+          const nodes = multiSelectNodes || [targetNode];
+          for (const node of nodes) {
+            await deleteGist(node.gist.id);
+            await closeGistFiles(node.gist);
+          }
         } else if (isGistWorkspace()) {
           const response = await window.showInformationMessage(
             "Are you sure you want to delete the opened Gist?",
@@ -412,9 +393,16 @@ export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.unstarGist`,
-      async (node: StarredGistNode) => {
+      async (
+        targetNode: StarredGistNode,
+        multiSelectNodes?: StarredGistNode[]
+      ) => {
         await ensureAuthenticated();
-        unstarGist(node.gist.id);
+
+        const nodes = multiSelectNodes || [targetNode];
+        for (const node of nodes) {
+          unstarGist(node.gist.id);
+        }
       }
     )
   );

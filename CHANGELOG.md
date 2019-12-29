@@ -1,6 +1,7 @@
 ## v0.0.34
 
-- The `Starred Gists` node is now hidden in the tree view, unless you actually have any starred gists. Additionally, when displayed, this node is collapsed by default.
+- Added multi-select support to the `Gists` tree view, and added support for the following commands: deleting gists, unstarring gists, deleting gist files, and unfollowing users.
+- The `Starred Gists` node is now hidden in the tree view unless you actually have any starred gists. Additionally, when displayed, this node is collapsed by default.
 
 ## v0.0.33 (12/28/2019)
 

@@ -19,6 +19,7 @@ import { ensureAuthenticated } from "../store/auth";
 import {
   getFileContents,
   getGistDetailsFromUri,
+  stringToByteArray,
   uriToFileName
 } from "../utils";
 
@@ -77,7 +78,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
       contents = "";
     }
 
-    return Buffer.from(contents);
+    return stringToByteArray(contents);
   }
 
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
@@ -157,7 +158,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
       };
     }
 
-    let newContent = content.toString();
+    let newContent = new TextDecoder().decode(content);
     if (newContent.trim().length === 0) {
       // Gist doesn't allow files to be blank
       newContent = ZERO_WIDTH_SPACE;

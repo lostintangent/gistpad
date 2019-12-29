@@ -186,7 +186,7 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `markdown` _(default)_: the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
-- `GistPad > Playground: Auto Save` - Specifies whether to automatically save your playground files (every 30s). If you've already set the `Files: Auto Save` setting to `afterDelay`, then that setting will be respected. 
+- `GistPad > Playground: Auto Save` - Specifies whether to automatically save your playground files (every 30s). If you've already set the `Files: Auto Save` setting to `afterDelay`, then that setting will be respected. Defaults to `true`.
 
 - `GistPad > Playground: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
 
@@ -194,9 +194,9 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `onSave`: Will re-run the playground when you save a file.
   - `never`: Don't automatically re-run the playground, and instead, only run it when the `GistPad: Run Playground` command is executed.
 
-- `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds.
+- `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds. Defaults to `true`.
 
-- `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds.
+- `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds. Defaults to `true`.
 
 - `GistPad > Playground: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
 
@@ -215,7 +215,7 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `css` _(default)_: Will result in an `style.css` file being created whenever you create a new web playground.
   - `scss`: Will result in an `style.scss` file being created whenever you create a new web playground.
 
-- `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground.
+- `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.
 
 - `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
 

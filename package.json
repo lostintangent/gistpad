@@ -91,17 +91,17 @@
           "description": "Specifies when to automatically run the code for a playground."
         },
         "gistpad.playground.autoSave": {
-          "default": "true",
+          "default": true,
           "type": "boolean",
           "description": "Specifies whether to automatically save your playground files (every 30s)."
         },
         "gistpad.playground.includeMarkup": {
-          "default": "true",
+          "default": true,
           "type": "boolean",
           "description": "Specifies whether to include a markup file (index.html) when creating new web playgrounds."
         },
         "gistpad.playground.includeStylesheet": {
-          "default": "true",
+          "default": true,
           "type": "boolean",
           "description": "Specifies whether to include a stylesheet file (style.css) when creating new web playgrounds."
         },
@@ -132,7 +132,7 @@
           "description": "Specifies the default stylesheet language to use when creating new web playgrounds."
         },
         "gistpad.playground.showConsole": {
-          "default": "false",
+          "default": false,
           "type": "boolean",
           "description": "Specifies whether to automatically show the console when opening a playground."
         },

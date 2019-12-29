@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { URI_PATTERN } from "../constants";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { GistNode } from "../tree/nodes";
-import { fileNameToUri } from "../utils";
+import { byteArrayToString, fileNameToUri } from "../utils";
 import {
   getCDNJSLibraries,
   getLibraryVersions,
@@ -100,7 +100,9 @@ const addDependencyLink = async (
 
     let playgroundJSON;
     try {
-      const content = (await vscode.workspace.fs.readFile(uri)).toString();
+      const content = byteArrayToString(
+        await vscode.workspace.fs.readFile(uri)
+      );
       playgroundJSON = getPlaygroundJson(content);
     } catch (e) {
       playgroundJSON = DEFAULT_MANIFEST;

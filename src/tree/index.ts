@@ -126,11 +126,13 @@ export function registerTreeProvider(store: IStore, extensionPath: string) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);
   window.createTreeView(`${EXTENSION_ID}.gists`, {
     showCollapseAll: true,
-    treeDataProvider
+    treeDataProvider,
+    canSelectMany: true
   });
 
   window.createTreeView(`${EXTENSION_ID}.gists.explorer`, {
     showCollapseAll: true,
-    treeDataProvider
+    treeDataProvider,
+    canSelectMany: true
   });
 }

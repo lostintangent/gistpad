@@ -21,9 +21,16 @@ export async function registerFollowCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.unfollowUser`,
-      async (node: FollowedUserGistsNode) => {
-        const username = node.user.username;
-        await unfollowUser(username);
+      async (
+        targetNode: FollowedUserGistsNode,
+        multiSelectNodes?: FollowedUserGistsNode[]
+      ) => {
+        const nodes = multiSelectNodes || [targetNode];
+
+        for (const node of nodes) {
+          const username = node.user.username;
+          await unfollowUser(username);
+        }
       }
     )
   );

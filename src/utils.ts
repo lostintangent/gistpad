@@ -33,6 +33,14 @@ export async function closeGistFiles(gist: Gist) {
   }
 }
 
+export function byteArrayToString(value: Uint8Array) {
+  return new TextDecoder().decode(value);
+}
+
+export function stringToByteArray(value: string) {
+  return new TextEncoder().encode(value);
+}
+
 export async function getFileContents(file: GistFile) {
   if (file.truncated || !file.content) {
     const responseType = file.type!.startsWith("image/")
@@ -102,7 +110,8 @@ export function isPlaygroundGist(gist: Gist) {
   //    always check for a markdown file, which would alwats exist
   return (
     gistFiles.includes(PLAYGROUND_JSON_FILE) ||
-    gistFiles.includes("index.html") || gistFiles.includes("index.pug") ||
+    gistFiles.includes("index.html") ||
+    gistFiles.includes("index.pug") ||
     (gistFiles.includes("scripts") &&
       gistFiles.some((file) => path.extname(file) === ".markdown"))
   );

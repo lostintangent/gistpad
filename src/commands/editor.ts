@@ -13,10 +13,12 @@ import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode } from "../tree/nodes";
 import {
+  byteArrayToString,
   fileNameToUri,
   getFileContents,
   getGistDescription,
-  getGistLabel
+  getGistLabel,
+  stringToByteArray
 } from "../utils";
 import { GistQuickPickItem } from "./gist";
 
@@ -88,7 +90,7 @@ async function promptForGistSelection(filename: string, contents: string) {
         () => {
           return workspace.fs.writeFile(
             fileNameToUri(gist.id!, filename!),
-            Buffer.from(contents!)
+            stringToByteArray(contents!)
           );
         }
       );
@@ -129,7 +131,9 @@ export function registerEditorCommands(context: ExtensionContext) {
             contents = await window.activeTextEditor!.document.getText();
           } else {
             filename = path.basename(nodeOrUri.toString());
-            contents = (await workspace.fs.readFile(nodeOrUri)).toString();
+            contents = byteArrayToString(
+              await workspace.fs.readFile(nodeOrUri)
+            );
           }
         }
 

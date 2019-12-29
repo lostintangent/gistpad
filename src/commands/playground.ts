@@ -6,7 +6,12 @@ import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
-import { closeGistFiles, fileNameToUri } from "../utils";
+import {
+  byteArrayToString,
+  closeGistFiles,
+  fileNameToUri,
+  stringToByteArray
+} from "../utils";
 import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
@@ -102,7 +107,7 @@ export const getManifestContent = (gist: Gist) => {
 
       vscode.workspace.fs.writeFile(
         fileNameToUri(gist.id, PLAYGROUND_JSON_FILE),
-        Buffer.from(content)
+        stringToByteArray(content)
       );
 
       return content;
@@ -226,7 +231,7 @@ async function getStylesheetContent(
     const sass = require("sass");
 
     try {
-      return sass.renderSync({ data: content }).css.toString();
+      return byteArrayToString(sass.renderSync({ data: content }).css);
     } catch (e) {
       // Something failed when trying to transpile SCSS,
       // so don't attempt to return anything

@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "module": "commonjs",
-    "target": "es6",
+    "target": "ES2017",
     "outDir": "out",
-    "lib": ["ES2018"],
+    "lib": ["ES2018", "DOM"],
     "sourceMap": true,
     "rootDir": "src",
     /* Strict Type-Checking Option */

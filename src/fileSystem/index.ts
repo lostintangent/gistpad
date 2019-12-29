@@ -10,9 +10,10 @@ import {
   ProgressLocation,
   Uri,
   window,
-  workspace
+  workspace,
+  commands
 } from "vscode";
-import { FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
+import { FS_SCHEME, ZERO_WIDTH_SPACE, EXTENSION_ID } from "../constants";
 import { GistFile, IStore } from "../store";
 import { forkGist, getGist, updateGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
@@ -20,7 +21,8 @@ import {
   getFileContents,
   getGistDetailsFromUri,
   stringToByteArray,
-  uriToFileName
+  uriToFileName,
+  openGistAsWorkspace
 } from "../utils";
 
 export class GistFileSystemProvider implements FileSystemProvider {
@@ -84,6 +86,11 @@ export class GistFileSystemProvider implements FileSystemProvider {
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
     if (uri.path === "/") {
       const { gistId } = getGistDetailsFromUri(uri);
+      if (gistId == 'new') {
+        const gist = await commands.executeCommand<any>(`${EXTENSION_ID}.newPublicGist`);
+        openGistAsWorkspace(gist.id);
+      }
+
       const gist = await getGist(gistId);
 
       // TODO: Check to see if the file list is truncated, and if

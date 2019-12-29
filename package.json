@@ -156,7 +156,7 @@
       },
       {
         "command": "gistpad.addFile",
-        "title": "Add File(s)",
+        "title": "Add New File(s)",
         "category": "GistPad"
       },
       {
@@ -187,7 +187,7 @@
       },
       {
         "command": "gistpad.copyGistUrl",
-        "title": "Copy Gist URL",
+        "title": "Copy GitHub URL",
         "category": "GistPad"
       },
       {
@@ -197,7 +197,7 @@
       },
       {
         "command": "gistpad.copyFileUrl",
-        "title": "Copy File URL",
+        "title": "Copy GitHub URL",
         "category": "GistPad"
       },
       {
@@ -225,6 +225,11 @@
         "title": "Follow User",
         "category": "GistPad",
         "icon": "$(reactions)"
+      },
+      {
+        "command": "gistpad.duplicateGist",
+        "title": "Duplicate Gist",
+        "category": "GistPad"
       },
       {
         "command": "gistpad.forkGist",
@@ -255,7 +260,7 @@
       },
       {
         "command": "gistpad.openGist",
-        "title": "Open Gist",
+        "title": "Open Gist Files",
         "category": "GistPad"
       },
       {
@@ -292,17 +297,17 @@
       },
       {
         "command": "gistpad.openGistInBrowser",
-        "title": "Open Gist in GitHub",
+        "title": "View Gist in GitHub",
         "category": "GistPad"
       },
       {
         "command": "gistpad.openGistInGistLog",
-        "title": "Open Gist in GistLog",
+        "title": "View Gist in GistLog",
         "category": "GistPad"
       },
       {
         "command": "gistpad.openGistInNbViewer",
-        "title": "Open Gist in NbViewer",
+        "title": "View Gist in NbViewer",
         "category": "GistPad"
       },
       {
@@ -456,6 +461,10 @@
         },
         {
           "command": "gistpad.deleteGistComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.duplicateGist",
           "when": "false"
         },
         {
@@ -648,28 +657,33 @@
           "group": "base@2"
         },
         {
+          "command": "gistpad.copyGistUrl",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "group": "browse@2"
+        },
+        {
           "command": "gistpad.openGistInBrowser",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
-          "group": "browse@1"
+          "group": "browse@2"
         },
         {
           "command": "gistpad.openGistInGistLog",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist$/",
-          "group": "browse@2"
+          "group": "browse@3"
         },
         {
           "command": "gistpad.openGistInNbViewer",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.notebook$/",
-          "group": "browse@2"
+          "group": "browse@3"
         },
         {
-          "command": "gistpad.exportGistToCodePen",
-          "when": "viewItem == gists.gist.playground",
-          "group": "browse@2"
+          "command": "gistpad.duplicateGist",
+          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
+          "group": "copy@1"
         },
         {
-          "command": "gistpad.copyGistUrl",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "command": "gistpad.forkGist",
+          "when": "viewItem =~ /^(starredGists|followedUser).gist/",
           "group": "copy@1"
         },
         {
@@ -698,11 +712,6 @@
           "group": "manage@4"
         },
         {
-          "command": "gistpad.forkGist",
-          "when": "viewItem =~ /^(starredGists|followedUser).gist/",
-          "group": "manage@1"
-        },
-        {
           "command": "gistpad.unstarGist",
           "when": "viewItem =~ /^starredGists.gist/",
           "group": "manage@2"
@@ -716,6 +725,11 @@
           "command": "gistpad.addPlaygroundStylesheet",
           "when": "viewItem =~ /^gists.gist.playground$/",
           "group": "playground@2"
+        },
+        {
+          "command": "gistpad.exportGistToCodePen",
+          "when": "viewItem == gists.gist.playground",
+          "group": "playground@3"
         },
         {
           "command": "gistpad.unfollowUser",

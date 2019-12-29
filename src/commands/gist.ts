@@ -1,12 +1,39 @@
 import { URL } from "url";
-import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, Uri, window } from "vscode";
+import {
+  commands,
+  env,
+  ExtensionContext,
+  ProgressLocation,
+  QuickPickItem,
+  Uri,
+  window
+} from "vscode";
 import { CommandId, EXTENSION_ID } from "../constants";
 import { log } from "../logger";
-import { SortOrder, store } from "../store";
-import { changeDescription, deleteGist, forkGist, listGists, newGist, refreshGists, starredGists, unstarGist } from "../store/actions";
+import { GistFile, SortOrder, store } from "../store";
+import {
+  changeDescription,
+  deleteGist,
+  forkGist,
+  listGists,
+  newGist,
+  refreshGists,
+  starredGists,
+  unstarGist
+} from "../store/actions";
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
-import { GistNode, StarredGistNode } from "../tree/nodes";
-import { closeGistFiles, getGistDescription, getGistLabel, getGistWorkspaceId, getStarredGistLabel, isGistWorkspace, openGist, openGistAsWorkspace } from "../utils";
+import { FollowedUserGistNode, GistNode, StarredGistNode } from "../tree/nodes";
+import {
+  closeGistFiles,
+  getFileContents,
+  getGistDescription,
+  getGistLabel,
+  getGistWorkspaceId,
+  getStarredGistLabel,
+  isGistWorkspace,
+  openGist,
+  openGistAsWorkspace
+} from "../utils";
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -299,7 +326,7 @@ export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.forkGist`,
-      async (node?: StarredGistNode) => {
+      async (node?: StarredGistNode | FollowedUserGistNode) => {
         await ensureAuthenticated();
 
         let gistId: string | undefined;
@@ -403,6 +430,39 @@ export async function registerGistCommands(context: ExtensionContext) {
         for (const node of nodes) {
           unstarGist(node.gist.id);
         }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.duplicateGist`,
+      async (node: GistNode) => {
+        await ensureAuthenticated();
+
+        const description = await window.showInputBox({
+          prompt: "Enter an optional description for the new Gist",
+          value: node.gist.description
+        });
+
+        await window.withProgress(
+          {
+            location: ProgressLocation.Notification,
+            title: "Duplicating Gist..."
+          },
+          async () => {
+            const files: GistFile[] = [];
+            for (const filename of Object.keys(node.gist.files)) {
+              const content = await getFileContents(node.gist.files[filename]);
+              files.push({
+                filename,
+                content
+              });
+            }
+
+            newGist(files, node.gist.public, description);
+          }
+        );
       }
     )
   );

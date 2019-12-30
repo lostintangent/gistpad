@@ -32,6 +32,8 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
+1. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Web Playground` (or run the `GistPad: New Web Playground` command). This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
+
 ## Gist Commenting
 
 Gist comments are exposed within the editor at the bottom of any opened Gist files. If a Gist includes multiple files, then the comment thread will be displayed at the bottom of them all (duplicated and synchronized).
@@ -68,17 +70,39 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
 
 ## Playgrounds
 
-If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript, you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
+If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
 ![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
-Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you done with a playground, simply clone the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist.
+Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you're done with a playground, simply close the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist 👍
+
+### Additional Language Support
+
+By default, new playgrounds create an HTML, CSS and JavaScript file. However, if you're more productive using a different markup, stylesheet or scripting language, then simply rename the respective files to use the right extension, and the code will be automatically compiled for you on the fly! Specifically, GistPad supports the following languages:
+
+- **SCSS** - Rename the `style.css` file to `style.scss`
+- **Less** - Rename the `style.css` file to `style.less`
+- **Pug** - Rename the `index.html` file to `index.pug`
+- **TypeScript** - Rename the `script.js` file to `script.ts` (or `script.tsx`, in order to use JSX in your code)
+- **JSX** - Rename the `script.js` file to `script.jsx` in order to enable JSX to be written in "vanilla" JavaScript files. Additionally, if you add the [`react` library](#external-libraries) to your gist's `playground.json` file, then `*.js` files can also include JSX.
+
+If you'd like to always use one of these languages, then set one or more of the following settings, and all new playgrounds will include the right files by default: `GistPad > Playground: Markup Language`, `GistPad > Playground: Script Language`, `GistPad > Playground: Stylesheet Language`. View the [settings documentation](#configuration-settings) below for more detials.
 
 ### External Libraries
 
 If you need to add any external JavaScript libraries (e.g. `react`) or stylesheets (e.g. `font-awesome`) to your playground, simply right-click the gist in the `Gists` tree, and click `Add Playground Script` or `Add Playground Stylesheet` menu item. This will allow you to select a library from CDNJS or paste a custom library URL. Since Gist files provide an internet-accessible URL, you can use Gists as re-usable snippets for plaugrounds, and add references to them by right-clicking a gist file in the `Gists` tree, select `Copy File URL`, and then add it as a script/stylesheet reference to the appropriate playground. Behind the scenes, these commands update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually.
 
 ![Libraries](https://user-images.githubusercontent.com/116461/71530143-2a20f180-289d-11ea-940b-4ec60cabb0fd.gif)
+
+In addition to external libraries, you can add any additional files to your gist, and then reference them from your HTML, CSS, JavaScript files. If you right-click the gist file, and select `Copy URL`, you'll get the absolute URL for that file and can reference from from your playground code. Additionally, you can reference files using a relative path, and they'll be resolved to the file in your gist (e.g. `<img src="image.png" />`).
+
+### Layout
+
+By default, when you create a playground, it will open in a "Split Left" layout, which vertically stacks the code editors on the left, and allows the preview window to occupy the fully IDE height on the right. However, if you want to change the layout, you can run the `GistPad: Change Playout Layout` command and select `Grid`, `Split Right`, or `Split Top`.
+
+![Layout](https://user-images.githubusercontent.com/116461/71560396-5152fc80-2a1e-11ea-9cff-a9590e1ea779.gif)
+
+Additionally, if you create a playground, that looks best in a specific layout, you can set the `layout` property in the playground's `playground.json` file to either: `grid`, `splitLeft`, `splitRight`, or `splitTop`. Then, when you or someone else opens this playground, it will be opened with the specified layout, as opposed to the user's configured default layout.
 
 ## Console Window
 
@@ -87,32 +111,6 @@ The playground also provides an output window in order to view any logs written 
 <img width="503" src="https://user-images.githubusercontent.com/116461/71384593-0a38b780-2597-11ea-8bba-73f784f6ec76.png" />
 
 Additionally, if you create a playground that depends on the console, you can set the `showConsole` property in the playground's `playground.json` file to `true`. Then, when you or someone else opens this playground, the console will be automatically opened, regardless whether the end-user has configured it to show by default.
-
-### Layout
-
-By default, when you create a playground, it will open in a "Split Left" layout, which vertically stacks the code editors on the left, and allows the preview window to occupy the fully IDE height on the right. However, if you want to change the layout, you can run the `GistPad: Change Playout Layout` command and select `Grid`, `Split Right`, or `Split Top`. 
-
-![Layout](https://user-images.githubusercontent.com/116461/71560396-5152fc80-2a1e-11ea-9cff-a9590e1ea779.gif)
-
-Additionally, if you create a playground, that looks best in a specific layout, you can set the `layout` property in the playground's `playground.json` file to either: `grid`, `splitLeft`, `splitRight`, or `splitTop`. Then, when you or someone else opens this playground, it will be opened with the specified layout, as opposed to the user's configured default layout.
-
-### TypeScript
-
-If you'd prefer to write [TypeScript](https://www.typescriptlang.org/) instead of JavaScript, simply rename the `script.js` file to `index.ts` (or `index.tsx`) within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad > Playground: Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
-
-### SCSS/Less
-
-If you'd prefer to write [SCSS](https://sass-lang.com/) or [Less](http://lesscss.org/) instead of CSS, simply rename the `style.css` file to `style.scss` or `style.less` within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use SCSS/Less, then set the `GistPad > Playground: Stylesheet Language` setting to `scss` or `less`, and all new playgrounds will include an `style.scss`/`sytyle.less` file by default.
-
-### Pug
-
-If you'd prefer to write [Pug](https://pugjs.org/api/getting-started.html) instead of HTML, simply rename the `index.html` file to `index.pug` within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use SCSS, then set the `GistPad > Playground: Markup Language` setting to `pug`, and all new playgrounds will include an `index.pug` file by default.
-
-### React
-
-If you set the `GistPad: Playground Script Language` setting to `javascriptreact` or `typescriptreact`, then all new playgrounds will automatically include the `react` and `react-dom` libraries, and will automatically compile JSX for you. Additionally, if you manually add the `react` library to your gist's `playground.json` file, then even `*.js` files can include JSX, since it will be automatically compiled.
-
-![React](https://user-images.githubusercontent.com/116461/71385501-eaa48d80-259c-11ea-9b53-51d925ca3428.gif)
 
 ### CodePen
 
@@ -123,10 +121,6 @@ If you export a pen to a [GitHub Gist](https://blog.codepen.io/documentation/fea
 Additionally, if you develop a playground locally, and want to export it to CodePen (e.g. in order to share it with the community), you can right-click the gist and select `Export Playground to CodePen`. This allows you to develop within VS Code, and then share it when you're done. When a playground is exported to CodePen, it's tagged with `gistpad` so that the community can [see](https://aka.ms/gistpad-codepen) the pens being created with it.
 
 ![Export](https://user-images.githubusercontent.com/116461/71533903-39f60100-28b0-11ea-9e16-891a110c7074.gif)
-
-### Additional Resources
-
-You can add any additional files to your gist, and then reference them from your HTML, CSS, JavaScript files. If you right-click the gist file, and select `Copy URL`, you'll get the absolute URL for that file and can reference from from your playground code. Additionally, you can reference files using a relative path, and they'll be resolved to the file in your gist (e.g. `<img src="image.png" />`).
 
 ## GistLog
 
@@ -215,6 +209,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > Playground: Layout` - Specifies how to layout the editor windows when opening a playground. Can be set to one of the following values:
 
   - `grid`: Opens a 2x2 grid of editors, with the editors and preview window occupying an equal amount of space.
+  - `preview`: Simply opens the full-screen preview window. This is useful for interacting with complex playgrounds or viewing other's playgrouds.
   - `splitLeft` _(default)_: Opens a split-level layout, with the editors vertically stacked on the left, and the preview occupying the full IDE height on the right.
   - `splitRight`: Opens a split-level layout, with the editors vertically stacked on the right, and the preview occupying the full IDE height on the left.
   - `splitTop` _(default)_: Opens a split-level layout, with the editors horizontally stacked on the top, and the preview occupying the full IDE width on the bottom.

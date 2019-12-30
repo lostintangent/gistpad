@@ -1,13 +1,18 @@
+## v0.0.37 (12/30/2019)
+
+- Introduced the `preview` playground layout type, which allows viewing a playgroud's preview in full-screen mode.
+- Added support for opening playgrounds as workspaces, without needing to be authenticated with GitHub.
+
 ## v0.0.36 (12/30/2019)
 
 - Introduced support for defining your playground stylesheets in Less.
-  
+
 ## v0.0.35 (12/29/2019)
 
 - Added the `Change Playground Layout` command, as well as the `GistPad > Playground: Layout` setting, to allow developers to control the layout of the playground editors.
-  
+
   ![Layout](https://user-images.githubusercontent.com/116461/71560396-5152fc80-2a1e-11ea-9cff-a9590e1ea779.gif)
-  
+
 - Added the `showConsole` and `layout` options to the `playground.json` file, to allow playgrounds to define whether they require specific layout/console behavior.
 
 ## v0.0.34 (12/28/2019)

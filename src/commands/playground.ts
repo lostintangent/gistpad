@@ -313,6 +313,7 @@ const EditorLayouts = {
 
 enum PlaygroundLayout {
   grid = "grid",
+  preview = "preview",
   splitLeft = "splitLeft",
   splitRight = "splitRight",
   splitTop = "splitTop"
@@ -400,42 +401,59 @@ export async function openPlayground(gist: Gist) {
   }
 
   await vscode.commands.executeCommand("workbench.action.closeAllEditors");
-  await vscode.commands.executeCommand("vscode.setEditorLayout", editorLayout);
 
-  let htmlEditor: vscode.TextEditor;
+  // The preview layout mode only shows a single file,
+  // so there's no need to set a custom editor layout for it.
+  if (playgroundLayout !== PlaygroundLayout.preview) {
+    await vscode.commands.executeCommand(
+      "vscode.setEditorLayout",
+      editorLayout
+    );
+  }
+
+  let htmlDocument: vscode.TextDocument;
   if (markupFile) {
-    htmlEditor = await vscode.window.showTextDocument(
-      fileNameToUri(gist.id, markupFile),
-      {
+    htmlDocument = await vscode.workspace.openTextDocument(
+      fileNameToUri(gist.id, markupFile)
+    );
+
+    if (playgroundLayout !== PlaygroundLayout.preview) {
+      vscode.window.showTextDocument(htmlDocument, {
         preview: false,
         viewColumn: currentViewColumn++,
         preserveFocus: false
-      }
-    );
+      });
+    }
   }
 
-  let cssEditor: vscode.TextEditor;
+  let cssDocument: vscode.TextDocument;
   if (stylesheetFile) {
-    cssEditor = await vscode.window.showTextDocument(
-      fileNameToUri(gist.id, stylesheetFile),
-      {
+    cssDocument = await vscode.workspace.openTextDocument(
+      fileNameToUri(gist.id, stylesheetFile)
+    );
+
+    if (playgroundLayout !== PlaygroundLayout.preview) {
+      vscode.window.showTextDocument(cssDocument, {
         preview: false,
         viewColumn: currentViewColumn++,
         preserveFocus: true
-      }
-    );
+      });
+    }
   }
 
-  let jsEditor: vscode.TextEditor | undefined;
+  let jsDocument: vscode.TextDocument;
   if (scriptFile) {
-    jsEditor = await vscode.window.showTextDocument(
-      fileNameToUri(gist.id, scriptFile!),
-      {
+    jsDocument = await vscode.workspace.openTextDocument(
+      fileNameToUri(gist.id, scriptFile!)
+    );
+
+    if (playgroundLayout !== PlaygroundLayout.preview) {
+      vscode.window.showTextDocument(jsDocument, {
         preview: false,
         viewColumn: currentViewColumn++,
         preserveFocus: true
-      }
-    );
+      });
+    }
   }
 
   const webViewPanel = vscode.window.createWebviewPanel(
@@ -488,15 +506,14 @@ export async function openPlayground(gist: Gist) {
         // than we need to update the manifest in case new scripts
         // need to be injected into the webview (e.g. "react").
         if (
-          jsEditor &&
-          jsEditor.document.uri.toString() !== document.uri.toString()
+          jsDocument &&
+          jsDocument.uri.toString() !== document.uri.toString()
         ) {
           // TODO: Clean up this logic
-          const oldFile =
-            gist.files[path.basename(jsEditor.document.uri.toString())];
+          const oldFile = gist.files[path.basename(jsDocument.uri.toString())];
           if (oldFile) {
             gist.files[path.basename(document.uri.toString())] = oldFile;
-            delete gist.files[path.basename(jsEditor.document.uri.toString())];
+            delete gist.files[path.basename(jsDocument.uri.toString())];
 
             htmlView.updateManifest(getManifestContent(gist), runOnEdit);
           }
@@ -505,10 +522,10 @@ export async function openPlayground(gist: Gist) {
       } else if (isPlaygroundManifestFile(gist, document)) {
         htmlView.updateManifest(document.getText(), runOnEdit);
 
-        if (jsEditor) {
+        if (jsDocument) {
           // TODO: Only update the JS if the manifest change
           // actually impacts it (e.g. adding/removing react)
-          htmlView.updateJavaScript(jsEditor.document, runOnEdit);
+          htmlView.updateJavaScript(jsDocument, runOnEdit);
         }
       } else if (isPlaygroundDocument(gist, document, STYLESHEET_EXTENSIONS)) {
         const content = await getStylesheetContent(document);
@@ -534,19 +551,15 @@ export async function openPlayground(gist: Gist) {
   }
 
   htmlView.updateManifest(manifestContent);
-
   htmlView.updateHTML(
-    !!markupFile ? getMarkupContent(htmlEditor!.document) || "" : ""
+    !!markupFile ? getMarkupContent(htmlDocument!) || "" : ""
   );
-
   htmlView.updateCSS(
-    !!stylesheetFile
-      ? (await getStylesheetContent(cssEditor!.document)) || ""
-      : ""
+    !!stylesheetFile ? (await getStylesheetContent(cssDocument!)) || "" : ""
   );
 
-  if (jsEditor) {
-    htmlView.updateJavaScript(jsEditor.document);
+  if (jsDocument!) {
+    htmlView.updateJavaScript(jsDocument!);
   }
 
   activePlayground = {

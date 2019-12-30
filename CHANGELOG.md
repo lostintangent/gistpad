@@ -5,7 +5,7 @@
 
 ## v0.0.36 (12/30/2019)
 
-- Introduced support for defining your playground stylesheets in Less.
+- Introduced support for defining your playground stylesheets in [Less](http://lesscss.org/), by either renaming your `style.css` file to `style.less` and/or setting the `GistPad > Playground: Stylsheet Language` setting to `less`.
 
 ## v0.0.35 (12/29/2019)
 

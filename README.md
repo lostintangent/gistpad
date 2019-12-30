@@ -14,13 +14,13 @@ GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gis
 
    > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
 
-1. Open the `Explorer` tab and expand the `Gists` view. From there, you can open a Gist by ID/URL, or sign-in in wth a GitHub token, in order to view/edit/create/delete Gists.
+1. Open the `Explorer` tab and expand the `Gists` view. From there, you can open a Gist by ID/URL, or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone Gists.
 
    <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
    > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_. Otherwise, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
 
-1. Add local files/snippets to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File` ([details](#contributed-commands-editor))
+1. Add local files/selections to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File` ([details](#contributed-commands-editor))
 
    <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
@@ -68,6 +68,12 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
+## Following
+
+GitHub Gists already allows you to star other user's gists, and when you do that, those will appear in the `Gists` tree, underneath a `Starred Gists` node. However, if you want to follow a GitHub user, and easily browse all of their current and future gists (without having to star each one!), you can run the `GistPad: Follow User` command and specify their GitHub user name. Once you've done that, you'll see a new node in the `Gists` tree which displays all of their public gists, and allows you to open/fork/clone/star them just like any other gist.
+
+<img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
+
 ## Playgrounds
 
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
@@ -98,11 +104,11 @@ In addition to external libraries, you can add any additional files to your gist
 
 ### Layout
 
-By default, when you create a playground, it will open in a "Split Left" layout, which vertically stacks the code editors on the left, and allows the preview window to occupy the fully IDE height on the right. However, if you want to change the layout, you can run the `GistPad: Change Playout Layout` command and select `Grid`, `Split Right`, or `Split Top`.
+By default, when you create a playground, it will open in a "Split Left" layout, which vertically stacks the code editors on the left, and allows the preview window to occupy the fully IDE height on the right. However, if you want to change the layout, you can run the `GistPad: Change Playout Layout` command and select `Grid`, `Preview`, `Split Right`, or `Split Top`.
 
 ![Layout](https://user-images.githubusercontent.com/116461/71560396-5152fc80-2a1e-11ea-9cff-a9590e1ea779.gif)
 
-Additionally, if you create a playground, that looks best in a specific layout, you can set the `layout` property in the playground's `playground.json` file to either: `grid`, `splitLeft`, `splitRight`, or `splitTop`. Then, when you or someone else opens this playground, it will be opened with the specified layout, as opposed to the user's configured default layout.
+Additionally, if you create a playground, that looks best in a specific layout, you can set the `layout` property in the playground's `playground.json` file to either: `grid`, `preview`, `splitLeft`, `splitRight`, or `splitTop`. Then, when you or someone else opens this playground, it will be opened with the specified layout, as opposed to the user's configured default layout.
 
 ## Console Window
 
@@ -134,7 +140,7 @@ In addition to being able to view individual posts on GistLog, you can also open
 
 ## Contributed Commands (File Explorer)
 
-In addition to the `Gists` view, GistPad also contributes an `Add Document to Gist` command to the context menu of the `Explorer` file tree, which allows you to easily add local files to an existing or new Gist.
+In addition to the `Gists` view, GistPad also contributes an `Copy File to Gist` command to the context menu of the `Explorer` file tree, which allows you to easily add local files to a new or existing Gist.
 
 <img width="260px" src="https://user-images.githubusercontent.com/116461/69831695-58001100-11df-11ea-997e-fc8020556348.png" />
 
@@ -142,13 +148,15 @@ In addition to the `Gists` view, GistPad also contributes an `Add Document to Gi
 
 In addition to the `Explorer` file tree commands, GistPad also contributes the following commands to the editor's context menu:
 
-- `Add Document to Gist` - Same behavior as the equivalent command in the `Explorer` tree
+- `Copy File to Gist` - Same behavior as the equivalent command in the `Explorer` tree.
 
 - `Add Selection to Gist` - Allows you to add a snippet/selection of code to a Gist, instead of the entire document
 
 - `Paste Gist File` - Allows you to paste the contents of a Gist file into the active document
 
     <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
+
+- `Paste Screenshot` - Allows you to paste an image from your clipboard into a markdown file. The command will automatically upload the image and then add a reference to it.
 
 ## Contributed Commands (Command Palette)
 
@@ -158,15 +166,17 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Paste Screenshot` - Paste screenshot from the clipboard.
 
-- `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a Gist ID directly, which doesn't require being signed in.
+- `GistPad: Open Gist Files` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a Gist ID directly, which doesn't require being signed in.
 
 - `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, istead of "loose files".
 
 - `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-seperated list of names (e.g. `foo.txt,bar.js`).
 
-- `GistPad: New Gist (Secret)` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
+- `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
 - `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
+
+- `GistPad: New GistLog` - Creates a [GistLog](#gistlog);
 
 * `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a Gist workspace open, it will delete that and then close the folde
 

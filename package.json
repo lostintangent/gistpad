@@ -1,7 +1,7 @@
 {
   "name": "gistfs",
   "displayName": "GistPad",
-  "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
+  "description": "Your personal code snippet manager, knowledge base, and interactive playground, powered by GitHub Gists",
   "publisher": "vsls-contrib",
   "version": "0.0.37",
   "extensionKind": [
@@ -392,6 +392,11 @@
         "icon": "$(sort-precedence)"
       },
       {
+        "command": "gistpad.starGist",
+        "title": "Star Gist",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.starredGists",
         "title": "Starred Gists",
         "category": "GistPad"
@@ -439,6 +444,10 @@
         },
         {
           "command": "gistpad.addGistComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.starGist",
           "when": "false"
         },
         {
@@ -736,6 +745,11 @@
         {
           "command": "gistpad.unstarGist",
           "when": "viewItem =~ /^starredGists.gist/",
+          "group": "manage@2"
+        },
+        {
+          "command": "gistpad.starGist",
+          "when": "viewItem =~ /^followedUser.gist/",
           "group": "manage@2"
         },
         {

@@ -243,6 +243,13 @@ export async function updateGist(
   store.gists = newGists;
 }
 
+export async function starGist(gist: Gist) {
+  const api = await getApi();
+  await api.star(gist.id);
+
+  store.starredGists.push(gist);
+}
+
 export async function unstarGist(id: string) {
   const api = await getApi();
   await api.unstar(id);

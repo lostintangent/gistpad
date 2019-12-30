@@ -1,3 +1,7 @@
+## v0.0.38 (12/30/2019)
+
+- Added the ability to star the gist's for user's you're following.
+
 ## v0.0.37 (12/30/2019)
 
 - Introduced the `preview` playground layout type, which allows viewing a playgroud's preview in full-screen mode.

@@ -18,6 +18,7 @@ import {
   listGists,
   newGist,
   refreshGists,
+  starGist,
   starredGists,
   unstarGist
 } from "../store/actions";
@@ -429,6 +430,23 @@ export async function registerGistCommands(context: ExtensionContext) {
         const nodes = multiSelectNodes || [targetNode];
         for (const node of nodes) {
           unstarGist(node.gist.id);
+        }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.starGist`,
+      async (
+        targetNode: FollowedUserGistNode,
+        multiSelectNodes?: FollowedUserGistNode[]
+      ) => {
+        await ensureAuthenticated();
+
+        const nodes = multiSelectNodes || [targetNode];
+        for (const node of nodes) {
+          starGist(node.gist);
         }
       }
     )

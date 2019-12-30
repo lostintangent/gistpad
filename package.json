@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Your personal code snippet manager, knowledge base, and interactive playground, powered by GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.37",
+  "version": "0.0.38",
   "extensionKind": [
     "ui",
     "web",

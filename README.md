@@ -100,9 +100,9 @@ Additionally, if you create a playground, that looks best in a specific layout, 
 
 If you'd prefer to write [TypeScript](https://www.typescriptlang.org/) instead of JavaScript, simply rename the `script.js` file to `index.ts` (or `index.tsx`) within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use TypeScript, then set the `GistPad > Playground: Script Language` setting to `typescript` (or `typescriptreact`), and all new playgrounds will include an `index.ts` file by default.
 
-### SCSS
+### SCSS/Less
 
-If you'd prefer to write [SCSS](https://sass-lang.com/) instead of CSS, simply rename the `style.css` file to `style.scss` within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use SCSS, then set the `GistPad > Playground: Stylesheet Language` setting to `scss`, and all new playgrounds will include an `style.scss` file by default.
+If you'd prefer to write [SCSS](https://sass-lang.com/) or [Less](http://lesscss.org/) instead of CSS, simply rename the `style.css` file to `style.scss` or `style.less` within a playground, and the code will be transparently compiled for you as you write it. If you'd like to always use SCSS/Less, then set the `GistPad > Playground: Stylesheet Language` setting to `scss` or `less`, and all new playgrounds will include an `style.scss`/`sytyle.less` file by default.
 
 ### Pug
 
@@ -234,6 +234,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > Playground: Stylesheet Language` - Specifies the default stylesheet language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `css` _(default)_: Will result in an `style.css` file being created whenever you create a new web playground.
+  - `less`: Will result in an `style.less` file being created whenever you create a new web playground.
   - `scss`: Will result in an `style.scss` file being created whenever you create a new web playground.
 
 - `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.

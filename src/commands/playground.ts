@@ -1,5 +1,6 @@
 import { debounce } from "debounce";
 import * as path from "path";
+import { GistsNode } from "src/tree/nodes";
 import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
@@ -10,6 +11,7 @@ import { byteArrayToString, closeGistFiles, fileNameToUri, openGistAsWorkspace, 
 import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
+
 export enum PlaygroundLibraryType {
   script = "scripts",
   style = "styles"
@@ -22,6 +24,11 @@ export enum PlaygroundFileType {
   manifest
 }
 
+export const DEFAULT_MANIFEST = {
+  scripts: [] as string[],
+  styles: [] as string[]
+};
+
 const MarkupLanguage = {
   html: ".html",
   pug: ".pug"
@@ -31,15 +38,15 @@ const MARKUP_EXTENSIONS = [MarkupLanguage.html, MarkupLanguage.pug];
 
 const StylesheetLanguage = {
   css: ".css",
+  less: ".less",
   scss: ".scss"
 };
 
-export const DEFAULT_MANIFEST = {
-  scripts: [] as string[],
-  styles: [] as string[]
-};
-
-const STYLESHEET_EXTENSIONS = [StylesheetLanguage.css, StylesheetLanguage.scss];
+const STYLESHEET_EXTENSIONS = [
+  StylesheetLanguage.css,
+  StylesheetLanguage.less,
+  StylesheetLanguage.scss
+];
 
 const ScriptLanguage = {
   babel: ".babel",
@@ -231,6 +238,14 @@ async function getStylesheetContent(
     } catch (e) {
       // Something failed when trying to transpile SCSS,
       // so don't attempt to return anything
+      return null;
+    }
+  } else if (extension === StylesheetLanguage.less) {
+    try {
+      const less = require("less").default;
+      const output = await less.render(content);
+      return output.css;
+    } catch (e) {
       return null;
     }
   } else {
@@ -590,7 +605,7 @@ export async function registerPlaygroundCommands(
   context.subscriptions.push(
     vscode.commands.registerCommand(
       `${EXTENSION_ID}.newPlayground`,
-      async (openAsWorkspace: boolean = false) => {
+      async (node?: GistsNode, openAsWorkspace: boolean = false) => {
         const description = await vscode.window.showInputBox({
           prompt: "Enter the description of the playground"
         });

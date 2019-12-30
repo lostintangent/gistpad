@@ -149,6 +149,10 @@ export class PlaygroundWebview {
     </style>
     ${scripts}
     <script>
+
+    // Wrap this code in braces, so that none of the variables
+    // conflict with variables created by a playground's scripts.
+    {
       document.getElementById("_defaultStyles").remove();
 
       const vscode = acquireVsCodeApi();
@@ -180,6 +184,7 @@ export class PlaygroundWebview {
           value: message
         });
       };
+    }
 
     </script>
   </head>

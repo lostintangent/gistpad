@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Browse, edit and fork GitHub Gists, directly within Visual Studio Code",
   "publisher": "vsls-contrib",
-  "version": "0.0.35",
+  "version": "0.0.36",
   "extensionKind": [
     "ui",
     "web",
@@ -137,6 +137,7 @@
           "default": "css",
           "enum": [
             "css",
+            "less",
             "scss"
           ],
           "description": "Specifies the default stylesheet language to use when creating new web playgrounds."
@@ -933,6 +934,7 @@
   },
   "dependencies": {
     "@types/debounce": "^1.2.0",
+    "@types/less": "^3.0.1",
     "@types/moment": "^2.13.0",
     "@types/pug": "^2.0.4",
     "@types/sass": "^1.16.0",
@@ -941,6 +943,7 @@
     "debounce": "^1.2.0",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
+    "less": "^3.10.3",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
     "pug": "^2.0.4",

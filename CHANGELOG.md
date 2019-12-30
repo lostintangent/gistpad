@@ -1,3 +1,7 @@
+## v0.0.36 (12/30/2019)
+
+- Introduced support for defining your playground stylesheets in Less.
+  
 ## v0.0.35 (12/29/2019)
 
 - Added the `Change Playground Layout` command, as well as the `GistPad > Playground: Layout` setting, to allow developers to control the layout of the playground editors.

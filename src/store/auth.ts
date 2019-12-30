@@ -5,9 +5,9 @@ import { commands, window } from "vscode";
 import { store } from ".";
 import * as config from "../config";
 import { EXTENSION_ID } from "../constants";
+import { log } from "../logger";
 import { getGistWorkspaceId, isGistWorkspace, openGist } from "../utils";
 import { refreshGists } from "./actions";
-
 const GitHub = require("github-base");
 
 export function getCurrentUser() {
@@ -46,17 +46,20 @@ async function testToken(token: string) {
       (item: string) => item.toLowerCase() === SCOPE_HEADER
     );
     if (scopeHeaderIndex === -1) {
+      log.info(`Token test failed: No scopes header`);
       return false;
     }
 
     const tokenScopes = response.rawHeaders[scopeHeaderIndex + 1];
     if (!tokenScopes.includes(GIST_SCOPE)) {
+      log.info(`Token test failed: Scopes don't include gist`);
       return false;
     }
 
     store.login = response.body.login;
     return true;
   } catch (e) {
+    log.info(`Token test failed: ${e.message}`);
     return false;
   }
 }
@@ -65,18 +68,21 @@ async function testToken(token: string) {
 async function attemptGitLogin(): Promise<boolean> {
   const gitSSO = await config.get("gitSSO");
   if (!gitSSO) {
+    log.info("Git SSO disabled");
     return false;
   }
 
   try {
     const token = execGitCredentialFill();
     if (token && token.length > 0 && (await testToken(token))) {
+      log.info("Git SSO succeeded");
       await keytar.setPassword(SERVICE, ACCOUNT, token);
       return true;
     }
 
     return false;
   } catch (e) {
+    log.info(`Git SSO failed: ${e.nessage}`);
     return false;
   }
 }
@@ -111,19 +117,23 @@ export async function initializeAuth() {
 
   const isSignedIn = await isAuthenticated();
   if (isSignedIn) {
+    log.info("Signed in, checking for token's validity...");
     const currentToken = (await getToken())!;
     const tokenStillValid = await testToken(currentToken);
     if (!tokenStillValid) {
+      log.info("Clearing token, since it is no longer valud");
       await deleteToken();
       return;
     }
   } else {
+    log.info("Not signed in, attempting git SSO...");
     const gitSSO = await attemptGitLogin();
     if (!gitSSO) {
       return;
     }
   }
 
+  log.info("Marking user as signed in");
   await markUserAsSignedIn();
 }
 

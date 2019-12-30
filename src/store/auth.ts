@@ -6,7 +6,6 @@ import { store } from ".";
 import * as config from "../config";
 import { EXTENSION_ID } from "../constants";
 import { log } from "../logger";
-import { getGistWorkspaceId, isGistWorkspace, openGist } from "../utils";
 import { refreshGists } from "./actions";
 const GitHub = require("github-base");
 
@@ -145,18 +144,8 @@ export async function isAuthenticated() {
 async function markUserAsSignedIn() {
   store.isSignedIn = true;
   commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_IN);
+
   await refreshGists();
-
-  if (isGistWorkspace()) {
-    const gistId = getGistWorkspaceId();
-    openGist(gistId, false);
-  }
-}
-
-function markUserAsSignedOut() {
-  store.login = "";
-  store.isSignedIn = false;
-  commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_OUT);
 }
 
 export async function signIn() {
@@ -172,6 +161,12 @@ export async function signIn() {
       );
     }
   }
+}
+
+function markUserAsSignedOut() {
+  store.login = "";
+  store.isSignedIn = false;
+  commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_OUT);
 }
 
 export async function signout() {

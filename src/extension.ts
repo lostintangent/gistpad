@@ -8,6 +8,7 @@ import { store } from "./store";
 import { initializeAuth } from "./store/auth";
 import { initializeStorage } from "./store/storage";
 import { registerTreeProvider } from "./tree";
+import { getGistWorkspaceId, isGistWorkspace, openGist } from "./utils";
 
 export async function activate(context: vscode.ExtensionContext) {
   log.setLoggingChannel(vscode.window.createOutputChannel("GistPad"));
@@ -17,6 +18,11 @@ export async function activate(context: vscode.ExtensionContext) {
   registerCommands(context);
   registerTreeProvider(store, context.extensionPath);
   registerCommentController();
+
+  if (isGistWorkspace()) {
+    const gistId = getGistWorkspaceId();
+    openGist(gistId, false);
+  }
 
   initializeStorage(context);
   initializeAuth();

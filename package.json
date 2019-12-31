@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.38",
+  "version": "0.0.39",
   "extensionKind": [
     "ui",
     "web",
@@ -196,7 +196,10 @@
         "command": "gistpad.changePlaygroundLayout",
         "title": "Change Playground Layout",
         "category": "GistPad",
-        "icon": "$(project)"
+        "icon": {
+          "dark": "images/dark/layout.svg",
+          "light": "images/light/layout.svg"
+        }
       },
       {
         "command": "gistpad.cloneRepository",
@@ -866,12 +869,12 @@
           "group": "navigation@2"
         },
         {
-          "command": "gistpad.openPlaygroundDeveloperTools",
+          "command": "gistpad.changePlaygroundLayout",
           "when": "gistpad:inPlayground",
           "group": "navigation@3"
         },
         {
-          "command": "gistpad.changePlaygroundLayout",
+          "command": "gistpad.openPlaygroundDeveloperTools",
           "when": "gistpad:inPlayground",
           "group": "navigation@4"
         },

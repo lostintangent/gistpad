@@ -242,7 +242,10 @@
         "command": "gistpad.followUser",
         "title": "Follow User",
         "category": "GistPad",
-        "icon": "$(reactions)"
+        "icon": {
+          "dark": "images/dark/follow.svg",
+          "light": "images/light/follow.svg"
+        }
       },
       {
         "command": "gistpad.duplicateGist",
@@ -258,7 +261,10 @@
         "command": "gistpad.newPublicGist",
         "title": "New Gist",
         "category": "GistPad",
-        "icon": "$(add)"
+        "icon": {
+          "dark": "images/dark/add.svg",
+          "light": "images/light/add.svg"
+        }
       },
       {
         "command": "gistpad.newGistLog",
@@ -274,7 +280,10 @@
         "command": "gistpad.newSecretGist",
         "title": "New Secret Gist",
         "category": "GistPad",
-        "icon": "$(gist-secret)"
+        "icon": {
+          "dark": "images/dark/add-secret.svg",
+          "light": "images/light/add-secret.svg"
+        }
       },
       {
         "command": "gistpad.openGist",
@@ -290,13 +299,19 @@
         "command": "gistpad.openPlaygroundConsole",
         "title": "Open Playground Console",
         "category": "GistPad",
-        "icon": "$(console)"
+        "icon": {
+          "dark": "images/dark/console.svg",
+          "light": "images/light/console.svg"
+        }
       },
       {
         "command": "gistpad.openPlaygroundDeveloperTools",
         "title": "Open Playground Dev Tools",
         "category": "GistPad",
-        "icon": "$(tools)"
+        "icon": {
+          "dark": "images/dark/dev-tools.svg",
+          "light": "images/light/dev-tools.svg"
+        }
       },
       {
         "command": "gistpad.exportGistToCodePen",
@@ -347,7 +362,10 @@
         "command": "gistpad.refreshGists",
         "title": "Refresh Gists",
         "category": "GistPad",
-        "icon": "$(refresh)"
+        "icon": {
+          "dark": "images/dark/refresh.svg",
+          "light": "images/light/refresh.svg"
+        }
       },
       {
         "command": "gistpad.renameFile",
@@ -363,7 +381,10 @@
         "command": "gistpad.runPlayground",
         "title": "Run Playground",
         "category": "GistPad",
-        "icon": "$(play)"
+        "icon": {
+          "dark": "images/dark/run.svg",
+          "light": "images/light/run.svg"
+        }
       },
       {
         "command": "gistpad.saveGistComment",
@@ -383,13 +404,19 @@
         "command": "gistpad.sortGistsAlphabetically",
         "title": "Sort Gists Alphabetically",
         "category": "GistPad",
-        "icon": "$(symbol-text)"
+        "icon": {
+          "dark": "images/dark/sort-alphabetical.svg",
+          "light": "images/light/sort-alphabetical.svg"
+        }
       },
       {
         "command": "gistpad.sortGistsByUpdatedTime",
         "title": "Sort Gists by Updated Time",
         "category": "GistPad",
-        "icon": "$(sort-precedence)"
+        "icon": {
+          "dark": "images/dark/sort-time.svg",
+          "light": "images/light/sort-time.svg"
+        }
       },
       {
         "command": "gistpad.starGist",

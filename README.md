@@ -1,8 +1,8 @@
-# GistPad
+# GistPad 📘
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to develop [GitHub Gists](https://gist.github.com/) entirely from within the editor. You can open, create, delete and fork Gists, and then seamlessly begin editing files, as if they were local. It's like your very own, cloud-based scratchpad, code snippet manager, knowledge base, [playground](#playgrounds) and [blog](#gistlog). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
+GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork and star Gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library, code snippet manager, programming notebook, and [interactive playground](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -68,13 +68,13 @@ By default the screenshot gets uploaded as a `.png` file to the gist and the lin
   - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
   - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
 
-## Following
+## Following Users
 
 GitHub Gists already allows you to star other user's gists, and when you do that, those will appear in the `Gists` tree, underneath a `Starred Gists` node. However, if you want to follow a GitHub user, and easily browse all of their current and future gists (without having to star each one!), you can run the `GistPad: Follow User` command and specify their GitHub user name. Once you've done that, you'll see a new node in the `Gists` tree which displays all of their public gists, and allows you to open/fork/clone/star them just like any other gist.
 
 <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
-## Playgrounds
+## Interactive Playgrounds
 
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
@@ -110,7 +110,7 @@ By default, when you create a playground, it will open in a "Split Left" layout,
 
 Additionally, if you create a playground, that looks best in a specific layout, you can set the `layout` property in the playground's `playground.json` file to either: `grid`, `preview`, `splitLeft`, `splitRight`, or `splitTop`. Then, when you or someone else opens this playground, it will be opened with the specified layout, as opposed to the user's configured default layout.
 
-## Console Window
+### Console Output
 
 The playground also provides an output window in order to view any logs written via the `console.log` API. You can bring up the output window, as well as run the playground or open the Chrome Developer Tools, by clicking the respective command icon in the editor toolbar. If you'd like to always open the console when creating/opening playgrounds, you can set the `GistPad > Playground: Show Console` setting to `true`.
 

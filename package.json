@@ -831,14 +831,6 @@
         {
           "command": "gistpad.pasteScreenshot",
           "when": "resourceScheme == gist && resourceLangId == markdown"
-        },
-        {
-          "command": "gistpad.addPlaygroundScript",
-          "when": "resourceScheme == gist && resourceFilename == playground.json"
-        },
-        {
-          "command": "gistpad.addPlaygroundStylesheet",
-          "when": "resourceScheme == gist && resourceFilename == playground.json"
         }
       ],
       "editor/title": [

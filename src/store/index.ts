@@ -56,6 +56,7 @@ export interface GistComment {
 export interface IFollowedUser {
   username: string;
   gists: Gist[];
+  avatarUrl?: string;
   isLoading: boolean;
 }
 

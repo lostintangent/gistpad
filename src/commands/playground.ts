@@ -1,3 +1,4 @@
+import Axios from "axios";
 import { debounce } from "debounce";
 import * as path from "path";
 import { GistsNode } from "src/tree/nodes";
@@ -7,7 +8,13 @@ import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
-import { byteArrayToString, closeGistFiles, fileNameToUri, openGistAsWorkspace, stringToByteArray } from "../utils";
+import {
+  byteArrayToString,
+  closeGistFiles,
+  fileNameToUri,
+  openGistAsWorkspace,
+  stringToByteArray
+} from "../utils";
 import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
@@ -645,6 +652,24 @@ export async function registerPlaygroundCommands(
           openGistAsWorkspace(gist.id);
         } else {
           openPlayground(gist);
+        }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_ID}.newPlaygroundFromTemplate`,
+      async (node?: GistsNode, openAsWorkspace: boolean = false) => {
+        const { data } = await Axios.get(
+          "https://gist.githubusercontent.com/lostintangent/bfd095a7ca088f729c52ad3d5ccfb731/raw/99b3acd473a71b7e82825012f6c6d4dab604a917/templates.json"
+        );
+
+        const template = await vscode.window.showQuickPick(data, {
+          placeHolder: "Select the playground template to use"
+        });
+        if (template) {
+          vscode.window.showInformationMessage("Cool");
         }
       }
     )

@@ -2,7 +2,7 @@ import * as vscode from "vscode";
 import { URI_PATTERN } from "../constants";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { GistNode } from "../tree/nodes";
-import { byteArrayToString, fileNameToUri } from "../utils";
+import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
 import {
   getCDNJSLibraries,
   getLibraryVersions,
@@ -112,7 +112,7 @@ const addDependencyLink = async (
     playgroundJSON[libraryType] = [...new Set(playgroundJSON[libraryType])];
 
     const updatedContent = JSON.stringify(playgroundJSON, null, 2);
-    vscode.workspace.fs.writeFile(uri, Buffer.from(updatedContent));
+    vscode.workspace.fs.writeFile(uri, stringToByteArray(updatedContent));
 
     if (activePlayground && activePlayground.gist.id === node.gist.id) {
       activePlayground.webView.updateManifest(updatedContent, true);

@@ -158,6 +158,14 @@ In addition to the `Explorer` file tree commands, GistPad also contributes the f
 
 - `Paste Screenshot` - Allows you to paste an image from your clipboard into a markdown file. The command will automatically upload the image and then add a reference to it.
 
+The `Copy File to Gist` command is also available on the editor tab's context menu.
+
+## Contributed Commands (Editor Title Bar)
+
+In addition to the commands added to the editor context menu, GistPad also contributes the following commands to the editor's title bar menu (click the `...` in the upper right section of an editor window):
+
+- `Rename File` - Allows you to rename the current file.
+
 ## Contributed Commands (Command Palette)
 
 In addition to the `Gists` view, this extension also provides the following commands:

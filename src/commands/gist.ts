@@ -33,7 +33,7 @@ import {
   getStarredGistLabel,
   isGistWorkspace,
   openGist,
-  openGistAsWorkspace
+  openGistFiles
 } from "../utils";
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
@@ -86,14 +86,6 @@ interface IOpenGistOptions {
   gistId?: string;
 }
 
-const openGistById = (id: string, openAsWorkspace: boolean) => {
-  if (openAsWorkspace) {
-    return openGistAsWorkspace(id);
-  }
-
-  return openGist(id, false);
-};
-
 const getGistIdFromUrl = (gistUrl: string) => {
   const url = new URL(gistUrl);
   const { pathname } = url;
@@ -116,9 +108,9 @@ async function openGistInternal(
   if (gistUrl || gistId) {
     const id = gistId ? gistId : getGistIdFromUrl(gistUrl!); // (!) since the `gistId` is not set, means the `gistUrl` is set
 
-    return openGistById(id, !!openAsWorkspace);
+    return openGist(id, !!openAsWorkspace);
   } else if (node) {
-    return openGistById(node.gist.id, !!openAsWorkspace);
+    return openGist(node.gist.id, !!openAsWorkspace);
   }
 
   let gistItems: GistQuickPickItem[] = [];
@@ -167,7 +159,7 @@ async function openGistInternal(
         gistId = (<any>GIST_URL_PATTERN.exec(gist.id)!).groups.id;
       }
 
-      openGistById(gistId, !!openAsWorkspace);
+      openGist(gistId, !!openAsWorkspace);
     } else {
       switch (gist.label) {
         case SIGN_IN_ITEM:
@@ -208,7 +200,7 @@ async function starredGistsInternal() {
   });
 
   if (selected) {
-    openGist(selected.id);
+    openGistFiles(selected.id);
   }
 }
 

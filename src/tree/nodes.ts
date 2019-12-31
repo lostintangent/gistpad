@@ -1,6 +1,6 @@
 import * as moment from "moment";
 import * as path from "path";
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { Gist, GistFile, IFollowedUser } from "../store";
 import {
@@ -149,10 +149,14 @@ export class FollowedUserGistsNode extends TreeNode {
   constructor(public user: IFollowedUser, extensionPath: string) {
     super(`${user.username}'s Gists`, TreeItemCollapsibleState.Collapsed);
 
-    this.iconPath = {
-      dark: path.join(extensionPath, "images/dark/user.svg"),
-      light: path.join(extensionPath, "images/light/user.svg")
-    };
+    if (user.avatarUrl) {
+      this.iconPath = Uri.parse(user.avatarUrl);
+    } else {
+      this.iconPath = {
+        dark: path.join(extensionPath, "images/dark/user.svg"),
+        light: path.join(extensionPath, "images/light/user.svg")
+      };
+    }
 
     this.contextValue = "followedUserGists";
   }
@@ -160,7 +164,7 @@ export class FollowedUserGistsNode extends TreeNode {
 
 export class NoUserGistsNode extends TreeNode {
   constructor() {
-    super("No Gists");
+    super("This user doesn't have any gists");
   }
 }
 

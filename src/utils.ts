@@ -117,7 +117,15 @@ export function isPlaygroundGist(gist: Gist) {
   );
 }
 
-export async function openGist(id: string, isNew: boolean = false) {
+export async function openGist(id: string, openAsWorkspace: boolean) {
+  if (openAsWorkspace) {
+    return openGistAsWorkspace(id);
+  }
+
+  return openGistFiles(id);
+}
+
+export async function openGistFiles(id: string) {
   const gist = await getGist(id);
 
   if (isPlaygroundGist(gist)) {

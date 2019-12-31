@@ -1,3 +1,10 @@
+## v0.0.39 (12/31/2019)
+
+- Added the `View Profile in GitHub` command to followed user's in the `Gists` tree view.
+- The tree node for followed users not displays the user's GitHub avatar, instead of the generic user icon.
+- Added the `Rename File` command to the editor title bar, which allows easily renaming opened files, without having to find them in the `Gists` tree and/or using workspace-mode.
+- Added support to the protocol handler for programatically following users (e.g. `vscode://vsls-contrib.gistfs/follow?user=chuxel`).
+
 ## v0.0.38 (12/30/2019)
 
 - Added the ability to star the gist's for user's you're following.

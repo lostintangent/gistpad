@@ -305,12 +305,12 @@
       },
       {
         "command": "gistpad.openProfile",
-        "title": "Open Profile in GitHub",
+        "title": "View Profile in GitHub",
         "category": "GistPad"
       },
       {
         "command": "gistpad.openGistLogFeed",
-        "title": "Open Feed in GistLog",
+        "title": "View Feed in GistLog",
         "category": "GistPad"
       },
       {
@@ -335,7 +335,7 @@
       },
       {
         "command": "gistpad.pasteGistFile",
-        "title": "Paste Gist File",
+        "title": "Paste Gist File Contents",
         "category": "GistPad"
       },
       {
@@ -669,7 +669,7 @@
         },
         {
           "command": "gistpad.openProfile",
-          "when": "viewItem == gists",
+          "when": "viewItem == gists || viewItem == followedUserGists",
           "group": "open@1"
         },
         {
@@ -847,6 +847,10 @@
           "command": "gistpad.changePlaygroundLayout",
           "when": "gistpad:inPlayground",
           "group": "navigation@4"
+        },
+        {
+          "command": "gistpad.renameFile",
+          "when": "resourceScheme == gist"
         }
       ],
       "editor/title/context": [

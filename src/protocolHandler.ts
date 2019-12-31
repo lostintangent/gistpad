@@ -1,48 +1,38 @@
 import { URLSearchParams } from "url";
 import * as vscode from "vscode";
-import { CommandId } from "./constants";
-import { log } from "./logger";
+import { followUser } from "./store/actions";
 import { initializeAuth } from "./store/auth";
+import { openGist } from "./utils";
 
-const getQuery = (uri: vscode.Uri): URLSearchParams => {
-  const query = new URLSearchParams(uri.query);
-
-  return query;
-};
-
-const openGist = async (uri: vscode.Uri) => {
-  const query = getQuery(uri);
-
-  const gistUrl = query.get("url");
-  const gistId = query.get("id");
-  const openAsWorkspace = query.get("workspace") === "true";
-
-  if (!gistUrl && !gistId) {
-    const message = `No gist URL nor Id specified in "${uri}"`;
-    log.error(message);
-    throw new Error(message);
+async function handleFollowRequest(query: URLSearchParams) {
+  const user = query.get("user");
+  if (user) {
+    followUser(user);
+    vscode.commands.executeCommand("workbench.view.extension.gistpad");
   }
+}
 
-  const options = gistUrl ? { gistUrl } : { gistId };
+async function handleOpenRequest(query: URLSearchParams) {
+  const gistId = query.get("gist");
+  const openAsWorkspace = query.get("workspace") !== null;
 
-  await vscode.commands.executeCommand(CommandId.openGist, {
-    ...options,
-    openAsWorkspace
-  });
-};
+  if (gistId) {
+    openGist(gistId, !!openAsWorkspace);
+  }
+}
 
-export class GistPadProtocolHandler implements vscode.UriHandler {
+class GistPadProtocolHandler implements vscode.UriHandler {
   public async handleUri(uri: vscode.Uri): Promise<void> {
+    const query = new URLSearchParams(uri.query);
+
     switch (uri.path) {
-      case "/open-gist": {
-        return await openGist(uri);
-      }
-      case "/did-authenticate": {
+      case "/open":
+        return await handleOpenRequest(query);
+      case "/follow":
+        return await handleFollowRequest(query);
+      case "/did-authenticate":
         await initializeAuth();
-      }
-      default: {
         break;
-      }
     }
   }
 
@@ -51,7 +41,6 @@ export class GistPadProtocolHandler implements vscode.UriHandler {
 
 export const initializeProtocolHander = () => {
   if (typeof vscode.window.registerUriHandler === "function") {
-    log.info("Protocol handler is registered.");
     vscode.window.registerUriHandler(new GistPadProtocolHandler());
   }
 };

@@ -15,6 +15,7 @@ import { GistFileNode, GistNode } from "../tree/nodes";
 import {
   byteArrayToString,
   fileNameToUri,
+  getGistDetailsFromUri,
   openGistFile,
   stringToByteArray
 } from "../utils";
@@ -148,12 +149,22 @@ export function registerFileCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.renameFile`,
-      async (node: GistFileNode) => {
+      async (nodeOrUri: GistFileNode | Uri) => {
         await ensureAuthenticated();
+
+        let gistId, fileName;
+        if (nodeOrUri instanceof GistFileNode) {
+          gistId = nodeOrUri.gistId;
+          fileName = nodeOrUri.file.filename;
+        } else {
+          const details = getGistDetailsFromUri(nodeOrUri);
+          gistId = details.gistId;
+          fileName = details.file;
+        }
 
         const newFilename = await window.showInputBox({
           prompt: "Specify the new name for this file",
-          value: node.file.filename
+          value: fileName
         });
 
         if (!newFilename) {
@@ -161,8 +172,8 @@ export function registerFileCommands(context: ExtensionContext) {
         }
 
         await workspace.fs.rename(
-          fileNameToUri(node.gistId, node.file.filename!),
-          fileNameToUri(node.gistId, newFilename)
+          fileNameToUri(gistId, fileName!),
+          fileNameToUri(gistId, newFilename)
         );
       }
     )

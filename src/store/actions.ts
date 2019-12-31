@@ -4,13 +4,13 @@ import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { log } from "../logger";
-import { openGist, sortGists } from "../utils";
+import { openGistFiles, sortGists } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
 
 const Gists = require("gists");
 
-async function getApi() {
+async function getApi(constructor = Gists) {
   const token = await getToken();
   const apiurl = await config.get("apiUrl");
 
@@ -20,7 +20,7 @@ async function getApi() {
     throw new Error(message);
   }
 
-  return new Gists({ apiurl, token });
+  return new constructor({ apiurl, token });
 }
 
 export async function addGistFiles(id: string, fileNames: string[]) {
@@ -44,6 +44,23 @@ export async function addGistFiles(id: string, fileNames: string[]) {
   newGists.push(response.body);
 
   store.gists = newGists;
+}
+
+export async function getUser(username: string) {
+  const GitHub = require("github-base");
+  const api = await getApi(GitHub);
+
+  try {
+    const response = await api.get(`/users/${username}`);
+    return response.body;
+  } catch (e) {
+    return null;
+  }
+}
+
+export async function getUserAvatar(username: string) {
+  const user = await getUser(username);
+  return user ? user.avatar_url : null;
 }
 
 export async function changeDescription(id: string, description: string) {
@@ -92,8 +109,15 @@ export async function editGistComment(
 }
 
 export async function followUser(username: string) {
-  const followedUsers = storage.followedUsers;
+  const avatarUrl = await getUserAvatar(username);
+  if (!avatarUrl) {
+    window.showErrorMessage(
+      `"${username}" doesn't appear to be a valid GitHub user. Please try again.`
+    );
+    return;
+  }
 
+  const followedUsers = storage.followedUsers;
   if (followedUsers.find((user) => user === username)) {
     window.showInformationMessage("You're already following this user");
     return;
@@ -104,6 +128,7 @@ export async function followUser(username: string) {
 
   const user: IFollowedUser = observable({
     username,
+    avatarUrl,
     gists: [],
     isLoading: true
   });
@@ -119,7 +144,8 @@ export async function forkGist(id: string) {
 
   const gist = await api.fork(id);
   store.gists.unshift(gist.body);
-  openGist(gist.body.id);
+
+  openGistFiles(gist.body.id);
 }
 
 export async function getGist(id: string): Promise<Gist> {
@@ -180,7 +206,7 @@ export async function newGist(
   store.gists.unshift(gist.body);
 
   if (openAfterCreation) {
-    openGist(gist.body.id, true);
+    openGistFiles(gist.body.id);
   }
 
   return gist.body;
@@ -203,6 +229,7 @@ export async function refreshGists() {
 
   if (storage.followedUsers.length > 0) {
     for (const followedUser of store.followedUsers) {
+      followedUser.avatarUrl = await getUserAvatar(followedUser.username);
       followedUser.gists = await listUserGists(followedUser.username);
       followedUser.isLoading = false;
     }

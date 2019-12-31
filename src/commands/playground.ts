@@ -677,15 +677,32 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.addPlaygroundScript`,
-      addPlaygroundLibraryCommand.bind(null, PlaygroundLibraryType.script)
-    )
-  );
+      `${EXTENSION_ID}.addPlaygroundLibrary`,
+      async () => {
+        const response = await vscode.window.showQuickPick(
+          [
+            {
+              label: "Script",
+              description:
+                "Adds a <script> reference, before your playground script",
+              libraryType: PlaygroundLibraryType.script
+            },
+            {
+              label: "Stylesheet",
+              description:
+                "Adds a <link rel='stylesheet' /> reference, before your playground styles",
+              libraryType: PlaygroundLibraryType.style
+            }
+          ],
+          {
+            placeHolder: "Select the library type you'd like to add"
+          }
+        );
 
-  context.subscriptions.push(
-    vscode.commands.registerCommand(
-      `${EXTENSION_ID}.addPlaygroundStylesheet`,
-      addPlaygroundLibraryCommand.bind(null, PlaygroundLibraryType.style)
+        if (response) {
+          addPlaygroundLibraryCommand(response.libraryType);
+        }
+      }
     )
   );
 

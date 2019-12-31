@@ -28,8 +28,7 @@
   "activationEvents": [
     "onCommand:gistpad.addFileToGist",
     "onCommand:gistpad.addSelectionToGist",
-    "onCommand:gistpad.addPlaygroundScript",
-    "onCommand:gistpad.addPlaygroundStylesheet",
+    "onCommand:gistpad.addPlaygroundLibrary",
     "onCommand:gistpad.deleteGist",
     "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
@@ -318,7 +317,7 @@
       },
       {
         "command": "gistpad.exportGistToCodePen",
-        "title": "Export Playground to CodePen",
+        "title": "Export to CodePen",
         "category": "GistPad"
       },
       {
@@ -442,14 +441,13 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.addPlaygroundScript",
-        "title": "Add Playground Script",
-        "category": "GistPad"
-      },
-      {
-        "command": "gistpad.addPlaygroundStylesheet",
-        "title": "Add Playground Stylesheet",
-        "category": "GistPad"
+        "command": "gistpad.addPlaygroundLibrary",
+        "title": "Add Playground Library",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add-library.svg",
+          "light": "images/light/add-library.svg"
+        }
       }
     ],
     "keybindings": {
@@ -481,12 +479,8 @@
           "when": "false"
         },
         {
-          "command": "gistpad.addPlaygroundScript",
-          "when": "resourceScheme == gist && resourceFilename == playground.json"
-        },
-        {
-          "command": "gistpad.addPlaygroundStylesheet",
-          "when": "resourceScheme == gist && resourceFilename == playground.json"
+          "command": "gistpad.addPlaygroundLibrary",
+          "when": "gistpad:inPlayground"
         },
         {
           "command": "gistpad.addSelectionToGist",
@@ -570,7 +564,7 @@
         },
         {
           "command": "gistpad.exportGistToCodePen",
-          "when": "false"
+          "when": "gistpad:inPlayground"
         },
         {
           "command": "gistpad.pasteGistFile",
@@ -728,6 +722,11 @@
           "group": "browse@2"
         },
         {
+          "command": "gistpad.exportGistToCodePen",
+          "when": "viewItem == gists.gist.playground",
+          "group": "browse@3"
+        },
+        {
           "command": "gistpad.openGistInGistLog",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist$/",
           "group": "browse@3"
@@ -781,21 +780,6 @@
           "command": "gistpad.starGist",
           "when": "viewItem =~ /^followedUser.gist/",
           "group": "manage@2"
-        },
-        {
-          "command": "gistpad.addPlaygroundScript",
-          "when": "viewItem =~ /^gists.gist.playground$/",
-          "group": "playground@1"
-        },
-        {
-          "command": "gistpad.addPlaygroundStylesheet",
-          "when": "viewItem =~ /^gists.gist.playground$/",
-          "group": "playground@2"
-        },
-        {
-          "command": "gistpad.exportGistToCodePen",
-          "when": "viewItem == gists.gist.playground",
-          "group": "playground@3"
         },
         {
           "command": "gistpad.unfollowUser",
@@ -874,9 +858,14 @@
           "group": "navigation@3"
         },
         {
-          "command": "gistpad.openPlaygroundDeveloperTools",
+          "command": "gistpad.addPlaygroundLibrary",
           "when": "gistpad:inPlayground",
           "group": "navigation@4"
+        },
+        {
+          "command": "gistpad.openPlaygroundDeveloperTools",
+          "when": "gistpad:inPlayground",
+          "group": "navigation@5"
         },
         {
           "command": "gistpad.renameFile",

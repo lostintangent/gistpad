@@ -1,7 +1,6 @@
 import * as vscode from "vscode";
-import { URI_PATTERN } from "../constants";
+import { PLAYGROUND_JSON_FILE, URI_PATTERN } from "../constants";
 import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
-import { GistNode } from "../tree/nodes";
 import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
 import {
   getCDNJSLibraries,
@@ -90,62 +89,41 @@ export const getPlaygroundJson = (text: string): IPlaygroundJSON => {
   }
 };
 
-const addDependencyLink = async (
+async function addDependencyLink(
   libraryType: PlaygroundLibraryType,
-  libraryUrl: string,
-  node?: GistNode | vscode.Uri
-) => {
-  if (node && node instanceof GistNode) {
-    const uri = fileNameToUri(node.gist.id, "playground.json");
+  libraryUrl: string
+) {
+  const gistId = activePlayground!.gist.id;
+  const uri = fileNameToUri(gistId, PLAYGROUND_JSON_FILE);
 
-    let playgroundJSON;
-    try {
-      const content = byteArrayToString(
-        await vscode.workspace.fs.readFile(uri)
-      );
-      playgroundJSON = getPlaygroundJson(content);
-    } catch (e) {
-      playgroundJSON = DEFAULT_MANIFEST;
-    }
-
-    playgroundJSON[libraryType]!.push(libraryUrl);
-    playgroundJSON[libraryType] = [...new Set(playgroundJSON[libraryType])];
-
-    const updatedContent = JSON.stringify(playgroundJSON, null, 2);
-    vscode.workspace.fs.writeFile(uri, stringToByteArray(updatedContent));
-
-    if (activePlayground && activePlayground.gist.id === node.gist.id) {
-      activePlayground.webView.updateManifest(updatedContent, true);
-    }
-    return;
-  } else if (vscode.window.activeTextEditor) {
-    await vscode.window.activeTextEditor.edit(async (edit) => {
-      const { document } = vscode.window.activeTextEditor!;
-      const text = document.getText();
-      const playgroundJSON = getPlaygroundJson(text);
-
-      playgroundJSON[libraryType]!.push(libraryUrl);
-      playgroundJSON[libraryType] = [...new Set(playgroundJSON[libraryType])];
-
-      const range = new vscode.Range(
-        document.positionAt(0),
-        document.positionAt(text.length)
-      );
-
-      edit.replace(range, JSON.stringify(playgroundJSON, null, 2));
-    });
+  let playgroundJSON;
+  try {
+    const content = byteArrayToString(await vscode.workspace.fs.readFile(uri));
+    playgroundJSON = getPlaygroundJson(content);
+  } catch (e) {
+    playgroundJSON = DEFAULT_MANIFEST;
   }
-};
+
+  playgroundJSON[libraryType]!.push(libraryUrl);
+  playgroundJSON[libraryType] = [...new Set(playgroundJSON[libraryType])];
+
+  const updatedContent = JSON.stringify(playgroundJSON, null, 2);
+  vscode.workspace.fs.writeFile(uri, stringToByteArray(updatedContent));
+
+  if (activePlayground && activePlayground.gist.id === gistId) {
+    activePlayground.webView.updateManifest(updatedContent, true);
+  }
+  return;
+}
 
 const createLatestUrl = (libraryAnswer: any) => {
   const { name, latest } = libraryAnswer.library;
   return SUPPORTED_DEFAULT_LIBRARIES.indexOf(name) > -1 ? name : latest;
 };
 
-export const addPlaygroundLibraryCommand = async (
-  libraryType: PlaygroundLibraryType,
-  nodeOrUri?: GistNode | vscode.Uri
-) => {
+export async function addPlaygroundLibraryCommand(
+  libraryType: PlaygroundLibraryType
+) {
   const libraries = await getCDNJSLibraries();
   const libraryPickListItems = librariesToPickList(libraries);
 
@@ -172,11 +150,7 @@ export const addPlaygroundLibraryCommand = async (
     list.hide();
 
     if (libraryAnswer.label.match(URI_PATTERN)) {
-      return await addDependencyLink(
-        libraryType,
-        libraryAnswer.label,
-        nodeOrUri
-      );
+      return await addDependencyLink(libraryType, libraryAnswer.label);
     }
 
     const libraryVersionAnswer = await vscode.window.showQuickPick(
@@ -217,8 +191,8 @@ export const addPlaygroundLibraryCommand = async (
             fileAnswer.label
           );
 
-    await addDependencyLink(libraryType, libraryUrl, nodeOrUri);
+    await addDependencyLink(libraryType, libraryUrl);
   });
 
   list.show();
-};
+}

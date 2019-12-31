@@ -1,9 +1,13 @@
+## v0.0.40 (12/31/2019)
+
+- Replaced the `Add Playground Script` and `Add Playground Stylesheet` commands with the `Add Playground Library` command. Additionally, this new command has been added to the "playground" toolbar to simplify the process of adding new libraries.
+
 ## v0.0.39 (12/31/2019)
 
 - Added the `View Profile in GitHub` command to followed user's in the `Gists` tree view.
 - The tree node for followed users not displays the user's GitHub avatar, instead of the generic user icon.
 - Added the `Rename File` command to the editor title bar, which allows easily renaming opened files, without having to find them in the `Gists` tree and/or using workspace-mode.
-- Added support to the protocol handler for programatically following users (e.g. `vscode://vsls-contrib.gistfs/follow?user=chuxel`).
+- Added support to the protocol handler for programatically following users (e.g. `vscode://vsls-contrib.gistfs/follow?user=lostintangent`).
 
 ## v0.0.38 (12/30/2019)
 

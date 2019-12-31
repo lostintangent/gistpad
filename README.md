@@ -82,6 +82,18 @@ If you're building web applications, and want to create a quick playground envir
 
 Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you're done with a playground, simply close the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist 👍
 
+### Toolbar
+
+When you open a playground, this activates the "playground toolbar", which is a collection of helpful utilities that are displayed in the editor's title bar. The following describes the available actions:
+
+- **Run Playground** - Re-runs the HTML, JavaScript and CSS of your playground. This can be useful when wanting to reset a playground's state and/or if you've disabled the auto-run behavior for playgrounds.
+- **Open Console** - Opens the `GistPad Playground` console, which allows you to view the output of any `console.log` calls that your playground makes ([details](#console-output)).
+- **Change Layout** - Allows you to change the layout configuration of the playground editors ([details](#layout)).
+- **Add Library** - Allows you to add an external library to your playground (e.g. React.js, Font-Awesome) ([details](#external-libraries))
+- **Open Playground Developer Tools** - Opens the Chrome Dev Tools for your playground preview, which lets you use the DOM exlporer, evaluate JavaScript expressions in the console, etc.
+
+<img width="464" src="https://user-images.githubusercontent.com/116461/71629353-eafee300-2bb1-11ea-88f0-0996ab6149c4.png" />
+
 ### Additional Language Support
 
 By default, new playgrounds create an HTML, CSS and JavaScript file. However, if you're more productive using a different markup, stylesheet or scripting language, then simply rename the respective files to use the right extension, and the code will be automatically compiled for you on the fly! Specifically, GistPad supports the following languages:
@@ -96,11 +108,11 @@ If you'd like to always use one of these languages, then set one or more of the 
 
 ### External Libraries
 
-If you need to add any external JavaScript libraries (e.g. `react`) or stylesheets (e.g. `font-awesome`) to your playground, simply right-click the gist in the `Gists` tree, and click `Add Playground Script` or `Add Playground Stylesheet` menu item. This will allow you to select a library from CDNJS or paste a custom library URL. Since Gist files provide an internet-accessible URL, you can use Gists as re-usable snippets for plaugrounds, and add references to them by right-clicking a gist file in the `Gists` tree, select `Copy File URL`, and then add it as a script/stylesheet reference to the appropriate playground. Behind the scenes, these commands update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually.
+If you need to add any external JavaScript libraries (e.g. `react`) or stylesheets (e.g. `font-awesome`) to your playground, simply click the `Add Playground Library` commmand in the playground "action bar" (or run `GistPad: Add Playground Library` from the command palette). This will allow you to search for a library from CDNJS or paste a custom library URL. When you select a library, it will be automatically added to your playground.
 
-![Libraries](https://user-images.githubusercontent.com/116461/71530143-2a20f180-289d-11ea-940b-4ec60cabb0fd.gif)
+![Add Library](https://user-images.githubusercontent.com/116461/71629251-4ed4dc00-2bb1-11ea-9488-78c3d71dbacd.gif)
 
-In addition to external libraries, you can add any additional files to your gist, and then reference them from your HTML, CSS, JavaScript files. If you right-click the gist file, and select `Copy URL`, you'll get the absolute URL for that file and can reference from from your playground code. Additionally, you can reference files using a relative path, and they'll be resolved to the file in your gist (e.g. `<img src="image.png" />`).
+Behind the scenes, this command update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually if you'd prefer. Additionally, since Gist files provide an internet-accessible URL, you can use Gists as re-usable snippets for playgrounds, and add references to them by right-clicking a gist file in the `Gists` tree, select `Copy GitHub URL`, and then adding it as a library reference to the appropriate playground. 
 
 ### Layout
 
@@ -124,7 +136,7 @@ If you export a pen to a [GitHub Gist](https://blog.codepen.io/documentation/fea
 
 ![CodePen](https://user-images.githubusercontent.com/116461/71393589-171ed080-25c2-11ea-8138-ba075daf7d37.gif)
 
-Additionally, if you develop a playground locally, and want to export it to CodePen (e.g. in order to share it with the community), you can right-click the gist and select `Export Playground to CodePen`. This allows you to develop within VS Code, and then share it when you're done. When a playground is exported to CodePen, it's tagged with `gistpad` so that the community can [see](https://aka.ms/gistpad-codepen) the pens being created with it.
+Additionally, if you develop a playground locally, and want to export it to CodePen (e.g. in order to share it with the community), you can right-click the gist and select `Export to CodePen`. This allows you to develop within VS Code, and then share it when you're done. When a playground is exported to CodePen, it's tagged with `gistpad` so that the community can [see](https://aka.ms/gistpad-codepen) the pens being created with it.
 
 ![Export](https://user-images.githubusercontent.com/116461/71533903-39f60100-28b0-11ea-9e16-891a110c7074.gif)
 

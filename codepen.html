@@ -10,12 +10,7 @@
 
     const xhr = new XMLHttpRequest();
     xhr.open("GET", metadataUrl);
-
-    xhr.setRequestHeader(
-      "cache-control",
-      "no-cache, max-age=0, no-store, must-revalidate"
-    );
-    xhr.setRequestHeader("pragma", "no-cache");
+    xhr.setRequestHeader("cache-control", "no-cache, max-age=0");
 
     xhr.onload = () => {
       if (xhr.status == 200) {

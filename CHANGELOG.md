@@ -2,7 +2,7 @@
 
 - Added the `Upload File(s)...` command to gist nodes in the `Gists` view, which allows easily uploading one or more local files to a gist
 - Added the ability to star your own gists
-- Update the `Starred Gists` list to use the same display name formatting and sorting as the `Your Gists` and followed user lists
+- Updated the `Starred Gists` list to use the same display name formatting and sorting as the `Your Gists` and followed user lists
 - Added the ability to paste images into HTML and Pug files
 - Removed the `Add Active File` command from gist nodes in the `Gists` view, in favor of the `Copy File to Gist` command that's available in the `Explorer` view and on the editor tab's context menu
 

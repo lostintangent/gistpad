@@ -3,22 +3,22 @@
 </form>
 
 <script>
-  const data = window.location.search.replace("?pen=", "");
+  const pen = window.location.search.replace("?pen=", "");
 
-  if (data) {
-    const metadataUrl = decodeURIComponent(data);
+  if (pen) {
+    const metadataUrl = decodeURIComponent(pen);
 
     const xhr = new XMLHttpRequest();
     xhr.open("GET", metadataUrl);
     xhr.onload = () => {
       if (xhr.status == 200) {
-        const data = xhr.response.replace(/"/g, "&quot;");
+        const response = xhr.response.replace(/"/g, "&quot;");
 
         document
           .querySelector("input[type='hidden']")
-          .setAttribute("value", data);
+          .setAttribute("value", response);
 
-        document.querySelector("form").submit();
+        //document.querySelector("form").submit();
       }
     };
 

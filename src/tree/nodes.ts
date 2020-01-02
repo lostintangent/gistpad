@@ -7,7 +7,6 @@ import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
-  getStarredGistLabel,
   isNotebookGist,
   isPlaygroundGist
 } from "../utils";
@@ -131,10 +130,15 @@ export class NoStarredGistsNode extends TreeNode {
 
 export class StarredGistNode extends TreeNode {
   constructor(public gist: Gist) {
-    super(getStarredGistLabel(gist), TreeItemCollapsibleState.Collapsed);
+    super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
 
-    this.description = gist.description;
-    this.tooltip = `${this.label} - ${this.description}`;
+    this.description = getGistDescription(gist);
+
+    this.tooltip = `Description: ${this.label}
+Updated: ${moment(gist.updated_at).calendar()}
+Created: ${moment(gist.created_at).calendar()}
+Owner: ${gist.owner.login}`;
+
     this.contextValue = "starredGists.gist";
 
     if (isNotebookGist(gist)) {

@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
+import { IPlaygroundJSON } from "../commands/playground";
 import { PLAYGROUND_JSON_FILE, URI_PATTERN } from "../constants";
-import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
 import {
   getCDNJSLibraries,

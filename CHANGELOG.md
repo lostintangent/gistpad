@@ -1,3 +1,11 @@
+## v0.0.41 (01/01/2020)
+
+- Added the `Upload File(s)...` command to gist nodes in the `Gists` view, which allows easily uploading one or more local files to a gist
+- Added the ability to star your own gists
+- Update the `Starred Gists` list to use the same display name formatting and sorting as the `Your Gists` and followed user lists
+- Added the ability to paste images into HTML and Pug files
+- Removed the `Add Active File` command from gist nodes in the `Gists` view, in favor of the `Copy File to Gist` command that's available in the `Explorer` view and on the editor tab's context menu
+
 ## v0.0.40 (12/31/2019)
 
 - Replaced the `Add Playground Script` and `Add Playground Stylesheet` commands with the `Add Playground Library` command. Additionally, this new command has been added to the "playground" toolbar to simplify the process of adding new libraries.

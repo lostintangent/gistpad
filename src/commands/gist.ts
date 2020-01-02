@@ -30,7 +30,6 @@ import {
   getGistDescription,
   getGistLabel,
   getGistWorkspaceId,
-  getStarredGistLabel,
   isGistWorkspace,
   openGist,
   openGistFiles
@@ -185,8 +184,8 @@ async function starredGistsInternal() {
 
   const gists = await starredGists();
   const items = gists.map((g) => ({
-    label: getStarredGistLabel(g),
-    description: g.description,
+    label: getGistLabel(g),
+    description: getGistDescription(g),
     id: g.id
   }));
 
@@ -431,8 +430,8 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_ID}.starGist`,
       async (
-        targetNode: FollowedUserGistNode,
-        multiSelectNodes?: FollowedUserGistNode[]
+        targetNode: GistNode | FollowedUserGistNode,
+        multiSelectNodes?: GistNode[] | FollowedUserGistNode[]
       ) => {
         await ensureAuthenticated();
 

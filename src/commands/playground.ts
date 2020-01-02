@@ -5,7 +5,6 @@ import { GistsNode } from "src/tree/nodes";
 import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
-import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import {
@@ -18,6 +17,13 @@ import {
 import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
+
+export interface IPlaygroundJSON {
+  scripts?: string[];
+  styles?: string[];
+  layout?: string;
+  showConsole?: boolean;
+}
 
 export enum PlaygroundLibraryType {
   script = "scripts",
@@ -748,7 +754,7 @@ export async function registerPlaygroundCommands(
           return { label: capital(layout), layout };
         });
         const result = await vscode.window.showQuickPick(items, {
-          placeHolder: "Specify the layout to use for playgrounds"
+          placeHolder: "Select the layout to use for playgrounds"
         });
 
         if (result) {

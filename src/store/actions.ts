@@ -270,6 +270,14 @@ export async function updateGist(
   store.gists = newGists;
 }
 
+export async function refreshGist(id: string) {
+  const gist = await getGist(id);
+  const newGists = store.gists.filter((gist) => gist.id !== id);
+  newGists.push(gist);
+
+  store.gists = newGists;
+}
+
 export async function starGist(gist: Gist) {
   const api = await getApi();
   await api.star(gist.id);

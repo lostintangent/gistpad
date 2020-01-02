@@ -5,11 +5,9 @@ const CONFIG_SECTION = "gistpad";
 export async function get(key: "apiUrl"): Promise<string>;
 export async function get(key: "gitSSO"): Promise<boolean>;
 export async function get(
-  key: "pasteScreenshotOutput"
+  key: "image.markdownPasteFormat"
 ): Promise<"markdown" | "html">;
-export async function get(
-  key: "pasteScreenshotType"
-): Promise<"file" | "base64">;
+export async function get(key: "image.pasteType"): Promise<"file" | "base64">;
 export async function get(
   key: "playground.autoRun"
 ): Promise<"onEdit" | "onSave" | "never">;

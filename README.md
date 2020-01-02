@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork and star Gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library, code snippet manager, programming notebook, and [interactive playground](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their Gists, directly from within Visual Studio Code 🚀
+GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly used config, programming-related notes/documentation, and [interactive/runnable samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -33,7 +33,7 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
 1. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Web Playground` (or run the `GistPad: New Web Playground` command). This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
-
+  
 ## Gist Commenting
 
 Gist comments are exposed within the editor at the bottom of any opened Gist files. If a Gist includes multiple files, then the comment thread will be displayed at the bottom of them all (duplicated and synchronized).
@@ -44,29 +44,11 @@ If you're not authenticated, you can view existing comments, but you can't reply
 
 ## Pasting Images
 
-In order to make it easy to author markdown files, that include images, you can copy images into your clipboard and then paste them directly into a gist file:
+In order to make it easy to author markdown and HTML/Pug files that include image assets, you can copy images into your clipboard (e.g. taking a screenshot, clicking `Copy Image` in your browser, etc.) and then paste them directly into a gist file by right-clicking the editor and selecting `Paste Image`, or using one of the following keyboard shortcuts: `ctrl + shift + v` *(Windows/Linux)*,`cmd + shift + v` *(macOS)*.
 
-![paste-screenshot](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
+![paste-image](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
 
-In order to paste an image into a gist file, use one of the following methods:
-
-- From the editor's context menu: `Paste Screenshot` command (this only appears within GistPad-managed markdown files).
-- From command palette: `GistPad: Paste Screenshot` command.
-- Keyboard shortcut:
-  - Windows/Linux: `ctrl + shift + v`
-  - Mac OSx: `cmd + shift + v`
-
-By default the screenshot gets uploaded as a `.png` file to the gist and the link is added to the gist as `Markdown` image markup. The behaviour can be changed using the follow settings:
-
-- `Gistpad: Paste Screenshot Type`:
-
-  - `file` (default): the screenshot is `uploaded` as a `.png` file to the gist.
-  - `base64`: the screenshot is `base64`-embedded into the gist.
-
-- `Gistpad: Paste Screenshot Output`
-
-  - `markdown` (default): the `Markdown` format is used for the image markup, e.g. `![image](link)`.
-  - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
+By default, when you paste an image into a Gist file, it's uploaded as a `.png` to the gist, and the appropriate reference is added to it from the document (e.g. inserting an `<img />`). However, this behavior can be changed by using the `GistPad > Image: Paste Format` and/or `GistPad > Image: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details.
 
 ## Following Users
 
@@ -94,6 +76,14 @@ When you open a playground, this activates the "playground toolbar", which is a 
 
 <img width="464" src="https://user-images.githubusercontent.com/116461/71629353-eafee300-2bb1-11ea-88f0-0996ab6149c4.png" />
 
+### Uploading Immages
+
+You can reference HTTP-based images within any of your playground files, and they'll be downloaded/rendered automatically. However, if you need to add local images to your playground, you can upload them in one of two ways:
+
+1. Right-click the gist in the `Gists` view and select `Upload Files(s)`. This supports any file type, and therefore is the most general-purpose solution. Once the image is uploaded, you can then reference it from your playground using only its filename (e.g. `<img src="myImage.png" />`), since the playground preview understands the context of the "surrounding gist". 
+ 
+2. Copy/paste an image into your clipboard, open up an HTML or Pug file, right-click the editor and select `Paste Image`. This will transparently upload the image to the gist, and then insert a reference to it for you (e.g. adding an `<img />` tag). This solution works best when you want to paste a "transient" image into your playground, such as a captured screenshot, or an image that you copied from a webpage.
+   
 ### Additional Language Support
 
 By default, new playgrounds create an HTML, CSS and JavaScript file. However, if you're more productive using a different markup, stylesheet or scripting language, then simply rename the respective files to use the right extension, and the code will be automatically compiled for you on the fly! Specifically, GistPad supports the following languages:
@@ -112,7 +102,7 @@ If you need to add any external JavaScript libraries (e.g. `react`) or styleshee
 
 ![Add Library](https://user-images.githubusercontent.com/116461/71629251-4ed4dc00-2bb1-11ea-9488-78c3d71dbacd.gif)
 
-Behind the scenes, this command update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually if you'd prefer. Additionally, since Gist files provide an internet-accessible URL, you can use Gists as re-usable snippets for playgrounds, and add references to them by right-clicking a gist file in the `Gists` tree, select `Copy GitHub URL`, and then adding it as a library reference to the appropriate playground. 
+Behind the scenes, this command update the playground's manifest file (`playground.json`), which you can also open/edit yourself manually if you'd prefer. Additionally, since Gist files provide an internet-accessible URL, you can use Gists as re-usable snippets for playgrounds, and add references to them by right-clicking a gist file in the `Gists` tree, select `Copy GitHub URL`, and then adding it as a library reference to the appropriate playground.
 
 ### Layout
 
@@ -214,29 +204,29 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `Gistpad: Git SSO` - Specifies whether to enable single sign-in (SSO) with the `git` CLI, when you've already authenticated with github.com. Defaults to `true`.
 
-- `Gistpad: Paste Screenshot Type`: Specifies how to handle image pastes. Can be set to one of the following values:
+- `Gistpad > Image: Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
 
-  - `file` _(default)_: The pasted image is uploaded as a `.png` file to the gist, and a URL reference is added to the markdown file.
+  - `markdown` _(default)_: Pastes the image reference using `Markdown` format (e.g. `![image](link)`).
+  - `html`: Pastes the image reference using `HTML` format (e.g. `<img src="link" />`). Note, when you paste an image into an HTML file, it will always use this format type, regardless what the setting is.
+
+- `Gistpad > Image: Paste Type`: Specifies the method to use when pasting an image into a gist file. Can be set to one of the following values:
+
+  - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to file it's pasted into.
   - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
 
-- `Gistpad: Paste Screenshot Output`: Specifies the format to use when referencing the pasted image from a Gist file. Can be set to one of the following values:
-
-  - `markdown` _(default)_: the `Markdown` format is used for the image markup, e.g. `![image](link)`.
-  - `html`: the `HTML` format is used for the image markup, e.g. `<img src="link" />`.
-
-- `GistPad > Playground: Auto Save` - Specifies whether to automatically save your playground files (every 30s). If you've already set the `Files: Auto Save` setting to `afterDelay`, then that setting will be respected. Defaults to `true`.
-
-- `GistPad > Playground: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
+* `GistPad > Playground: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
 
   - `onEdit` _(default)_: Will re-run the playground automatically as you type.
   - `onSave`: Will re-run the playground when you save a file.
   - `never`: Don't automatically re-run the playground, and instead, only run it when the `GistPad: Run Playground` command is executed.
 
-- `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds. Defaults to `true`.
+* `GistPad > Playground: Auto Save` - Specifies whether to automatically save your playground files (every 30s). If you've already set the `Files: Auto Save` setting to `afterDelay`, then that setting will be respected. Defaults to `true`.
 
-- `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds. Defaults to `true`.
+* `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds. Defaults to `true`.
 
-- `GistPad > Playground: Layout` - Specifies how to layout the editor windows when opening a playground. Can be set to one of the following values:
+* `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds. Defaults to `true`.
+
+* `GistPad > Playground: Layout` - Specifies how to layout the editor windows when opening a playground. Can be set to one of the following values:
 
   - `grid`: Opens a 2x2 grid of editors, with the editors and preview window occupying an equal amount of space.
   - `preview`: Simply opens the full-screen preview window. This is useful for interacting with complex playgrounds or viewing other's playgrouds.
@@ -244,27 +234,27 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `splitRight`: Opens a split-level layout, with the editors vertically stacked on the right, and the preview occupying the full IDE height on the left.
   - `splitTop` _(default)_: Opens a split-level layout, with the editors horizontally stacked on the top, and the preview occupying the full IDE width on the bottom.
 
-- `GistPad > Playground: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
+* `GistPad > Playground: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `html` _(default)_: Will result in an `index.html` file being created whenever you create a new web playground.
   - `pug`: Will result in an `index.pug` file being created whenever you create a new web playground.
 
-- `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
+* `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `javascript` _(default)_: Will result in an `script.js` file being created whenever you create a new web playground.
   - `javascriptreact`: Will result in an `script.jsx` file being created whenever you create a new web playground.
   - `typescript`: Will result in an `script.ts` file being created whenever you create a new web playground.
   - `typescriptreact`: Will result in an `script.tsx` file being created whenever you create a new web playground.
 
-- `GistPad > Playground: Stylesheet Language` - Specifies the default stylesheet language to use when creating new web playgrounds. Can be set to one of the following values:
+* `GistPad > Playground: Stylesheet Language` - Specifies the default stylesheet language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `css` _(default)_: Will result in an `style.css` file being created whenever you create a new web playground.
   - `less`: Will result in an `style.less` file being created whenever you create a new web playground.
   - `scss`: Will result in an `style.scss` file being created whenever you create a new web playground.
 
-- `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.
+* `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.
 
-- `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
+* `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
 
   - `always`: Always display the comment thread whenever you open a Gist file. You can manually collapse it as needed.
   - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.

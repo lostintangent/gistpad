@@ -1,9 +1,11 @@
+import { pasteImageCommand } from "@abstractions/image/pasteImage";
 import * as path from "path";
 import {
   commands,
   env,
   ExtensionContext,
   ProgressLocation,
+  TextEditor,
   Uri,
   window,
   workspace
@@ -163,9 +165,9 @@ export function registerEditorCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(
+    commands.registerTextEditorCommand(
       `${EXTENSION_ID}.pasteGistFile`,
-      async (fileUri: Uri) => {
+      async (editor: TextEditor) => {
         await ensureAuthenticated();
 
         const gists = await listGists();
@@ -202,6 +204,13 @@ export function registerEditorCommands(context: ExtensionContext) {
         await env.clipboard.writeText(contents);
         await commands.executeCommand("editor.action.clipboardPasteAction");
       }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerTextEditorCommand(
+      `${EXTENSION_ID}.pasteImage`,
+      pasteImageCommand
     )
   );
 }

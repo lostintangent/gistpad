@@ -4,9 +4,8 @@ import { spawn } from "child_process";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { IClipboardToImageBuffer } from "../../../interfaces/IClipboardToImageBuffer";
 import { log } from "../../../logger";
-import { randomInt } from "../../../utils/randomInt";
+import { randomInt } from "./utils/randomInt";
 
 const createImagePath = () => {
   const imagePath = path.join(os.tmpdir(), `${randomInt()}_${randomInt()}.png`);
@@ -20,7 +19,7 @@ const removeImage = (imagePath: string) => {
   });
 };
 
-export class ClipboardToImageBuffer implements IClipboardToImageBuffer {
+export class ClipboardToImageBuffer {
   public async getImageBits(): Promise<Buffer> {
     const platform = process.platform;
     const imagePath = createImagePath();

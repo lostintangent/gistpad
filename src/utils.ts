@@ -81,8 +81,8 @@ export function getGistWorkspaceId() {
 }
 
 export function getStarredGistLabel(gist: Gist) {
-  const suffix = gist.public ? "" : " 🔒";
-  return `${gist.owner.login} / ${Object.keys(gist.files)[0]}${suffix}`;
+  const userName = gist.owner ? gist.owner.login : "Anonymous";
+  return `${userName} / ${Object.keys(gist.files)[0]}`;
 }
 
 export function isGistDocument(document: TextDocument) {

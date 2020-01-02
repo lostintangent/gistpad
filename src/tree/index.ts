@@ -90,7 +90,9 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       if (this.store.starredGists.length === 0) {
         return [new NoStarredGistsNode()];
       } else {
-        return this.store.starredGists.map((gist) => new StarredGistNode(gist));
+        return sortGists(this.store.starredGists).map(
+          (gist) => new StarredGistNode(gist)
+        );
       }
     } else if (element instanceof GistNode) {
       return Object.entries(element.gist.files).map(

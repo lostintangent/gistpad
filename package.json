@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.40",
+  "version": "0.0.41",
   "extensionKind": [
     "ui",
     "web",
@@ -39,7 +39,7 @@
     "onCommand:gistpad.openGist",
     "onCommand:gistpad.openGistWorkspace",
     "onCommand:gistpad.pasteGistFile",
-    "onCommand:gistpad.pasteScreenshot",
+    "onCommand:gistpad.pasteImage",
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
@@ -64,21 +64,21 @@
           "type": "boolean",
           "description": "Specifies whether to enable single sign-in (SSO) with the Git CLI, when you've already authenticated with github.com."
         },
-        "gistpad.pasteScreenshotOutput": {
+        "gistpad.image.markdownPasteFormat": {
           "default": "markdown",
           "enum": [
-            "markdown",
-            "html"
+            "html",
+            "markdown"
           ],
-          "description": "Specify the image tag for the paste image command as Markdown or HTML"
+          "description": "Specifies the markup format to use when pasting an image into a markdown gist file."
         },
-        "gistpad.pasteScreenshotType": {
+        "gistpad.image.pasteType": {
           "default": "file",
           "enum": [
-            "file",
-            "base64"
+            "base64",
+            "file"
           ],
-          "description": "Upload pasted screenshot to the Gist as a file or Base64-embed it to the gist."
+          "description": "Specifies the upload method to use when pasting an image into a gist file."
         },
         "gistpad.playground.autoRun": {
           "default": "onEdit",
@@ -161,11 +161,6 @@
     },
     "commands": [
       {
-        "command": "gistpad.addActiveFile",
-        "title": "Add Active File",
-        "category": "GistPad"
-      },
-      {
         "command": "gistpad.addFile",
         "title": "Add New File(s)",
         "category": "GistPad"
@@ -173,6 +168,11 @@
       {
         "command": "gistpad.addFileToGist",
         "title": "Copy File to Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.uploadFileToGist",
+        "title": "Upload File(s)",
         "category": "GistPad"
       },
       {
@@ -356,8 +356,8 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.pasteScreenshot",
-        "title": "Paste Screenshot",
+        "command": "gistpad.pasteImage",
+        "title": "Paste Image",
         "category": "GistPad"
       },
       {
@@ -453,17 +453,17 @@
     "keybindings": {
       "key": "ctrl+shift+v",
       "mac": "cmd+shift+v",
-      "command": "gistpad.pasteScreenshot",
+      "command": "gistpad.pasteImage",
       "when": "resourceScheme == gist && resourceLangId == markdown"
     },
     "menus": {
       "commandPalette": [
         {
-          "command": "gistpad.addActiveFile",
+          "command": "gistpad.addFileToGist",
           "when": "false"
         },
         {
-          "command": "gistpad.addFileToGist",
+          "command": "gistpad.uploadFileToGist",
           "when": "false"
         },
         {
@@ -639,8 +639,8 @@
           "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.pasteScreenshot",
-          "when": "gistpad:state == SignedIn"
+          "command": "gistpad.pasteImage",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -757,7 +757,7 @@
           "group": "manage@1"
         },
         {
-          "command": "gistpad.addActiveFile",
+          "command": "gistpad.uploadFileToGist",
           "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
           "group": "manage@2"
         },
@@ -774,12 +774,12 @@
         {
           "command": "gistpad.unstarGist",
           "when": "viewItem =~ /^starredGists.gist/",
-          "group": "manage@2"
+          "group": "star@1"
         },
         {
           "command": "gistpad.starGist",
-          "when": "viewItem =~ /^followedUser.gist/",
-          "group": "manage@2"
+          "when": "viewItem =~ /^(gists|followedUser).gist(.(notebook|playground))?$/",
+          "group": "star@1"
         },
         {
           "command": "gistpad.unfollowUser",
@@ -820,17 +820,22 @@
       ],
       "editor/context": [
         {
-          "command": "gistpad.addFileToGist"
-        },
-        {
           "command": "gistpad.addSelectionToGist"
         },
         {
           "command": "gistpad.pasteGistFile"
         },
         {
-          "command": "gistpad.pasteScreenshot",
+          "command": "gistpad.pasteImage",
           "when": "resourceScheme == gist && resourceLangId == markdown"
+        },
+        {
+          "command": "gistpad.pasteImage",
+          "when": "resourceScheme == gist && resourceLangId == html"
+        },
+        {
+          "command": "gistpad.pasteImage",
+          "when": "resourceScheme == gist && resourceLangId == jade"
         }
       ],
       "editor/title": [
@@ -973,6 +978,7 @@
     "debounce": "^1.2.0",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
+    "is-binary-path": "^2.1.0",
     "less": "^3.10.3",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",

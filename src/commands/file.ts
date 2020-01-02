@@ -1,4 +1,6 @@
+import * as fs from "fs";
 import * as path from "path";
+import { URL } from "url";
 import {
   commands,
   env,
@@ -16,56 +18,10 @@ import {
   byteArrayToString,
   fileNameToUri,
   getGistDetailsFromUri,
-  openGistFile,
-  stringToByteArray
+  openGistFile
 } from "../utils";
 
 export function registerFileCommands(context: ExtensionContext) {
-  context.subscriptions.push(
-    commands.registerCommand(
-      `${EXTENSION_ID}.addActiveFile`,
-      async (node: GistNode) => {
-        await ensureAuthenticated();
-
-        if (window.activeTextEditor) {
-          let filename: string | undefined;
-          if (window.activeTextEditor.document.isUntitled) {
-            filename = await window.showInputBox({
-              prompt: "Enter a name to give to this file",
-              value: "foo.txt"
-            });
-
-            if (!filename) {
-              return;
-            }
-          } else {
-            filename = path.basename(
-              window.activeTextEditor!.document.fileName
-            );
-          }
-
-          window.withProgress(
-            {
-              location: ProgressLocation.Notification,
-              title: "Adding files..."
-            },
-            () => {
-              const content = window.activeTextEditor!.document.getText();
-              return workspace.fs.writeFile(
-                fileNameToUri(node.gist.id, filename!),
-                stringToByteArray(content!)
-              );
-            }
-          );
-        } else {
-          window.showErrorMessage(
-            "There's no active editor. Open a file and then retry again."
-          );
-        }
-      }
-    )
-  );
-
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_ID}.addFile`,
@@ -88,6 +44,40 @@ export function registerFileCommands(context: ExtensionContext) {
             return addGistFiles(node.gist.id, fileNames);
           }
         );
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.uploadFileToGist`,
+      async (node: GistNode) => {
+        await ensureAuthenticated();
+
+        const files = await window.showOpenDialog({
+          canSelectMany: true,
+          openLabel: "Upload"
+        });
+
+        if (files) {
+          window.withProgress(
+            {
+              location: ProgressLocation.Notification,
+              title: "Uploading files..."
+            },
+            async () => {
+              for (const file of files) {
+                const fileName = path.basename(file.path);
+                const content = fs.readFileSync(new URL(file.toString()));
+
+                await workspace.fs.writeFile(
+                  fileNameToUri(node.gist.id, fileName),
+                  content
+                );
+              }
+            }
+          );
+        }
       }
     )
   );
@@ -155,7 +145,7 @@ export function registerFileCommands(context: ExtensionContext) {
         let gistId, fileName;
         if (nodeOrUri instanceof GistFileNode) {
           gistId = nodeOrUri.gistId;
-          fileName = nodeOrUri.file.filename;
+          fileName = nodeOrUri.file.filename!;
         } else {
           const details = getGistDetailsFromUri(nodeOrUri);
           gistId = details.gistId;
@@ -172,7 +162,7 @@ export function registerFileCommands(context: ExtensionContext) {
         }
 
         await workspace.fs.rename(
-          fileNameToUri(gistId, fileName!),
+          fileNameToUri(gistId, fileName),
           fileNameToUri(gistId, newFilename)
         );
       }

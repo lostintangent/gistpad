@@ -7,7 +7,6 @@ import { registerFileCommands } from "./file";
 import { registerFollowCommands } from "./follow";
 import { registerGistCommands } from "./gist";
 import { registerGistLogCommands } from "./gistLog";
-import { registerPasteImageCommands } from "./pasteImage";
 import { registerPlaygroundCommands } from "./playground";
 
 export function registerCommands(context: ExtensionContext) {
@@ -18,7 +17,6 @@ export function registerCommands(context: ExtensionContext) {
   registerGistCommands(context);
   registerGistLogCommands(context);
   registerFileCommands(context);
-  registerPasteImageCommands(context);
   registerPlaygroundCommands(context);
   registerCodePenCommands(context);
 }

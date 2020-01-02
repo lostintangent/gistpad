@@ -1,3 +1,4 @@
+import * as path from "path";
 import {
   commands,
   Disposable,
@@ -24,6 +25,8 @@ import {
   stringToByteArray,
   uriToFileName
 } from "../utils";
+import { addFile, renameFile } from "./git";
+const isBinaryPath = require("is-binary-path");
 
 export class GistFileSystemProvider implements FileSystemProvider {
   constructor(private store: IStore) {}
@@ -39,6 +42,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     return gist.files[file];
   }
 
+  // TODO: Enable for binary files
   async copy?(
     source: Uri,
     destination: Uri,
@@ -126,9 +130,13 @@ export class GistFileSystemProvider implements FileSystemProvider {
     const { gistId } = getGistDetailsFromUri(oldUri);
     const newFileName = uriToFileName(newUri);
 
-    await updateGist(gistId, file.filename!, {
-      filename: newFileName
-    });
+    if (isBinaryPath(file.filename!)) {
+      await renameFile(gistId, file.filename!, newFileName);
+    } else {
+      return updateGist(gistId, file.filename!, {
+        filename: newFileName
+      });
+    }
   }
 
   async stat(uri: Uri): Promise<FileStat> {
@@ -162,43 +170,50 @@ export class GistFileSystemProvider implements FileSystemProvider {
   ): Promise<void> {
     await ensureAuthenticated();
 
-    let file = await this.getFileFromUri(uri);
     const { gistId } = getGistDetailsFromUri(uri);
+    let file = await this.getFileFromUri(uri);
 
-    if (!file) {
-      const newFileName = uriToFileName(uri);
-      file = {
-        filename: newFileName,
-        truncated: false
-      };
-    }
+    if (isBinaryPath(uri.path)) {
+      return addFile(gistId, path.basename(uri.path), content);
+    } else {
+      if (!file) {
+        const newFileName = uriToFileName(uri);
+        file = {
+          filename: newFileName,
+          truncated: false
+        };
+      }
 
-    let newContent = new TextDecoder().decode(content);
-    if (newContent.trim().length === 0) {
-      // Gist doesn't allow files to be blank
-      newContent = ZERO_WIDTH_SPACE;
-    }
+      let newContent = new TextDecoder().decode(content);
+      if (newContent.trim().length === 0) {
+        // Gist doesn't allow files to be blank
+        newContent = ZERO_WIDTH_SPACE;
+      }
 
-    file.content = newContent;
-    file.size = newContent.length;
+      file.content = newContent;
+      file.size = newContent.length;
 
-    try {
-      await updateGist(gistId, file.filename!, {
-        filename: file.filename,
-        content: file.content
-      });
-    } catch (e) {
-      // TODO: Check the Gist owner vs. current owner and fail
-      // based on that, as opposed to requiring a hit to the server.
-      const response = await window.showInformationMessage(
-        "You can't edit a Gist you don't own.",
-        "Fork this Gist"
-      );
-      if (response === "Fork this Gist") {
-        await window.withProgress(
-          { location: ProgressLocation.Notification, title: "Forking Gist..." },
-          () => forkGist(gistId)
+      try {
+        await updateGist(gistId, file.filename!, {
+          filename: file.filename,
+          content: file.content
+        });
+      } catch (e) {
+        // TODO: Check the Gist owner vs. current owner and fail
+        // based on that, as opposed to requiring a hit to the server.
+        const response = await window.showInformationMessage(
+          "You can't edit a Gist you don't own.",
+          "Fork this Gist"
         );
+        if (response === "Fork this Gist") {
+          await window.withProgress(
+            {
+              location: ProgressLocation.Notification,
+              title: "Forking Gist..."
+            },
+            () => forkGist(gistId)
+          );
+        }
       }
     }
   }

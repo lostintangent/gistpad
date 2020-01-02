@@ -2,10 +2,10 @@ import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
 import {
   getScriptContent,
+  IPlaygroundJSON,
   PlaygroundLibraryType
 } from "../commands/playground";
 import { URI_PATTERN } from "../constants";
-import { IPlaygroundJSON } from "../interfaces/IPlaygroundJSON";
 import { Gist } from "../store";
 
 export class PlaygroundWebview {

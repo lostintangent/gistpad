@@ -18,7 +18,6 @@ export async function pasteImageAsFile(
   const { gistId } = getGistDetailsFromUri(editor.document.uri);
   const imageBits = await clipboardToImageBuffer.getImageBits();
 
-  console.log("GP Writing file: %o", fileNameToUri(gistId, fileName));
   vscode.workspace.fs.writeFile(fileNameToUri(gistId, fileName), imageBits);
 
   const imageSrc = `https://gist.github.com/${store.login}/${gistId}/raw/${fileName}`;

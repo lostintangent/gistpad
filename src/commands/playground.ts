@@ -668,7 +668,7 @@ export async function registerPlaygroundCommands(
       `${EXTENSION_ID}.newPlaygroundFromTemplate`,
       async (node?: GistsNode, openAsWorkspace: boolean = false) => {
         const { data } = await Axios.get(
-          "https://gist.githubusercontent.com/lostintangent/bfd095a7ca088f729c52ad3d5ccfb731/raw/99b3acd473a71b7e82825012f6c6d4dab604a917/templates.json"
+          "https://gist.github.com/lostintangent/bfd095a7ca088f729c52ad3d5ccfb731/raw/templates.json"
         );
 
         const template = await vscode.window.showQuickPick(data, {

@@ -134,10 +134,11 @@ export class StarredGistNode extends TreeNode {
 
     this.description = getGistDescription(gist);
 
+    const owner = gist.owner ? gist.owner.login : "Anonymous";
     this.tooltip = `Description: ${this.label}
 Updated: ${moment(gist.updated_at).calendar()}
 Created: ${moment(gist.created_at).calendar()}
-Owner: ${gist.owner.login}`;
+Owner: ${owner}`;
 
     this.contextValue = "starredGists.gist";
 

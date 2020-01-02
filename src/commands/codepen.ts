@@ -1,15 +1,31 @@
 import * as path from "path";
 import { Gist } from "src/store";
 import * as vscode from "vscode";
-import { EXTENSION_ID, URI_PATTERN } from "../constants";
+import { EXTENSION_ID, PLAYGROUND_JSON_FILE, URI_PATTERN } from "../constants";
 import { updateGist } from "../store/actions";
 import { GistNode } from "../tree/nodes";
-import { fileNameToUri } from "../utils";
+import { byteArrayToString, fileNameToUri } from "../utils";
 import { getCDNJSLibraries } from "./cdnjs";
 import { getGistFileOfType, PlaygroundFileType } from "./playground";
 
 const CODEPEN_URI = "https://vsls-contrib.github.io/gistpad/codepen.html";
 const MARKER_FILE = ".codepen";
+
+const SCRIPT_PATTERN = /<script src="(?<url>[^"]+)"><\/script>/gi;
+const STYLE_PATTERN = /<link href="(?<url>[^"]+)" rel="stylesheet" \/>/gi;
+
+function matchAllUrls(string: string, regex: RegExp): string[] {
+  let match;
+  let results = [];
+  while ((match = regex.exec(string)) !== null) {
+    if (match.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+
+    results.push(match!.groups!.url);
+  }
+  return results;
+}
 
 interface PenDefinition {
   title: string;
@@ -36,7 +52,7 @@ function resolveLibraries(libraries: string[]) {
         const libraryEntry = libraries.find((lib) => lib.name === library);
 
         if (!libraryEntry) {
-          return;
+          return "";
         }
 
         return libraryEntry.latest;
@@ -57,16 +73,16 @@ async function exportGist(gist: Gist) {
   const stylesheetFile = getGistFileOfType(gist, PlaygroundFileType.stylesheet);
 
   if (markupFile) {
-    data.html = (
+    data.html = byteArrayToString(
       await vscode.workspace.fs.readFile(fileNameToUri(gist.id, markupFile))
-    ).toString();
+    );
     data.html_pre_processor = markupFile.endsWith(".pug") ? "pug" : "none";
   }
 
   if (scriptFile) {
-    data.js = (
+    data.js = byteArrayToString(
       await vscode.workspace.fs.readFile(fileNameToUri(gist.id, scriptFile))
-    ).toString();
+    );
 
     const extension = path.extname(scriptFile);
     switch (extension) {
@@ -84,21 +100,47 @@ async function exportGist(gist: Gist) {
   }
 
   if (stylesheetFile) {
-    data.css = (
+    data.css = byteArrayToString(
       await vscode.workspace.fs.readFile(fileNameToUri(gist.id, stylesheetFile))
-    ).toString();
+    );
     data.css_pre_processor = stylesheetFile.endsWith("scss") ? "scss" : "none";
   }
 
-  if (Object.keys(gist.files).includes("playground.json")) {
-    const manifestContent = (
+  let scripts: string[] = [];
+  let styles: string[] = [];
+
+  if (Object.keys(gist.files).includes("scripts")) {
+    const scriptsContent = byteArrayToString(
+      await vscode.workspace.fs.readFile(fileNameToUri(gist.id, "scripts"))
+    );
+
+    scripts = matchAllUrls(scriptsContent, SCRIPT_PATTERN);
+  }
+
+  if (Object.keys(gist.files).includes("styles")) {
+    const stylesContent = byteArrayToString(
+      await vscode.workspace.fs.readFile(fileNameToUri(gist.id, "styles"))
+    );
+
+    styles = matchAllUrls(stylesContent, STYLE_PATTERN);
+  }
+
+  if (Object.keys(gist.files).includes(PLAYGROUND_JSON_FILE)) {
+    const manifestContent = byteArrayToString(
       await vscode.workspace.fs.readFile(
-        fileNameToUri(gist.id, "playground.json")
+        fileNameToUri(gist.id, PLAYGROUND_JSON_FILE)
       )
-    ).toString();
+    );
 
     if (manifestContent) {
-      const manifest = JSON.parse(manifestContent);
+      let manifest;
+      try {
+        manifest = JSON.parse(manifestContent);
+      } catch (e) {
+        throw new Error(
+          "The gist's manifest file appears to be invalid. Please check it and try again."
+        );
+      }
       if (manifest.scripts && manifest.scripts.length > 0) {
         if (
           manifest.scripts.find((script: any) => script === "react") &&
@@ -107,15 +149,21 @@ async function exportGist(gist: Gist) {
           data.js_pre_processor = "babel";
         }
 
-        const scripts = await resolveLibraries(manifest.scripts);
-        data.js_external = scripts.join(";");
+        scripts = scripts.concat(await resolveLibraries(manifest.scripts));
       }
 
       if (manifest.styles && manifest.styles.length > 0) {
-        const styles = await resolveLibraries(manifest.styles);
-        data.css_external = styles.join(";");
+        styles = styles.concat(await resolveLibraries(manifest.styles));
       }
     }
+  }
+
+  if (scripts.length > 0) {
+    data.js_external = scripts.join(";");
+  }
+
+  if (styles.length > 0) {
+    data.css_external = styles.join(";");
   }
 
   await updateGist(gist.id, MARKER_FILE, {
@@ -124,7 +172,7 @@ async function exportGist(gist: Gist) {
   });
 
   const definitionUrl = encodeURIComponent(
-    `https://gist.githubusercontent.com/${gist.owner.login}/${gist.id}/raw/${MARKER_FILE}`
+    `https://gist.github.com/${gist.owner.login}/${gist.id}/raw/${MARKER_FILE}`
   );
 
   await vscode.env.openExternal(

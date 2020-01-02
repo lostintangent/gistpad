@@ -1,3 +1,7 @@
+## v0.0.42 (01/02/2020)
+
+- Added support for roundtripping external scripts/stylesheets from CodePen
+  
 ## v0.0.41 (01/01/2020)
 
 - Added the `Upload File(s)...` command to gist nodes in the `Gists` view, which allows easily uploading one or more local files to a gist

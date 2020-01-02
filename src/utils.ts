@@ -80,11 +80,6 @@ export function getGistWorkspaceId() {
   return workspace.workspaceFolders![0].uri.authority;
 }
 
-export function getStarredGistLabel(gist: Gist) {
-  const userName = gist.owner ? gist.owner.login : "Anonymous";
-  return `${userName} / ${Object.keys(gist.files)[0]}`;
-}
-
 export function isGistDocument(document: TextDocument) {
   return document.uri.scheme === FS_SCHEME;
 }

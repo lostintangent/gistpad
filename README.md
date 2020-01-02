@@ -76,7 +76,7 @@ When you open a playground, this activates the "playground toolbar", which is a 
 
 <img width="464" src="https://user-images.githubusercontent.com/116461/71629353-eafee300-2bb1-11ea-88f0-0996ab6149c4.png" />
 
-### Uploading Immages
+### Uploading Images
 
 You can reference HTTP-based images within any of your playground files, and they'll be downloaded/rendered automatically. However, if you need to add local images to your playground, you can upload them in one of two ways:
 

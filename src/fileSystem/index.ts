@@ -133,7 +133,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     if (isBinaryPath(file.filename!)) {
       await renameFile(gistId, file.filename!, newFileName);
     } else {
-      return updateGist(gistId, file.filename!, {
+      await updateGist(gistId, file.filename!, {
         filename: newFileName
       });
     }

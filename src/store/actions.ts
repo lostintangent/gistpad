@@ -256,7 +256,7 @@ export async function updateGist(
   id: string,
   filename: string,
   file: GistFile | null
-) {
+): Promise<Gist> {
   const api = await getApi();
   const response = await api.edit(id, {
     files: {
@@ -266,8 +266,9 @@ export async function updateGist(
 
   const newGists = store.gists.filter((gist) => gist.id !== id);
   newGists.push(response.body);
-
   store.gists = newGists;
+
+  return response.body;
 }
 
 export async function refreshGist(id: string) {

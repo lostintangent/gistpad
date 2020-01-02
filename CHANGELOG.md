@@ -1,6 +1,7 @@
 ## v0.0.42 (01/02/2020)
 
-- Added support for roundtripping external scripts/stylesheets from CodePen
+- Added support for fully roundtripping external scripts/stylesheets from CodePen, and fixed a caching issue when exporting the same playground multiple times in a short timespan
+- Fixed a bug with viewing starred gists, when you had a starred gist from an anonymous user
   
 ## v0.0.41 (01/01/2020)
 
@@ -17,7 +18,7 @@
 ## v0.0.39 (12/31/2019)
 
 - Added the `View Profile in GitHub` command to followed user's in the `Gists` tree view.
-- The tree node for followed users not displays the user's GitHub avatar, instead of the generic user icon.
+- The tree node for followed users now displays the user's GitHub avatar, instead of the generic user icon.
 - Added the `Rename File` command to the editor title bar, which allows easily renaming opened files, without having to find them in the `Gists` tree and/or using workspace-mode.
 - Added support to the protocol handler for programatically following users (e.g. `vscode://vsls-contrib.gistfs/follow?user=lostintangent`).
 
@@ -27,7 +28,7 @@
 
 ## v0.0.37 (12/30/2019)
 
-- Introduced the `preview` playground layout type, which allows viewing a playgroud's preview in full-screen mode.
+- Introduced the `preview` playground layout type, which allows viewing a playground's preview in full-screen mode.
 - Added support for opening playgrounds as workspaces, without needing to be authenticated with GitHub.
 
 ## v0.0.36 (12/30/2019)

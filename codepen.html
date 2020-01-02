@@ -10,7 +10,6 @@
 
     const xhr = new XMLHttpRequest();
     xhr.open("GET", metadataUrl);
-    xhr.setRequestHeader("cache-control", "no-cache");
 
     xhr.onload = () => {
       if (xhr.status == 200) {

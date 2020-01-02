@@ -166,13 +166,15 @@ async function exportGist(gist: Gist) {
     data.css_external = styles.join(";");
   }
 
-  await updateGist(gist.id, MARKER_FILE, {
+  const updatedGist = await updateGist(gist.id, MARKER_FILE, {
     filename: MARKER_FILE,
     content: JSON.stringify(data)
   });
 
+  // Grab the updated raw URL, which will include
+  // the latest commit ID after adding the marker file.
   const definitionUrl = encodeURIComponent(
-    `https://gist.github.com/${gist.owner.login}/${gist.id}/raw/${MARKER_FILE}`
+    updatedGist.files[MARKER_FILE].raw_url!
   );
 
   await vscode.env.openExternal(

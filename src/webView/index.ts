@@ -1,6 +1,10 @@
 import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
-import { getScriptContent, IPlaygroundJSON, PlaygroundLibraryType } from "../commands/playground";
+import {
+  getScriptContent,
+  IPlaygroundJSON,
+  PlaygroundLibraryType
+} from "../commands/playground";
 import { URI_PATTERN } from "../constants";
 import { Gist } from "../store";
 
@@ -127,7 +131,7 @@ export class PlaygroundWebview {
   }
 
   public async rebuildWebview() {
-    const baseUrl = `https://gist.github.com/${this.gist..owner.login}/${this.gist.id}/raw/`;
+    const baseUrl = `https://gist.github.com/${this.gist.owner.login}/${this.gist.id}/raw/`;
     const styleId = `gistpad-playground-style-${Math.random()}`;
 
     const scripts = await this.resolveLibraries(PlaygroundLibraryType.script);

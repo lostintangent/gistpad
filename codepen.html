@@ -9,6 +9,8 @@
     const metadataUrl = decodeURIComponent(pen);
 
     const xhr = new XMLHttpRequest();
+    xhr.open("GET", metadataUrl);
+
     xhr.setRequestHeader(
       "cache-control",
       "no-cache, must-revalidate, post-check=0, pre-check=0"
@@ -18,7 +20,6 @@
     xhr.setRequestHeader("expires", "Tue, 01 Jan 1980 1:00:00 GMT");
     xhr.setRequestHeader("pragma", "no-cache");
 
-    xhr.open("GET", metadataUrl);
     xhr.onload = () => {
       if (xhr.status == 200) {
         const response = xhr.response.replace(/"/g, "&quot;");

@@ -14,6 +14,11 @@
     "type": "git",
     "url": "https://github.com/vsls-contrib/gistpad"
   },
+  "bugs": {
+    "url": "https://github.com/vsls-contrib/gistpad/issues"
+  },
+  "homepage": "https://github.com/vsls-contrib/gistpad#readme",
+  "license": "ISC",
   "engines": {
     "vscode": "^1.40.0"
   },
@@ -28,7 +33,6 @@
   "activationEvents": [
     "onCommand:gistpad.addFileToGist",
     "onCommand:gistpad.addSelectionToGist",
-    "onCommand:gistpad.addPlaygroundLibrary",
     "onCommand:gistpad.deleteGist",
     "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
@@ -45,8 +49,7 @@
     "onCommand:gistpad.starredGists",
     "onFileSystem:gist",
     "onView:gistpad.gists",
-    "onUri",
-    "*"
+    "onUri"
   ],
   "main": "./out/prod/extension.js",
   "contributes": {
@@ -94,6 +97,16 @@
           "type": "boolean",
           "description": "Specifies whether to automatically save your playground files (every 30s)."
         },
+        "gistpad.playground.includeMarkup": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether to include a markup file (index.html) when creating new web playgrounds."
+        },
+        "gistpad.playground.includeStylesheet": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether to include a stylesheet file (style.css) when creating new web playgrounds."
+        },
         "gistpad.playground.layout": {
           "default": "splitLeft",
           "enum": [
@@ -104,16 +117,6 @@
             "splitTop"
           ],
           "description": "Specifies how to layout the editor windows when opening a playground."
-        },
-        "gistpad.playground.includeMarkup": {
-          "default": true,
-          "type": "boolean",
-          "description": "Specifies whether to include a markup file (index.html) when creating new web playgrounds."
-        },
-        "gistpad.playground.includeStylesheet": {
-          "default": true,
-          "type": "boolean",
-          "description": "Specifies whether to include a stylesheet file (style.css) when creating new web playgrounds."
         },
         "gistpad.playground.markupLanguage": {
           "default": "html",
@@ -143,11 +146,6 @@
           ],
           "description": "Specifies the default stylesheet language to use when creating new web playgrounds."
         },
-        "gistpad.playground.showConsole": {
-          "default": false,
-          "type": "boolean",
-          "description": "Specifies whether to automatically show the console when opening a playground."
-        },
         "gistpad.showCommentThread": {
           "default": "whenNotEmpty",
           "type": "string",
@@ -157,6 +155,11 @@
             "whenNotEmpty"
           ],
           "description": "Specifies when to display the comment thread when you open a Gist file."
+        },
+        "gistpad.playground.showConsole": {
+          "default": false,
+          "type": "boolean",
+          "description": "Specifies whether to automatically show the console when opening a playground."
         }
       }
     },
@@ -172,14 +175,18 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.uploadFileToGist",
-        "title": "Upload File(s)",
-        "category": "GistPad"
-      },
-      {
         "command": "gistpad.addGistComment",
         "title": "Add Comment",
         "enablement": "!commentIsEmpty"
+      },
+      {
+        "command": "gistpad.addPlaygroundLibrary",
+        "title": "Add Playground Library",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add-library.svg",
+          "light": "images/light/add-library.svg"
+        }
       },
       {
         "command": "gistpad.addSelectionToGist",
@@ -207,17 +214,17 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.copyGistUrl",
-        "title": "Copy GitHub URL",
-        "category": "GistPad"
-      },
-      {
         "command": "gistpad.copyFileContents",
         "title": "Copy File Contents",
         "category": "GistPad"
       },
       {
         "command": "gistpad.copyFileUrl",
+        "title": "Copy GitHub URL",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.copyGistUrl",
         "title": "Copy GitHub URL",
         "category": "GistPad"
       },
@@ -237,8 +244,18 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.duplicateGist",
+        "title": "Duplicate Gist",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.editGistComment",
         "title": "Edit Comment",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.exportGistToCodePen",
+        "title": "Export to CodePen",
         "category": "GistPad"
       },
       {
@@ -251,23 +268,9 @@
         }
       },
       {
-        "command": "gistpad.duplicateGist",
-        "title": "Duplicate Gist",
-        "category": "GistPad"
-      },
-      {
         "command": "gistpad.forkGist",
         "title": "Fork Gist",
         "category": "GistPad"
-      },
-      {
-        "command": "gistpad.newPublicGist",
-        "title": "New Gist",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/add.svg",
-          "light": "images/light/add.svg"
-        }
       },
       {
         "command": "gistpad.newGistLog",
@@ -278,6 +281,15 @@
         "command": "gistpad.newPlayground",
         "title": "New Web Playground",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.newPublicGist",
+        "title": "New Gist",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add.svg",
+          "light": "images/light/add.svg"
+        }
       },
       {
         "command": "gistpad.newSecretGist",
@@ -296,34 +308,6 @@
       {
         "command": "gistpad.openGistFile",
         "title": "Open Gist File",
-        "category": "GistPad"
-      },
-      {
-        "command": "gistpad.openPlaygroundConsole",
-        "title": "Open Playground Console",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/console.svg",
-          "light": "images/light/console.svg"
-        }
-      },
-      {
-        "command": "gistpad.openPlaygroundDeveloperTools",
-        "title": "Open Playground Dev Tools",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/dev-tools.svg",
-          "light": "images/light/dev-tools.svg"
-        }
-      },
-      {
-        "command": "gistpad.exportGistToCodePen",
-        "title": "Export to CodePen",
-        "category": "GistPad"
-      },
-      {
-        "command": "gistpad.openProfile",
-        "title": "View Profile in GitHub",
         "category": "GistPad"
       },
       {
@@ -349,6 +333,29 @@
       {
         "command": "gistpad.openGistWorkspace",
         "title": "Open Gist as Workspace",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openPlaygroundConsole",
+        "title": "Open Playground Console",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/console.svg",
+          "light": "images/light/console.svg"
+        }
+      },
+      {
+        "command": "gistpad.openPlaygroundDeveloperTools",
+        "title": "Open Playground Dev Tools",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/dev-tools.svg",
+          "light": "images/light/dev-tools.svg"
+        }
+      },
+      {
+        "command": "gistpad.openProfile",
+        "title": "View Profile in GitHub",
         "category": "GistPad"
       },
       {
@@ -442,13 +449,9 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.addPlaygroundLibrary",
-        "title": "Add Playground Library",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/add-library.svg",
-          "light": "images/light/add-library.svg"
-        }
+        "command": "gistpad.uploadFileToGist",
+        "title": "Upload File(s)",
+        "category": "GistPad"
       }
     ],
     "keybindings": {
@@ -460,28 +463,80 @@
     "menus": {
       "commandPalette": [
         {
-          "command": "gistpad.addFileToGist",
-          "when": "false"
+          "command": "gistpad.deleteGist",
+          "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.uploadFileToGist",
-          "when": "false"
+          "command": "gistpad.followUser",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.forkGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.signIn",
+          "when": "gistpad:state != SignedIn"
+        },
+        {
+          "command": "gistpad.signOut",
+          "when": "gistpad:state != SignedOut"
+        },
+        {
+          "command": "gistpad.newGistLog",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.newPlayground",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.newPublicGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.newSecretGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.starredGists",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.addPlaygroundLibrary",
+          "when": "gistpad:inPlayground"
+        },
+        {
+          "command": "gistpad.changePlaygroundLayout",
+          "when": "gistpad:inPlayground"
+        },
+        {
+          "command": "gistpad.exportGistToCodePen",
+          "when": "gistpad:inPlayground"
+        },
+        {
+          "command": "gistpad.openPlaygroundConsole",
+          "when": "gistpad:inPlayground"
+        },
+        {
+          "command": "gistpad.openPlaygroundDeveloperTools",
+          "when": "gistpad:inPlayground"
+        },
+        {
+          "command": "gistpad.runPlayground",
+          "when": "gistpad:inPlayground"
         },
         {
           "command": "gistpad.addFile",
           "when": "false"
         },
         {
+          "command": "gistpad.addFileToGist",
+          "when": "false"
+        },
+        {
           "command": "gistpad.addGistComment",
           "when": "false"
-        },
-        {
-          "command": "gistpad.starGist",
-          "when": "false"
-        },
-        {
-          "command": "gistpad.addPlaygroundLibrary",
-          "when": "gistpad:inPlayground"
         },
         {
           "command": "gistpad.addSelectionToGist",
@@ -490,10 +545,6 @@
         {
           "command": "gistpad.changeGistDescription",
           "when": "false"
-        },
-        {
-          "command": "gistpad.changePlaygroundLayout",
-          "when": "gistpad:inPlayground"
         },
         {
           "command": "gistpad.cloneRepository",
@@ -528,31 +579,15 @@
           "when": "false"
         },
         {
+          "command": "gistpad.starGist",
+          "when": "false"
+        },
+        {
           "command": "gistpad.openGistFile",
           "when": "false"
         },
         {
           "command": "gistpad.openGistInBrowser",
-          "when": "false"
-        },
-        {
-          "command": "gistpad.openGistInGistLog",
-          "when": "false"
-        },
-        {
-          "command": "gistpad.openPlaygroundConsole",
-          "when": "gistpad:inPlayground"
-        },
-        {
-          "command": "gistpad.openPlaygroundDeveloperTools",
-          "when": "gistpad:inPlayground"
-        },
-        {
-          "command": "gistpad.runPlayground",
-          "when": "gistpad:inPlayground"
-        },
-        {
-          "command": "gistpad.openProfile",
           "when": "false"
         },
         {
@@ -564,8 +599,16 @@
           "when": "false"
         },
         {
-          "command": "gistpad.exportGistToCodePen",
-          "when": "gistpad:inPlayground"
+          "command": "gistpad.openGistInGistLog",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openProfile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.pasteImage",
+          "when": "false"
         },
         {
           "command": "gistpad.pasteGistFile",
@@ -584,10 +627,6 @@
           "when": "false"
         },
         {
-          "command": "gistpad.unstarGist",
-          "when": "false"
-        },
-        {
           "command": "gistpad.sortGistsAlphabetically",
           "when": "false"
         },
@@ -596,78 +635,42 @@
           "when": "false"
         },
         {
-          "command": "gistpad.signIn",
-          "when": "gistpad:state != SignedIn"
-        },
-        {
-          "command": "gistpad.signOut",
-          "when": "gistpad:state != SignedOut"
+          "command": "gistpad.uploadFileToGist",
+          "when": "false"
         },
         {
           "command": "gistpad.unfollowUser",
           "when": "false"
         },
         {
-          "command": "gistpad.followUser",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.newPublicGist",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.newSecretGist",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.forkGist",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.starredGists",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.newGistLog",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.newPlayground",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.deleteGist",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
-          "command": "gistpad.pasteImage",
+          "command": "gistpad.unstarGist",
           "when": "false"
         }
       ],
       "view/title": [
         {
           "command": "gistpad.newPublicGist",
-          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
+          "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn",
           "group": "navigation@1"
         },
         {
           "command": "gistpad.newSecretGist",
-          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
+          "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn",
           "group": "navigation@2"
         },
         {
           "command": "gistpad.sortGistsAlphabetically",
-          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn && gistpad:sortOrder == updatedTime",
+          "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn && gistpad:sortOrder == updatedTime",
           "group": "navigation@3"
         },
         {
           "command": "gistpad.sortGistsByUpdatedTime",
-          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn && gistpad:sortOrder == alphabetical",
+          "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn && gistpad:sortOrder == alphabetical",
           "group": "navigation@3"
         },
         {
           "command": "gistpad.refreshGists",
-          "when": "view =~ /gistpad.gists/ && gistpad:state == SignedIn",
+          "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn",
           "group": "navigation@4"
         }
       ],
@@ -907,6 +910,15 @@
         }
       ]
     },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "gistpad",
+          "title": "GistPad",
+          "icon": "images/icon-activity.svg"
+        }
+      ]
+    },
     "views": {
       "explorer": [
         {
@@ -918,15 +930,6 @@
         {
           "id": "gistpad.gists",
           "name": "Gists"
-        }
-      ]
-    },
-    "viewsContainers": {
-      "activitybar": [
-        {
-          "id": "gistpad",
-          "title": "GistPad",
-          "icon": "images/icon-activity.svg"
         }
       ]
     },
@@ -946,27 +949,13 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "npm run build:webpack",
-    "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./",
-    "build:webpack": "webpack --config ./webpack/webpack.node.config.js",
-    "watch:webpack": "webpack --watch --progress --config ./webpack/webpack.node.config.js",
     "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
+    "build:webpack": "webpack --config ./webpack/webpack.node.config.js",
+    "compile": "tsc -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "npm run compile && node ./node_modules/vscode/bin/test"
-  },
-  "devDependencies": {
-    "@types/keytar": "^4.4.2",
-    "@types/node": "^8.10.25",
-    "copy-webpack-plugin": "^5.0.5",
-    "ts-loader": "^6.2.1",
-    "tslint": "^5.8.0",
-    "typescript": "^3.7.3",
-    "vscode": "^1.1.25",
-    "vscode-nls-dev": "^3.3.1",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-merge": "^4.2.2"
+    "vscode:prepublish": "npm run build:webpack",
+    "watch": "tsc -watch -p ./",
+    "watch:webpack": "webpack --watch --progress --config ./webpack/webpack.node.config.js"
   },
   "dependencies": {
     "@types/debounce": "^1.2.0",
@@ -987,10 +976,17 @@
     "sass": "^1.24.0",
     "simple-git": "^1.126.0"
   },
-  "bugs": {
-    "url": "https://github.com/vsls-contrib/gistpad/issues"
-  },
-  "homepage": "https://github.com/vsls-contrib/gistpad#readme",
-  "author": "",
-  "license": "ISC"
+  "devDependencies": {
+    "@types/keytar": "^4.4.2",
+    "@types/node": "^8.10.25",
+    "copy-webpack-plugin": "^5.0.5",
+    "ts-loader": "^6.2.1",
+    "tslint": "^5.8.0",
+    "typescript": "^3.7.3",
+    "vscode": "^1.1.25",
+    "vscode-nls-dev": "^3.3.1",
+    "webpack": "^4.41.2",
+    "webpack-cli": "^3.3.10",
+    "webpack-merge": "^4.2.2"
+  }
 }

@@ -9,7 +9,7 @@ import {
   window
 } from "vscode";
 import { EXTENSION_ID } from "../constants";
-import { IStore } from "../store";
+import { Store } from "../store";
 import { sortGists } from "../utils";
 import {
   CreateNewGistNode,
@@ -35,7 +35,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   public readonly onDidChangeTreeData: Event<TreeNode> = this
     ._onDidChangeTreeData.event;
 
-  constructor(private store: IStore, private extensionPath: string) {
+  constructor(private store: Store, private extensionPath: string) {
     reaction(
       () => [
         store.gists.map((gist) => [gist.description, gist.updated_at]),
@@ -124,7 +124,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export function registerTreeProvider(store: IStore, extensionPath: string) {
+export function registerTreeProvider(store: Store, extensionPath: string) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);
   window.createTreeView(`${EXTENSION_ID}.gists`, {
     showCollapseAll: true,

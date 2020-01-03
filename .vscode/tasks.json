@@ -3,6 +3,12 @@
   "tasks": [
     {
       "type": "npm",
+      "script": "build:webpack",
+      "problemMatcher": ["$gulp-tsc"],
+      "group": "build"
+    },
+    {
+      "type": "npm",
       "script": "watch",
       "problemMatcher": "$tsc-watch",
       "isBackground": true,
@@ -26,12 +32,6 @@
         }
       },
       "isBackground": true,
-      "group": "build"
-    },
-    {
-      "type": "npm",
-      "script": "build:webpack",
-      "problemMatcher": ["$gulp-tsc"],
       "group": "build"
     }
   ]

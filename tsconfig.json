@@ -1,4 +1,5 @@
 {
+  "exclude": ["node_modules"],
   "compilerOptions": {
     "module": "commonjs",
     "target": "ES2017",
@@ -6,17 +7,11 @@
     "lib": ["ES2018", "DOM"],
     "sourceMap": true,
     "rootDir": "src",
-    /* Strict Type-Checking Option */
-    "strict": true /* enable all strict type-checking options */,
-    /* Additional Checks */
-    "noUnusedLocals": true /* Report errors on unused locals. */,
-    // "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
-    // "noFallthroughCasesInSwitch": true, /* Report errors for fallthrough cases in switch statement. */
-    // "noUnusedParameters": true,  /* Report errors on unused parameters. */
+    "strict": true,
+    "noUnusedLocals": true,
     "baseUrl": ".",
     "paths": {
       "@abstractions/*": ["src/abstractions/node/*"]
     }
-  },
-  "exclude": ["node_modules", ".vscode-test"]
+  }
 }

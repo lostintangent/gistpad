@@ -8,7 +8,7 @@ import {
   Uri,
   window
 } from "vscode";
-import { CommandId, EXTENSION_ID } from "../constants";
+import { EXTENSION_ID } from "../constants";
 import { log } from "../logger";
 import { GistFile, SortOrder, store } from "../store";
 import {
@@ -353,7 +353,7 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(CommandId.openGist, (node?: GistNode) => {
+    commands.registerCommand(`${EXTENSION_ID}.openGist`, (node?: GistNode) => {
       openGistInternal({ node });
     })
   );

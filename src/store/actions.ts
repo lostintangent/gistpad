@@ -1,6 +1,6 @@
 import { observable } from "mobx";
 import { window } from "vscode";
-import { Gist, GistComment, GistFile, IFollowedUser, store } from ".";
+import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { log } from "../logger";
@@ -126,7 +126,7 @@ export async function followUser(username: string) {
     storage.followedUsers = followedUsers;
   }
 
-  const user: IFollowedUser = observable({
+  const user: FollowedUser = observable({
     username,
     avatarUrl,
     gists: [],

@@ -14,8 +14,8 @@ import { FS_SCHEME, PLAYGROUND_JSON_FILE } from "./constants";
 import { Gist, GistFile, SortOrder, store } from "./store";
 import { getGist } from "./store/actions";
 
-export function fileNameToUri(gistId: string, filename: string): Uri {
-  return Uri.parse(`${FS_SCHEME}://${gistId}/${encodeURIComponent(filename)}`);
+export function byteArrayToString(value: Uint8Array) {
+  return new TextDecoder().decode(value);
 }
 
 export async function closeGistFiles(gist: Gist) {
@@ -33,12 +33,8 @@ export async function closeGistFiles(gist: Gist) {
   }
 }
 
-export function byteArrayToString(value: Uint8Array) {
-  return new TextDecoder().decode(value);
-}
-
-export function stringToByteArray(value: string) {
-  return new TextEncoder().encode(value);
+export function fileNameToUri(gistId: string, filename: string): Uri {
+  return Uri.parse(`${FS_SCHEME}://${gistId}/${encodeURIComponent(filename)}`);
 }
 
 export async function getFileContents(file: GistFile) {
@@ -120,6 +116,13 @@ export async function openGist(id: string, openAsWorkspace: boolean) {
   return openGistFiles(id);
 }
 
+export function openGistAsWorkspace(id: string) {
+  // TODO: Add support for adding the Gist as a new
+  // root to an existing workspace
+  const uri = Uri.parse(`${FS_SCHEME}://${id}/`);
+  commands.executeCommand("vscode.openFolder", uri, false);
+}
+
 export async function openGistFiles(id: string) {
   const gist = await getGist(id);
 
@@ -166,13 +169,6 @@ export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
   commands.executeCommand(commandName, uri);
 }
 
-export function openGistAsWorkspace(id: string) {
-  // TODO: Add support for adding the Gist as a new
-  // root to an existing workspace
-  const uri = Uri.parse(`${FS_SCHEME}://${id}/`);
-  commands.executeCommand("vscode.openFolder", uri, false);
-}
-
 export function sortGists(gists: Gist[]) {
   if (store.sortOrder === SortOrder.alphabetical) {
     return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
@@ -183,6 +179,10 @@ export function sortGists(gists: Gist[]) {
         Date.parse(a.updated_at || a.created_at)
     );
   }
+}
+
+export function stringToByteArray(value: string) {
+  return new TextEncoder().encode(value);
 }
 
 export function uriToFileName(uri: Uri): string {

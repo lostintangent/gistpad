@@ -1,7 +1,6 @@
-const path = require("path");
-
-const merge = require("webpack-merge");
 const devConfig = require("./webpack.config.js");
+const merge = require("webpack-merge");
+const path = require("path");
 
 module.exports = merge(devConfig, {
   target: "webworker",
@@ -13,6 +12,6 @@ module.exports = merge(devConfig, {
   node: {
     util: true,
     fs: "empty",
-    readline: "empty",
+    readline: "empty"
   }
 });

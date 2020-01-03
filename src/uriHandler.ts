@@ -21,8 +21,8 @@ async function handleOpenRequest(query: URLSearchParams) {
   }
 }
 
-class GistPadProtocolHandler implements vscode.UriHandler {
-  public async handleUri(uri: vscode.Uri): Promise<void> {
+class GistPadPUriHandler implements vscode.UriHandler {
+  public async handleUri(uri: vscode.Uri) {
     const query = new URLSearchParams(uri.query);
 
     switch (uri.path) {
@@ -31,16 +31,13 @@ class GistPadProtocolHandler implements vscode.UriHandler {
       case "/follow":
         return await handleFollowRequest(query);
       case "/did-authenticate":
-        await initializeAuth();
-        break;
+        return await initializeAuth();
     }
   }
-
-  public dispose(): void {}
 }
 
-export const initializeProtocolHander = () => {
+export function registerProtocolHander() {
   if (typeof vscode.window.registerUriHandler === "function") {
-    vscode.window.registerUriHandler(new GistPadProtocolHandler());
+    vscode.window.registerUriHandler(new GistPadPUriHandler());
   }
-};
+}

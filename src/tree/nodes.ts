@@ -2,7 +2,7 @@ import * as moment from "moment";
 import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { EXTENSION_ID } from "../constants";
-import { Gist, GistFile, IFollowedUser } from "../store";
+import { FollowedUser, Gist, GistFile } from "../store";
 import {
   fileNameToUri,
   getGistDescription,
@@ -151,7 +151,7 @@ Owner: ${owner}`;
 }
 
 export class FollowedUserGistsNode extends TreeNode {
-  constructor(public user: IFollowedUser, extensionPath: string) {
+  constructor(public user: FollowedUser, extensionPath: string) {
     super(`${user.username}'s Gists`, TreeItemCollapsibleState.Collapsed);
 
     if (user.avatarUrl) {

@@ -15,7 +15,7 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_ID, FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
-import { GistFile, IStore } from "../store";
+import { GistFile, Store } from "../store";
 import { forkGist, getGist, updateGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import {
@@ -29,7 +29,7 @@ import { addFile, renameFile } from "./git";
 const isBinaryPath = require("is-binary-path");
 
 export class GistFileSystemProvider implements FileSystemProvider {
-  constructor(private store: IStore) {}
+  constructor(private store: Store) {}
 
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
@@ -232,7 +232,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 }
 
-export function registerFileSystemProvider(store: IStore) {
+export function registerFileSystemProvider(store: Store) {
   const provider = new GistFileSystemProvider(store);
   workspace.registerFileSystemProvider(FS_SCHEME, provider);
   return provider;

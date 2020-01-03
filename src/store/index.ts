@@ -1,19 +1,19 @@
 import { observable } from "mobx";
 
-interface Owner {
-  login: string;
+interface User {
   id: number;
+  login: string;
   avatar_url: string;
   html_url: string;
 }
 
 export interface GistFile {
-  content?: string;
   filename?: string;
-  size?: number;
-  truncated?: boolean;
-  raw_url?: string;
+  content?: string;
   type?: string;
+  size?: number;
+  raw_url?: string;
+  truncated?: boolean;
 }
 
 export interface GistRevisionStatus {
@@ -23,7 +23,7 @@ export interface GistRevisionStatus {
 }
 
 export interface GistRevision {
-  user: Owner;
+  user: User;
   version: string;
   committed_at: string;
   change_status: GistRevisionStatus;
@@ -36,7 +36,7 @@ export interface Gist {
   truncated: boolean;
   url: string;
   description: string;
-  owner: Owner;
+  owner: User;
   public: boolean;
   created_at: string;
   updated_at: string;
@@ -47,27 +47,17 @@ export interface Gist {
 export interface GistComment {
   id: string;
   body: string;
-  user: Owner;
+  user: User;
   created_at: string;
   updated_at: string;
   author_association: "NONE" | "OWNER";
 }
 
-export interface IFollowedUser {
+export interface FollowedUser {
   username: string;
   gists: Gist[];
   avatarUrl?: string;
   isLoading: boolean;
-}
-
-export interface IStore {
-  gists: Gist[];
-  starredGists: Gist[];
-  followedUsers: IFollowedUser[];
-  isLoading: boolean;
-  isSignedIn: boolean;
-  login: string;
-  sortOrder: SortOrder;
 }
 
 export enum SortOrder {
@@ -75,12 +65,22 @@ export enum SortOrder {
   updatedTime = "updatedTime"
 }
 
-export const store: IStore = observable({
-  gists: [],
-  starredGists: [],
+export interface Store {
+  followedUsers: FollowedUser[];
+  gists: Gist[];
+  isLoading: boolean;
+  isSignedIn: boolean;
+  login: string;
+  sortOrder: SortOrder;
+  starredGists: Gist[];
+}
+
+export const store: Store = observable({
   followedUsers: [],
+  gists: [],
   isLoading: false,
   isSignedIn: false,
   login: "",
-  sortOrder: SortOrder.updatedTime
+  sortOrder: SortOrder.updatedTime,
+  starredGists: []
 });

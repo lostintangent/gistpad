@@ -67,7 +67,7 @@ async function tryToRemoveUploadingMarkup(
 }
 
 export async function pasteImageCommand(editor: vscode.TextEditor) {
-  const imageType = await config.get("image.pasteType");
+  const imageType = await config.get("images.pasteType");
   const isFilePaste = imageType === "file";
 
   const imageId = randomInt();
@@ -81,10 +81,11 @@ export async function pasteImageCommand(editor: vscode.TextEditor) {
     if (!isFilePaste) {
       return await pasteImageAsBase64(editor, imageId);
     }
-
     return await pasteImageAsFile(editor, imageId);
   } catch (e) {
-    throw e;
+    vscode.window.showErrorMessage(
+      "There doesn't appear to be an image on your clipboard. Copy an image and try again."
+    );
   } finally {
     await addUploadingMarkupPromise;
     await tryToRemoveUploadingMarkup(editor, imageId, isFilePaste);

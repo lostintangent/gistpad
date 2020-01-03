@@ -9,7 +9,7 @@ module.exports = merge(devConfig, {
       {
         from: path.resolve(
           __dirname,
-          "../src/abstractions/node/commands/scripts/*"
+          "../src/abstractions/node/images/scripts/*"
         ),
         to: path.resolve(__dirname, "../out/prod/scripts/"),
         flatten: true

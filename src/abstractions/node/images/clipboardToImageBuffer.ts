@@ -4,20 +4,11 @@ import { spawn } from "child_process";
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { log } from "../../../logger";
 import { randomInt } from "./utils/randomInt";
 
-const createImagePath = () => {
-  const imagePath = path.join(os.tmpdir(), `${randomInt()}_${randomInt()}.png`);
-
-  return imagePath;
-};
-
-const removeImage = (imagePath: string) => {
-  fs.unlink(imagePath, (e: any | null) => {
-    log.error(e);
-  });
-};
+function createImagePath() {
+  return path.join(os.tmpdir(), `${randomInt()}_${randomInt()}.png`);
+}
 
 export class ClipboardToImageBuffer {
   public async getImageBits(): Promise<Buffer> {
@@ -25,21 +16,14 @@ export class ClipboardToImageBuffer {
     const imagePath = createImagePath();
 
     switch (platform) {
-      case "win32": {
+      case "win32":
         return await this.getImageFromClipboardWin(imagePath);
-      }
-
-      case "darwin": {
+      case "darwin":
         return await this.getImageFromClipboardMac(imagePath);
-      }
-
-      case "linux": {
+      case "linux":
         return await this.getImageFromClipboardLinux(imagePath);
-      }
-
-      default: {
+      default:
         throw new Error(`Not supported platform "${platform}".`);
-      }
     }
   }
 
@@ -92,7 +76,7 @@ export class ClipboardToImageBuffer {
         }
 
         res(binary);
-        removeImage(imagePath);
+        fs.unlinkSync(imagePath);
       });
     });
   }
@@ -100,26 +84,24 @@ export class ClipboardToImageBuffer {
   private getImageFromClipboardMac(imagePath: string): Promise<Buffer> {
     return new Promise((res, rej) => {
       const scriptPath = path.join(__dirname, "./scripts/mac.applescript");
-
       const ascript = spawn("osascript", [scriptPath, imagePath]);
-      ascript.on("error", function(e: any) {
+      ascript.on("error", (e: any) => {
         rej(e);
       });
 
-      ascript.stdout.on("data", function(data: Buffer) {
+      ascript.stdout.on("data", (data: Buffer) => {
         const filePath = data.toString().trim();
-
         if (filePath === "no image") {
-          rej("No image found.");
+          return rej("No image found.");
         }
 
         const binary = fs.readFileSync(filePath);
         if (!binary) {
-          rej("No temporary image file read.");
+          return rej("No temporary image file read.");
         }
 
+        fs.unlinkSync(imagePath);
         res(binary);
-        removeImage(imagePath);
       });
     });
   }
@@ -133,7 +115,7 @@ export class ClipboardToImageBuffer {
         rej(e);
       });
 
-      ascript.stdout.on("data", function(data: Buffer) {
+      ascript.stdout.on("data", (data: Buffer) => {
         const result = data.toString().trim();
         if (result === "no xclip") {
           const message = "You need to install xclip command first.";
@@ -148,11 +130,11 @@ export class ClipboardToImageBuffer {
         const binary = fs.readFileSync(result);
 
         if (!binary) {
-          rej("No temporary image file read.");
+          return rej("No temporary image file read.");
         }
 
         res(binary);
-        removeImage(imagePath);
+        fs.unlinkSync(imagePath);
       });
     });
   }

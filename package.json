@@ -67,7 +67,17 @@
           "type": "boolean",
           "description": "Specifies whether to enable single sign-in (SSO) with the Git CLI, when you've already authenticated with github.com."
         },
-        "gistpad.image.markdownPasteFormat": {
+        "gistpad.comments.showThread": {
+          "default": "whenNotEmpty",
+          "type": "string",
+          "enum": [
+            "always",
+            "never",
+            "whenNotEmpty"
+          ],
+          "description": "Specifies when to display the comment thread when you open a Gist file."
+        },
+        "gistpad.images.markdownPasteFormat": {
           "default": "markdown",
           "enum": [
             "html",
@@ -75,7 +85,7 @@
           ],
           "description": "Specifies the markup format to use when pasting an image into a markdown gist file."
         },
-        "gistpad.image.pasteType": {
+        "gistpad.images.pasteType": {
           "default": "file",
           "enum": [
             "base64",
@@ -83,7 +93,7 @@
           ],
           "description": "Specifies the upload method to use when pasting an image into a gist file."
         },
-        "gistpad.playground.autoRun": {
+        "gistpad.playgrounds.autoRun": {
           "default": "onEdit",
           "enum": [
             "onEdit",
@@ -92,22 +102,22 @@
           ],
           "description": "Specifies when to automatically run the code for a playground."
         },
-        "gistpad.playground.autoSave": {
+        "gistpad.playgrounds.autoSave": {
           "default": true,
           "type": "boolean",
           "description": "Specifies whether to automatically save your playground files (every 30s)."
         },
-        "gistpad.playground.includeMarkup": {
+        "gistpad.playgrounds.includeMarkup": {
           "default": true,
           "type": "boolean",
           "description": "Specifies whether to include a markup file (index.html) when creating new web playgrounds."
         },
-        "gistpad.playground.includeStylesheet": {
+        "gistpad.playgrounds.includeStylesheet": {
           "default": true,
           "type": "boolean",
           "description": "Specifies whether to include a stylesheet file (style.css) when creating new web playgrounds."
         },
-        "gistpad.playground.layout": {
+        "gistpad.playgrounds.layout": {
           "default": "splitLeft",
           "enum": [
             "grid",
@@ -118,7 +128,7 @@
           ],
           "description": "Specifies how to layout the editor windows when opening a playground."
         },
-        "gistpad.playground.markupLanguage": {
+        "gistpad.playgrounds.markupLanguage": {
           "default": "html",
           "enum": [
             "html",
@@ -126,7 +136,7 @@
           ],
           "description": "Specifies the default markup language to use when creating new web playgrounds."
         },
-        "gistpad.playground.scriptLanguage": {
+        "gistpad.playgrounds.scriptLanguage": {
           "default": "javascript",
           "enum": [
             "javascript",
@@ -136,7 +146,7 @@
           ],
           "description": "Specifies the default scripting language to use when creating new web playgrounds."
         },
-        "gistpad.playground.stylesheetLanguage": {
+        "gistpad.playgrounds.stylesheetLanguage": {
           "default": "css",
           "enum": [
             "css",
@@ -146,17 +156,7 @@
           ],
           "description": "Specifies the default stylesheet language to use when creating new web playgrounds."
         },
-        "gistpad.showCommentThread": {
-          "default": "whenNotEmpty",
-          "type": "string",
-          "enum": [
-            "always",
-            "never",
-            "whenNotEmpty"
-          ],
-          "description": "Specifies when to display the comment thread when you open a Gist file."
-        },
-        "gistpad.playground.showConsole": {
+        "gistpad.playgrounds.showConsole": {
           "default": false,
           "type": "boolean",
           "description": "Specifies whether to automatically show the console when opening a playground."
@@ -456,15 +456,14 @@
     ],
     "keybindings": [
       {
-        "key": "ctrl+shift+v",
-        "mac": "cmd+shift+v",
-        "command": "gistpad.pasteImage",
-        "when": "resourceScheme == gist && resourceLangId == markdown"
-      },
-      {
         "key": "ctrl+shift+o",
         "mac": "cmd+shift+o",
         "command": "gistpad.openGist"
+      },
+      {
+        "key": "ctrl+shift+g",
+        "mac": "cmd+shift+g",
+        "command": "gistpad.newPublicGist"
       }
     ],
     "menus": {
@@ -503,6 +502,10 @@
         },
         {
           "command": "gistpad.newSecretGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.refreshGists",
           "when": "gistpad:state == SignedIn"
         },
         {
@@ -619,10 +622,6 @@
         },
         {
           "command": "gistpad.pasteGistFile",
-          "when": "false"
-        },
-        {
-          "command": "gistpad.refreshGists",
           "when": "false"
         },
         {

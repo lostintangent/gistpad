@@ -1,4 +1,4 @@
-import { pasteImageCommand } from "@abstractions/image/pasteImage";
+import { pasteImageCommand } from "@abstractions/images/pasteImage";
 import * as path from "path";
 import {
   commands,

@@ -135,7 +135,7 @@ export const getManifestContent = (gist: Gist) => {
 };
 
 async function generateNewPlaygroundFiles() {
-  const scriptLanguage = await config.get("playground.scriptLanguage");
+  const scriptLanguage = await config.get("playgrounds.scriptLanguage");
   const scriptFileName = `script${ScriptLanguage[scriptLanguage]}`;
 
   const manifest = {
@@ -156,9 +156,9 @@ async function generateNewPlaygroundFiles() {
     }
   ];
 
-  if (await config.get("playground.includeStylesheet")) {
+  if (await config.get("playgrounds.includeStylesheet")) {
     const stylesheetLanguage = await config.get(
-      "playground.stylesheetLanguage"
+      "playgrounds.stylesheetLanguage"
     );
     const stylesheetFileName = `style${StylesheetLanguage[stylesheetLanguage]}`;
 
@@ -167,8 +167,8 @@ async function generateNewPlaygroundFiles() {
     });
   }
 
-  if (await config.get("playground.includeMarkup")) {
-    const markupLanguage = await config.get("playground.markupLanguage");
+  if (await config.get("playgrounds.includeMarkup")) {
+    const markupLanguage = await config.get("playgrounds.markupLanguage");
     const markupFileName = `index${MarkupLanguage[markupLanguage]}`;
 
     files.unshift({
@@ -392,7 +392,7 @@ export async function openPlayground(gist: Gist) {
   }
 
   const playgroundLayout =
-    manifest.layout || (await config.get("playground.layout"));
+    manifest.layout || (await config.get("playgrounds.layout"));
 
   let editorLayout: any;
   if (includedFiles === 3) {
@@ -509,11 +509,11 @@ export async function openPlayground(gist: Gist) {
     styles
   );
 
-  if ((await config.get("playground.showConsole")) || manifest.showConsole) {
+  if ((await config.get("playgrounds.showConsole")) || manifest.showConsole) {
     output.show(false);
   }
 
-  const autoRun = await config.get("playground.autoRun");
+  const autoRun = await config.get("playgrounds.autoRun");
   const runOnEdit = autoRun === "onEdit";
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
@@ -604,7 +604,7 @@ export async function openPlayground(gist: Gist) {
     .getConfiguration("files")
     .get<string>("autoSave");
   let autoSaveInterval: NodeJS.Timer | undefined;
-  if (autoSave !== "afterDelay" && (await config.get("playground.autoSave"))) {
+  if (autoSave !== "afterDelay" && (await config.get("playgrounds.autoSave"))) {
     autoSaveInterval = setInterval(async () => {
       for (const document of vscode.workspace.textDocuments) {
         if (document.isDirty && document.uri.scheme === FS_SCHEME) {
@@ -770,7 +770,7 @@ export async function registerPlaygroundCommands(
         if (result) {
           await vscode.workspace
             .getConfiguration("gistpad")
-            .update("playground.layout", result.layout, true);
+            .update("playgrounds.layout", result.layout, true);
 
           openPlayground(activePlayground!.gist);
         }

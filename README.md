@@ -40,7 +40,7 @@ Gist comments are exposed within the editor at the bottom of any opened Gist fil
 
 <img src="https://user-images.githubusercontent.com/116461/70118599-42467d80-161d-11ea-85eb-7f4cc6e4006b.gif" width="700px" />
 
-If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments. In order to control the behavior of how Gist comment threads are displayed, refer to the `GistPad: Show Comment Thread` config setting.
+If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments. In order to control the behavior of how Gist comment threads are displayed, refer to the `GistPad > Comments: Show Thread` config setting.
 
 ## Pasting Images
 
@@ -48,7 +48,7 @@ In order to make it easy to author markdown and HTML/Pug files that include imag
 
 ![paste-image](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
 
-By default, when you paste an image into a Gist file, it's uploaded as a `.png` to the gist, and the appropriate reference is added to it from the document (e.g. inserting an `<img />`). However, this behavior can be changed by using the `GistPad > Image: Paste Format` and/or `GistPad > Image: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details.
+By default, when you paste an image into a Gist file, it's uploaded as a `.png` to the gist, and the appropriate reference is added to it from the document (e.g. inserting an `<img />`). However, this behavior can be changed by using the `GistPad > Images: Paste Format` and/or `GistPad > Images: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details.
 
 ## Following Users
 
@@ -94,7 +94,7 @@ By default, new playgrounds create an HTML, CSS and JavaScript file. However, if
 - **TypeScript** - Rename the `script.js` file to `script.ts` (or `script.tsx`, in order to use JSX in your code)
 - **JSX** - Rename the `script.js` file to `script.jsx` in order to enable JSX to be written in "vanilla" JavaScript files. Additionally, if you add the [`react` library](#external-libraries) to your gist's `playground.json` file, then `*.js` files can also include JSX.
 
-If you'd like to always use one of these languages, then set one or more of the following settings, and all new playgrounds will include the right files by default: `GistPad > Playground: Markup Language`, `GistPad > Playground: Script Language`, `GistPad > Playground: Stylesheet Language`. View the [settings documentation](#configuration-settings) below for more detials.
+If you'd like to always use one of these languages, then set one or more of the following settings, and all new playgrounds will include the right files by default: `GistPad > Playgrounds: Markup Language`, `GistPad > Playgrounds: Script Language`, `GistPad > Playgrounds: Stylesheet Language`. View the [settings documentation](#configuration-settings) below for more detials.
 
 ### External Libraries
 
@@ -114,7 +114,7 @@ Additionally, if you create a playground, that looks best in a specific layout, 
 
 ### Console Output
 
-The playground also provides an output window in order to view any logs written via the `console.log` API. You can bring up the output window, as well as run the playground or open the Chrome Developer Tools, by clicking the respective command icon in the editor toolbar. If you'd like to always open the console when creating/opening playgrounds, you can set the `GistPad > Playground: Show Console` setting to `true`.
+The playground also provides an output window in order to view any logs written via the `console.log` API. You can bring up the output window, as well as run the playground or open the Chrome Developer Tools, by clicking the respective command icon in the editor toolbar. If you'd like to always open the console when creating/opening playgrounds, you can set the `GistPad > Playgrounds: Show Console` setting to `true`.
 
 <img width="503" src="https://user-images.githubusercontent.com/116461/71384593-0a38b780-2597-11ea-8bba-73f784f6ec76.png" />
 
@@ -170,29 +170,31 @@ In addition to the commands added to the editor context menu, GistPad also contr
 
 In addition to the `Gists` view, this extension also provides the following commands:
 
-- `GistPad: Follow User` - Follow another GitHub user, whuich allows you to browser/access/fork their Gists from within the `Gists` view.
+- `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a Gist workspace open, it will delete that and then close the folde
 
-- `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a gist by URL, `username/id`, or ID, which doesn't require being signed in.
+* `GistPad: Follow User` - Follow another GitHub user, whuich allows you to browser/access/fork their Gists from within the `Gists` view.
 
-- `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, istead of "loose files".
+- `GistPad: Fork Gist` - Forks the currently opened Gist, and then opens it as a virtual workspace.
 
-- `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-seperated list of names (e.g. `foo.txt,bar.js`).
+* `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a gist by URL, `username/id`, or ID, which doesn't require being signed in.
 
-- `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
+* `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, istead of "loose files".
 
-- `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
+* `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-seperated list of names (e.g. `foo.txt,bar.js`).
 
-- `GistPad: New GistLog` - Creates a [GistLog](#gistlog);
+* `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
-* `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a Gist workspace open, it will delete that and then close the folde
+* `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
 
-* `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
+* `GistPad: New GistLog` - Creates a [GistLog](#gistlog).
 
-* `GistPad: Fork Gist` - Forks the currently opened Gist, and then opens it as a virtual workspace.
-
+* `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
+*
 * `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
 
 * `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
+
+- `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
 
 ## Configuration Settings
 
@@ -200,29 +202,36 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `Gistpad: Git SSO` - Specifies whether to enable single sign-in (SSO) with the `git` CLI, when you've already authenticated with github.com. Defaults to `true`.
 
-- `Gistpad > Image: Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
+* `GistPad > Comments: Show Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
+
+  - `always`: Always display the comment thread whenever you open a Gist file. You can manually collapse it as needed.
+  - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.
+  - `whenNotEmpty` _(default)_: Automatically display the comment thread whenever there are actually comments in a Gist file. Otherwise, leave it collapsed.
+  -
+
+- `Gistpad > Images: Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
 
   - `markdown` _(default)_: Pastes the image reference using `Markdown` format (e.g. `![image](link)`).
   - `html`: Pastes the image reference using `HTML` format (e.g. `<img src="link" />`). Note, when you paste an image into an HTML file, it will always use this format type, regardless what the setting is.
 
-- `Gistpad > Image: Paste Type`: Specifies the method to use when pasting an image into a gist file. Can be set to one of the following values:
+- `Gistpad > Images: Paste Type`: Specifies the method to use when pasting an image into a gist file. Can be set to one of the following values:
 
   - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to file it's pasted into.
   - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
 
-* `GistPad > Playground: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
+* `GistPad > Playgrounds: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
 
   - `onEdit` _(default)_: Will re-run the playground automatically as you type.
   - `onSave`: Will re-run the playground when you save a file.
   - `never`: Don't automatically re-run the playground, and instead, only run it when the `GistPad: Run Playground` command is executed.
 
-* `GistPad > Playground: Auto Save` - Specifies whether to automatically save your playground files (every 30s). If you've already set the `Files: Auto Save` setting to `afterDelay`, then that setting will be respected. Defaults to `true`.
+* `GistPad > Playgrounds: Auto Save` - Specifies whether to automatically save your playground files (every 30s). If you've already set the `Files: Auto Save` setting to `afterDelay`, then that setting will be respected. Defaults to `true`.
 
-* `GistPad > Playground: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds. Defaults to `true`.
+* `GistPad > Playgrounds: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds. Defaults to `true`.
 
-* `GistPad > Playground: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds. Defaults to `true`.
+* `GistPad > Playgrounds: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds. Defaults to `true`.
 
-* `GistPad > Playground: Layout` - Specifies how to layout the editor windows when opening a playground. Can be set to one of the following values:
+* `GistPad > Playgrounds: Layout` - Specifies how to layout the editor windows when opening a playground. Can be set to one of the following values:
 
   - `grid`: Opens a 2x2 grid of editors, with the editors and preview window occupying an equal amount of space.
   - `preview`: Simply opens the full-screen preview window. This is useful for interacting with complex playgrounds or viewing other's playgrouds.
@@ -230,37 +239,33 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `splitRight`: Opens a split-level layout, with the editors vertically stacked on the right, and the preview occupying the full IDE height on the left.
   - `splitTop` _(default)_: Opens a split-level layout, with the editors horizontally stacked on the top, and the preview occupying the full IDE width on the bottom.
 
-* `GistPad > Playground: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
+* `GistPad > Playgrounds: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `html` _(default)_: Will result in an `index.html` file being created whenever you create a new web playground.
   - `pug`: Will result in an `index.pug` file being created whenever you create a new web playground.
 
-* `GistPad > Playground: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
+* `GistPad > Playgrounds: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `javascript` _(default)_: Will result in an `script.js` file being created whenever you create a new web playground.
   - `javascriptreact`: Will result in an `script.jsx` file being created whenever you create a new web playground.
   - `typescript`: Will result in an `script.ts` file being created whenever you create a new web playground.
   - `typescriptreact`: Will result in an `script.tsx` file being created whenever you create a new web playground.
 
-* `GistPad > Playground: Stylesheet Language` - Specifies the default stylesheet language to use when creating new web playgrounds. Can be set to one of the following values:
+* `GistPad > Playgrounds: Stylesheet Language` - Specifies the default stylesheet language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `css` _(default)_: Will result in an `style.css` file being created whenever you create a new web playground.
   - `less`: Will result in an `style.less` file being created whenever you create a new web playground.
   - `sass`: Will result in an `style.sass` file being created whenever you create a new web playground.
   - `scss`: Will result in an `style.scss` file being created whenever you create a new web playground.
 
-* `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.
-
-* `GistPad: Show Comment Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
-
-  - `always`: Always display the comment thread whenever you open a Gist file. You can manually collapse it as needed.
-  - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.
-  - `whenNotEmpty` _(default)_: Automatically display the comment thread whenever there are actually comments in a Gist file. Otherwise, leave it collapsed.
+* `GistPad > Playgrounds: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.
 
 ## Keyboard Shortcuts
 
+- **New Public Gist**: `ctrl+shift+n` _(Windows/Linux)_, `cmd+shift+n` _(macOS)_
+- **New Web Playground**: `ctrl+shift+p` _(Windows/Linux)_, `cmd+shift+p` _(macOS)_
 - **Open Gist**: `ctrl+shift+o` _(Windows/Linux)_, `cmd+shift+v` _(macOS)_
-- **Paste Image**: `ctrl+shift+v` _(Windows/Linux)_, `cmd+shift+v` _(macOS)_
+- **Paste Image**: `ctrl+shift+i` _(Windows/Linux)_, `cmd+shift+i` _(macOS)_
 
 ## Supported Filesystem Operations
 

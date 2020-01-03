@@ -7,7 +7,7 @@ export async function pasteImageMarkup(
   imageMarkup: string,
   imageMarkupId: string | number
 ) {
-  const uploadSetting = await config.get("image.pasteType");
+  const uploadSetting = await config.get("images.pasteType");
   const isUploading = uploadSetting === "file";
 
   await editor.edit(async (edit) => {

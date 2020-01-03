@@ -5,31 +5,31 @@ const CONFIG_SECTION = "gistpad";
 export async function get(key: "apiUrl"): Promise<string>;
 export async function get(key: "gitSSO"): Promise<boolean>;
 export async function get(
-  key: "image.markdownPasteFormat"
+  key: "images.markdownPasteFormat"
 ): Promise<"markdown" | "html">;
-export async function get(key: "image.pasteType"): Promise<"file" | "base64">;
+export async function get(key: "images.pasteType"): Promise<"file" | "base64">;
 export async function get(
-  key: "playground.autoRun"
+  key: "playgrounds.autoRun"
 ): Promise<"onEdit" | "onSave" | "never">;
-export async function get(key: "playground.autoSave"): Promise<boolean>;
+export async function get(key: "playgrounds.autoSave"): Promise<boolean>;
 export async function get(
-  key: "playground.layout"
+  key: "playgrounds.layout"
 ): Promise<"grid" | "splitLeft" | "splitRight" | "splitTop">;
-export async function get(key: "playground.includeMarkup"): Promise<boolean>;
+export async function get(key: "playgrounds.includeMarkup"): Promise<boolean>;
 export async function get(
-  key: "playground.includeStylesheet"
+  key: "playgrounds.includeStylesheet"
 ): Promise<boolean>;
 export async function get(
-  key: "playground.markupLanguage"
+  key: "playgrounds.markupLanguage"
 ): Promise<"html" | "pug">;
 export async function get(
-  key: "playground.scriptLanguage"
+  key: "playgrounds.scriptLanguage"
 ): Promise<"javascript" | "javascriptreact" | "typescript" | "typescriptreact">;
 export async function get(
-  key: "playground.stylesheetLanguage"
+  key: "playgrounds.stylesheetLanguage"
 ): Promise<"css" | "less" | "sass" | "scss">;
-export async function get(key: "playground.showConsole"): Promise<boolean>;
-export async function get(key: "showCommentThread"): Promise<string>;
+export async function get(key: "playgrounds.showConsole"): Promise<boolean>;
+export async function get(key: "comments.showThread"): Promise<string>;
 export async function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);
 

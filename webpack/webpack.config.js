@@ -25,6 +25,10 @@ const config = {
       "@abstractions": path.join(__dirname, "../src/abstractions/node")
     }
   },
+  node: {
+    __filename: false,
+    __dirname: false
+  },
   module: {
     rules: [
       {

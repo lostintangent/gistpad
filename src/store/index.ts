@@ -66,6 +66,7 @@ export enum SortOrder {
 }
 
 export interface Store {
+  activeGist: Gist | null;
   followedUsers: FollowedUser[];
   gists: Gist[];
   isLoading: boolean;
@@ -76,6 +77,7 @@ export interface Store {
 }
 
 export const store: Store = observable({
+  activeGist: null,
   followedUsers: [],
   gists: [],
   isLoading: false,

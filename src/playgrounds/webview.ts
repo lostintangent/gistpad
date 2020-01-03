@@ -2,24 +2,24 @@ import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
 import {
   getScriptContent,
-  IPlaygroundJSON,
-  PlaygroundLibraryType
+  PlaygroundLibraryType,
+  PlaygroundManifest
 } from "../commands/playground";
 import { URI_PATTERN } from "../constants";
 import { Gist } from "../store";
 
 export class PlaygroundWebview {
+  private css: string = "";
   private html: string = "";
   private javascript: string = "";
-  private css: string = "";
-  private manifest: IPlaygroundJSON | undefined;
+  private manifest: PlaygroundManifest | undefined;
 
   constructor(
     private webview: vscode.Webview,
     output: vscode.OutputChannel,
     private gist: Gist,
-    private scripts: string = "",
-    private styles: string = ""
+    private codePenScripts: string = "",
+    private codePenStyles: string = ""
   ) {
     webview.onDidReceiveMessage(({ command, value }) => {
       switch (command) {
@@ -38,19 +38,11 @@ export class PlaygroundWebview {
     });
   }
 
-  public async updateManifest(manifest: string, rebuild = false) {
-    if (!manifest) {
-      return;
-    }
+  public updateCSS(css: string, rebuild = false) {
+    this.css = css;
 
-    try {
-      this.manifest = JSON.parse(manifest);
-
-      if (rebuild) {
-        await this.rebuildWebview();
-      }
-    } catch (e) {
-      // The user might have typed invalid JSON
+    if (rebuild) {
+      this.webview.postMessage({ command: "updateCSS", value: css });
     }
   }
 
@@ -78,16 +70,27 @@ export class PlaygroundWebview {
     }
   }
 
-  public updateCSS(css: string, rebuild = false) {
-    this.css = css;
+  public async updateManifest(manifest: string, rebuild = false) {
+    if (!manifest) {
+      return;
+    }
 
-    if (rebuild) {
-      this.webview.postMessage({ command: "updateCSS", value: css });
+    try {
+      this.manifest = JSON.parse(manifest);
+
+      if (rebuild) {
+        await this.rebuildWebview();
+      }
+    } catch (e) {
+      // The user might have typed invalid JSON
     }
   }
 
   private async resolveLibraries(libraryType: PlaygroundLibraryType) {
-    let libraries = this[libraryType];
+    let libraries =
+      libraryType === PlaygroundLibraryType.script
+        ? this.codePenScripts
+        : this.codePenStyles;
 
     if (
       !this.manifest ||
@@ -105,7 +108,7 @@ export class PlaygroundWebview {
 
         const appendLibrary = (url: string) => {
           if (libraryType === PlaygroundLibraryType.style) {
-            libraries += `<link rel="stylesheet" href="${url}" />`;
+            libraries += `<link href="${url}" rel="stylesheet" />`;
           } else {
             libraries += `<script src="${url}"></script>`;
           }

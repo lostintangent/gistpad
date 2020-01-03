@@ -1,10 +1,10 @@
-## v0.0.42 (01/03/2020)
+## v0.0.43 (01/03/2020)
 
-- Added support for Sass, in addition to the existing support for SCSS
+- Added support for Sass, in addition to the existing support for SCSS. This was primarily added for improved interop with CodePen (e.g. [3D Texbox](https://codepen.io/jouanmarcel/pen/Powbrgq).
 
 ## v0.0.42 (01/02/2020)
 
-- Added support for fully roundtripping external scripts/stylesheets from CodePen, and fixed a caching issue when exporting the same playground multiple times in a short timespan
+- Added support for fully round-tripping external scripts/stylesheets from CodePen, and fixed a caching issue when exporting the same playground multiple times in a short timespan
 - Fixed a bug with viewing starred gists, when you had a starred gist from an anonymous user
 
 ## v0.0.41 (01/01/2020)

@@ -5,6 +5,7 @@ import { GistsNode } from "src/tree/nodes";
 import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
+import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import {
@@ -14,11 +15,10 @@ import {
   openGistAsWorkspace,
   stringToByteArray
 } from "../utils";
-import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
-export interface IPlaygroundJSON {
+export interface PlaygroundManifest {
   scripts?: string[];
   styles?: string[];
   layout?: string;
@@ -181,7 +181,7 @@ async function generateNewPlaygroundFiles() {
 
 export function getScriptContent(
   document: vscode.TextDocument,
-  manifest: IPlaygroundJSON | undefined
+  manifest: PlaygroundManifest | undefined
 ): string | null {
   let content = document.getText();
   if (content.trim() === "") {
@@ -384,7 +384,7 @@ export async function openPlayground(gist: Gist) {
   ).length;
 
   const manifestContent = getManifestContent(gist);
-  let manifest: IPlaygroundJSON;
+  let manifest: PlaygroundManifest;
   try {
     manifest = JSON.parse(manifestContent);
   } catch (e) {

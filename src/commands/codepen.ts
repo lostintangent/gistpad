@@ -14,19 +14,6 @@ const MARKER_FILE = ".codepen";
 const SCRIPT_PATTERN = /<script src="(?<url>[^"]+)"><\/script>/gi;
 const STYLE_PATTERN = /<link href="(?<url>[^"]+)" rel="stylesheet" \/>/gi;
 
-function matchAllUrls(string: string, regex: RegExp): string[] {
-  let match;
-  let results = [];
-  while ((match = regex.exec(string)) !== null) {
-    if (match.index === regex.lastIndex) {
-      regex.lastIndex++;
-    }
-
-    results.push(match!.groups!.url);
-  }
-  return results;
-}
-
 interface PenDefinition {
   title: string;
   description: string;
@@ -39,6 +26,19 @@ interface PenDefinition {
   css_external?: string;
   js_external?: string;
   tags: string[];
+}
+
+function matchAllUrls(string: string, regex: RegExp): string[] {
+  let match;
+  let results = [];
+  while ((match = regex.exec(string)) !== null) {
+    if (match.index === regex.lastIndex) {
+      regex.lastIndex++;
+    }
+
+    results.push(match!.groups!.url);
+  }
+  return results;
 }
 
 function resolveLibraries(libraries: string[]) {
@@ -186,6 +186,8 @@ async function exportGist(gist: Gist) {
 
   // Grab the updated raw URL, which will include
   // the latest commit ID after adding the marker file.
+  // This is neccessary for "busting" the cache, when the
+  // CodePen export page tries to download the marker file.
   const definitionUrl = encodeURIComponent(
     updatedGist.files[MARKER_FILE].raw_url!
   );
@@ -194,6 +196,8 @@ async function exportGist(gist: Gist) {
     vscode.Uri.parse(`${CODEPEN_URI}?pen=${definitionUrl}`)
   );
 
+  // Return a function that when called,
+  // will delete the temporary marker file.
   return () => {
     updateGist(gist.id, MARKER_FILE, null);
   };

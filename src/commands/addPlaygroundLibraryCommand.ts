@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { IPlaygroundJSON } from "../commands/playground";
+import { PlaygroundManifest } from "../commands/playground";
 import { PLAYGROUND_JSON_FILE, URI_PATTERN } from "../constants";
 import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
 import {
@@ -76,9 +76,9 @@ const filterOutCommonJsFiles = (versions: string[]) => {
   return result;
 };
 
-export const getPlaygroundJson = (text: string): IPlaygroundJSON => {
+export const getPlaygroundJson = (text: string): PlaygroundManifest => {
   try {
-    const json = JSON.parse(text) as IPlaygroundJSON;
+    const json = JSON.parse(text) as PlaygroundManifest;
 
     return {
       ...DEFAULT_MANIFEST,

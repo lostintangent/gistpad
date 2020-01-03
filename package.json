@@ -302,7 +302,7 @@
       },
       {
         "command": "gistpad.openGist",
-        "title": "Open Gist Files",
+        "title": "Open Gist",
         "category": "GistPad"
       },
       {
@@ -454,12 +454,19 @@
         "category": "GistPad"
       }
     ],
-    "keybindings": {
-      "key": "ctrl+shift+v",
-      "mac": "cmd+shift+v",
-      "command": "gistpad.pasteImage",
-      "when": "resourceScheme == gist && resourceLangId == markdown"
-    },
+    "keybindings": [
+      {
+        "key": "ctrl+shift+v",
+        "mac": "cmd+shift+v",
+        "command": "gistpad.pasteImage",
+        "when": "resourceScheme == gist && resourceLangId == markdown"
+      },
+      {
+        "key": "ctrl+shift+o",
+        "mac": "cmd+shift+o",
+        "command": "gistpad.openGist"
+      }
+    ],
     "menus": {
       "commandPalette": [
         {
@@ -696,14 +703,19 @@
           "group": "newAdvanced@2"
         },
         {
+          "command": "gistpad.openGist",
+          "when": "viewItem == gists",
+          "group": "open@1"
+        },
+        {
           "command": "gistpad.openProfile",
           "when": "viewItem == gists || viewItem == followedUserGists",
-          "group": "open@1"
+          "group": "open@2"
         },
         {
           "command": "gistpad.openGistLogFeed",
           "when": "viewItem == gists",
-          "group": "open@2"
+          "group": "open@3"
         },
         {
           "command": "gistpad.openGist",

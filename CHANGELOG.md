@@ -1,6 +1,9 @@
 ## v0.0.43 (01/03/2020)
 
 - Added support for Sass, in addition to the existing support for SCSS. This was primarily added for improved interop with CodePen (e.g. [3D Texbox](https://codepen.io/jouanmarcel/pen/Powbrgq).
+- Gists can no be opened using the `username/id` format, in addition to full URL or ID
+- Added the `ctrl+shift+o` (Windows/Linux) and `cmd+shift+o` (macOS) keyboard shortcut for opening gists
+- Added the `Open Gist` command to the `Your Gists` node in the `Gists` view
 
 ## v0.0.42 (01/02/2020)
 

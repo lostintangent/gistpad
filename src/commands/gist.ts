@@ -23,7 +23,12 @@ import {
   unstarGist
 } from "../store/actions";
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
-import { FollowedUserGistNode, GistNode, StarredGistNode } from "../tree/nodes";
+import {
+  FollowedUserGistNode,
+  GistNode,
+  GistsNode,
+  StarredGistNode
+} from "../tree/nodes";
 import {
   closeGistFiles,
   getFileContents,
@@ -34,7 +39,11 @@ import {
   openGist,
   openGistFiles
 } from "../utils";
-const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
+
+const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/i;
+const GIST_NAME_PATTERN = /(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>.+)/i;
+
+const GIST_PATTERNS = [GIST_URL_PATTERN, GIST_NAME_PATTERN];
 
 export interface GistQuickPickItem extends QuickPickItem {
   id?: string;
@@ -132,8 +141,9 @@ async function openGistInternal(
   }
 
   const list = window.createQuickPick();
-  list.placeholder = "Select or specify the Gist you'd like to open";
+  list.placeholder = "Select the gist to open, or specify a gist URL or ID";
   list.items = gistItems;
+  list.ignoreFocusOut = true;
 
   list.onDidChangeValue((gistId) => {
     list.items = gistId
@@ -142,7 +152,7 @@ async function openGistInternal(
   });
 
   const clipboardValue = await env.clipboard.readText();
-  if (GIST_URL_PATTERN.test(clipboardValue)) {
+  if (GIST_PATTERNS.some((pattern) => pattern.test(clipboardValue))) {
     list.value = clipboardValue;
     list.items = [{ label: clipboardValue, id: clipboardValue }, ...gistItems];
   }
@@ -152,10 +162,15 @@ async function openGistInternal(
 
     list.hide();
 
+    // The "id" property is only set on list items
+    // that are added in response to user input, as
+    // opposed to being part of the list of owned gists.
     if (gist.id) {
       let gistId = gist.id;
       if (GIST_URL_PATTERN.test(gist.id)) {
         gistId = (<any>GIST_URL_PATTERN.exec(gist.id)!).groups.id;
+      } else if (GIST_NAME_PATTERN.test(gist.id)) {
+        gistId = (<any>GIST_NAME_PATTERN).exec(gist.id!).groups.id;
       }
 
       openGist(gistId, !!openAsWorkspace);
@@ -353,9 +368,17 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.openGist`, (node?: GistNode) => {
-      openGistInternal({ node });
-    })
+    commands.registerCommand(
+      `${EXTENSION_ID}.openGist`,
+      (node?: GistNode | GistsNode) => {
+        // We expose the "Open Gist" command on the "Your Gists" node
+        // for productivity purposes, but that node doesn't contain
+        // a gist, and so if the user is coming in from there, then
+        // don't pass on the tree node object to the open gist method.
+        const gistNode = node instanceof GistNode ? node : undefined;
+        openGistInternal({ node: gistNode });
+      }
+    )
   );
 
   context.subscriptions.push(

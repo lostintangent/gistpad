@@ -172,7 +172,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Follow User` - Follow another GitHub user, whuich allows you to browser/access/fork their Gists from within the `Gists` view.
 
-- `GistPad: Open Gist Files` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a Gist ID directly, which doesn't require being signed in.
+- `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a gist by URL, `username/id`, or ID, which doesn't require being signed in.
 
 - `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, istead of "loose files".
 
@@ -259,10 +259,8 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 ## Keyboard Shortcuts
 
-- `Paste Screenshot` command:
-
-  - Windows/Linux: `ctrl + shift + v`
-  - Mac OSx: `cmd + shift + v`
+- **Open Gist**: `ctrl+shift+o` _(Windows/Linux)_, `cmd+shift+v` _(macOS)_
+- **Paste Image**: `ctrl+shift+v` _(Windows/Linux)_, `cmd+shift+v` _(macOS)_
 
 ## Supported Filesystem Operations
 

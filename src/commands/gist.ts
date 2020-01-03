@@ -1,39 +1,14 @@
 import { URL } from "url";
-import {
-  commands,
-  env,
-  ExtensionContext,
-  ProgressLocation,
-  QuickPickItem,
-  Uri,
-  window
-} from "vscode";
+import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, Uri, window } from "vscode";
 import { CommandId, EXTENSION_ID } from "../constants";
+import { markGistUpdateAsSeen } from "../gistUpdates";
 import { log } from "../logger";
 import { GistFile, SortOrder, store } from "../store";
-import {
-  changeDescription,
-  deleteGist,
-  forkGist,
-  listGists,
-  newGist,
-  refreshGists,
-  starGist,
-  starredGists,
-  unstarGist
-} from "../store/actions";
+import { changeDescription, deleteGist, forkGist, listGists, newGist, refreshGists, starGist, starredGists, unstarGist } from "../store/actions";
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
+import { refreshTree } from "../tree";
 import { FollowedUserGistNode, GistNode, StarredGistNode } from "../tree/nodes";
-import {
-  closeGistFiles,
-  getFileContents,
-  getGistDescription,
-  getGistLabel,
-  getGistWorkspaceId,
-  isGistWorkspace,
-  openGist,
-  openGistFiles
-} from "../utils";
+import { closeGistFiles, getFileContents, getGistDescription, getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistFiles } from "../utils";
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -242,7 +217,7 @@ export async function registerGistCommands(context: ExtensionContext) {
         // in it, and the API doesn't support that URL format
         const url = `https://gist.github.com/${node.gist.owner!.login}/${
           node.gist.id
-        }`;
+          }`;
         env.clipboard.writeText(url);
       }
     )
@@ -340,6 +315,22 @@ export async function registerGistCommands(context: ExtensionContext) {
           { location: ProgressLocation.Notification, title: "Forking Gist..." },
           () => forkGist(gistId!)
         );
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_ID}.markGistAsRead`,
+      async (node?: StarredGistNode | FollowedUserGistNode) => {
+        if (!node) {
+          log.error(`"markGistAsRead" invoked but no node passed.`);
+          return;
+        }
+
+        markGistUpdateAsSeen(node.section, node.gist);
+
+        refreshTree();
       }
     )
   );

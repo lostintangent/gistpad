@@ -1,25 +1,12 @@
 import * as fs from "fs";
 import * as path from "path";
 import { URL } from "url";
-import {
-  commands,
-  env,
-  ExtensionContext,
-  ProgressLocation,
-  Uri,
-  window,
-  workspace
-} from "vscode";
+import { commands, env, ExtensionContext, ProgressLocation, Uri, window, workspace } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { addGistFiles } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
-import {
-  byteArrayToString,
-  fileNameToUri,
-  getGistDetailsFromUri,
-  openGistFile
-} from "../utils";
+import { byteArrayToString, fileNameToUri, getGistDetailsFromUri, openGistFile } from "../utils";
 
 export function registerFileCommands(context: ExtensionContext) {
   context.subscriptions.push(
@@ -87,7 +74,7 @@ export function registerFileCommands(context: ExtensionContext) {
       `${EXTENSION_ID}.copyFileContents`,
       async (node: GistFileNode) => {
         const contents = await workspace.fs.readFile(
-          fileNameToUri(node.gistId, node.file.filename!)
+          fileNameToUri(node.gist.id, node.file.filename!)
         );
         await env.clipboard.writeText(byteArrayToString(contents));
       }
@@ -118,7 +105,7 @@ export function registerFileCommands(context: ExtensionContext) {
             const fileNodes = multiSelectNodes || [targetNode];
             for (const fileNode of fileNodes) {
               await workspace.fs.delete(
-                fileNameToUri(fileNode.gistId, fileNode.file.filename!)
+                fileNameToUri(fileNode.gist.id, fileNode.file.filename!)
               );
             }
           }
@@ -144,7 +131,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
         let gistId, fileName;
         if (nodeOrUri instanceof GistFileNode) {
-          gistId = nodeOrUri.gistId;
+          gistId = nodeOrUri.gist.id;
           fileName = nodeOrUri.file.filename!;
         } else {
           const details = getGistDetailsFromUri(nodeOrUri);

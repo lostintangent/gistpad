@@ -1,15 +1,10 @@
 import * as moment from "moment";
 import * as path from "path";
+import { IGistDiff } from "src/gistUpdates";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import { EXTENSION_ID } from "../constants";
 import { Gist, GistFile, IFollowedUser } from "../store";
-import {
-  fileNameToUri,
-  getGistDescription,
-  getGistLabel,
-  isNotebookGist,
-  isPlaygroundGist
-} from "../utils";
+import { fileNameToUri, getGistDescription, getGistLabel, isNotebookGist, isPlaygroundGist } from "../utils";
 
 export abstract class TreeNode extends TreeItem {
   constructor(
@@ -91,14 +86,14 @@ Type: ${gist.public ? "Public" : "Secret"}`;
 
 export class GistFileNode extends TreeNode {
   constructor(
-    public gistId: string,
+    public gist: Gist,
     public file: GistFile,
     private isReadOnly = true
   ) {
     super(file.filename!);
 
     this.iconPath = ThemeIcon.File;
-    this.resourceUri = fileNameToUri(gistId, file.filename!);
+    this.resourceUri = fileNameToUri(gist.id, file.filename!);
     this.contextValue = "gists.gist.file";
 
     this.command = {
@@ -129,7 +124,7 @@ export class NoStarredGistsNode extends TreeNode {
 }
 
 export class StarredGistNode extends TreeNode {
-  constructor(public gist: Gist) {
+  constructor(public gist: Gist, public section: string) {
     super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
 
     this.description = getGistDescription(gist);
@@ -151,8 +146,12 @@ Owner: ${owner}`;
 }
 
 export class FollowedUserGistsNode extends TreeNode {
-  constructor(public user: IFollowedUser, extensionPath: string) {
-    super(`${user.username}'s Gists`, TreeItemCollapsibleState.Collapsed);
+  constructor(
+    public user: IFollowedUser,
+    extensionPath: string,
+    updatesCount: number
+  ) {
+    super(`${user.username}'s Gists${updatesCount ? ` (${updatesCount})` : ''}`, TreeItemCollapsibleState.Collapsed);
 
     if (user.avatarUrl) {
       this.iconPath = Uri.parse(user.avatarUrl);
@@ -173,17 +172,50 @@ export class NoUserGistsNode extends TreeNode {
   }
 }
 
+const getGistUpdateIcon = (gistDiff: IGistDiff, extensionPath: string) => {
+  switch (gistDiff.changeType) {
+    case 'add': {
+      return path.join(extensionPath, "images/added-icon.svg");
+      break;
+    }
+
+    case 'modify': {
+      return path.join(extensionPath, "images/modified-icon.svg");
+      break;
+    }
+
+    case 'remove': {
+      return path.join(extensionPath, "images/deleted-icon.svg");
+      break;
+    }
+  }
+}
+
 export class FollowedUserGistNode extends TreeNode {
-  constructor(public gist: Gist) {
+  constructor(
+    public gist: Gist,
+    public section: string,
+    extensionPath: string,
+    gistDiff: IGistDiff | undefined
+  ) {
     super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
 
     this.description = getGistDescription(gist);
 
-    this.tooltip = `Description: ${this.label}
-Updated: ${moment(gist.updated_at).calendar()}
-Created: ${moment(gist.created_at).calendar()}`;
+    const tooltipItems = [
+      `Description: ${this.label}`,
+      `Updated: ${moment(gist.updated_at).calendar()}`,
+      `Created: ${moment(gist.created_at).calendar()}`
+    ];
+
+    this.tooltip = tooltipItems.join('\n');
 
     this.contextValue = "followedUser.gist";
+
+    if (gistDiff) {
+      this.iconPath = getGistUpdateIcon(gistDiff, extensionPath);
+      this.contextValue += "WithUpdates"
+    }
 
     if (isNotebookGist(gist)) {
       this.contextValue += ".notebook";

@@ -7,13 +7,7 @@ import * as config from "../config";
 import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
-import {
-  byteArrayToString,
-  closeGistFiles,
-  fileNameToUri,
-  openGistAsWorkspace,
-  stringToByteArray
-} from "../utils";
+import { byteArrayToString, closeGistFiles, fileNameToUri, openGistAsWorkspace, stringToByteArray } from "../utils";
 import { PlaygroundWebview } from "../webView";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";

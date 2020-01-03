@@ -1,14 +1,7 @@
 import axios from "axios";
 import * as moment from "moment";
 import * as path from "path";
-import {
-  commands,
-  TextDocument,
-  Uri,
-  ViewColumn,
-  window,
-  workspace
-} from "vscode";
+import { commands, TextDocument, Uri, ViewColumn, window, workspace } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
 import { FS_SCHEME, PLAYGROUND_JSON_FILE } from "./constants";
 import { Gist, GistFile, SortOrder, store } from "./store";
@@ -67,9 +60,11 @@ export function getGistDetailsFromUri(uri: Uri) {
 }
 
 export function getGistDescription(gist: Gist): string {
-  return `${moment(gist.updated_at).calendar()}${
+  const result = `${moment(gist.updated_at).calendar()}${
     gist.public ? "" : " (Secret)"
-  }`;
+    }`;
+
+  return result;
 }
 
 export function getGistLabel(gist: Gist): string {
@@ -163,7 +158,7 @@ export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
     }
   }
 
-  commands.executeCommand(commandName, uri);
+  await commands.executeCommand(commandName, uri);
 }
 
 export function openGistAsWorkspace(id: string) {

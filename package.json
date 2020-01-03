@@ -260,6 +260,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.markGistAsRead",
+        "title": "Mark as Read",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.newPublicGist",
         "title": "New Gist",
         "category": "GistPad",
@@ -703,7 +708,7 @@
         },
         {
           "command": "gistpad.openGist",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).(gist|gistWithUpdates)(.(notebook|playground))?$/",
           "group": "base@1"
         },
         {
@@ -713,12 +718,12 @@
         },
         {
           "command": "gistpad.copyGistUrl",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).(gist|gistWithUpdates)(.(notebook|playground))?$/",
           "group": "browse@2"
         },
         {
           "command": "gistpad.openGistInBrowser",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).(gist|gistWithUpdates)(.(notebook|playground))?$/",
           "group": "browse@2"
         },
         {
@@ -728,12 +733,12 @@
         },
         {
           "command": "gistpad.openGistInGistLog",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).(gist|gistWithUpdates)$/",
           "group": "browse@3"
         },
         {
           "command": "gistpad.openGistInNbViewer",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.notebook$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).(gist|gistWithUpdates).notebook$/",
           "group": "browse@3"
         },
         {
@@ -743,12 +748,17 @@
         },
         {
           "command": "gistpad.forkGist",
-          "when": "viewItem =~ /^(starredGists|followedUser).gist/",
+          "when": "viewItem =~ /^(starredGists|followedUser).(gist|gistWithUpdates)/",
+          "group": "copy@1"
+        },
+        {
+          "command": "gistpad.markGistAsRead",
+          "when": "viewItem =~ /^(starredGists|followedUser).gistWithUpdates/",
           "group": "copy@1"
         },
         {
           "command": "gistpad.cloneRepository",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).(gist|gistWithUpdates)(.(notebook|playground))?$/",
           "group": "copy@2"
         },
         {

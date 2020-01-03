@@ -3,7 +3,7 @@ import { EXTENSION_ID } from "../constants";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import { GistNode, GistsNode } from "../tree/nodes";
-import { fileNameToUri, openGistFile } from "../utils";
+import { fileNameToUri } from "../utils";
 
 const GISTLOG_URL = "https://gistlog.co";
 const GISTLOG_BLOG_FILE = "blog.md";
@@ -30,7 +30,8 @@ const newGistLog = async (description: string) => {
 
   const gist = await newGist(files, true, description, false);
   const blogFileUri = fileNameToUri(gist.id, GISTLOG_BLOG_FILE);
-  openGistFile(blogFileUri, false);
+  // openGistFile(blogFileUri, false);
+  console.log(blogFileUri);
 };
 
 export async function registerGistLogCommands(

@@ -1,32 +1,10 @@
 import { reaction } from "mobx";
-import {
-  Disposable,
-  Event,
-  EventEmitter,
-  ProviderResult,
-  TreeDataProvider,
-  TreeItem,
-  window
-} from "vscode";
+import { Disposable, Event, EventEmitter, ProviderResult, TreeDataProvider, TreeItem, window } from "vscode";
 import { EXTENSION_ID } from "../constants";
+import { gistsSectionOpen } from "../gistUpdates";
 import { IStore } from "../store";
 import { sortGists } from "../utils";
-import {
-  CreateNewGistNode,
-  FollowedUserGistNode,
-  FollowedUserGistsNode,
-  GistFileNode,
-  GistNode,
-  GistsNode,
-  LoadingNode,
-  NoStarredGistsNode,
-  NoUserGistsNode,
-  OpenGistNode,
-  SignInNode,
-  StarredGistNode,
-  StarredGistsNode,
-  TreeNode
-} from "./nodes";
+import { CreateNewGistNode, FollowedUserGistNode, FollowedUserGistsNode, GistFileNode, GistNode, GistsNode, LoadingNode, NoStarredGistsNode, NoUserGistsNode, OpenGistNode, SignInNode, StarredGistNode, StarredGistsNode, TreeNode } from "./nodes";
 
 class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
@@ -51,6 +29,10 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     );
   }
 
+  public refresh = () => {
+    this._onDidChangeTreeData.fire();
+  }
+
   getTreeItem(node: TreeNode): TreeItem {
     return node;
   }
@@ -68,12 +50,15 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
           ];
 
           if (this.store.starredGists.length > 0) {
-            nodes.push(new StarredGistsNode(this.extensionPath));
+            const starredGistsNode = new StarredGistsNode(this.extensionPath);
+            nodes.push(starredGistsNode);
           }
 
           if (this.store.followedUsers.length > 0) {
             this.store.followedUsers.forEach((user) => {
-              nodes.push(new FollowedUserGistsNode(user, this.extensionPath));
+              const gistsDiff = gistsSectionOpen(`gistpad.followed.user.${user.username}`, user.gists);
+
+              nodes.push(new FollowedUserGistsNode(user, this.extensionPath, gistsDiff.length));
             });
           }
 
@@ -87,34 +72,47 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         return sortGists(this.store.gists).map((gist) => new GistNode(gist));
       }
     } else if (element instanceof StarredGistsNode) {
+      const section = `gistpad.starred.section`;
+      console.log(element);
+
       if (this.store.starredGists.length === 0) {
         return [new NoStarredGistsNode()];
       } else {
         return sortGists(this.store.starredGists).map(
-          (gist) => new StarredGistNode(gist)
+          (gist) => new StarredGistNode(gist, section)
         );
       }
     } else if (element instanceof GistNode) {
       return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file, false)
+        ([_, file]) => new GistFileNode(element.gist, file, false)
       );
     } else if (element instanceof StarredGistNode) {
       return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file)
+        ([_, file]) => new GistFileNode(element.gist, file)
       );
     } else if (element instanceof FollowedUserGistsNode) {
+      const section = `gistpad.followed.user.${element.user.username}`;
+
       if (element.user.isLoading) {
         return [new LoadingNode()];
       } else if (element.user.gists.length === 0) {
         return [new NoUserGistsNode()];
       } else {
+        const gistsDiff = gistsSectionOpen(section, element.user.gists);
+
         return sortGists(element.user.gists).map(
-          (gist) => new FollowedUserGistNode(gist)
+          (gist) => {
+            const gistDiff = gistsDiff.find((gistDiffItem) => {
+              return (gistDiffItem.gistId === gist.id);
+            });
+
+            return new FollowedUserGistNode(gist, section, this.extensionPath, gistDiff);
+          }
         );
       }
     } else if (element instanceof FollowedUserGistNode) {
       return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file)
+        ([_, file]) => new GistFileNode(element.gist, file)
       );
     }
   }
@@ -124,6 +122,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
+export let refreshTree: Function;
+
 export function registerTreeProvider(store: IStore, extensionPath: string) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);
   window.createTreeView(`${EXTENSION_ID}.gists`, {
@@ -132,9 +132,27 @@ export function registerTreeProvider(store: IStore, extensionPath: string) {
     canSelectMany: true
   });
 
+  // setInterval(async () => {
+  //   const tree = await treeDataProvider.getChildren();
+
+  //   console.clear();
+
+  //   if (!tree) {
+  //     console.log(`-=-=-=-=->>> no tree`);
+  //     return;
+  //   }
+
+  //   for (let leaf of tree) {
+  //     const treeItem = treeDataProvider.getTreeItem(leaf);
+  //     console.log(treeItem.label, treeItem.collapsibleState);
+  //   }
+  // }, 2000);
+
   window.createTreeView(`${EXTENSION_ID}.gists.explorer`, {
     showCollapseAll: true,
     treeDataProvider,
     canSelectMany: true
   });
+
+  refreshTree = treeDataProvider.refresh;
 }

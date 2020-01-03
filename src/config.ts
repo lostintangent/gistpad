@@ -27,7 +27,7 @@ export async function get(
 ): Promise<"javascript" | "javascriptreact" | "typescript" | "typescriptreact">;
 export async function get(
   key: "playground.stylesheetLanguage"
-): Promise<"css" | "less" | "scss">;
+): Promise<"css" | "less" | "sass" | "scss">;
 export async function get(key: "playground.showConsole"): Promise<boolean>;
 export async function get(key: "showCommentThread"): Promise<string>;
 export async function get(key: any) {

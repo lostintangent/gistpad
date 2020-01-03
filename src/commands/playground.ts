@@ -52,12 +52,14 @@ const MARKUP_EXTENSIONS = [MarkupLanguage.html, MarkupLanguage.pug];
 const StylesheetLanguage = {
   css: ".css",
   less: ".less",
+  sass: ".sass",
   scss: ".scss"
 };
 
 const STYLESHEET_EXTENSIONS = [
   StylesheetLanguage.css,
   StylesheetLanguage.less,
+  StylesheetLanguage.sass,
   StylesheetLanguage.scss
 ];
 
@@ -243,11 +245,19 @@ async function getStylesheetContent(
   }
 
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  if (extension === StylesheetLanguage.scss) {
+  if (
+    extension === StylesheetLanguage.scss ||
+    extension === StylesheetLanguage.sass
+  ) {
     const sass = require("sass");
 
     try {
-      return byteArrayToString(sass.renderSync({ data: content }).css);
+      return byteArrayToString(
+        sass.renderSync({
+          data: content,
+          indentedSyntax: extension === StylesheetLanguage.sass
+        }).css
+      );
     } catch (e) {
       // Something failed when trying to transpile SCSS,
       // so don't attempt to return anything

@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.42",
+  "version": "0.0.43",
   "extensionKind": [
     "ui",
     "web",
@@ -138,6 +138,7 @@
           "enum": [
             "css",
             "less",
+            "sass",
             "scss"
           ],
           "description": "Specifies the default stylesheet language to use when creating new web playgrounds."

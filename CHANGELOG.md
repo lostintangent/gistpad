@@ -1,8 +1,12 @@
+## v0.0.42 (01/03/2020)
+
+- Added support for Sass, in addition to the existing support for SCSS
+
 ## v0.0.42 (01/02/2020)
 
 - Added support for fully roundtripping external scripts/stylesheets from CodePen, and fixed a caching issue when exporting the same playground multiple times in a short timespan
 - Fixed a bug with viewing starred gists, when you had a starred gist from an anonymous user
-  
+
 ## v0.0.41 (01/01/2020)
 
 - Added the `Upload File(s)...` command to gist nodes in the `Gists` view, which allows easily uploading one or more local files to a gist

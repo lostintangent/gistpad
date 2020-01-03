@@ -103,7 +103,20 @@ async function exportGist(gist: Gist) {
     data.css = byteArrayToString(
       await vscode.workspace.fs.readFile(fileNameToUri(gist.id, stylesheetFile))
     );
-    data.css_pre_processor = stylesheetFile.endsWith("scss") ? "scss" : "none";
+    switch (path.extname(stylesheetFile)) {
+      case ".scss":
+        data.css_pre_processor = "scss";
+        break;
+      case ".sass":
+        data.css_pre_processor = "sass";
+        break;
+      case ".less":
+        data.css_pre_processor = "less";
+        break;
+      default:
+        data.css_pre_processor = "none";
+        break;
+    }
   }
 
   let scripts: string[] = [];

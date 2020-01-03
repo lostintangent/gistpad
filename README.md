@@ -33,7 +33,7 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
 1. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Web Playground` (or run the `GistPad: New Web Playground` command). This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
-  
+
 ## Gist Commenting
 
 Gist comments are exposed within the editor at the bottom of any opened Gist files. If a Gist includes multiple files, then the comment thread will be displayed at the bottom of them all (duplicated and synchronized).
@@ -44,7 +44,7 @@ If you're not authenticated, you can view existing comments, but you can't reply
 
 ## Pasting Images
 
-In order to make it easy to author markdown and HTML/Pug files that include image assets, you can copy images into your clipboard (e.g. taking a screenshot, clicking `Copy Image` in your browser, etc.) and then paste them directly into a gist file by right-clicking the editor and selecting `Paste Image`, or using one of the following keyboard shortcuts: `ctrl + shift + v` *(Windows/Linux)*,`cmd + shift + v` *(macOS)*.
+In order to make it easy to author markdown and HTML/Pug files that include image assets, you can copy images into your clipboard (e.g. taking a screenshot, clicking `Copy Image` in your browser, etc.) and then paste them directly into a gist file by right-clicking the editor and selecting `Paste Image`, or using one of the following keyboard shortcuts: `ctrl + shift + v` _(Windows/Linux)_,`cmd + shift + v` _(macOS)_.
 
 ![paste-image](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
 
@@ -58,7 +58,7 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 ## Interactive Playgrounds
 
-If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
+If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
 ![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
 
@@ -80,15 +80,15 @@ When you open a playground, this activates the "playground toolbar", which is a 
 
 You can reference HTTP-based images within any of your playground files, and they'll be downloaded/rendered automatically. However, if you need to add local images to your playground, you can upload them in one of two ways:
 
-1. Right-click the gist in the `Gists` view and select `Upload Files(s)`. This supports any file type, and therefore is the most general-purpose solution. Once the image is uploaded, you can then reference it from your playground using only its filename (e.g. `<img src="myImage.png" />`), since the playground preview understands the context of the "surrounding gist". 
- 
+1. Right-click the gist in the `Gists` view and select `Upload Files(s)`. This supports any file type, and therefore is the most general-purpose solution. Once the image is uploaded, you can then reference it from your playground using only its filename (e.g. `<img src="myImage.png" />`), since the playground preview understands the context of the "surrounding gist".
+
 2. Copy/paste an image into your clipboard, open up an HTML or Pug file, right-click the editor and select `Paste Image`. This will transparently upload the image to the gist, and then insert a reference to it for you (e.g. adding an `<img />` tag). This solution works best when you want to paste a "transient" image into your playground, such as a captured screenshot, or an image that you copied from a webpage.
-   
+
 ### Additional Language Support
 
 By default, new playgrounds create an HTML, CSS and JavaScript file. However, if you're more productive using a different markup, stylesheet or scripting language, then simply rename the respective files to use the right extension, and the code will be automatically compiled for you on the fly! Specifically, GistPad supports the following languages:
 
-- **SCSS** - Rename the `style.css` file to `style.scss`
+- **SCSS/Sass** - Rename the `style.css` file to `style.scss` or `style.sass`. \*Note: While VS Code ships with language support for SCSS out-of-the-box, it doesn't ship support for Sass (the "indentended" syntax). So if you plan to author playgrounds with that syntax, it's recommended that you install [this extension](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented) along with GistPad.
 - **Less** - Rename the `style.css` file to `style.less`
 - **Pug** - Rename the `index.html` file to `index.pug`
 - **TypeScript** - Rename the `script.js` file to `script.ts` (or `script.tsx`, in order to use JSX in your code)
@@ -150,15 +150,13 @@ In addition to the `Gists` view, GistPad also contributes an `Copy File to Gist`
 
 In addition to the `Explorer` file tree commands, GistPad also contributes the following commands to the editor's context menu:
 
-- `Copy File to Gist` - Same behavior as the equivalent command in the `Explorer` tree.
-
 - `Add Selection to Gist` - Allows you to add a snippet/selection of code to a Gist, instead of the entire document
 
 - `Paste Gist File` - Allows you to paste the contents of a Gist file into the active document
 
-    <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
+- `Paste Image` - Allows you to paste an image from your clipboard into a markdown, HTML or Pug file. The command will automatically upload the image and then add a reference to it.
 
-- `Paste Screenshot` - Allows you to paste an image from your clipboard into a markdown file. The command will automatically upload the image and then add a reference to it.
+<img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
 The `Copy File to Gist` command is also available on the editor tab's context menu.
 
@@ -173,8 +171,6 @@ In addition to the commands added to the editor context menu, GistPad also contr
 In addition to the `Gists` view, this extension also provides the following commands:
 
 - `GistPad: Follow User` - Follow another GitHub user, whuich allows you to browser/access/fork their Gists from within the `Gists` view.
-
-- `GistPad: Paste Screenshot` - Paste screenshot from the clipboard.
 
 - `GistPad: Open Gist Files` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a Gist ID directly, which doesn't require being signed in.
 
@@ -250,6 +246,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
   - `css` _(default)_: Will result in an `style.css` file being created whenever you create a new web playground.
   - `less`: Will result in an `style.less` file being created whenever you create a new web playground.
+  - `sass`: Will result in an `style.sass` file being created whenever you create a new web playground.
   - `scss`: Will result in an `style.scss` file being created whenever you create a new web playground.
 
 * `GistPad > Playground: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.

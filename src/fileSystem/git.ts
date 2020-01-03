@@ -22,9 +22,13 @@ async function ensureRepo(gistId: string): Promise<[string, git.SimpleGit]> {
   } else {
     const token = await getToken();
     const remote = `https://${store.login}:${token}@gist.github.com/${gistId}.git`;
+    await git(os.tmpdir())
+      .silent(true)
+      .clone(remote);
 
-    repo = git(os.tmpdir());
-    await repo.silent(true).clone(remote);
+    // Reset the git instance to point
+    // at the newly cloned folder.
+    repo = git(repoPath);
   }
 
   return [repoPath, repo];

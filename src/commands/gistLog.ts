@@ -1,5 +1,5 @@
 import * as vscode from "vscode";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
 import { GistNode, GistsNode } from "../tree/nodes";
@@ -37,28 +37,31 @@ export async function registerGistLogCommands(
   context: vscode.ExtensionContext
 ) {
   context.subscriptions.push(
-    vscode.commands.registerCommand(`${EXTENSION_ID}.newGistLog`, async () => {
-      const description = await vscode.window.showInputBox({
-        prompt: "Enter the description of the GistLog"
-      });
+    vscode.commands.registerCommand(
+      `${EXTENSION_NAME}.newGistLog`,
+      async () => {
+        const description = await vscode.window.showInputBox({
+          prompt: "Enter the description of the GistLog"
+        });
 
-      if (!description) {
-        return;
+        if (!description) {
+          return;
+        }
+
+        vscode.window.withProgress(
+          {
+            location: vscode.ProgressLocation.Notification,
+            title: "Creating GistLog..."
+          },
+          () => newGistLog(description)
+        );
       }
-
-      vscode.window.withProgress(
-        {
-          location: vscode.ProgressLocation.Notification,
-          title: "Creating GistLog..."
-        },
-        () => newGistLog(description)
-      );
-    })
+    )
   );
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.openGistInGistLog`,
+      `${EXTENSION_NAME}.openGistInGistLog`,
       async (node: GistNode) => {
         const uri = createGistLogUri(node.gist);
         vscode.env.openExternal(uri);
@@ -68,7 +71,7 @@ export async function registerGistLogCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.openGistLogFeed`,
+      `${EXTENSION_NAME}.openGistLogFeed`,
       async (node: GistsNode) => {
         const uri = createGistLogFeedUri(node.login);
         vscode.env.openExternal(uri);

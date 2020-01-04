@@ -4,7 +4,7 @@ import * as keytarType from "keytar";
 import { commands, window } from "vscode";
 import { store } from ".";
 import * as config from "../config";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { log } from "../logger";
 import { refreshGists } from "./actions";
 const GitHub = require("github-base");
@@ -27,9 +27,9 @@ function getNativeKeytar(): Keytar {
 const keytar = getNativeKeytar();
 
 const ACCOUNT = "gist-token";
-const SERVICE = `vscode-${EXTENSION_ID}`;
+const SERVICE = `vscode-${EXTENSION_NAME}`;
 
-const STATE_CONTEXT_KEY = `${EXTENSION_ID}:state`;
+const STATE_CONTEXT_KEY = `${EXTENSION_NAME}:state`;
 const STATE_SIGNED_IN = "SignedIn";
 const STATE_SIGNED_OUT = "SignedOut";
 

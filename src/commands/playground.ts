@@ -4,7 +4,7 @@ import * as path from "path";
 import { GistsNode } from "src/tree/nodes";
 import * as vscode from "vscode";
 import * as config from "../config";
-import { EXTENSION_ID, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
+import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
 import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist } from "../store";
 import { newGist } from "../store/actions";
@@ -640,7 +640,7 @@ export async function registerPlaygroundCommands(
 ) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.newPlayground`,
+      `${EXTENSION_NAME}.newPlayground`,
       async (node?: GistsNode, openAsWorkspace: boolean = false) => {
         const description = await vscode.window.showInputBox({
           prompt: "Enter the description of the playground"
@@ -675,7 +675,7 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.newPlaygroundFromTemplate`,
+      `${EXTENSION_NAME}.newPlaygroundFromTemplate`,
       async (node?: GistsNode, openAsWorkspace: boolean = false) => {
         const { data } = await Axios.get(
           "https://gist.github.com/lostintangent/bfd095a7ca088f729c52ad3d5ccfb731/raw/templates.json"
@@ -693,7 +693,7 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.addPlaygroundLibrary`,
+      `${EXTENSION_NAME}.addPlaygroundLibrary`,
       async () => {
         const response = await vscode.window.showQuickPick(
           [
@@ -724,7 +724,7 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.openPlaygroundConsole`,
+      `${EXTENSION_NAME}.openPlaygroundConsole`,
       () => {
         if (activePlayground) {
           activePlayground.console.show();
@@ -735,7 +735,7 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.openPlaygroundDeveloperTools`,
+      `${EXTENSION_NAME}.openPlaygroundDeveloperTools`,
       () => {
         vscode.commands.executeCommand(
           "workbench.action.webview.openDeveloperTools"
@@ -746,7 +746,7 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.runPlayground`,
+      `${EXTENSION_NAME}.runPlayground`,
       async () => {
         if (activePlayground) {
           await activePlayground.webView.rebuildWebview();
@@ -757,7 +757,7 @@ export async function registerPlaygroundCommands(
 
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.changePlaygroundLayout`,
+      `${EXTENSION_NAME}.changePlaygroundLayout`,
       async () => {
         const { capital } = require("case");
         const items = Object.keys(PlaygroundLayout).map((layout) => {

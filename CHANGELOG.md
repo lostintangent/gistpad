@@ -5,6 +5,7 @@
 - Added keyboard shortcuts for opening a gist and creating new public gists
 - Added the `Open Gist` command to the `Your Gists` node in the `Gists` view
 - Added the `GistPad: Refresh Gists` command to the command palette (in addition to the title bar of the `Gists` view)
+- Added the `Copy GistPad URL` command to gists in the `Gists` view
 
 ## v0.0.42 (01/02/2020)
 

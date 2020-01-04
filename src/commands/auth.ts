@@ -1,19 +1,19 @@
 import { commands, env, ExtensionContext, Uri } from "vscode";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { signIn, signout } from "../store/auth";
 import { FollowedUserGistsNode, GistsNode } from "../tree/nodes";
 
 export async function registerAuthCommands(context: ExtensionContext) {
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.signIn`, signIn)
+    commands.registerCommand(`${EXTENSION_NAME}.signIn`, signIn)
   );
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.signOut`, signout)
+    commands.registerCommand(`${EXTENSION_NAME}.signOut`, signout)
   );
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.openProfile`,
+      `${EXTENSION_NAME}.openProfile`,
       async (node: GistsNode | FollowedUserGistsNode) => {
         const login =
           node instanceof GistsNode ? node.login : node.user.username;

@@ -12,7 +12,7 @@ import {
   workspace
 } from "vscode";
 import * as config from "../config";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { GistComment } from "../store";
 import { getGistComments } from "../store/actions";
 import { getCurrentUser } from "../store/auth";
@@ -49,7 +49,7 @@ function commentRange(document: TextDocument) {
 
 const documentComments = new Map<string, CommentThread>();
 export async function registerCommentController() {
-  const controller = comments.createCommentController(EXTENSION_ID, "Gist");
+  const controller = comments.createCommentController(EXTENSION_NAME, "Gist");
   controller.commentingRangeProvider = {
     provideCommentingRanges: (document) => {
       if (isGistDocument(document)) {

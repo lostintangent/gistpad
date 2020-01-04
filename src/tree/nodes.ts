@@ -1,7 +1,7 @@
 import * as moment from "moment";
 import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { FollowedUser, Gist, GistFile } from "../store";
 import {
   fileNameToUri,
@@ -25,7 +25,7 @@ export class OpenGistNode extends TreeNode {
     super("Open Gist...");
 
     this.command = {
-      command: `${EXTENSION_ID}.openGist`,
+      command: `${EXTENSION_NAME}.openGist`,
       title: "Open Gist.."
     };
   }
@@ -36,7 +36,7 @@ export class SignInNode extends TreeNode {
     super("Sign in to view your Gists...");
 
     this.command = {
-      command: `${EXTENSION_ID}.signIn`,
+      command: `${EXTENSION_NAME}.signIn`,
       title: "Sign in to view your Gists..."
     };
   }
@@ -62,7 +62,7 @@ export class CreateNewGistNode extends TreeNode {
     super("Create new Gist...");
 
     this.command = {
-      command: `${EXTENSION_ID}.newPublicGist`,
+      command: `${EXTENSION_NAME}.newPublicGist`,
       title: "Create new Gist..."
     };
   }

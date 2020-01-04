@@ -10,7 +10,7 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_ID, UNTITLED_SCHEME } from "../constants";
+import { EXTENSION_NAME, UNTITLED_SCHEME } from "../constants";
 import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode } from "../tree/nodes";
@@ -78,7 +78,7 @@ async function promptForGistSelection(filename: string, contents: string) {
   gistItems.push(...CREATE_GIST_ITEMS);
 
   const list = window.createQuickPick();
-  list.placeholder = "Specify the Gist you'd like to add this file to";
+  list.placeholder = "Specify the gist you'd like to add this file to";
   list.items = gistItems;
 
   list.onDidAccept(async () => {
@@ -88,7 +88,7 @@ async function promptForGistSelection(filename: string, contents: string) {
 
     if (gist.id) {
       window.withProgress(
-        { location: ProgressLocation.Notification, title: "Adding files..." },
+        { location: ProgressLocation.Notification, title: "Adding file..." },
         () => {
           return workspace.fs.writeFile(
             fileNameToUri(gist.id!, filename!),
@@ -108,7 +108,7 @@ async function promptForGistSelection(filename: string, contents: string) {
 export function registerEditorCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.addFileToGist`,
+      `${EXTENSION_NAME}.addFileToGist`,
       async (nodeOrUri: GistFileNode | Uri) => {
         await ensureAuthenticated();
 
@@ -146,7 +146,7 @@ export function registerEditorCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.addSelectionToGist`,
+      `${EXTENSION_NAME}.addSelectionToGist`,
       async (fileUri: Uri) => {
         await ensureAuthenticated();
 
@@ -166,7 +166,7 @@ export function registerEditorCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerTextEditorCommand(
-      `${EXTENSION_ID}.pasteGistFile`,
+      `${EXTENSION_NAME}.pasteGistFile`,
       async (editor: TextEditor) => {
         await ensureAuthenticated();
 
@@ -209,7 +209,7 @@ export function registerEditorCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerTextEditorCommand(
-      `${EXTENSION_ID}.pasteImage`,
+      `${EXTENSION_NAME}.pasteImage`,
       pasteImageCommand
     )
   );

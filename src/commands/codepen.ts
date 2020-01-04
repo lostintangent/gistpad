@@ -1,7 +1,11 @@
 import * as path from "path";
 import { Gist } from "src/store";
 import * as vscode from "vscode";
-import { EXTENSION_ID, PLAYGROUND_JSON_FILE, URI_PATTERN } from "../constants";
+import {
+  EXTENSION_NAME,
+  PLAYGROUND_JSON_FILE,
+  URI_PATTERN
+} from "../constants";
 import { updateGist } from "../store/actions";
 import { GistNode } from "../tree/nodes";
 import { byteArrayToString, fileNameToUri } from "../utils";
@@ -206,7 +210,7 @@ async function exportGist(gist: Gist) {
 export function registerCodePenCommands(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.commands.registerCommand(
-      `${EXTENSION_ID}.exportGistToCodePen`,
+      `${EXTENSION_NAME}.exportGistToCodePen`,
       async (node: GistNode) => {
         const cleanup = await vscode.window.withProgress(
           {

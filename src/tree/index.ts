@@ -8,7 +8,7 @@ import {
   TreeItem,
   window
 } from "vscode";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { Store } from "../store";
 import { sortGists } from "../utils";
 import {
@@ -126,13 +126,13 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 
 export function registerTreeProvider(store: Store, extensionPath: string) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);
-  window.createTreeView(`${EXTENSION_ID}.gists`, {
+  window.createTreeView(`${EXTENSION_NAME}.gists`, {
     showCollapseAll: true,
     treeDataProvider,
     canSelectMany: true
   });
 
-  window.createTreeView(`${EXTENSION_ID}.gists.explorer`, {
+  window.createTreeView(`${EXTENSION_NAME}.gists.explorer`, {
     showCollapseAll: true,
     treeDataProvider,
     canSelectMany: true

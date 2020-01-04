@@ -1,11 +1,11 @@
 import { commands, env, ExtensionContext, window } from "vscode";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { followUser, unfollowUser } from "../store/actions";
 import { FollowedUserGistsNode } from "../tree/nodes";
 
 export async function registerFollowCommands(context: ExtensionContext) {
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.followUser`, async () => {
+    commands.registerCommand(`${EXTENSION_NAME}.followUser`, async () => {
       const value = await env.clipboard.readText();
       const username = await window.showInputBox({
         prompt: "Specify the name of the user you'd like to follow",
@@ -20,7 +20,7 @@ export async function registerFollowCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.unfollowUser`,
+      `${EXTENSION_NAME}.unfollowUser`,
       async (
         targetNode: FollowedUserGistsNode,
         multiSelectNodes?: FollowedUserGistsNode[]

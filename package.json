@@ -224,6 +224,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.copyGistPadUrl",
+        "title": "Copy GistPad URL",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.copyGistUrl",
         "title": "Copy GitHub URL",
         "category": "GistPad"
@@ -561,6 +566,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.copyGistPadUrl",
+          "when": "false"
+        },
+        {
           "command": "gistpad.copyGistUrl",
           "when": "false"
         },
@@ -729,27 +738,32 @@
         {
           "command": "gistpad.copyGistUrl",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "group": "browse@1"
+        },
+        {
+          "command": "gistpad.copyGistPadUrl",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
           "group": "browse@2"
         },
         {
           "command": "gistpad.openGistInBrowser",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
-          "group": "browse@2"
+          "group": "browse@3"
         },
         {
           "command": "gistpad.exportGistToCodePen",
           "when": "viewItem == gists.gist.playground",
-          "group": "browse@3"
+          "group": "browse@4"
         },
         {
           "command": "gistpad.openGistInGistLog",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist$/",
-          "group": "browse@3"
+          "group": "browse@4"
         },
         {
           "command": "gistpad.openGistInNbViewer",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.notebook$/",
-          "group": "browse@3"
+          "group": "browse@4"
         },
         {
           "command": "gistpad.duplicateGist",
@@ -984,6 +998,7 @@
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
     "pug": "^2.0.4",
+    "rxjs": "^6.5.4",
     "sass": "^1.24.0",
     "simple-git": "^1.126.0"
   },

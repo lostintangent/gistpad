@@ -1,4 +1,5 @@
-export const EXTENSION_ID = "gistpad";
+export const EXTENSION_NAME = "gistpad";
+export const EXTENSION_ID = `vsls-contrib.gistfs`;
 export const FS_SCHEME = "gist";
 export const PLAYGROUND_JSON_FILE = "playground.json";
 export const UNTITLED_SCHEME = "untitled";

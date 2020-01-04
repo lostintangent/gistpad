@@ -8,7 +8,7 @@ import {
   Uri,
   window
 } from "vscode";
-import { EXTENSION_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { log } from "../logger";
 import { GistFile, SortOrder, store } from "../store";
 import {
@@ -29,6 +29,7 @@ import {
   GistsNode,
   StarredGistNode
 } from "../tree/nodes";
+import { createGistPadOpenUrl } from "../uriHandler";
 import {
   closeGistFiles,
   getFileContents,
@@ -221,7 +222,7 @@ async function starredGistsInternal() {
 export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.changeGistDescription`,
+      `${EXTENSION_NAME}.changeGistDescription`,
       async (node?: GistNode) => {
         await ensureAuthenticated();
 
@@ -242,7 +243,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.cloneRepository`,
+      `${EXTENSION_NAME}.cloneRepository`,
       async (node: GistNode) => {
         commands.executeCommand("git.clone", node.gist.git_pull_url);
       }
@@ -251,7 +252,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.copyGistUrl`,
+      `${EXTENSION_NAME}.copyGistUrl`,
       async (node: GistNode) => {
         // Note: The "html_url" property doesn't include the Gist's owner
         // in it, and the API doesn't support that URL format
@@ -263,10 +264,20 @@ export async function registerGistCommands(context: ExtensionContext) {
     )
   );
 
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.copyGistPadUrl`,
+      async (node: GistNode) => {
+        const url = createGistPadOpenUrl(node.gist.id);
+        env.clipboard.writeText(url);
+      }
+    )
+  );
+
   const DELETE_RESPONSE = "Delete";
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.deleteGist`,
+      `${EXTENSION_NAME}.deleteGist`,
       async (targetNode?: GistNode, multiSelectNodes?: GistNode[]) => {
         await ensureAuthenticated();
 
@@ -332,7 +343,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.forkGist`,
+      `${EXTENSION_NAME}.forkGist`,
       async (node?: StarredGistNode | FollowedUserGistNode) => {
         await ensureAuthenticated();
 
@@ -360,16 +371,16 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.newPublicGist`, newPublicGist)
+    commands.registerCommand(`${EXTENSION_NAME}.newPublicGist`, newPublicGist)
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.newSecretGist`, newSecretGist)
+    commands.registerCommand(`${EXTENSION_NAME}.newSecretGist`, newSecretGist)
   );
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.openGist`,
+      `${EXTENSION_NAME}.openGist`,
       (node?: GistNode | GistsNode) => {
         // We expose the "Open Gist" command on the "Your Gists" node
         // for productivity purposes, but that node doesn't contain
@@ -383,7 +394,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.openGistInBrowser`,
+      `${EXTENSION_NAME}.openGistInBrowser`,
       async (node: GistNode) => {
         env.openExternal(Uri.parse(node.gist.html_url));
       }
@@ -392,7 +403,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.openGistInNbViewer`,
+      `${EXTENSION_NAME}.openGistInNbViewer`,
       async (node: GistNode) => {
         const url = `https://nbviewer.jupyter.org/gist/${node.gist.owner.login}/${node.gist.id}`;
         env.openExternal(Uri.parse(url));
@@ -402,7 +413,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.openGistWorkspace`,
+      `${EXTENSION_NAME}.openGistWorkspace`,
       (node?: GistNode) => {
         openGistInternal({ node, openAsWorkspace: true });
       }
@@ -410,31 +421,34 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.refreshGists`, refreshGists)
+    commands.registerCommand(`${EXTENSION_NAME}.refreshGists`, refreshGists)
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.sortGistsAlphabetically`, () => {
-      store.sortOrder = SortOrder.alphabetical;
-    })
+    commands.registerCommand(
+      `${EXTENSION_NAME}.sortGistsAlphabetically`,
+      () => {
+        store.sortOrder = SortOrder.alphabetical;
+      }
+    )
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_ID}.sortGistsByUpdatedTime`, () => {
+    commands.registerCommand(`${EXTENSION_NAME}.sortGistsByUpdatedTime`, () => {
       store.sortOrder = SortOrder.updatedTime;
     })
   );
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.starredGists`,
+      `${EXTENSION_NAME}.starredGists`,
       starredGistsInternal
     )
   );
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.unstarGist`,
+      `${EXTENSION_NAME}.unstarGist`,
       async (
         targetNode: StarredGistNode,
         multiSelectNodes?: StarredGistNode[]
@@ -451,7 +465,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.starGist`,
+      `${EXTENSION_NAME}.starGist`,
       async (
         targetNode: GistNode | FollowedUserGistNode,
         multiSelectNodes?: GistNode[] | FollowedUserGistNode[]
@@ -468,7 +482,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.duplicateGist`,
+      `${EXTENSION_NAME}.duplicateGist`,
       async (node: GistNode) => {
         await ensureAuthenticated();
 

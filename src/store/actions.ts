@@ -10,7 +10,7 @@ import { storage } from "./storage";
 
 const Gists = require("gists");
 
-async function getApi(constructor = Gists) {
+export async function getApi(constructor = Gists) {
   const token = await getToken();
   const apiurl = await config.get("apiUrl");
 
@@ -21,29 +21,6 @@ async function getApi(constructor = Gists) {
   }
 
   return new constructor({ apiurl, token });
-}
-
-export async function addGistFiles(id: string, fileNames: string[]) {
-  const api = await getApi();
-
-  const files = fileNames
-    .map((fileName) => fileName.trim())
-    .filter((fileName) => fileName !== "")
-    .reduce((accumulator, fileName) => {
-      return {
-        ...accumulator,
-        [fileName]: {
-          content: ZERO_WIDTH_SPACE
-        }
-      };
-    }, {});
-
-  const response = await api.edit(id, { files });
-
-  const newGists = store.gists.filter((gist) => gist.id !== id);
-  newGists.push(response.body);
-
-  store.gists = newGists;
 }
 
 export async function getUser(username: string) {
@@ -252,6 +229,7 @@ export async function unfollowUser(username: string) {
   );
 }
 
+// TODO: Replace this method with the updateGistFiles
 export async function updateGist(
   id: string,
   filename: string,

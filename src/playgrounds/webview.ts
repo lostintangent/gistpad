@@ -1,3 +1,4 @@
+import axios from "axios";
 import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
 import {
@@ -13,6 +14,7 @@ export class PlaygroundWebview {
   private html: string = "";
   private javascript: string = "";
   private manifest: PlaygroundManifest | undefined;
+  private baseUrl = "";
 
   constructor(
     private webview: vscode.Webview,
@@ -21,7 +23,10 @@ export class PlaygroundWebview {
     private codePenScripts: string = "",
     private codePenStyles: string = ""
   ) {
-    webview.onDidReceiveMessage(({ command, value }) => {
+    const owner = this.gist.owner ? this.gist.owner.login : "anonymous";
+    this.baseUrl = `https://gist.githack.com/${owner}/${this.gist.id}/raw/${this.gist.history[0].version}/`;
+
+    webview.onDidReceiveMessage(async ({ command, value }) => {
       switch (command) {
         case "alert":
           if (value) {
@@ -33,6 +38,26 @@ export class PlaygroundWebview {
           break;
         case "log":
           output.appendLine(value);
+          break;
+        case "httpRequest":
+          const response = await axios.request({
+            baseURL: this.baseUrl,
+            url: value.url,
+            method: value.method,
+            data: value.body,
+            headers: JSON.parse(value.headers || {})
+          });
+
+          webview.postMessage({
+            command: "httpResponse",
+            value: {
+              id: value.id,
+              body: JSON.stringify(response.data),
+              status: response.status,
+              statusText: response.statusText,
+              headers: JSON.stringify(response.headers || {})
+            }
+          });
           break;
       }
     });
@@ -134,7 +159,6 @@ export class PlaygroundWebview {
   }
 
   public async rebuildWebview() {
-    const baseUrl = `https://gist.github.com/${this.gist.owner.login}/${this.gist.id}/raw/`;
     const styleId = `gistpad-playground-style-${Math.random()}`;
 
     const scripts = await this.resolveLibraries(PlaygroundLibraryType.script);
@@ -142,7 +166,7 @@ export class PlaygroundWebview {
 
     this.webview.html = `<html>
   <head>
-    <base href="${baseUrl}" />
+    <base href="${this.baseUrl}" />
     <style>
       body { background-color: white; }
     </style>
@@ -150,7 +174,7 @@ export class PlaygroundWebview {
     <style id="${styleId}">
       ${this.css}
     </style>
-    ${scripts}
+    <script src="https://unpkg.com/mock-xmlhttprequest@5.1.0/dist/mock-xmlhttprequest.js"></script>
     <script>
 
     // Wrap this code in braces, so that none of the variables
@@ -161,9 +185,16 @@ export class PlaygroundWebview {
       const vscode = acquireVsCodeApi();
       const style = document.getElementById("${styleId}");
   
+      let httpRequestId = 1;
+      const pendingHttpRequests = new Map();
+
       window.addEventListener("message", ({ data }) => {    
         if (data.command === "updateCSS") {
           style.textContent = data.value;
+        } else if (data.command === "httpResponse") {
+          const xhr = pendingHttpRequests.get(data.value.id);
+          xhr.respond(data.value.status, JSON.parse(data.value.headers), data.value.body, data.value.statusText);
+          pendingHttpRequests.delete(data.value.id);
         }
       });
     
@@ -187,9 +218,26 @@ export class PlaygroundWebview {
           value: message
         });
       };
+
+      const mockXHRServer = MockXMLHttpRequest.newServer();
+      mockXHRServer.setDefaultHandler((xhr) => {
+        pendingHttpRequests.set(httpRequestId, xhr);
+        vscode.postMessage({
+          command: "httpRequest",
+          value: {
+            id: httpRequestId++,
+            url: xhr.url,
+            method: xhr.method,
+            body: xhr.body,
+            headers: JSON.stringify(xhr.headers || {})
+          }
+        });
+      });
+      mockXHRServer.install(window);
     }
 
     </script>
+    ${scripts}
   </head>
   <body>
     ${this.html}

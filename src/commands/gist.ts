@@ -6,7 +6,8 @@ import {
   ProgressLocation,
   QuickPickItem,
   Uri,
-  window
+  window,
+  workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { log } from "../logger";
@@ -31,8 +32,9 @@ import {
 } from "../tree/nodes";
 import { createGistPadOpenUrl } from "../uriHandler";
 import {
+  byteArrayToString,
   closeGistFiles,
-  getFileContents,
+  fileNameToUri,
   getGistDescription,
   getGistLabel,
   getGistWorkspaceId,
@@ -41,10 +43,7 @@ import {
   openGistFiles
 } from "../utils";
 
-const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/i;
-const GIST_NAME_PATTERN = /(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>.+)/i;
-
-const GIST_PATTERNS = [GIST_URL_PATTERN, GIST_NAME_PATTERN];
+const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
 
 export interface GistQuickPickItem extends QuickPickItem {
   id?: string;
@@ -153,7 +152,7 @@ async function openGistInternal(
   });
 
   const clipboardValue = await env.clipboard.readText();
-  if (GIST_PATTERNS.some((pattern) => pattern.test(clipboardValue))) {
+  if (GIST_NAME_PATTERN.test(clipboardValue)) {
     list.value = clipboardValue;
     list.items = [{ label: clipboardValue, id: clipboardValue }, ...gistItems];
   }
@@ -168,10 +167,8 @@ async function openGistInternal(
     // opposed to being part of the list of owned gists.
     if (gist.id) {
       let gistId = gist.id;
-      if (GIST_URL_PATTERN.test(gist.id)) {
-        gistId = (<any>GIST_URL_PATTERN.exec(gist.id)!).groups.id;
-      } else if (GIST_NAME_PATTERN.test(gist.id)) {
-        gistId = (<any>GIST_NAME_PATTERN).exec(gist.id!).groups.id;
+      if (GIST_NAME_PATTERN.test(gist.id)) {
+        gistId = GIST_NAME_PATTERN.exec(gist.id)!.groups!.id;
       }
 
       openGist(gistId, !!openAsWorkspace);
@@ -499,7 +496,13 @@ export async function registerGistCommands(context: ExtensionContext) {
           async () => {
             const files: GistFile[] = [];
             for (const filename of Object.keys(node.gist.files)) {
-              const content = await getFileContents(node.gist.files[filename]);
+              // TODO: Replace this with a Git operation, since the duplicated
+              // gist might contain images, that wouldn't support this
+              const content = byteArrayToString(
+                await workspace.fs.readFile(
+                  fileNameToUri(node.gist.id, filename)
+                )
+              );
               files.push({
                 filename,
                 content

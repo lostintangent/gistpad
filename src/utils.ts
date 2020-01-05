@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as moment from "moment";
 import * as path from "path";
 import {
@@ -11,7 +10,7 @@ import {
 } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
 import { FS_SCHEME, PLAYGROUND_JSON_FILE } from "./constants";
-import { Gist, GistFile, SortOrder, store } from "./store";
+import { Gist, SortOrder, store } from "./store";
 import { getGist } from "./store/actions";
 
 export function byteArrayToString(value: Uint8Array) {
@@ -31,35 +30,6 @@ export async function closeGistFiles(gist: Gist) {
   if (isPlaygroundGist(gist)) {
     closeWebviewPanel(gist.id);
   }
-}
-
-export function fileNameToUri(gistId: string, filename: string): Uri {
-  return Uri.parse(`${FS_SCHEME}://${gistId}/${encodeURIComponent(filename)}`);
-}
-
-export async function getFileContents(file: GistFile) {
-  if (file.truncated || !file.content) {
-    const responseType = file.type!.startsWith("image/")
-      ? "arraybuffer"
-      : "text";
-    file.content = (
-      await axios.get(file.raw_url!, {
-        responseType,
-        transformResponse: (data) => {
-          return data;
-        }
-      })
-    ).data;
-  }
-
-  return file.content!;
-}
-
-export function getGistDetailsFromUri(uri: Uri) {
-  return {
-    gistId: uri.authority,
-    file: decodeURIComponent(path.basename(uri.path))
-  };
 }
 
 export function getGistDescription(gist: Gist): string {
@@ -124,26 +94,32 @@ export function openGistAsWorkspace(id: string) {
 }
 
 export async function openGistFiles(id: string) {
-  const gist = await getGist(id);
+  try {
+    const gist = await getGist(id);
 
-  if (isPlaygroundGist(gist)) {
-    await openPlayground(gist);
-  } else {
-    Object.entries(gist.files)
-      .reverse()
-      .forEach(async ([_, file], index) => {
-        const uri = fileNameToUri(id, file.filename!);
+    if (isPlaygroundGist(gist)) {
+      await openPlayground(gist);
+    } else {
+      Object.entries(gist.files)
+        .reverse()
+        .forEach(async ([_, file], index) => {
+          const uri = fileNameToUri(id, file.filename!);
 
-        //if (!isNew && path.extname(file.filename!) === ".md") {
-        //  commands.executeCommand("markdown.showPreview", uri);
-        //} else {
-        // TODO: Improve the view column arrangement for more than 2 files
-        await window.showTextDocument(uri, {
-          preview: false,
-          viewColumn: ViewColumn.Beside
+          //if (!isNew && path.extname(file.filename!) === ".md") {
+          //  commands.executeCommand("markdown.showPreview", uri);
+          //} else {
+          // TODO: Improve the view column arrangement for more than 2 files
+          await window.showTextDocument(uri, {
+            preview: false,
+            viewColumn: ViewColumn.Beside
+          });
+          //}
         });
-        //}
-      });
+    }
+  } catch (e) {
+    window.showErrorMessage(
+      `The specified gist doesn't exist: "${id}". Please check the spelling and try again.`
+    );
   }
 }
 
@@ -167,6 +143,17 @@ export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
   }
 
   commands.executeCommand(commandName, uri);
+}
+
+export function fileNameToUri(gistId: string, filename: string): Uri {
+  return Uri.parse(`${FS_SCHEME}://${gistId}/${encodeURIComponent(filename)}`);
+}
+
+export function getGistDetailsFromUri(uri: Uri) {
+  return {
+    gistId: uri.authority,
+    file: decodeURIComponent(path.basename(uri.path))
+  };
 }
 
 export function sortGists(gists: Gist[]) {

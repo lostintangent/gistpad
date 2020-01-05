@@ -10,38 +10,48 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_ID } from "../constants";
-import { addGistFiles } from "../store/actions";
+import { EXTENSION_NAME } from "../constants";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
 import {
   byteArrayToString,
   fileNameToUri,
   getGistDetailsFromUri,
-  openGistFile
+  openGistFile,
+  stringToByteArray
 } from "../utils";
 
 export function registerFileCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.addFile`,
+      `${EXTENSION_NAME}.addFile`,
       async (node: GistNode) => {
         await ensureAuthenticated();
 
         const fileName = await window.showInputBox({
           prompt:
-            "Enter the files name(s) to seed the Gist with (can be a comma-seperated list)",
-          value: "foo.txt"
+            "Enter the files name(s) to add to the gist (can be a comma-seperated list)",
+          value: "foo.md"
         });
         if (!fileName) {
           return;
         }
 
         window.withProgress(
-          { location: ProgressLocation.Notification, title: "Adding files..." },
+          {
+            location: ProgressLocation.Notification,
+            title: "Adding file(s)..."
+          },
           () => {
             const fileNames = fileName.split(",");
-            return addGistFiles(node.gist.id, fileNames);
+            return Promise.all(
+              fileNames.map((fileName) => {
+                return workspace.fs.writeFile(
+                  fileNameToUri(node.gist.id, fileName),
+                  stringToByteArray("")
+                );
+              })
+            );
           }
         );
       }
@@ -50,7 +60,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.uploadFileToGist`,
+      `${EXTENSION_NAME}.uploadFileToGist`,
       async (node: GistNode) => {
         await ensureAuthenticated();
 
@@ -65,17 +75,18 @@ export function registerFileCommands(context: ExtensionContext) {
               location: ProgressLocation.Notification,
               title: "Uploading files..."
             },
-            async () => {
-              for (const file of files) {
-                const fileName = path.basename(file.path);
-                const content = fs.readFileSync(new URL(file.toString()));
+            async () =>
+              Promise.all(
+                files.map((file) => {
+                  const fileName = path.basename(file.path);
+                  const content = fs.readFileSync(new URL(file.toString()));
 
-                await workspace.fs.writeFile(
-                  fileNameToUri(node.gist.id, fileName),
-                  content
-                );
-              }
-            }
+                  return workspace.fs.writeFile(
+                    fileNameToUri(node.gist.id, fileName),
+                    content
+                  );
+                })
+              )
           );
         }
       }
@@ -84,7 +95,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.copyFileContents`,
+      `${EXTENSION_NAME}.copyFileContents`,
       async (node: GistFileNode) => {
         const contents = await workspace.fs.readFile(
           fileNameToUri(node.gistId, node.file.filename!)
@@ -96,7 +107,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.copyFileUrl`,
+      `${EXTENSION_NAME}.copyFileUrl`,
       async (node: GistFileNode) => {
         await env.clipboard.writeText(node.file.raw_url!);
       }
@@ -105,7 +116,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.deleteFile`,
+      `${EXTENSION_NAME}.deleteFile`,
       async (targetNode: GistFileNode, multiSelectNodes?: GistFileNode[]) => {
         await ensureAuthenticated();
 
@@ -116,11 +127,13 @@ export function registerFileCommands(context: ExtensionContext) {
           },
           async () => {
             const fileNodes = multiSelectNodes || [targetNode];
-            for (const fileNode of fileNodes) {
-              await workspace.fs.delete(
-                fileNameToUri(fileNode.gistId, fileNode.file.filename!)
-              );
-            }
+            await Promise.all(
+              fileNodes.map((fileNode) =>
+                workspace.fs.delete(
+                  fileNameToUri(fileNode.gistId, fileNode.file.filename!)
+                )
+              )
+            );
           }
         );
       }
@@ -129,7 +142,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.openGistFile`,
+      `${EXTENSION_NAME}.openGistFile`,
       async (uri: Uri) => {
         openGistFile(uri, false);
       }
@@ -138,7 +151,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_ID}.renameFile`,
+      `${EXTENSION_NAME}.renameFile`,
       async (nodeOrUri: GistFileNode | Uri) => {
         await ensureAuthenticated();
 

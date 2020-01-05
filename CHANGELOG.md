@@ -1,11 +1,14 @@
-## v0.0.43 (01/03/2020)
+## v0.0.43 (01/05/2020)
 
 - Added support for Sass, in addition to the existing support for SCSS. This was primarily added for improved interop with CodePen (e.g. [3D Texbox](https://codepen.io/jouanmarcel/pen/Powbrgq).
-- Gists can no be opened using the `username/id` format, in addition to full URL or ID
+- Gists can now be opened (via the `Open Gist` command) using either the `username/id` format or any URL whose path ends with that (e.g. `http://bl.ocks.org/simzou/6459889`)
 - Added keyboard shortcuts for opening a gist and creating new public gists
 - Added the `Open Gist` command to the `Your Gists` node in the `Gists` view
 - Added the `GistPad: Refresh Gists` command to the command palette (in addition to the title bar of the `Gists` view)
-- Added the `Copy GistPad URL` command to gists in the `Gists` view
+- Added the `Copy GistPad URL` command to gist nodes in the `Gists` view
+- Updated the `Copy File to Gist` command to support multi-select in both the `Gists` view and the file explorer
+- Added support for `XMLHttpRequests` calls in playgrounds, inlcuding the ability to request relative paths in your Gist (e.g. [US Map of Nielsen Media Markets](http://bl.ocks.org/simzou/6459889))
+- Added support for referencing JavaScript and CSS files in your playgrounds via `<script />` and `<link />` tags (e.g. [Fantasy Map Generator](http://bl.ocks.org/Azgaar/b845ce22ea68090d43a4ecfb914f51bd))
 
 ## v0.0.42 (01/02/2020)
 

@@ -1,5 +1,6 @@
 import { pasteImageCommand } from "@abstractions/images/pasteImage";
 import * as path from "path";
+import { GistFile } from "src/store";
 import {
   commands,
   env,
@@ -10,14 +11,13 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_NAME, UNTITLED_SCHEME } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode } from "../tree/nodes";
 import {
   byteArrayToString,
   fileNameToUri,
-  getFileContents,
   getGistDescription,
   getGistLabel,
   stringToByteArray
@@ -38,11 +38,7 @@ const CREATE_GIST_ITEMS = [
   { label: CREATE_SECRET_GIST_ITEM }
 ];
 
-async function newGistWithFile(
-  isPublic: boolean,
-  filename: string,
-  content: string
-) {
+async function newGistWithFiles(isPublic: boolean, files: GistFile[]) {
   const description = await window.showInputBox({
     prompt: "Enter an optional description for the new Gist"
   });
@@ -50,22 +46,12 @@ async function newGistWithFile(
   window.withProgress(
     { location: ProgressLocation.Notification, title: "Creating Gist..." },
     () => {
-      return newGist(
-        [
-          {
-            filename,
-            content
-          }
-        ],
-        isPublic,
-        description,
-        false
-      );
+      return newGist(files, isPublic, description, false);
     }
   );
 }
 
-async function promptForGistSelection(filename: string, contents: string) {
+async function promptForGistSelection(files: GistFile[]) {
   const gists = await listGists();
   const gistItems = gists.map((gist) => {
     return <GistQuickPickItem>{
@@ -78,7 +64,7 @@ async function promptForGistSelection(filename: string, contents: string) {
   gistItems.push(...CREATE_GIST_ITEMS);
 
   const list = window.createQuickPick();
-  list.placeholder = "Specify the gist you'd like to add this file to";
+  list.placeholder = "Specify the gist you'd like to add the file(s) to";
   list.items = gistItems;
 
   list.onDidAccept(async () => {
@@ -88,17 +74,20 @@ async function promptForGistSelection(filename: string, contents: string) {
 
     if (gist.id) {
       window.withProgress(
-        { location: ProgressLocation.Notification, title: "Adding file..." },
-        () => {
-          return workspace.fs.writeFile(
-            fileNameToUri(gist.id!, filename!),
-            stringToByteArray(contents!)
-          );
-        }
+        { location: ProgressLocation.Notification, title: "Adding file(s)..." },
+        () =>
+          Promise.all(
+            files.map((file) =>
+              workspace.fs.writeFile(
+                fileNameToUri(gist.id!, file.filename!),
+                stringToByteArray(file.content!)
+              )
+            )
+          )
       );
     } else {
       const isPublic = gist.label === CREATE_PUBLIC_GIST_ITEM;
-      newGistWithFile(isPublic, filename, contents);
+      newGistWithFiles(isPublic, files);
     }
   });
 
@@ -109,45 +98,47 @@ export function registerEditorCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.addFileToGist`,
-      async (nodeOrUri: GistFileNode | Uri) => {
+      async (
+        targetNode: GistFileNode | Uri,
+        multiSelectNodes?: GistFileNode[] | Uri[]
+      ) => {
         await ensureAuthenticated();
 
-        let filename: string | undefined;
-        let contents: string | undefined;
+        const nodes = multiSelectNodes || [targetNode];
+        const files = [];
 
-        if (nodeOrUri instanceof GistFileNode) {
-          // The command is being called as a response to
-          // right-clicking a file node in the Gists tree
-          filename = nodeOrUri.file.filename!;
-          contents = await getFileContents(nodeOrUri.file);
-        } else {
-          // The command is being called as a response
-          // to right-clicking a file in the explorer
-          // tree or right-clicking an editor window
-          if (nodeOrUri.scheme === UNTITLED_SCHEME) {
-            filename = await askForFileName();
-            if (!filename) {
-              return;
-            }
-
-            contents = await window.activeTextEditor!.document.getText();
+        for (const node of nodes) {
+          if (node instanceof GistFileNode) {
+            // The command is being called as a response to
+            // right-clicking a file node in the Gists tree
+            files.push({
+              filename: node.file.filename!,
+              content: byteArrayToString(
+                await workspace.fs.readFile(
+                  fileNameToUri(node.gistId, node.file.filename!)
+                )
+              )
+            });
           } else {
-            filename = path.basename(nodeOrUri.toString());
-            contents = byteArrayToString(
-              await workspace.fs.readFile(nodeOrUri)
-            );
+            // The command is being called as a response to
+            // right-clicking a file node in the explorer
+            // and/or right-clicking the editor tab
+            files.push({
+              filename: path.basename(node.toString()),
+              content: byteArrayToString(await workspace.fs.readFile(node))
+            });
           }
         }
 
-        promptForGistSelection(filename, contents);
+        promptForGistSelection(files);
       }
     )
   );
 
   context.subscriptions.push(
-    commands.registerCommand(
+    commands.registerTextEditorCommand(
       `${EXTENSION_NAME}.addSelectionToGist`,
-      async (fileUri: Uri) => {
+      async (editor: TextEditor) => {
         await ensureAuthenticated();
 
         const filename = await askForFileName();
@@ -155,11 +146,8 @@ export function registerEditorCommands(context: ExtensionContext) {
           return;
         }
 
-        const contents = await window.activeTextEditor!.document.getText(
-          window.activeTextEditor!.selection
-        );
-
-        promptForGistSelection(filename, contents);
+        const content = await editor.document.getText(editor.selection);
+        promptForGistSelection([{ filename, content }]);
       }
     )
   );
@@ -178,7 +166,7 @@ export function registerEditorCommands(context: ExtensionContext) {
         }));
 
         const selectedGist = await window.showQuickPick(gistItems, {
-          placeHolder: "Select the Gist you'd like to paste from"
+          placeHolder: "Select the Gist you'd like to paste a file from"
         });
         if (!selectedGist) {
           return;
@@ -200,7 +188,11 @@ export function registerEditorCommands(context: ExtensionContext) {
           }
         }
 
-        const contents = await getFileContents(gist!.files[selectedFile]);
+        // TODO: Add support for pasting binary files
+        // (or at least prevent it)
+        const uri = fileNameToUri(gist!.id, selectedFile);
+        const contents = byteArrayToString(await workspace.fs.readFile(uri));
+
         await env.clipboard.writeText(contents);
         await commands.executeCommand("editor.action.clipboardPasteAction");
       }

@@ -1,10 +1,13 @@
 import * as path from "path";
+import { Subject } from "rxjs";
+import { buffer, debounceTime } from "rxjs/operators";
 import {
   commands,
   Disposable,
   Event,
   EventEmitter,
   FileChangeEvent,
+  FileChangeType,
   FileStat,
   FileSystemError,
   FileSystemProvider,
@@ -14,22 +17,73 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_ID, FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
+import { EXTENSION_NAME, FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
 import { GistFile, Store } from "../store";
 import { forkGist, getGist, updateGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import {
-  getFileContents,
+  byteArrayToString,
   getGistDetailsFromUri,
   openGistAsWorkspace,
   stringToByteArray,
   uriToFileName
 } from "../utils";
+import { getFileContents, updateGistFiles } from "./api";
 import { addFile, renameFile } from "./git";
 const isBinaryPath = require("is-binary-path");
 
+interface WriteOperation {
+  gistId: string;
+  filename: string;
+  uri: Uri;
+  type: FileChangeType;
+  content?: string;
+  resolve: () => void;
+}
+
+let count = 0;
 export class GistFileSystemProvider implements FileSystemProvider {
-  constructor(private store: Store) {}
+  private _pendingWrites = new Subject<WriteOperation>();
+
+  private _onDidChangeFile = new EventEmitter<FileChangeEvent[]>();
+  public readonly onDidChangeFile: Event<FileChangeEvent[]> = this
+    ._onDidChangeFile.event;
+
+  constructor(private store: Store) {
+    this._pendingWrites
+      .pipe(buffer(this._pendingWrites.pipe(debounceTime(100))))
+      .subscribe((operations: WriteOperation[]) => {
+        const writesByGist = operations.reduce((map, operation) => {
+          let operations = map.get(operation.gistId);
+          if (!operations) {
+            operations = [];
+            map.set(operation.gistId, operations);
+          }
+
+          operations.push(operation);
+          return map;
+        }, new Map<string, WriteOperation[]>());
+
+        writesByGist.forEach(async (writeOperations, gistId) => {
+          await updateGistFiles(
+            gistId,
+            writeOperations.map((write) => {
+              const value: GistFile | null =
+                write.type === FileChangeType.Deleted
+                  ? null
+                  : {
+                      filename: write.filename!,
+                      content: write.content!
+                    };
+              return [write.filename, value];
+            })
+          );
+
+          writeOperations.forEach((w) => w.resolve());
+          this._onDidChangeFile.fire(writeOperations);
+        });
+      });
+  }
 
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
@@ -58,6 +112,13 @@ export class GistFileSystemProvider implements FileSystemProvider {
       filename: newFileName,
       content: file.content!
     });
+
+    this._onDidChangeFile.fire([
+      {
+        type: FileChangeType.Created,
+        uri: destination
+      }
+    ]);
   }
 
   createDirectory(uri: Uri): void {
@@ -70,21 +131,30 @@ export class GistFileSystemProvider implements FileSystemProvider {
     await ensureAuthenticated();
 
     const { gistId, file } = getGistDetailsFromUri(uri);
-    await updateGist(gistId, file!, null);
+    await new Promise((resolve) => {
+      this._pendingWrites.next({
+        type: FileChangeType.Deleted,
+        gistId,
+        filename: file,
+        uri,
+        resolve
+      });
+    });
   }
 
   async readFile(uri: Uri): Promise<Uint8Array> {
     const file = await this.getFileFromUri(uri);
     let contents = await getFileContents(file);
 
-    if (
-      !file.type!.startsWith("image") &&
-      contents.trim() === ZERO_WIDTH_SPACE
-    ) {
-      contents = "";
+    if (isBinaryPath(file.filename)) {
+      // @ts-ignore
+      return contents;
+    } else {
+      if (contents.trim() === ZERO_WIDTH_SPACE) {
+        contents = "";
+      }
+      return stringToByteArray(contents);
     }
-
-    return stringToByteArray(contents);
   }
 
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
@@ -92,12 +162,12 @@ export class GistFileSystemProvider implements FileSystemProvider {
       const { gistId } = getGistDetailsFromUri(uri);
       if (gistId === "new") {
         const gist = await commands.executeCommand<any>(
-          `${EXTENSION_ID}.newSecretGist`
+          `${EXTENSION_NAME}.newSecretGist`
         );
         openGistAsWorkspace(gist.id);
       } else if (gistId === "playground") {
         await commands.executeCommand(
-          `${EXTENSION_ID}.newPlayground`,
+          `${EXTENSION_NAME}.newPlayground`,
           null,
           /*openAsWorkspace*/ true
         );
@@ -137,6 +207,17 @@ export class GistFileSystemProvider implements FileSystemProvider {
         filename: newFileName
       });
     }
+
+    this._onDidChangeFile.fire([
+      {
+        type: FileChangeType.Deleted,
+        uri: oldUri
+      },
+      {
+        type: FileChangeType.Created,
+        uri: newUri
+      }
+    ]);
   }
 
   async stat(uri: Uri): Promise<FileStat> {
@@ -158,7 +239,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     return {
       type: FileType.File,
       ctime: 0,
-      mtime: 0,
+      mtime: ++count,
       size: file.size!
     };
   }
@@ -171,58 +252,50 @@ export class GistFileSystemProvider implements FileSystemProvider {
     await ensureAuthenticated();
 
     const { gistId } = getGistDetailsFromUri(uri);
-    let file = await this.getFileFromUri(uri);
+    if (!this.store.gists.find((gist) => gist.id === gistId)) {
+      const response = await window.showInformationMessage(
+        "You can't edit a Gist you don't own.",
+        "Fork this Gist"
+      );
+
+      // TODO: Replace the edit after forking the gist
+      if (response === "Fork this Gist") {
+        await window.withProgress(
+          {
+            location: ProgressLocation.Notification,
+            title: "Forking Gist..."
+          },
+          () => forkGist(gistId)
+        );
+      }
+      return;
+    }
 
     if (isBinaryPath(uri.path)) {
-      return addFile(gistId, path.basename(uri.path), content);
-    } else {
-      if (!file) {
-        const newFileName = uriToFileName(uri);
-        file = {
-          filename: newFileName,
-          truncated: false
-        };
-      }
+      await addFile(gistId, path.basename(uri.path), content);
 
-      let newContent = new TextDecoder().decode(content);
-      if (newContent.trim().length === 0) {
-        // Gist doesn't allow files to be blank
-        newContent = ZERO_WIDTH_SPACE;
-      }
-
-      file.content = newContent;
-      file.size = newContent.length;
-
-      try {
-        await updateGist(gistId, file.filename!, {
-          filename: file.filename,
-          content: file.content
-        });
-      } catch (e) {
-        // TODO: Check the Gist owner vs. current owner and fail
-        // based on that, as opposed to requiring a hit to the server.
-        const response = await window.showInformationMessage(
-          "You can't edit a Gist you don't own.",
-          "Fork this Gist"
-        );
-        if (response === "Fork this Gist") {
-          await window.withProgress(
-            {
-              location: ProgressLocation.Notification,
-              title: "Forking Gist..."
-            },
-            () => forkGist(gistId)
-          );
+      this._onDidChangeFile.fire([
+        {
+          type: FileChangeType.Created,
+          uri
         }
-      }
+      ]);
+    } else {
+      const file = await this.getFileFromUri(uri);
+      const type = file ? FileChangeType.Changed : FileChangeType.Created;
+
+      await new Promise((resolve) => {
+        this._pendingWrites.next({
+          type,
+          gistId,
+          filename: uriToFileName(uri),
+          content: byteArrayToString(content),
+          uri,
+          resolve
+        });
+      });
     }
   }
-
-  // Unimplemented members
-
-  private _onDidChangeFile = new EventEmitter<FileChangeEvent[]>();
-  public readonly onDidChangeFile: Event<FileChangeEvent[]> = this
-    ._onDidChangeFile.event;
 
   watch(
     uri: Uri,
@@ -233,7 +306,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
 }
 
 export function registerFileSystemProvider(store: Store) {
-  const provider = new GistFileSystemProvider(store);
-  workspace.registerFileSystemProvider(FS_SCHEME, provider);
-  return provider;
+  workspace.registerFileSystemProvider(
+    FS_SCHEME,
+    new GistFileSystemProvider(store)
+  );
 }

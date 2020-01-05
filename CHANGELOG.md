@@ -9,6 +9,7 @@
 - Updated the `Copy File to Gist` command to support multi-select in both the `Gists` view and the file explorer
 - Added support for `XMLHttpRequests` calls in playgrounds, inlcuding the ability to request relative paths in your Gist (e.g. [US Map of Nielsen Media Markets](http://bl.ocks.org/simzou/6459889))
 - Added support for referencing JavaScript and CSS files in your playgrounds via `<script />` and `<link />` tags (e.g. [Fantasy Map Generator](http://bl.ocks.org/Azgaar/b845ce22ea68090d43a4ecfb914f51bd))
+- Fixed the `Save All` command when you've edited multiple files in the same gist
 
 ## v0.0.42 (01/02/2020)
 

@@ -40,6 +40,7 @@
     "onCommand:gistpad.newPublicGist",
     "onCommand:gistpad.newSecretGist",
     "onCommand:gistpad.newPlayground",
+    "onCommand:gistpad.newSecretPlayground",
     "onCommand:gistpad.openGist",
     "onCommand:gistpad.openGistWorkspace",
     "onCommand:gistpad.pasteGistFile",
@@ -284,7 +285,12 @@
       },
       {
         "command": "gistpad.newPlayground",
-        "title": "New Web Playground",
+        "title": "New Playground",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.newSecretPlayground",
+        "title": "New Secret Playground",
         "category": "GistPad"
       },
       {
@@ -510,6 +516,10 @@
           "when": "gistpad:state == SignedIn"
         },
         {
+          "command": "gistpad.newSecretPlayground",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
           "command": "gistpad.refreshGists",
           "when": "gistpad:state == SignedIn"
         },
@@ -706,7 +716,7 @@
           "group": "newAdvanced@1"
         },
         {
-          "command": "gistpad.newGistLog",
+          "command": "gistpad.newSecretPlayground",
           "when": "viewItem == gists",
           "group": "newAdvanced@2"
         },

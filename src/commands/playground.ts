@@ -6,7 +6,7 @@ import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
 import { PlaygroundWebview } from "../playgrounds/webview";
-import { Gist } from "../store";
+import { Gist, store } from "../store";
 import { newGist } from "../store/actions";
 import {
   byteArrayToString,
@@ -374,6 +374,35 @@ function isPlaygroundDocument(
   return extensions.includes(extension);
 }
 
+async function newPlaygroundInternal(
+  isPublic: boolean,
+  node?: GistsNode,
+  openAsWorkspace: boolean = false
+) {
+  const description = await vscode.window.showInputBox({
+    prompt: "Enter the description of the playground"
+  });
+
+  if (!description) {
+    return;
+  }
+
+  const gist: Gist = await vscode.window.withProgress(
+    {
+      location: vscode.ProgressLocation.Notification,
+      title: "Creating Playground..."
+    },
+    async () =>
+      newGist(await generateNewPlaygroundFiles(), isPublic, description, false)
+  );
+
+  if (openAsWorkspace) {
+    openGistAsWorkspace(gist.id);
+  } else {
+    openPlayground(gist);
+  }
+}
+
 export async function openPlayground(gist: Gist) {
   const markupFile = getGistFileOfType(gist, PlaygroundFileType.markup);
   const stylesheetFile = getGistFileOfType(gist, PlaygroundFileType.stylesheet);
@@ -604,13 +633,15 @@ export async function openPlayground(gist: Gist) {
     .getConfiguration("files")
     .get<string>("autoSave");
   let autoSaveInterval: NodeJS.Timer | undefined;
-  if (autoSave !== "afterDelay" && (await config.get("playgrounds.autoSave"))) {
+
+  const isOwner = gist.owner && gist.owner.login === store.login;
+  if (
+    autoSave !== "afterDelay" && // Don't enable autoSave if the end-user has already configured it
+    (await config.get("playgrounds.autoSave")) &&
+    isOwner // You can't edit gists you don't own, so it doesn't make sense to attempt to auto-save these files
+  ) {
     autoSaveInterval = setInterval(async () => {
-      for (const document of vscode.workspace.textDocuments) {
-        if (document.isDirty && document.uri.scheme === FS_SCHEME) {
-          await document.save();
-        }
-      }
+      vscode.commands.executeCommand("workbench.action.files.saveAll");
     }, 30000);
   }
 
@@ -641,35 +672,14 @@ export async function registerPlaygroundCommands(
   context.subscriptions.push(
     vscode.commands.registerCommand(
       `${EXTENSION_NAME}.newPlayground`,
-      async (node?: GistsNode, openAsWorkspace: boolean = false) => {
-        const description = await vscode.window.showInputBox({
-          prompt: "Enter the description of the playground"
-        });
+      newPlaygroundInternal.bind(null, true)
+    )
+  );
 
-        if (!description) {
-          return;
-        }
-
-        const gist: Gist = await vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: "Creating Playground..."
-          },
-          async () =>
-            newGist(
-              await generateNewPlaygroundFiles(),
-              true,
-              description,
-              false
-            )
-        );
-
-        if (openAsWorkspace) {
-          openGistAsWorkspace(gist.id);
-        } else {
-          openPlayground(gist);
-        }
-      }
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_NAME}.newSecretPlayground`,
+      newPlaygroundInternal.bind(null, false)
     )
   );
 

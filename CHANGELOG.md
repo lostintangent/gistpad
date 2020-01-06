@@ -1,3 +1,8 @@
+## v0.0.44 (01/06/2020)
+
+- Added the new `New Secret Playground` command, which allows you to create playgrounds that are backed by secret gists
+- Update the playground auto-save feature, so that it doesn't attempt to run when you're 1) signed out, or 2) have a playground open you don't own
+  
 ## v0.0.43 (01/05/2020)
 
 - Added support for Sass, in addition to the existing support for SCSS. This was primarily added for improved interop with CodePen (e.g. [3D Texbox](https://codepen.io/jouanmarcel/pen/Powbrgq).

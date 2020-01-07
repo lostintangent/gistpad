@@ -29,6 +29,12 @@ export async function get(
   key: "playgrounds.stylesheetLanguage"
 ): Promise<"css" | "less" | "sass" | "scss">;
 export async function get(key: "playgrounds.showConsole"): Promise<boolean>;
+export async function get(
+  key: "playgrounds.templates.galleries"
+): Promise<string[]>;
+export async function get(
+  key: "playgrounds.templates.tagName"
+): Promise<string>;
 export async function get(key: "comments.showThread"): Promise<string>;
 export async function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

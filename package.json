@@ -161,6 +161,24 @@
           "default": false,
           "type": "boolean",
           "description": "Specifies whether to automatically show the console when opening a playground."
+        },
+        "gistpad.playgrounds.templates.galleries": {
+          "default": [
+            "web"
+          ],
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "uri"
+          },
+          "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
+        },
+        "gistpad.playgrounds.templates.tagName": {
+          "default": [
+            "template"
+          ],
+          "type": "string",
+          "description": "Specifies the name of the tag that identifies an owned or starred gist as being a playground template."
         }
       }
     },

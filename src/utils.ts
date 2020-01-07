@@ -2,6 +2,7 @@ import * as moment from "moment";
 import * as path from "path";
 import {
   commands,
+  ProgressLocation,
   TextDocument,
   Uri,
   ViewColumn,
@@ -15,6 +16,20 @@ import { getGist } from "./store/actions";
 
 export function byteArrayToString(value: Uint8Array) {
   return new TextDecoder().decode(value);
+}
+
+export async function showGistQuickPick(gists: Gist[], placeHolder: string) {
+  const items = gists.map((gist) => {
+    return {
+      label: getGistLabel(gist),
+      description: getGistDescription(gist),
+      id: gist.id
+    };
+  });
+
+  return window.showQuickPick(items, {
+    placeHolder
+  });
 }
 
 export async function closeGistFiles(gist: Gist) {
@@ -36,6 +51,16 @@ export function getGistDescription(gist: Gist): string {
   return `${moment(gist.updated_at).calendar()}${
     gist.public ? "" : " (Secret)"
   }`;
+}
+
+export function withProgress<T>(title: string, action: () => Promise<T>) {
+  return window.withProgress(
+    {
+      location: ProgressLocation.Notification,
+      title
+    },
+    action
+  );
 }
 
 export function getGistLabel(gist: Gist): string {

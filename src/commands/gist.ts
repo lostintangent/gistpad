@@ -40,7 +40,8 @@ import {
   getGistWorkspaceId,
   isGistWorkspace,
   openGist,
-  openGistFiles
+  openGistFiles,
+  sortGists
 } from "../utils";
 
 const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
@@ -196,7 +197,7 @@ async function starredGistsInternal() {
   await ensureAuthenticated();
 
   const gists = await starredGists();
-  const items = gists.map((g) => ({
+  const items = sortGists(gists).map((g) => ({
     label: getGistLabel(g),
     description: getGistDescription(g),
     id: g.id

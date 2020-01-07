@@ -1,10 +1,15 @@
 import { observable } from "mobx";
-import { window } from "vscode";
+import { window, workspace } from "vscode";
 import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { log } from "../logger";
-import { openGistFiles, sortGists } from "../utils";
+import {
+  byteArrayToString,
+  fileNameToUri,
+  openGistFiles,
+  sortGists
+} from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
 
@@ -21,6 +26,26 @@ export async function getApi(constructor = Gists) {
   }
 
   return new constructor({ apiurl, token });
+}
+
+export async function duplicateGist(
+  id: string,
+  isPublic: boolean = true,
+  description?: string
+) {
+  const gist = await getGist(id);
+  const files = [];
+  for (const filename of Object.keys(gist.files)) {
+    const content = byteArrayToString(
+      await workspace.fs.readFile(fileNameToUri(gist.id, filename))
+    );
+    files.push({
+      filename,
+      content
+    });
+  }
+
+  newGist(files, isPublic, description || gist.description);
 }
 
 export async function getUser(username: string) {
@@ -42,11 +67,14 @@ export async function getUserAvatar(username: string) {
 
 export async function changeDescription(id: string, description: string) {
   const api = await getApi();
-  await api.edit(id, {
+  const gist = await api.edit(id, {
     description
   });
 
-  store.gists.find((gist) => gist.id === id)!.description = description;
+  const newGists = store.gists.filter((gist) => gist.id !== id);
+  newGists.push(gist);
+
+  store.gists = newGists;
 }
 
 export async function createGistComment(

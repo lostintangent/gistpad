@@ -485,13 +485,13 @@
     ],
     "keybindings": [
       {
-        "key": "ctrl+shift+o",
-        "mac": "cmd+shift+o",
+        "key": "ctrl+g ctrl+o",
+        "mac": "cmd+g cmd+o",
         "command": "gistpad.openGist"
       },
       {
-        "key": "ctrl+shift+g",
-        "mac": "cmd+shift+g",
+        "key": "ctrl+g ctrl+n",
+        "mac": "cmd+g cmd+n",
         "command": "gistpad.newPublicGist"
       }
     ],

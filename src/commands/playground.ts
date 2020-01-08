@@ -9,7 +9,16 @@ import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { GistsNode } from "../tree/nodes";
-import { byteArrayToString, closeGistFiles, fileNameToUri, openGistAsWorkspace, showGistQuickPick, sortGists, stringToByteArray, withProgress } from "../utils";
+import {
+  byteArrayToString,
+  closeGistFiles,
+  fileNameToUri,
+  openGistAsWorkspace,
+  showGistQuickPick,
+  sortGists,
+  stringToByteArray,
+  withProgress
+} from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
@@ -135,9 +144,13 @@ export const getManifestContent = (gist: Gist) => {
   return manifest;
 };
 
+const MARKUP_BASE_NAME = "index";
+const SCRIPT_BASE_NAME = "script";
+const STYLESHEET_BASE_NAME = "style";
+
 async function generateNewPlaygroundFiles() {
   const scriptLanguage = await config.get("playgrounds.scriptLanguage");
-  const scriptFileName = `script${ScriptLanguage[scriptLanguage]}`;
+  const scriptFileName = `${SCRIPT_BASE_NAME}${ScriptLanguage[scriptLanguage]}`;
 
   const manifest = {
     ...DEFAULT_MANIFEST
@@ -161,7 +174,7 @@ async function generateNewPlaygroundFiles() {
     const stylesheetLanguage = await config.get(
       "playgrounds.stylesheetLanguage"
     );
-    const stylesheetFileName = `style${StylesheetLanguage[stylesheetLanguage]}`;
+    const stylesheetFileName = `${STYLESHEET_BASE_NAME}${StylesheetLanguage[stylesheetLanguage]}`;
 
     files.unshift({
       filename: stylesheetFileName
@@ -170,7 +183,7 @@ async function generateNewPlaygroundFiles() {
 
   if (await config.get("playgrounds.includeMarkup")) {
     const markupLanguage = await config.get("playgrounds.markupLanguage");
-    const markupFileName = `index${MarkupLanguage[markupLanguage]}`;
+    const markupFileName = `${MARKUP_BASE_NAME}${MarkupLanguage[markupLanguage]}`;
 
     files.unshift({
       filename: markupFileName
@@ -345,21 +358,28 @@ enum PlaygroundLayout {
 
 export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
   let extensions: string[];
+  let fileBaseName: string;
   switch (fileType) {
     case PlaygroundFileType.markup:
       extensions = MARKUP_EXTENSIONS;
+      fileBaseName = MARKUP_BASE_NAME;
       break;
     case PlaygroundFileType.script:
       extensions = SCRIPT_EXTENSIONS;
+      fileBaseName = SCRIPT_BASE_NAME;
       break;
     case PlaygroundFileType.stylesheet:
+    default:
       extensions = STYLESHEET_EXTENSIONS;
+      fileBaseName = STYLESHEET_BASE_NAME;
       break;
   }
 
-  return Object.keys(gist.files).find((file) =>
-    extensions.includes(path.extname(file))
+  const fileCandidates = extensions.map(
+    (extension) => `${fileBaseName}${extension}`
   );
+
+  return Object.keys(gist.files).find((file) => fileCandidates.includes(file));
 };
 
 function isPlaygroundDocument(
@@ -383,18 +403,18 @@ const SELECT_TEMPLATE_ITEMS = [
     label: NO_TEMPLATE_GIST_ITEM,
     alwaysShow: true,
     description:
-      "Creates a playground based on your configured GistPad settings"
+      'Create a "vanilla.js" playground based on your configured GistPad settings'
   },
   {
     label: SELECT_OWN_GIST_ITEM,
     alwaysShow: true,
-    description: `Creates a playground from one of your gists (tagged with #template)`
+    description: `Create a playground from one of your own gists (tagged with #template)`
   },
   {
     label: SELECT_STARRED_GIST_ITEM,
     alwaysShow: true,
     description:
-      "Creates a playground from a starred gist (tagged with #template)"
+      "Create a playground from a gist you've starred (tagged with #template)"
   }
 ];
 
@@ -408,7 +428,8 @@ function duplicatePlayground(
   );
 }
 
-const KNOWN_GALLERY_ROOT = "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad/galleries/";
+const KNOWN_GALLERY_ROOT =
+  "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad/galleries/";
 const KnownGalleries = ["web"];
 
 let galleryTemplates: GalleryTemplate[] = [];
@@ -419,7 +440,7 @@ async function loadGalleryTemplates() {
 
   let templates: GalleryTemplate[] = [];
   for (let gallery of galleries) {
-    if (KnownGalleries.includes(gallery) {
+    if (KnownGalleries.includes(gallery)) {
       gallery = `${KNOWN_GALLERY_ROOT}${gallery}.json`;
     }
 
@@ -477,6 +498,7 @@ async function newPlaygroundInternal(
   openAsWorkspace: boolean = false
 ) {
   const quickPick = vscode.window.createQuickPick();
+  quickPick.title = "Create new " + (isPublic ? "" : "secret ") + "playground";
   quickPick.placeholder = "Select the playground template to use";
 
   if (galleryTemplates.length > 0) {
@@ -911,6 +933,6 @@ export async function registerPlaygroundCommands(
   );
 
   // Warm up the local CDNJS cache
-  await getCDNJSLibraries();
-  await loadGalleryTemplates();
+  getCDNJSLibraries();
+  loadGalleryTemplates();
 }

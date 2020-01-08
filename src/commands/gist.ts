@@ -56,26 +56,55 @@ const newSecretGist = newGistInternal.bind(null, false);
 async function newGistInternal(isPublic: boolean = true) {
   await ensureAuthenticated();
 
-  const fileName = await window.showInputBox({
-    prompt:
-      "Enter the files name(s) to seed the Gist with (can be a comma-seperated list)",
-    value: "foo.txt"
-  });
-  if (!fileName) {
-    return;
-  }
+  const title = "Create new " + (isPublic ? "" : "secret ") + "gist";
+  const totalSteps = 2;
+  let currentStep = 1;
 
-  const description = await window.showInputBox({
-    prompt: "Enter an optional description for the new Gist"
-  });
+  const fileNameInputBox = window.createInputBox();
+  fileNameInputBox.title = title;
+  fileNameInputBox.prompt =
+    "Enter the files name(s) to seed the Gist with (can be a comma-seperated list)";
+  fileNameInputBox.step = currentStep++;
+  fileNameInputBox.totalSteps = totalSteps;
+  fileNameInputBox.placeholder = "foo.md";
 
-  return window.withProgress(
-    { location: ProgressLocation.Notification, title: "Creating Gist..." },
-    () => {
-      const files = fileName.split(",").map((filename) => ({ filename }));
-      return newGist(files, isPublic, description);
+  fileNameInputBox.onDidAccept(() => {
+    const fileName = fileNameInputBox.value;
+
+    if (!fileName) {
+      fileNameInputBox.validationMessage =
+        "You must specify at least one filename in order to create a gist.";
+
+      // TODO: Have a regex check for valid input
+      return;
     }
-  );
+
+    fileNameInputBox.hide();
+
+    const descriptionInputBox = window.createInputBox();
+    descriptionInputBox.title = title;
+    descriptionInputBox.step = currentStep++;
+    descriptionInputBox.totalSteps = totalSteps;
+    descriptionInputBox.prompt =
+      "Enter an optional description for the new Gist";
+
+    descriptionInputBox.onDidAccept(() => {
+      descriptionInputBox.hide();
+      const description = descriptionInputBox.value;
+
+      return window.withProgress(
+        { location: ProgressLocation.Notification, title: "Creating Gist..." },
+        () => {
+          const files = fileName.split(",").map((filename) => ({ filename }));
+          return newGist(files, isPublic, description);
+        }
+      );
+    });
+
+    descriptionInputBox.show();
+  });
+
+  fileNameInputBox.show();
 }
 
 const SIGN_IN_ITEM = "Sign in to view Gists...";

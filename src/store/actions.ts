@@ -72,7 +72,7 @@ export async function changeDescription(id: string, description: string) {
   });
 
   const newGists = store.gists.filter((gist) => gist.id !== id);
-  newGists.push(gist);
+  newGists.push(gist.body);
 
   store.gists = newGists;
 }

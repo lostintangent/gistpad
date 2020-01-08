@@ -14,25 +14,25 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
 
    > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
 
-1. Open the `Explorer` tab and expand the `Gists` view. From there, you can open a Gist by ID/URL, or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone Gists.
+2. Open the `GistPad` tab *(look for the notebook icon in the activity bar)*. From there, you can open a Gist by ID/URL, or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone your own gists. To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
 
    <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
-   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_. Otherwise, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
+   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_. 
 
-1. Add local files/selections to your Gists by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File` ([details](#contributed-commands-editor))
+3. Create new gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
 
    <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
-1. View and reply to comments in a Gist by scrolling to the bottom of a Gist file and interacting with the thread (including embedded code snippets!)
+4. View and reply to comments in a Gist by scrolling to the bottom of a Gist file and interacting with the thread (including embedded code snippets!)
 
    <img width="450px" src="https://user-images.githubusercontent.com/116461/70117955-a9633280-161b-11ea-88a5-ac8a15a3b7a0.png" />
 
-1. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
+5. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
 
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
-1. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Web Playground` (or run the `GistPad: New Web Playground` command). This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
+6. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Playground` (or `New Secret Playground`. This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
 
 ## Gist Commenting
 

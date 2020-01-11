@@ -1,3 +1,4 @@
+import * as vscode from 'vscode';
 import { log } from "../logger";
 import * as memento from '../memento';
 import { Gist } from "../store";
@@ -15,7 +16,7 @@ type GistFileChange = 'modify' | 'add' | 'remove';
 export interface IGistDiff {
   gistId: string;
   lastSeenUpdateTime: string | null;
-  currentUpdateTIme: string | null;
+  currentUpdateTime: string | null;
   fileChanged: GistFileChange[];
   changeType: GistChange;
 }
@@ -67,7 +68,7 @@ const createGistAddDiff = (currentGist: Gist): IGistDiff => {
     {
       gistId: currentGist.id,
       lastSeenUpdateTime: null,
-      currentUpdateTIme: getGistUpdateTime(currentGist),
+      currentUpdateTime: getGistUpdateTime(currentGist),
       fileChanged: [],
       changeType: 'add'
     }
@@ -79,7 +80,7 @@ const createGistModifyDiff = (currentGist: Gist, previousGist: Gist): IGistDiff 
     {
       gistId: currentGist.id,
       lastSeenUpdateTime: getGistUpdateTime(previousGist),
-      currentUpdateTIme: getGistUpdateTime(currentGist),
+      currentUpdateTime: getGistUpdateTime(currentGist),
       fileChanged: [],
       changeType: 'modify'
     }
@@ -91,7 +92,7 @@ const createGistRemoveDiff = (previousGist: Gist): IGistDiff => {
     {
       gistId: previousGist.id,
       lastSeenUpdateTime: getGistUpdateTime(previousGist),
-      currentUpdateTIme: null,
+      currentUpdateTime: null,
       fileChanged: [],
       changeType: 'remove'
     }
@@ -144,6 +145,50 @@ const diffGistRecords = (gistRecordsBefore: Gist[], currentGistRecords: Gist[]):
   return result;
 }
 
+let diff: IGistDiff[] = [];
+
+// function createResourceUri(relativePath: string): vscode.Uri {
+//   const absolutePath = path.join(vscode.workspace.rootPath!, relativePath);
+//   return vscode.Uri.file(absolutePath);
+// }
+
+class QuickDiff implements vscode.QuickDiffProvider {
+
+  private _onDidChangeOriginalResource = new vscode.EventEmitter<vscode.Uri>();
+  readonly onDidChangeOriginalResource: vscode.Event<vscode.Uri> = this._onDidChangeOriginalResource.event;
+
+  async provideOriginalResource(uri: vscode.Uri, token?: vscode.CancellationToken) {
+    const gistDiff = diff.find((d) => {
+      return (d.gistId === uri.authority);
+    });
+
+    if (!gistDiff) {
+      return;
+    }
+
+    const resultUri = uri.with({ authority: `diff__${uri.authority}` });
+
+    return resultUri;
+  }
+}
+
+const gistPadSCM = vscode.scm.createSourceControl('gistpad', 'GistPad');
+
+export const restQuickDiff = () => {
+  gistPadSCM.quickDiffProvider = new QuickDiff();
+}
+
+restQuickDiff();
+
+// const index = gistPadSCM.createResourceGroup('index', 'Gistpad Updates');
+// index.
+// index.resourceStates = [
+//     { resourceUri: createResourceUri('README.md') },
+//     { resourceUri: vscode.Uri.file(path.join(vscode.workspace.rootPath!, '/test/api/a.ts')) },
+//     { resourceUri: vscode.Uri.file(path.join(vscode.workspace.rootPath!, '/test/api/b.ts')) },
+//     { resourceUri: vscode.Uri.file(path.join(vscode.workspace.rootPath!, '/test/api/c.ts')) },
+// ];
+
 export const gistsSectionOpen = (sectionName: string, newGists: Gist[]) => {
   const gists = readGistRecordsForSection(sectionName);
 
@@ -156,6 +201,8 @@ export const gistsSectionOpen = (sectionName: string, newGists: Gist[]) => {
   }
 
   const gistsDiff = diffGistRecords(gists, newGists);
+
+  diff = gistsDiff;
 
   return gistsDiff;
 }
@@ -175,5 +222,18 @@ export const markGistUpdateAsSeen = (sectionName: string, gist: Gist) => {
 
   gists.push(gist);
 
+  // remove gist diff
+  diff = diff.filter((d) => {
+    return (d.gistId !== gist.id);
+  });
+
   writeGistRecordsForSection(sectionName, gists);
+}
+
+export const getGistDiff = (gistId: string) => {
+  const maybeGist = diff.find((g) => {
+    return (g.gistId === gistId);
+  });
+
+  return maybeGist;
 }

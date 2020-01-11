@@ -124,7 +124,11 @@ export class NoStarredGistsNode extends TreeNode {
 }
 
 export class StarredGistNode extends TreeNode {
-  constructor(public gist: Gist, public section: string) {
+  constructor(
+    public gist: Gist,
+    public section: string,
+    public parent: TreeNode,
+    public gistDiff?: IGistDiff) {
     super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
 
     this.description = getGistDescription(gist);
@@ -195,8 +199,9 @@ export class FollowedUserGistNode extends TreeNode {
   constructor(
     public gist: Gist,
     public section: string,
+    public parent: TreeNode,
     extensionPath: string,
-    gistDiff: IGistDiff | undefined
+    public gistDiff?: IGistDiff
   ) {
     super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
 

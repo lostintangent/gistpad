@@ -1,27 +1,11 @@
 import { pasteImageCommand } from "@abstractions/image/pasteImage";
 import * as path from "path";
-import {
-  commands,
-  env,
-  ExtensionContext,
-  ProgressLocation,
-  TextEditor,
-  Uri,
-  window,
-  workspace
-} from "vscode";
+import { commands, env, ExtensionContext, ProgressLocation, TextEditor, Uri, window, workspace } from "vscode";
 import { EXTENSION_ID, UNTITLED_SCHEME } from "../constants";
 import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode } from "../tree/nodes";
-import {
-  byteArrayToString,
-  fileNameToUri,
-  getFileContents,
-  getGistDescription,
-  getGistLabel,
-  stringToByteArray
-} from "../utils";
+import { byteArrayToString, fileNameToUri, getFileContents, getGistDescription, getGistLabel, stringToByteArray } from "../utils";
 import { GistQuickPickItem } from "./gist";
 
 async function askForFileName() {

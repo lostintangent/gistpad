@@ -1,6 +1,7 @@
 import { URL } from "url";
-import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, Uri, window } from "vscode";
+import { commands, env, ExtensionContext, FileChangeType, ProgressLocation, QuickPickItem, TreeItemCollapsibleState, Uri, window } from "vscode";
 import { CommandId, EXTENSION_ID } from "../constants";
+import { refreshFileSystem } from "../fileSystem";
 import { markGistUpdateAsSeen } from "../gistUpdates";
 import { log } from "../logger";
 import { GistFile, SortOrder, store } from "../store";
@@ -8,7 +9,7 @@ import { changeDescription, deleteGist, forkGist, listGists, newGist, refreshGis
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
 import { refreshTree } from "../tree";
 import { FollowedUserGistNode, GistNode, StarredGistNode } from "../tree/nodes";
-import { closeGistFiles, getFileContents, getGistDescription, getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistFiles } from "../utils";
+import { closeGistFiles, fileNameToUri, getFileContents, getGistDescription, getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistFiles } from "../utils";
 const GIST_URL_PATTERN = /https:\/\/gist\.github\.com\/(?<owner>[^\/]+)\/(?<id>.+)/;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -330,7 +331,30 @@ export async function registerGistCommands(context: ExtensionContext) {
 
         markGistUpdateAsSeen(node.section, node.gist);
 
-        refreshTree();
+        if (node.parent.label) {
+          node.parent.label = node.parent.label.replace(/\(.+\)?/gim, '');
+        }
+
+        node.parent.collapsibleState = TreeItemCollapsibleState.Expanded;
+
+        refreshTree(node.parent);
+
+        const { gist } = node;
+        refreshFileSystem(Object.entries(gist.files).map(([name, value]) => {
+          let uri = fileNameToUri(gist.id, value.filename!);
+
+          if (node.gistDiff && window.activeTextEditor) {
+            // window.activeTextEditor.hide();
+            uri = uri.with({
+              authority: `diff__${uri.authority}`
+            });
+          }
+
+          return {
+            type: FileChangeType.Changed,
+            uri
+          };
+        }));
       }
     )
   );

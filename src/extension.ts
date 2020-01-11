@@ -29,4 +29,5 @@ export async function activate(context: vscode.ExtensionContext) {
 
   initializeStorage(context);
   initializeAuth();
+  // registerScm();
 }

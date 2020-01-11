@@ -1,40 +1,82 @@
 import * as path from "path";
-import {
-  commands,
-  Disposable,
-  Event,
-  EventEmitter,
-  FileChangeEvent,
-  FileStat,
-  FileSystemError,
-  FileSystemProvider,
-  FileType,
-  ProgressLocation,
-  Uri,
-  window,
-  workspace
-} from "vscode";
+import { commands, Disposable, Event, EventEmitter, FileChangeEvent, FileStat, FileSystemError, FileSystemProvider, FileType, ProgressLocation, Uri, window, workspace } from "vscode";
 import { EXTENSION_ID, FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
+import { getGistDiff, IGistDiff } from "../gistUpdates";
 import { GistFile, IStore } from "../store";
-import { forkGist, getGist, updateGist } from "../store/actions";
+import { forkGist, getApi, getGist, updateGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
-import {
-  getFileContents,
-  getGistDetailsFromUri,
-  openGistAsWorkspace,
-  stringToByteArray,
-  uriToFileName
-} from "../utils";
+import { getFileContents, getGistDetailsFromUri, openGistAsWorkspace, stringToByteArray, uriToFileName } from "../utils";
 import { addFile, renameFile } from "./git";
 const isBinaryPath = require("is-binary-path");
 
+const getGistDiffVersion = async (uri: Uri, gistDiff: IGistDiff): Promise<string | undefined> => {
+  const api = await getApi();
+  const commitsResponse = await api.commits(uri.authority);
+  const commits = commitsResponse.body;
+
+  const commit = commits.find((c: any) => {
+    const lastUpdateTime = new Date(gistDiff.lastSeenUpdateTime!);
+    const commitedAtTime = new Date(c.committed_at);
+
+    const delta = Math.abs(commitedAtTime.getTime() - lastUpdateTime.getTime());
+
+    const result = delta <= (10 * 1000);
+
+    return result;
+  });
+
+  if (!commit) {
+    return;
+  }
+
+  const { version } = commit;
+
+  return version;
+}
+
+const getDiffAuthority = (authority: string) => {
+  const result = authority.split('diff__');
+  const auth = result[1];
+
+  if (!auth) {
+    return authority;
+  }
+
+  return auth;
+}
+
+const isDiffAuthority = (authority: string) => {
+  const result = authority.split('diff__');
+
+  const auth = result[1];
+
+  return !!auth;
+}
+
 export class GistFileSystemProvider implements FileSystemProvider {
-  constructor(private store: IStore) {}
+  constructor(private store: IStore) { }
+
+  public refresh = (data: FileChangeEvent[]) => {
+    this.mtime = Date.now();
+    this._onDidChangeFile.fire(data);
+  }
 
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
 
-    let gist = this.store.gists.find((gist) => gist.id === gistId);
+    if (isDiffAuthority(gistId)) {
+      const id = getDiffAuthority(gistId);
+      const gistDiff = getGistDiff(id);
+      if (gistDiff) {
+        const version = await getGistDiffVersion(uri.with({ authority: id }), gistDiff);
+        const gist = await getGist(id, version);
+
+        return gist.files[file];
+      }
+    }
+
+    let gist = this.store.gists.find((gist) => gist.id === getDiffAuthority(gistId));
+    // if a `version` specified, always fetch the gist
     if (!gist) {
       gist = await getGist(gistId);
     }
@@ -139,13 +181,15 @@ export class GistFileSystemProvider implements FileSystemProvider {
     }
   }
 
-  async stat(uri: Uri): Promise<FileStat> {
+  private mtime = Date.now();
+
+  stat = async (uri: Uri): Promise<FileStat> => {
     if (uri.path === "/") {
       return {
         type: FileType.Directory,
         size: 0,
         ctime: 0,
-        mtime: 0
+        mtime: this.mtime
       };
     }
 
@@ -158,7 +202,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     return {
       type: FileType.File,
       ctime: 0,
-      mtime: 0,
+      mtime: this.mtime,
       size: file.size!
     };
   }
@@ -228,12 +272,16 @@ export class GistFileSystemProvider implements FileSystemProvider {
     uri: Uri,
     options: { recursive: boolean; excludes: string[] }
   ): Disposable {
-    return new Disposable(() => {});
+    return new Disposable(() => { });
   }
 }
 
+export let refreshFileSystem: (data: FileChangeEvent[]) => void;
+
 export function registerFileSystemProvider(store: IStore) {
   const provider = new GistFileSystemProvider(store);
+  refreshFileSystem = provider.refresh;
+
   workspace.registerFileSystemProvider(FS_SCHEME, provider);
   return provider;
 }

@@ -53,9 +53,11 @@ export async function getFileContents(file: GistFile) {
 }
 
 export function getGistDetailsFromUri(uri: Uri) {
+  const { authority } = uri;
+
   return {
-    gistId: uri.authority,
-    file: decodeURIComponent(path.basename(uri.path))
+    gistId: authority,
+    file: decodeURIComponent(path.basename(uri.path)),
   };
 }
 

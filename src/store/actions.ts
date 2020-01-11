@@ -10,7 +10,7 @@ import { storage } from "./storage";
 
 const Gists = require("gists");
 
-async function getApi(constructor = Gists) {
+export async function getApi(constructor = Gists) {
   const token = await getToken();
   const apiurl = await config.get("apiUrl");
 
@@ -148,9 +148,12 @@ export async function forkGist(id: string) {
   openGistFiles(gist.body.id);
 }
 
-export async function getGist(id: string): Promise<Gist> {
+export async function getGist(id: string, version?: string): Promise<Gist> {
   const api = await getApi();
-  const gist = await api.get(id);
+  const gist = (version)
+    ? await api.revision(id, version)
+    : await api.get(id);
+
   return gist.body;
 }
 

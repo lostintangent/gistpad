@@ -29,8 +29,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     );
   }
 
-  public refresh = () => {
-    this._onDidChangeTreeData.fire();
+  public refresh = (data?: TreeNode) => {
+    this._onDidChangeTreeData.fire(data);
   }
 
   getTreeItem(node: TreeNode): TreeItem {
@@ -79,7 +79,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         return [new NoStarredGistsNode()];
       } else {
         return sortGists(this.store.starredGists).map(
-          (gist) => new StarredGistNode(gist, section)
+          (gist) => new StarredGistNode(gist, section, element)
         );
       }
     } else if (element instanceof GistNode) {
@@ -106,7 +106,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
               return (gistDiffItem.gistId === gist.id);
             });
 
-            return new FollowedUserGistNode(gist, section, this.extensionPath, gistDiff);
+            return new FollowedUserGistNode(gist, section, element, this.extensionPath, gistDiff);
           }
         );
       }
@@ -122,7 +122,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export let refreshTree: Function;
+export let refreshTree: (data?: TreeNode) => void;
 
 export function registerTreeProvider(store: IStore, extensionPath: string) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);

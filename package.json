@@ -71,7 +71,7 @@
         "gistpad.treeIcons": {
           "default": "true",
           "type": "boolean",
-          "description": "Show gist icons in the gists tree."
+          "description": "Specifies whether to show the gist type icons in the gists tree."
         },
         "gistpad.comments.showThread": {
           "default": "whenNotEmpty",

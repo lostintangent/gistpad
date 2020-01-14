@@ -8,7 +8,7 @@ import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
-  isBlogPostGist,
+  isDocumentGist,
   isNotebookGist,
   isPlaygroundGist
 } from "../utils";
@@ -45,12 +45,12 @@ export abstract class TreeNode extends TreeItem {
       return this.getIconPath(gist, "playground", extensionPath);
     }
 
-    if (isBlogPostGist(gist)) {
-      return this.getIconPath(gist, "blog-post", extensionPath);
-    }
-
     if (isNotebookGist(gist)) {
       return this.getIconPath(gist, "jupyter", extensionPath);
+    }
+
+    if (isDocumentGist(gist)) {
+      return this.getIconPath(gist, "blog-post", extensionPath);
     }
 
     return this.getIconPath(gist, "gist", extensionPath);

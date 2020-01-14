@@ -8,6 +8,7 @@
 - Introduced the concept of "playground templates", which allow you to create new playgrounds from a "standard" template (e.g. React.js, Vue), or define your own templates and then create new playgrounds from that over time
 - Added the `Active Gist` view that displays all of the files/actions of the currently open gist. To begin this, this only supports playgrounds, and the view shows/hides itself when you actually have a playground open.
 - Added the new `GistPad > Playgrounds: Include Script` setting, to allow indicating that you don't want a `script.js` file for new playgrounds
+- Updated the `Gists` tree to include icons that indicate the "type" of gist (code, playground, jupyter notebook or document), and whether it's public or secret
 - Added an inline action to gist tree nodes that allow you to open them with a single-click
 - Updated the playground auto-save feature, so that it doesn't attempt to run when you're 1) signed out, or 2) have a playground open you don't own
 

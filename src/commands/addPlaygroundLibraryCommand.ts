@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { PlaygroundManifest } from "../commands/playground";
-import { PLAYGROUND_JSON_FILE, URI_PATTERN } from "../constants";
+import { PLAYGROUND_FILE, URI_PATTERN } from "../constants";
 import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
 import {
   getCDNJSLibraries,
@@ -94,7 +94,7 @@ async function addDependencyLink(
   libraryUrl: string
 ) {
   const gistId = activePlayground!.gist.id;
-  const uri = fileNameToUri(gistId, PLAYGROUND_JSON_FILE);
+  const uri = fileNameToUri(gistId, PLAYGROUND_FILE);
 
   let playgroundJSON;
   try {

@@ -1,9 +1,10 @@
 import Axios from "axios";
 import { debounce } from "debounce";
+import { reaction } from "mobx";
 import * as path from "path";
 import * as vscode from "vscode";
 import * as config from "../config";
-import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_JSON_FILE } from "../constants";
+import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_FILE } from "../constants";
 import { log } from "../logger";
 import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
@@ -27,6 +28,7 @@ export interface PlaygroundManifest {
   styles?: string[];
   layout?: string;
   showConsole?: boolean;
+  template?: boolean;
 }
 
 export enum PlaygroundLibraryType {
@@ -76,18 +78,27 @@ const STYLESHEET_EXTENSIONS = [
 const ScriptLanguage = {
   babel: ".babel",
   javascript: ".js",
+  javascriptmodule: ".mjs",
   javascriptreact: ".jsx",
   typescript: ".ts",
   typescriptreact: ".tsx"
 };
+
 const REACT_EXTENSIONS = [
   ScriptLanguage.babel,
   ScriptLanguage.javascriptreact,
   ScriptLanguage.typescriptreact
 ];
 
+const MODULE_EXTENSIONS = [ScriptLanguage.javascriptmodule];
+
 const TYPESCRIPT_EXTENSIONS = [ScriptLanguage.typescript, ...REACT_EXTENSIONS];
-const SCRIPT_EXTENSIONS = [ScriptLanguage.javascript, ...TYPESCRIPT_EXTENSIONS];
+
+const SCRIPT_EXTENSIONS = [
+  ScriptLanguage.javascript,
+  ...MODULE_EXTENSIONS,
+  ...TYPESCRIPT_EXTENSIONS
+];
 
 interface IPlayground {
   gist: Gist;
@@ -119,11 +130,11 @@ const includesReactScripts = (scripts: string[]) => {
 };
 
 export const getManifestContent = (gist: Gist) => {
-  if (!gist.files[PLAYGROUND_JSON_FILE]) {
+  if (!gist.files[PLAYGROUND_FILE]) {
     return "";
   }
 
-  const manifest = gist.files[PLAYGROUND_JSON_FILE].content!;
+  const manifest = gist.files[PLAYGROUND_FILE].content!;
   if (includesReactFiles(gist)) {
     const parsedManifest = JSON.parse(manifest);
     if (!includesReactScripts(parsedManifest.scripts)) {
@@ -133,7 +144,7 @@ export const getManifestContent = (gist: Gist) => {
       const content = JSON.stringify(parsedManifest, null, 2);
 
       vscode.workspace.fs.writeFile(
-        fileNameToUri(gist.id, PLAYGROUND_JSON_FILE),
+        fileNameToUri(gist.id, PLAYGROUND_FILE),
         stringToByteArray(content)
       );
 
@@ -149,26 +160,24 @@ const SCRIPT_BASE_NAME = "script";
 const STYLESHEET_BASE_NAME = "style";
 
 async function generateNewPlaygroundFiles() {
-  const scriptLanguage = await config.get("playgrounds.scriptLanguage");
-  const scriptFileName = `${SCRIPT_BASE_NAME}${ScriptLanguage[scriptLanguage]}`;
-
   const manifest = {
     ...DEFAULT_MANIFEST
   };
 
-  if (isReactFile(scriptFileName)) {
-    manifest.scripts.push(...REACT_SCRIPTS);
-  }
+  const files = [];
 
-  const files = [
-    {
+  if (await config.get("playgrounds.includeScript")) {
+    const scriptLanguage = await config.get("playgrounds.scriptLanguage");
+    const scriptFileName = `${SCRIPT_BASE_NAME}${ScriptLanguage[scriptLanguage]}`;
+
+    files.push({
       filename: scriptFileName
-    },
-    {
-      filename: PLAYGROUND_JSON_FILE,
-      content: JSON.stringify(manifest, null, 2)
+    });
+
+    if (isReactFile(scriptFileName)) {
+      manifest.scripts.push(...REACT_SCRIPTS);
     }
-  ];
+  }
 
   if (await config.get("playgrounds.includeStylesheet")) {
     const stylesheetLanguage = await config.get(
@@ -176,7 +185,7 @@ async function generateNewPlaygroundFiles() {
     );
     const stylesheetFileName = `${STYLESHEET_BASE_NAME}${StylesheetLanguage[stylesheetLanguage]}`;
 
-    files.unshift({
+    files.push({
       filename: stylesheetFileName
     });
   }
@@ -185,10 +194,15 @@ async function generateNewPlaygroundFiles() {
     const markupLanguage = await config.get("playgrounds.markupLanguage");
     const markupFileName = `${MARKUP_BASE_NAME}${MarkupLanguage[markupLanguage]}`;
 
-    files.unshift({
+    files.push({
       filename: markupFileName
     });
   }
+
+  files.push({
+    filename: PLAYGROUND_FILE,
+    content: JSON.stringify(manifest, null, 2)
+  });
 
   return files;
 }
@@ -209,7 +223,8 @@ export function getScriptContent(
   if (TYPESCRIPT_EXTENSIONS.includes(extension) || includesJsx) {
     const typescript = require("typescript");
     const compilerOptions: any = {
-      experimentalDecorators: true
+      experimentalDecorators: true,
+      target: "ES2018"
     };
 
     if (includesJsx || REACT_EXTENSIONS.includes(extension)) {
@@ -296,7 +311,7 @@ function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
   }
 
   const fileName = path.basename(document.uri.toString().toLowerCase());
-  return fileName === PLAYGROUND_JSON_FILE;
+  return fileName === PLAYGROUND_FILE;
 }
 
 enum EditorLayoutOrientation {
@@ -348,6 +363,15 @@ const EditorLayouts = {
   }
 };
 
+function loadPlaygroundManifests() {
+  store.gists.concat(store.starredGists).forEach((gist) => {
+    const manifest = gist.files[PLAYGROUND_FILE];
+    if (manifest) {
+      vscode.workspace.fs.readFile(fileNameToUri(gist.id, PLAYGROUND_FILE));
+    }
+  });
+}
+
 enum PlaygroundLayout {
   grid = "grid",
   preview = "preview",
@@ -385,36 +409,55 @@ export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
 function isPlaygroundDocument(
   gist: Gist,
   document: vscode.TextDocument,
-  extensions: string[]
+  fileType: PlaygroundFileType
 ) {
   if (gist.id !== document.uri.authority) {
     return false;
   }
 
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  return extensions.includes(extension);
+  let extensions: string[];
+  let fileBaseName: string;
+  switch (fileType) {
+    case PlaygroundFileType.markup:
+      extensions = MARKUP_EXTENSIONS;
+      fileBaseName = MARKUP_BASE_NAME;
+      break;
+    case PlaygroundFileType.script:
+      extensions = SCRIPT_EXTENSIONS;
+      fileBaseName = SCRIPT_BASE_NAME;
+      break;
+    case PlaygroundFileType.stylesheet:
+    default:
+      extensions = STYLESHEET_EXTENSIONS;
+      fileBaseName = STYLESHEET_BASE_NAME;
+      break;
+  }
+
+  const fileCandidates = extensions.map(
+    (extension) => `${fileBaseName}${extension}`
+  );
+
+  return fileCandidates.includes(path.basename(document.uri.toString()));
 }
 
-const NO_TEMPLATE_GIST_ITEM = "$(circle-slash) Don't use a template";
+const NO_TEMPLATE_GIST_ITEM = "$(arrow-right) Continue without a template";
 const SELECT_OWN_GIST_ITEM = "$(gist-new) Select your own gist...";
 const SELECT_STARRED_GIST_ITEM = "$(star) Select a starred gist...";
 const SELECT_TEMPLATE_ITEMS = [
   {
     label: NO_TEMPLATE_GIST_ITEM,
     alwaysShow: true,
-    description:
-      'Create a "vanilla.js" playground based on your configured GistPad settings'
+    description: "Create a playground based on your configured GistPad settings"
   },
   {
     label: SELECT_OWN_GIST_ITEM,
     alwaysShow: true,
-    description: `Create a playground from one of your own gists (tagged with #template)`
+    description: `Create a playground from one of your own template gists`
   },
   {
     label: SELECT_STARRED_GIST_ITEM,
     alwaysShow: true,
-    description:
-      "Create a playground from a gist you've starred (tagged with #template)"
+    description: "Create a playground from a template gist you've starred"
   }
 ];
 
@@ -434,9 +477,7 @@ const KnownGalleries = ["web"];
 
 let galleryTemplates: GalleryTemplate[] = [];
 async function loadGalleryTemplates() {
-  const galleries: string[] = await config.get(
-    "playgrounds.templates.galleries"
-  );
+  const galleries: string[] = await config.get("playgrounds.templateGalleries");
 
   let templates: GalleryTemplate[] = [];
   for (let gallery of galleries) {
@@ -462,33 +503,32 @@ async function selectTemplateFromGists(
   isPublic: boolean,
   message: string
 ) {
-  const templateTagName: string = await config.get(
-    "playgrounds.templates.tagName"
-  );
-
-  const templategTag = `#${templateTagName}`;
-
-  const templates = sortGists(gists).filter((gist) =>
-    gist.description.includes(templategTag)
-  );
+  const templates = [];
+  for (const gist of gists) {
+    const manifest = gist.files[PLAYGROUND_FILE];
+    if (manifest && manifest.content) {
+      try {
+        const manifestContent = JSON.parse(manifest.content);
+        if (manifestContent.template) {
+          templates.push(gist);
+        }
+      } catch {
+        // No op
+      }
+    }
+  }
 
   if (templates.length === 0) {
-    return vscode.window.showInformationMessage(
-      `${message} (#${templateTagName})`
-    );
+    return vscode.window.showInformationMessage(message);
   }
 
   const selected = await showGistQuickPick(
-    templates,
+    sortGists(templates),
     "Select the gist you'd like to create a playground from"
   );
 
   if (selected) {
-    duplicatePlayground(
-      selected.id,
-      isPublic,
-      selected.label.replace(templategTag, "")
-    );
+    duplicatePlayground(selected.id, isPublic, selected.label);
   }
 }
 
@@ -709,13 +749,15 @@ export async function openPlayground(gist: Gist) {
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     debounce(async ({ document }) => {
-      if (isPlaygroundDocument(gist, document, MARKUP_EXTENSIONS)) {
+      if (isPlaygroundDocument(gist, document, PlaygroundFileType.markup)) {
         const content = getMarkupContent(document);
 
         if (content !== null) {
           htmlView.updateHTML(content, runOnEdit);
         }
-      } else if (isPlaygroundDocument(gist, document, SCRIPT_EXTENSIONS)) {
+      } else if (
+        isPlaygroundDocument(gist, document, PlaygroundFileType.script)
+      ) {
         // If the user renamed the script file (e.g. from *.js to *.jsx)
         // than we need to update the manifest in case new scripts
         // need to be injected into the webview (e.g. "react").
@@ -737,11 +779,15 @@ export async function openPlayground(gist: Gist) {
         htmlView.updateManifest(document.getText(), runOnEdit);
 
         if (jsDocument) {
+          manifest = JSON.parse(document.getText());
+
           // TODO: Only update the JS if the manifest change
           // actually impacts it (e.g. adding/removing react)
           htmlView.updateJavaScript(jsDocument, runOnEdit);
         }
-      } else if (isPlaygroundDocument(gist, document, STYLESHEET_EXTENSIONS)) {
+      } else if (
+        isPlaygroundDocument(gist, document, PlaygroundFileType.stylesheet)
+      ) {
         const content = await getStylesheetContent(document);
         if (content !== null) {
           htmlView.updateCSS(content, runOnEdit);
@@ -791,6 +837,14 @@ export async function openPlayground(gist: Gist) {
     true
   );
 
+  store.activeGist = gist.id;
+
+  await vscode.commands.executeCommand(
+    "setContext",
+    "gistpad:activeGist",
+    true
+  );
+
   const autoSave = vscode.workspace
     .getConfiguration("files")
     .get<string>("autoSave");
@@ -825,6 +879,8 @@ export async function openPlayground(gist: Gist) {
 
     vscode.commands.executeCommand("workbench.action.closePanel");
     vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false);
+    vscode.commands.executeCommand("setContext", "gistpad:activeGist", false);
+    store.activeGist = null;
   });
 }
 
@@ -932,7 +988,14 @@ export async function registerPlaygroundCommands(
     )
   );
 
-  // Warm up the local CDNJS cache
-  getCDNJSLibraries();
-  loadGalleryTemplates();
+  reaction(
+    () => [store.isSignedIn, store.isLoading],
+    ([isSignedIn, isLoading]) => {
+      if (isSignedIn && !isLoading) {
+        getCDNJSLibraries();
+        loadGalleryTemplates();
+        loadPlaygroundManifests();
+      }
+    }
+  );
 }

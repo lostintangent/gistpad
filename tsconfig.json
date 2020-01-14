@@ -2,9 +2,9 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "module": "commonjs",
-    "target": "ES2017",
+    "target": "ES2019",
     "outDir": "out",
-    "lib": ["ES2018", "DOM"],
+    "lib": ["ES2019", "DOM"],
     "sourceMap": true,
     "rootDir": "src",
     "strict": true,

@@ -5,7 +5,6 @@ import {
   commands,
   env,
   ExtensionContext,
-  ProgressLocation,
   Uri,
   window,
   workspace
@@ -18,7 +17,8 @@ import {
   fileNameToUri,
   getGistDetailsFromUri,
   openGistFile,
-  stringToByteArray
+  stringToByteArray,
+  withProgress
 } from "../utils";
 
 export function registerFileCommands(context: ExtensionContext) {
@@ -31,18 +31,11 @@ export function registerFileCommands(context: ExtensionContext) {
         const fileName = await window.showInputBox({
           prompt:
             "Enter the files name(s) to add to the gist (can be a comma-seperated list)",
-          value: "foo.md"
+          placeHolder: "foo.md"
         });
-        if (!fileName) {
-          return;
-        }
 
-        window.withProgress(
-          {
-            location: ProgressLocation.Notification,
-            title: "Adding file(s)..."
-          },
-          () => {
+        if (fileName) {
+          await withProgress("Adding file(s)...", () => {
             const fileNames = fileName.split(",");
             return Promise.all(
               fileNames.map((fileName) => {
@@ -52,8 +45,8 @@ export function registerFileCommands(context: ExtensionContext) {
                 );
               })
             );
-          }
-        );
+          });
+        }
       }
     )
   );
@@ -70,23 +63,18 @@ export function registerFileCommands(context: ExtensionContext) {
         });
 
         if (files) {
-          window.withProgress(
-            {
-              location: ProgressLocation.Notification,
-              title: "Uploading files..."
-            },
-            async () =>
-              Promise.all(
-                files.map((file) => {
-                  const fileName = path.basename(file.path);
-                  const content = fs.readFileSync(new URL(file.toString()));
+          withProgress("Uploading file(s)...", () =>
+            Promise.all(
+              files.map((file) => {
+                const fileName = path.basename(file.path);
+                const content = fs.readFileSync(new URL(file.toString()));
 
-                  return workspace.fs.writeFile(
-                    fileNameToUri(node.gist.id, fileName),
-                    content
-                  );
-                })
-              )
+                return workspace.fs.writeFile(
+                  fileNameToUri(node.gist.id, fileName),
+                  content
+                );
+              })
+            )
           );
         }
       }
@@ -120,32 +108,23 @@ export function registerFileCommands(context: ExtensionContext) {
       async (targetNode: GistFileNode, multiSelectNodes?: GistFileNode[]) => {
         await ensureAuthenticated();
 
-        window.withProgress(
-          {
-            title: "Deleting file(s)...",
-            location: ProgressLocation.Notification
-          },
-          async () => {
-            const fileNodes = multiSelectNodes || [targetNode];
-            await Promise.all(
-              fileNodes.map((fileNode) =>
-                workspace.fs.delete(
-                  fileNameToUri(fileNode.gistId, fileNode.file.filename!)
-                )
-              )
-            );
-          }
-        );
+        await withProgress("Deleting file(s)...", () => {
+          const fileNodes = multiSelectNodes || [targetNode];
+          return Promise.all(
+            fileNodes.map((fileNode) => {
+              workspace.fs.delete(
+                fileNameToUri(fileNode.gistId, fileNode.file.filename!)
+              );
+            })
+          );
+        });
       }
     )
   );
 
   context.subscriptions.push(
-    commands.registerCommand(
-      `${EXTENSION_NAME}.openGistFile`,
-      async (uri: Uri) => {
-        openGistFile(uri, false);
-      }
+    commands.registerCommand(`${EXTENSION_NAME}.openGistFile`, (uri: Uri) =>
+      openGistFile(uri, false)
     )
   );
 
@@ -170,14 +149,12 @@ export function registerFileCommands(context: ExtensionContext) {
           value: fileName
         });
 
-        if (!newFilename) {
-          return;
+        if (newFilename) {
+          await workspace.fs.rename(
+            fileNameToUri(gistId, fileName),
+            fileNameToUri(gistId, newFilename)
+          );
         }
-
-        await workspace.fs.rename(
-          fileNameToUri(gistId, fileName),
-          fileNameToUri(gistId, newFilename)
-        );
       }
     )
   );

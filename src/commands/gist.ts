@@ -1,3 +1,4 @@
+import { runInAction } from "mobx";
 import { URL } from "url";
 import {
   commands,
@@ -322,10 +323,13 @@ export async function registerGistCommands(context: ExtensionContext) {
           }
 
           const nodes = multiSelectNodes || [targetNode];
-          for (const node of nodes) {
-            await deleteGist(node.gist.id);
-            await closeGistFiles(node.gist);
-          }
+
+          await runInAction(async () => {
+            for (const node of nodes) {
+              await deleteGist(node.gist.id);
+              await closeGistFiles(node.gist);
+            }
+          });
         } else if (isGistWorkspace()) {
           const response = await window.showInformationMessage(
             "Are you sure you want to delete the opened Gist?",
@@ -413,7 +417,12 @@ export async function registerGistCommands(context: ExtensionContext) {
         // for productivity purposes, but that node doesn't contain
         // a gist, and so if the user is coming in from there, then
         // don't pass on the tree node object to the open gist method.
-        const gistNode = node instanceof GistNode ? node : undefined;
+        const gistNode =
+          node instanceof GistNode ||
+          node instanceof StarredGistNode ||
+          node instanceof FollowedUserGistNode
+            ? node
+            : undefined;
         openGistInternal({ node: gistNode });
       }
     )

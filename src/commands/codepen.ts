@@ -1,14 +1,9 @@
 import * as path from "path";
 import { Gist } from "src/store";
 import * as vscode from "vscode";
-import {
-  EXTENSION_NAME,
-  PLAYGROUND_JSON_FILE,
-  URI_PATTERN
-} from "../constants";
-import { updateGist } from "../store/actions";
+import { EXTENSION_NAME, PLAYGROUND_FILE, URI_PATTERN } from "../constants";
 import { GistNode } from "../tree/nodes";
-import { byteArrayToString, fileNameToUri } from "../utils";
+import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
 import { getCDNJSLibraries } from "./cdnjs";
 import { getGistFileOfType, PlaygroundFileType } from "./playground";
 
@@ -142,10 +137,10 @@ async function exportGist(gist: Gist) {
     styles = matchAllUrls(stylesContent, STYLE_PATTERN);
   }
 
-  if (Object.keys(gist.files).includes(PLAYGROUND_JSON_FILE)) {
+  if (Object.keys(gist.files).includes(PLAYGROUND_FILE)) {
     const manifestContent = byteArrayToString(
       await vscode.workspace.fs.readFile(
-        fileNameToUri(gist.id, PLAYGROUND_JSON_FILE)
+        fileNameToUri(gist.id, PLAYGROUND_FILE)
       )
     );
 
@@ -183,18 +178,16 @@ async function exportGist(gist: Gist) {
     data.css_external = styles.join(";");
   }
 
-  const updatedGist = await updateGist(gist.id, MARKER_FILE, {
-    filename: MARKER_FILE,
-    content: JSON.stringify(data)
-  });
+  await vscode.workspace.fs.writeFile(
+    fileNameToUri(gist.id, MARKER_FILE),
+    stringToByteArray(JSON.stringify(data))
+  );
 
   // Grab the updated raw URL, which will include
   // the latest commit ID after adding the marker file.
   // This is neccessary for "busting" the cache, when the
   // CodePen export page tries to download the marker file.
-  const definitionUrl = encodeURIComponent(
-    updatedGist.files[MARKER_FILE].raw_url!
-  );
+  const definitionUrl = encodeURIComponent(gist.files[MARKER_FILE].raw_url!);
 
   await vscode.env.openExternal(
     vscode.Uri.parse(`${CODEPEN_URI}?pen=${definitionUrl}`)
@@ -203,7 +196,7 @@ async function exportGist(gist: Gist) {
   // Return a function that when called,
   // will delete the temporary marker file.
   return () => {
-    updateGist(gist.id, MARKER_FILE, null);
+    vscode.workspace.fs.delete(fileNameToUri(gist.id, MARKER_FILE));
   };
 }
 

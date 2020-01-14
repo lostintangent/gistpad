@@ -1,8 +1,15 @@
+## v0.0.45 (?)
+
+- Added support for JavaScript modules, which allows you to `import` other modules, using either an [absolute URL](https://www.pika.dev/cdn), or a relative path to another JavaScript module in the gist. See an example [here](https://gist.github.com/lostintangent/efe75465292976f81149aed3363b0832)
+
 ## v0.0.44 (01/06/2020)
 
-- Added the new `New Secret Playground` command, which allows you to create playgrounds that are backed by secret gists
-- Added the new `New Playground from Template` command, which allows you to easily create playgrounds from an existing template
-- Update the playground auto-save feature, so that it doesn't attempt to run when you're 1) signed out, or 2) have a playground open you don't own
+- Added the `New Secret Playground` command, which allows you to create playgrounds that are backed by secret gists
+- Introduced the concept of "playground templates", which allow you to create new playgrounds from a "standard" template (e.g. React.js, Vue), or define your own templates and then create new playgrounds from that over time
+- Added the `Active Gist` view that displays all of the files/actions of the currently open gist. To begin this, this only supports playgrounds, and the view shows/hides itself when you actually have a playground open.
+- Added the new `GistPad > Playgrounds: Include Script` setting, to allow indicating that you don't want a `script.js` file for new playgrounds
+- Added an inline action to gist tree nodes that allow you to open them with a single-click
+- Updated the playground auto-save feature, so that it doesn't attempt to run when you're 1) signed out, or 2) have a playground open you don't own
 
 ## v0.0.43 (01/05/2020)
 

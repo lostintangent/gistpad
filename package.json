@@ -113,6 +113,11 @@
           "type": "boolean",
           "description": "Specifies whether to include a markup file (index.html) when creating new web playgrounds."
         },
+        "gistpad.playgrounds.includeScript": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether to include a script file (script.css) when creating new web playgrounds."
+        },
         "gistpad.playgrounds.includeStylesheet": {
           "default": true,
           "type": "boolean",
@@ -162,7 +167,7 @@
           "type": "boolean",
           "description": "Specifies whether to automatically show the console when opening a playground."
         },
-        "gistpad.playgrounds.templates.galleries": {
+        "gistpad.playgrounds.templateGalleries": {
           "default": [
             "web"
           ],
@@ -172,13 +177,6 @@
             "format": "uri"
           },
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
-        },
-        "gistpad.playgrounds.templates.tagName": {
-          "default": [
-            "template"
-          ],
-          "type": "string",
-          "description": "Specifies the name of the tag that identifies an owned or starred gist as being a playground template."
         }
       }
     },
@@ -332,7 +330,11 @@
       {
         "command": "gistpad.openGist",
         "title": "Open Gist",
-        "category": "GistPad"
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/open.svg",
+          "light": "images/light/open.svg"
+        }
       },
       {
         "command": "gistpad.openGistFile",
@@ -756,6 +758,11 @@
         {
           "command": "gistpad.openGist",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "group": "inline@1"
+        },
+        {
+          "command": "gistpad.openGist",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
           "group": "base@1"
         },
         {
@@ -983,6 +990,11 @@
         {
           "id": "gistpad.gists",
           "name": "Gists"
+        },
+        {
+          "id": "gistpad.activeGist",
+          "name": "Active Gist",
+          "when": "gistpad:activeGist"
         }
       ]
     },

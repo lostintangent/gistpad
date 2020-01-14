@@ -16,6 +16,7 @@ export async function get(
   key: "playgrounds.layout"
 ): Promise<"grid" | "splitLeft" | "splitRight" | "splitTop">;
 export async function get(key: "playgrounds.includeMarkup"): Promise<boolean>;
+export async function get(key: "playgrounds.includeScript"): Promise<boolean>;
 export async function get(
   key: "playgrounds.includeStylesheet"
 ): Promise<boolean>;
@@ -30,11 +31,8 @@ export async function get(
 ): Promise<"css" | "less" | "sass" | "scss">;
 export async function get(key: "playgrounds.showConsole"): Promise<boolean>;
 export async function get(
-  key: "playgrounds.templates.galleries"
+  key: "playgrounds.templateGalleries"
 ): Promise<string[]>;
-export async function get(
-  key: "playgrounds.templates.tagName"
-): Promise<string>;
 export async function get(key: "comments.showThread"): Promise<string>;
 export async function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

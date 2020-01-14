@@ -132,7 +132,7 @@ export const getManifestContent = (gist: Gist) => {
 
       const content = JSON.stringify(parsedManifest, null, 2);
 
-      vscode.workspace.fs.writeFile(
+      (vscode.workspace as any).fs.writeFile(
         fileNameToUri(gist.id, PLAYGROUND_JSON_FILE),
         stringToByteArray(content)
       );
@@ -149,7 +149,7 @@ const SCRIPT_BASE_NAME = "script";
 const STYLESHEET_BASE_NAME = "style";
 
 async function generateNewPlaygroundFiles() {
-  const scriptLanguage = await config.get("playgrounds.scriptLanguage");
+  const scriptLanguage = config.get("playgrounds.scriptLanguage");
   const scriptFileName = `${SCRIPT_BASE_NAME}${ScriptLanguage[scriptLanguage]}`;
 
   const manifest = {
@@ -170,10 +170,8 @@ async function generateNewPlaygroundFiles() {
     }
   ];
 
-  if (await config.get("playgrounds.includeStylesheet")) {
-    const stylesheetLanguage = await config.get(
-      "playgrounds.stylesheetLanguage"
-    );
+  if (config.get("playgrounds.includeStylesheet")) {
+    const stylesheetLanguage = config.get("playgrounds.stylesheetLanguage");
     const stylesheetFileName = `${STYLESHEET_BASE_NAME}${StylesheetLanguage[stylesheetLanguage]}`;
 
     files.unshift({
@@ -181,8 +179,8 @@ async function generateNewPlaygroundFiles() {
     });
   }
 
-  if (await config.get("playgrounds.includeMarkup")) {
-    const markupLanguage = await config.get("playgrounds.markupLanguage");
+  if (config.get("playgrounds.includeMarkup")) {
+    const markupLanguage = config.get("playgrounds.markupLanguage");
     const markupFileName = `${MARKUP_BASE_NAME}${MarkupLanguage[markupLanguage]}`;
 
     files.unshift({
@@ -434,9 +432,7 @@ const KnownGalleries = ["web"];
 
 let galleryTemplates: GalleryTemplate[] = [];
 async function loadGalleryTemplates() {
-  const galleries: string[] = await config.get(
-    "playgrounds.templates.galleries"
-  );
+  const galleries: string[] = config.get("playgrounds.templates.galleries");
 
   let templates: GalleryTemplate[] = [];
   for (let gallery of galleries) {
@@ -462,9 +458,7 @@ async function selectTemplateFromGists(
   isPublic: boolean,
   message: string
 ) {
-  const templateTagName: string = await config.get(
-    "playgrounds.templates.tagName"
-  );
+  const templateTagName: string = config.get("playgrounds.templates.tagName");
 
   const templategTag = `#${templateTagName}`;
 
@@ -582,8 +576,7 @@ export async function openPlayground(gist: Gist) {
     manifest = {};
   }
 
-  const playgroundLayout =
-    manifest.layout || (await config.get("playgrounds.layout"));
+  const playgroundLayout = manifest.layout || config.get("playgrounds.layout");
 
   let editorLayout: any;
   if (includedFiles === 3) {
@@ -700,11 +693,11 @@ export async function openPlayground(gist: Gist) {
     styles
   );
 
-  if ((await config.get("playgrounds.showConsole")) || manifest.showConsole) {
+  if (config.get("playgrounds.showConsole") || manifest.showConsole) {
     output.show(false);
   }
 
-  const autoRun = await config.get("playgrounds.autoRun");
+  const autoRun = config.get("playgrounds.autoRun");
   const runOnEdit = autoRun === "onEdit";
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
@@ -794,12 +787,12 @@ export async function openPlayground(gist: Gist) {
   const autoSave = vscode.workspace
     .getConfiguration("files")
     .get<string>("autoSave");
-  let autoSaveInterval: NodeJS.Timer | undefined;
+  let autoSaveInterval: any;
 
   const isOwner = gist.owner && gist.owner.login === store.login;
   if (
     autoSave !== "afterDelay" && // Don't enable autoSave if the end-user has already configured it
-    (await config.get("playgrounds.autoSave")) &&
+    config.get("playgrounds.autoSave") &&
     isOwner // You can't edit gists you don't own, so it doesn't make sense to attempt to auto-save these files
   ) {
     autoSaveInterval = setInterval(async () => {

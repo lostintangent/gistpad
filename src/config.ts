@@ -2,41 +2,30 @@ import * as vscode from "vscode";
 
 const CONFIG_SECTION = "gistpad";
 
-export async function get(key: "apiUrl"): Promise<string>;
-export async function get(key: "gitSSO"): Promise<boolean>;
-export async function get(
-  key: "images.markdownPasteFormat"
-): Promise<"markdown" | "html">;
-export async function get(key: "images.pasteType"): Promise<"file" | "base64">;
-export async function get(
-  key: "playgrounds.autoRun"
-): Promise<"onEdit" | "onSave" | "never">;
-export async function get(key: "playgrounds.autoSave"): Promise<boolean>;
-export async function get(
+export function get(key: "treeIcons"): boolean;
+export function get(key: "apiUrl"): string;
+export function get(key: "gitSSO"): boolean;
+export function get(key: "images.markdownPasteFormat"): "markdown" | "html";
+export function get(key: "images.pasteType"): "file" | "base64";
+export function get(key: "playgrounds.autoRun"): "onEdit" | "onSave" | "never";
+export function get(key: "playgrounds.autoSave"): boolean;
+export function get(
   key: "playgrounds.layout"
-): Promise<"grid" | "splitLeft" | "splitRight" | "splitTop">;
-export async function get(key: "playgrounds.includeMarkup"): Promise<boolean>;
-export async function get(
-  key: "playgrounds.includeStylesheet"
-): Promise<boolean>;
-export async function get(
-  key: "playgrounds.markupLanguage"
-): Promise<"html" | "pug">;
-export async function get(
+): "grid" | "splitLeft" | "splitRight" | "splitTop";
+export function get(key: "playgrounds.includeMarkup"): boolean;
+export function get(key: "playgrounds.includeStylesheet"): boolean;
+export function get(key: "playgrounds.markupLanguage"): "html" | "pug";
+export function get(
   key: "playgrounds.scriptLanguage"
-): Promise<"javascript" | "javascriptreact" | "typescript" | "typescriptreact">;
-export async function get(
+): "javascript" | "javascriptreact" | "typescript" | "typescriptreact";
+export function get(
   key: "playgrounds.stylesheetLanguage"
-): Promise<"css" | "less" | "sass" | "scss">;
-export async function get(key: "playgrounds.showConsole"): Promise<boolean>;
-export async function get(
-  key: "playgrounds.templates.galleries"
-): Promise<string[]>;
-export async function get(
-  key: "playgrounds.templates.tagName"
-): Promise<string>;
-export async function get(key: "comments.showThread"): Promise<string>;
-export async function get(key: any) {
+): "css" | "less" | "sass" | "scss";
+export function get(key: "playgrounds.showConsole"): boolean;
+export function get(key: "playgrounds.templates.galleries"): string[];
+export function get(key: "playgrounds.templates.tagName"): string;
+export function get(key: "comments.showThread"): string;
+export function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);
 
   return extensionConfig.get(key);

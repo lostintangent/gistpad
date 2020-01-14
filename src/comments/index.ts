@@ -79,7 +79,7 @@ export async function registerCommentController() {
           (comment) => new GistCodeComment(comment, gistId, thread, currentUser)
         );
 
-        const showCommentThread = await config.get("comments.showThread");
+        const showCommentThread = config.get("comments.showThread");
         if (
           showCommentThread === "always" ||
           (showCommentThread === "whenNotEmpty" && thread.comments.length > 0)

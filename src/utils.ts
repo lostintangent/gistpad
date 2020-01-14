@@ -47,10 +47,14 @@ export async function closeGistFiles(gist: Gist) {
   }
 }
 
-export function getGistDescription(gist: Gist): string {
-  return `${moment(gist.updated_at).calendar()}${
-    gist.public ? "" : " (Secret)"
-  }`;
+export function getGistDescription(
+  gist: Gist,
+  includeType: boolean = true
+): string {
+  const maybeSuffix = gist.public ? "" : " (Secret)";
+  const suffix = includeType ? maybeSuffix : "";
+
+  return `${moment(gist.updated_at).calendar()}${suffix}`;
 }
 
 export function withProgress<T>(title: string, action: () => Promise<T>) {

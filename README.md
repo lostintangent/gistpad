@@ -124,30 +124,32 @@ Additionally, if you create a playground that depends on the console, you can se
 
 ### Template Galleries
 
-When you create a new playground, you'll see a list of "templates", which let you create playgrounds using a pre-defined set of files and external libraries (e.g. React.js, Vue). This makes it really easy to get started quickly, and reduce repetitive tasks/boilerplate. By default, GistPad includes a standard set of templates, but you can also define your own custom galleries and then share them with your team/friends/community.
+When you create a new playground, you'll see a list of "templates", which let you create playgrounds using a pre-defined set of files and external libraries (e.g. React.js, Vue). This makes it really easy to get started quickly, and reduce repetitive tasks/boilerplate. By default, GistPad includes a standard set of templates, but you can also define your own custom galleries and then share them with your team/friends/community. If you don't want to use any template galleries, then you can simply delete the items listed in the `GistPad > Playgrounds: Template Galleries` setting.
 
-A template gallery is simply a JSON file, which is hosted somewhere (e.g. a gist, a git repo, your own web server) which defines a set of templates. A template is simply a gist, which includes the neccessary files, and then defines a name and description. To see an example of how to define a template gallery, set the [standard GistPad gallery](https://github.com/vsls-contrib/gistpad/blob/master/galleries/web.json). Additionally, to see an example of a template, see the [React.js template](https://gist.github.com/lostintangent/f15a2e498523f364e36075691542af4c).
+A template gallery is simply a JSON file, which is hosted somewhere (e.g. a gist, a git repo, your own web server), and defines a set of templates. A template is simply a gist, which includes the neccessary files (e.g. HTML, JavaScript, CSS, etc.), and then defines a name and description. To see an example of how to define a template gallery, set the [standard GistPad gallery](https://github.com/vsls-contrib/gistpad/blob/master/galleries/web.json). Additionally, to see an example of a template, see the [React.js template](https://gist.github.com/lostintangent/f15a2e498523f364e36075691542af4c).
 
-When defining the template, you can use the `playground.json` file to indicate not only the JavaScript and CSS libraries that the playgroud needs, but also, the [layout](#layout) it should use by default, and whether or not the console should be automatically opened (e.g. because the playground relies on writing console logs).
+When defining the template, you can use the `playground.json` file to indicate not only the JavaScript and CSS libraries that the playgroud needs, but also, the [layout](#layout) it should use by default, and whether or not the console should be automatically opened (e.g. because the playground relies on writing console logs). See [the docs](#playground-metadata) for more details on this file.
 
-### Templates
+### User Templates
 
-In addition to creating your own custom template galleries, you can also mark your own local playgrounds gists as being templates, by simply setting `"template": true` in the playground's `playground.json` file. Then, when you create a new playground, and select the option to use your own gist, you'll see your template in the list. This option is good for defining your own templates, that you don't intend to share with others.
+In addition to using/creating template galleries, you can also mark your own local playgrounds gists as being templates, by simply setting `"template": true` in the playground's `playground.json` file. Then, when you create a new playground, you'll see your template in the list. This option is good for defining your own templates, that you don't intend to share with others.
+
+Additionally, if you star a gist that is marked as a playground template, that will show up in the list of templates as well. That way, you can easily share templates with others, without needing to create a template gallery.
 
 ### Playground Metadata
 
-Whenever you create a playground, it includes a `playground.json` file, which defines the metadata for the playground, including it's behavior, requirements and intended presentation. 
+Whenever you create a playground, it includes a `playground.json` file, which defines the metadata for the playground, including it's behavior, requirements and intended presentation.
 
 - `scripts` - An array of URLs that indicate the JavaScript libraries which should be added to the playground when run. This property can be managed via the `Add Library` command in the [playground toolbar](#toolbar), and therefore, it isn't neccesary to manually edit it. Defaults to `[]`.
-  
+
 - `styles` - An array of URLs that indicate the CSS libraries which should be added to the playground when run. This property can be managed via the `Add Library` command in the [playground toolbar](#toolbar), and therefore, it isn't neccesary to manually edit it. Defaults to `[]`.
 
-- `showConsole` - Specifies whether to automatically open the [console](#console-output) when someone opens this playground. Note that this will take precendence over the user's configure console setting, and therefore, is useful when a playground relies on console output, and can ensure the playground is setup correctly without requiring the end-user to explicitly open the console. 
+- `showConsole` - Specifies whether to automatically open the [console](#console-output) when someone opens this playground. Note that this will take precendence over the user's configure console setting, and therefore, is useful when a playground relies on console output, and can ensure the playground is setup correctly without requiring the end-user to explicitly open the console.
 
 - `layout` - Specifies the [layout](#layout) to use when someone opens this playground. Note that this will take precedence over the user's configured default layout, and therefore, is useful when a playground is optimized for a specific layout, and therefore, can ensure the end-user has the best experience by default.
 
 - `template` - Indicates that this playground is intended to be used as a template for new playgrounds, and therefore, will appear in the list when creating a new playground. Defaults to `false`.
-   
+
 ### CodePen
 
 If you export a pen to a [GitHub Gist](https://blog.codepen.io/documentation/features/exporting-pens/#save-as-github-gist-2), and then refresh the `Gists` tree in VS Code, you'll be able to see the pen and then can open/edit it like any other playground. This allows you to easily fork someone's pen and work on it within VS Code.
@@ -242,7 +244,6 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.
   - `whenNotEmpty` _(default)_: Automatically display the comment thread whenever there are actually comments in a Gist file. Otherwise, leave it collapsed.
 
-
 - `Gistpad > Images: Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
 
   - `markdown` _(default)_: Pastes the image reference using `Markdown` format (e.g. `![image](link)`).
@@ -297,7 +298,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 * `GistPad > Playgrounds: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.
 
 * `GistPad > Playgrounds: Template Galleries` - Specifies the list of template galleries to use, when displaying the available templates when creating a new playground. Defaults to `["web"]`.
-  
+
 ## Keyboard Shortcuts
 
 - **New Public Gist**: `ctrl+shift+n` _(Windows/Linux)_, `cmd+shift+n` _(macOS)_

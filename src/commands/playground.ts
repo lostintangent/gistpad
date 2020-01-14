@@ -14,9 +14,9 @@ import {
   byteArrayToString,
   closeGistFiles,
   fileNameToUri,
+  getGistDescription,
+  getGistLabel,
   openGistAsWorkspace,
-  showGistQuickPick,
-  sortGists,
   stringToByteArray,
   withProgress
 } from "../utils";
@@ -438,27 +438,6 @@ function isPlaygroundDocument(
   return fileCandidates.includes(path.basename(document.uri.toString()));
 }
 
-const NO_TEMPLATE_GIST_ITEM = "$(arrow-right) Continue without a template";
-const SELECT_OWN_GIST_ITEM = "$(gist-new) Select your own gist...";
-const SELECT_STARRED_GIST_ITEM = "$(star) Select a starred gist...";
-const SELECT_TEMPLATE_ITEMS = [
-  {
-    label: NO_TEMPLATE_GIST_ITEM,
-    alwaysShow: true,
-    description: "Create a playground based on your configured GistPad settings"
-  },
-  {
-    label: SELECT_OWN_GIST_ITEM,
-    alwaysShow: true,
-    description: `Create a playground from one of your own template gists`
-  },
-  {
-    label: SELECT_STARRED_GIST_ITEM,
-    alwaysShow: true,
-    description: "Create a playground from a template gist you've starred"
-  }
-];
-
 function duplicatePlayground(
   gistId: string,
   isPublic: boolean,
@@ -496,37 +475,32 @@ async function loadGalleryTemplates() {
   galleryTemplates = templates.sort((a, b) => a.label.localeCompare(b.label));
 }
 
-async function selectTemplateFromGists(
-  gists: Gist[],
-  isPublic: boolean,
-  message: string
+const NO_TEMPLATE_GIST_ITEM = {
+  label: "$(arrow-right) Continue without a template",
+  alwaysShow: true,
+  description: "Create a playground based on your configured GistPad settings"
+};
+
+async function newPlaygroundWithoutTemplate(
+  isPublic: boolean = true,
+  openAsWorkspace: boolean = false
 ) {
-  const templates = [];
-  for (const gist of gists) {
-    const manifest = gist.files[PLAYGROUND_FILE];
-    if (manifest && manifest.content) {
-      try {
-        const manifestContent = JSON.parse(manifest.content);
-        if (manifestContent.template) {
-          templates.push(gist);
-        }
-      } catch {
-        // No op
-      }
-    }
+  const description = await vscode.window.showInputBox({
+    prompt: "Enter the description of the playground"
+  });
+
+  if (!description) {
+    return;
   }
 
-  if (templates.length === 0) {
-    return vscode.window.showInformationMessage(message);
-  }
-
-  const selected = await showGistQuickPick(
-    sortGists(templates),
-    "Select the gist you'd like to create a playground from"
+  const gist: Gist = await withProgress("Creating Playground...", async () =>
+    newGist(await generateNewPlaygroundFiles(), isPublic, description, false)
   );
 
-  if (selected) {
-    duplicatePlayground(selected.id, isPublic, selected.label);
+  if (openAsWorkspace) {
+    openGistAsWorkspace(gist.id);
+  } else {
+    openPlayground(gist);
   }
 }
 
@@ -539,11 +513,33 @@ async function newPlaygroundInternal(
   quickPick.title = "Create new " + (isPublic ? "" : "secret ") + "playground";
   quickPick.placeholder = "Select the playground template to use";
 
-  if (galleryTemplates.length > 0) {
-    quickPick.items = [...galleryTemplates, ...SELECT_TEMPLATE_ITEMS];
-  } else {
-    quickPick.items = [...SELECT_TEMPLATE_ITEMS];
+  const templates = [...galleryTemplates];
+  for (const gist of store.gists.concat(store.starredGists)) {
+    const manifest = gist.files[PLAYGROUND_FILE];
+    if (manifest && manifest.content) {
+      try {
+        const manifestContent = JSON.parse(manifest.content);
+        if (manifestContent.template) {
+          templates.push({
+            label: getGistLabel(gist),
+            description: getGistDescription(gist),
+            gist: gist.id
+          });
+        }
+      } catch {
+        // No op
+      }
+    }
   }
+
+  if (templates.length === 0) {
+    return await newPlaygroundWithoutTemplate(isPublic, openAsWorkspace);
+  }
+
+  quickPick.items = [
+    ...templates.sort((a, b) => a.label.localeCompare(b.label)),
+    NO_TEMPLATE_GIST_ITEM
+  ];
 
   quickPick.show();
 
@@ -552,46 +548,8 @@ async function newPlaygroundInternal(
 
     const template = quickPick.selectedItems[0];
     switch (template.label) {
-      case SELECT_OWN_GIST_ITEM:
-        return selectTemplateFromGists(
-          store.gists,
-          isPublic,
-          "You haven't tagged any of your gists as templates"
-        );
-      case SELECT_STARRED_GIST_ITEM:
-        return selectTemplateFromGists(
-          store.starredGists,
-          isPublic,
-          "You haven't starred any gists that are tagged as templates"
-        );
-      case NO_TEMPLATE_GIST_ITEM: {
-        const description = await vscode.window.showInputBox({
-          prompt: "Enter the description of the playground"
-        });
-
-        if (!description) {
-          return;
-        }
-
-        const gist: Gist = await vscode.window.withProgress(
-          {
-            location: vscode.ProgressLocation.Notification,
-            title: "Creating Playground..."
-          },
-          async () =>
-            newGist(
-              await generateNewPlaygroundFiles(),
-              isPublic,
-              description,
-              false
-            )
-        );
-
-        if (openAsWorkspace) {
-          openGistAsWorkspace(gist.id);
-        } else {
-          openPlayground(gist);
-        }
+      case NO_TEMPLATE_GIST_ITEM.label: {
+        await newPlaygroundWithoutTemplate(isPublic, openAsWorkspace);
       }
       default:
         duplicatePlayground(
@@ -995,4 +953,10 @@ export async function registerPlaygroundCommands(
       }
     }
   );
+
+  vscode.workspace.onDidChangeConfiguration((e) => {
+    if (e.affectsConfiguration("gistpad.playgrounds.templateGalleries")) {
+      loadGalleryTemplates();
+    }
+  });
 }

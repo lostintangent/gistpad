@@ -179,10 +179,8 @@ async function generateNewPlaygroundFiles() {
     }
   }
 
-  if (await config.get("playgrounds.includeStylesheet")) {
-    const stylesheetLanguage = await config.get(
-      "playgrounds.stylesheetLanguage"
-    );
+  if (config.get("playgrounds.includeStylesheet")) {
+    const stylesheetLanguage = config.get("playgrounds.stylesheetLanguage");
     const stylesheetFileName = `${STYLESHEET_BASE_NAME}${StylesheetLanguage[stylesheetLanguage]}`;
 
     files.push({
@@ -190,8 +188,8 @@ async function generateNewPlaygroundFiles() {
     });
   }
 
-  if (await config.get("playgrounds.includeMarkup")) {
-    const markupLanguage = await config.get("playgrounds.markupLanguage");
+  if (config.get("playgrounds.includeMarkup")) {
+    const markupLanguage = config.get("playgrounds.markupLanguage");
     const markupFileName = `${MARKUP_BASE_NAME}${MarkupLanguage[markupLanguage]}`;
 
     files.push({
@@ -622,8 +620,7 @@ export async function openPlayground(gist: Gist) {
     manifest = {};
   }
 
-  const playgroundLayout =
-    manifest.layout || (await config.get("playgrounds.layout"));
+  const playgroundLayout = manifest.layout || config.get("playgrounds.layout");
 
   let editorLayout: any;
   if (includedFiles === 3) {
@@ -740,11 +737,11 @@ export async function openPlayground(gist: Gist) {
     styles
   );
 
-  if ((await config.get("playgrounds.showConsole")) || manifest.showConsole) {
+  if (config.get("playgrounds.showConsole") || manifest.showConsole) {
     output.show(false);
   }
 
-  const autoRun = await config.get("playgrounds.autoRun");
+  const autoRun = config.get("playgrounds.autoRun");
   const runOnEdit = autoRun === "onEdit";
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
@@ -848,12 +845,12 @@ export async function openPlayground(gist: Gist) {
   const autoSave = vscode.workspace
     .getConfiguration("files")
     .get<string>("autoSave");
-  let autoSaveInterval: NodeJS.Timer | undefined;
+  let autoSaveInterval: any;
 
   const isOwner = gist.owner && gist.owner.login === store.login;
   if (
     autoSave !== "afterDelay" && // Don't enable autoSave if the end-user has already configured it
-    (await config.get("playgrounds.autoSave")) &&
+    config.get("playgrounds.autoSave") &&
     isOwner // You can't edit gists you don't own, so it doesn't make sense to attempt to auto-save these files
   ) {
     autoSaveInterval = setInterval(async () => {

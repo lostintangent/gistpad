@@ -67,7 +67,7 @@ async function tryToRemoveUploadingMarkup(
 }
 
 export async function pasteImageCommand(editor: vscode.TextEditor) {
-  const imageType = await config.get("images.pasteType");
+  const imageType = config.get("images.pasteType");
   const isFilePaste = imageType === "file";
 
   const imageId = randomInt();

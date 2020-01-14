@@ -21,7 +21,7 @@ export async function activate(context: vscode.ExtensionContext) {
   registerPlaygroundContentProvider();
   registerProtocolHander();
   registerTreeProvider(store, context.extensionPath);
-  registerActiveGistTreeProvider(store);
+  registerActiveGistTreeProvider(store, context.extensionPath);
 
   if (isGistWorkspace()) {
     const gistId = getGistWorkspaceId();

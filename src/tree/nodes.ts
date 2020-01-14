@@ -1,12 +1,14 @@
 import * as moment from "moment";
 import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import * as config from "../config";
 import { EXTENSION_NAME } from "../constants";
 import { FollowedUser, Gist, GistFile } from "../store";
 import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
+  isBlogPostGist,
   isNotebookGist,
   isPlaygroundGist
 } from "../utils";
@@ -18,6 +20,41 @@ export abstract class TreeNode extends TreeItem {
   ) {
     super(label, collapsibleState);
   }
+
+  private getIconPath = (
+    gist: Gist,
+    iconName: string,
+    extensionPath: string
+  ) => {
+    if (!gist.public) {
+      iconName += "-secret";
+    }
+
+    return {
+      dark: path.join(extensionPath, `images/dark/${iconName}.svg`),
+      light: path.join(extensionPath, `images/light/${iconName}.svg`)
+    };
+  };
+
+  public getGistTypeIcon = (gist: Gist, extensionPath: string) => {
+    if (!config.get("treeIcons")) {
+      return;
+    }
+
+    if (isPlaygroundGist(gist)) {
+      return this.getIconPath(gist, "playground", extensionPath);
+    }
+
+    if (isBlogPostGist(gist)) {
+      return this.getIconPath(gist, "blog-post", extensionPath);
+    }
+
+    if (isNotebookGist(gist)) {
+      return this.getIconPath(gist, "jupyter", extensionPath);
+    }
+
+    return this.getIconPath(gist, "gist", extensionPath);
+  };
 }
 
 export class OpenGistNode extends TreeNode {
@@ -71,11 +108,14 @@ export class CreateNewGistNode extends TreeNode {
 export class GistNode extends TreeNode {
   constructor(
     public gist: Gist,
+    extensionPath: string,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
     super(getGistLabel(gist), collapsibleState);
 
-    this.description = getGistDescription(gist);
+    this.description = getGistDescription(gist, !config.get("treeIcons"));
+    this.iconPath = this.getGistTypeIcon(gist, extensionPath);
+
     this.tooltip = this.getTooltip(
       `Type: ${gist.public ? "Public" : "Secret"}`
     );
@@ -147,8 +187,8 @@ export class NoStarredGistsNode extends TreeNode {
 }
 
 export class StarredGistNode extends GistNode {
-  constructor(public gist: Gist) {
-    super(gist);
+  constructor(public gist: Gist, extensionPath: string) {
+    super(gist, extensionPath);
 
     const owner = gist.owner ? gist.owner.login : "Anonymous";
     this.tooltip = this.getTooltip(`Owner: ${owner}`);
@@ -182,9 +222,10 @@ export class NoUserGistsNode extends TreeNode {
 export class FollowedUserGistNode extends GistNode {
   constructor(
     public gist: Gist,
+    extensionPath: string,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
-    super(gist, collapsibleState);
+    super(gist, extensionPath, collapsibleState);
 
     this.tooltip = this.getTooltip();
     this.contextValue = this.getContextValue("followedUser.gist");

@@ -62,7 +62,7 @@ If you're building web applications, and want to create a quick playground envir
 
 When you create a new playground, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries you intend to use (e.g. React.js, Vue.js). You can also choose not to use a template, which will simply create a new playground, with an empty HTML, CSS and JavaScript file, which you can then [add libraries](#external-libraries) to as neccessary.
 
-![Playground](https://user-images.githubusercontent.com/116461/72363388-a2fbb800-36a9-11ea-9233-168cea9ce1b1.gif)
+![Playground](https://user-images.githubusercontent.com/116461/72381586-79a05380-36cc-11ea-824e-38f9afec136b.gif)
 
 Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you're done with a playground, simply close the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist 👍
 

@@ -1,4 +1,4 @@
-import Axios from "axios";
+import axios from "axios";
 import { debounce } from "debounce";
 import { reaction } from "mobx";
 import * as path from "path";
@@ -453,17 +453,18 @@ const KNOWN_GALLERY_ROOT =
 const KnownGalleries = ["web"];
 
 let galleryTemplates: GalleryTemplate[] = [];
+
 async function loadGalleryTemplates() {
   const galleries: string[] = await config.get("playgrounds.templateGalleries");
-
   let templates: GalleryTemplate[] = [];
+
   for (let gallery of galleries) {
     if (KnownGalleries.includes(gallery)) {
       gallery = `${KNOWN_GALLERY_ROOT}${gallery}.json`;
     }
 
     try {
-      const { data } = await Axios.get(gallery);
+      const { data } = await axios.get(gallery);
       templates.push(...data.templates);
     } catch (e) {
       log.info(
@@ -761,6 +762,8 @@ export async function openPlayground(gist: Gist) {
         ) {
           await htmlView.rebuildWebview();
         }
+
+        console.log("on did save text doc");
       }
     );
   }

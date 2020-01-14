@@ -8,6 +8,7 @@ import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
+  isBlogPostGist,
   isNotebookGist,
   isPlaygroundGist
 } from "../utils";
@@ -103,14 +104,6 @@ export class CreateNewGistNode extends TreeNode {
     };
   }
 }
-
-const isBlogPostGist = (gist: Gist) => {
-  for (let [fileName] of Object.entries(gist.files)) {
-    if (fileName === "gistlog.yml") {
-      return true;
-    }
-  }
-};
 
 export class GistNode extends TreeNode {
   constructor(

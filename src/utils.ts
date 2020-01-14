@@ -212,3 +212,11 @@ export function stringToByteArray(value: string) {
 export function uriToFileName(uri: Uri): string {
   return decodeURIComponent(path.basename(uri.toString()));
 }
+
+export const isBlogPostGist = (gist: Gist) => {
+  for (let [fileName] of Object.entries(gist.files)) {
+    if (fileName === "gistlog.yml") {
+      return true;
+    }
+  }
+};

@@ -19,7 +19,7 @@ import {
 } from "vscode";
 import { EXTENSION_NAME, FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
 import { GistFile, Store } from "../store";
-import { forkGist, getGist, updateGist } from "../store/actions";
+import { forkGist, getGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import {
   byteArrayToString,
@@ -79,7 +79,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
             })
           );
 
-          writeOperations.forEach((w) => w.resolve());
+          writeOperations.forEach((write) => write.resolve());
           this._onDidChangeFile.fire(writeOperations);
         });
       });
@@ -108,10 +108,14 @@ export class GistFileSystemProvider implements FileSystemProvider {
     const newFileName = uriToFileName(destination);
 
     const file = await this.getFileFromUri(source);
-    await updateGist(gistId, newFileName, {
-      filename: newFileName,
-      content: file.content!
-    });
+    await updateGistFiles(gistId, [
+      [
+        newFileName,
+        {
+          content: file.content!
+        }
+      ]
+    ]);
 
     this._onDidChangeFile.fire([
       {
@@ -131,7 +135,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     await ensureAuthenticated();
 
     const { gistId, file } = getGistDetailsFromUri(uri);
-    await new Promise((resolve) => {
+    return new Promise((resolve) => {
       this._pendingWrites.next({
         type: FileChangeType.Deleted,
         gistId,
@@ -147,8 +151,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     let contents = await getFileContents(file);
 
     if (isBinaryPath(file.filename)) {
-      // @ts-ignore
-      return contents;
+      return <any>contents;
     } else {
       if (contents.trim() === ZERO_WIDTH_SPACE) {
         contents = "";
@@ -203,9 +206,14 @@ export class GistFileSystemProvider implements FileSystemProvider {
     if (isBinaryPath(file.filename!)) {
       await renameFile(gistId, file.filename!, newFileName);
     } else {
-      await updateGist(gistId, file.filename!, {
-        filename: newFileName
-      });
+      await updateGistFiles(gistId, [
+        [
+          file.filename!,
+          {
+            filename: newFileName
+          }
+        ]
+      ]);
     }
 
     this._onDidChangeFile.fire([
@@ -284,7 +292,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
       const file = await this.getFileFromUri(uri);
       const type = file ? FileChangeType.Changed : FileChangeType.Created;
 
-      await new Promise((resolve) => {
+      return new Promise((resolve) => {
         this._pendingWrites.next({
           type,
           gistId,

@@ -1,22 +1,23 @@
 import axios from "axios";
+import { runInAction } from "mobx";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { Gist, GistFile, store } from "../store";
 import { getApi } from "../store/actions";
 
+const isBinaryPath = require("is-binary-path");
 export async function getFileContents(file: GistFile) {
   if (file.truncated || !file.content) {
-    const responseType = file.type!.startsWith("image/")
-      ? "arraybuffer"
-      : "text";
-    file.content = (
-      await axios.get(file.raw_url!, {
-        responseType,
-        transformResponse: (data) => {
-          return data;
-        }
-      })
-    ).data;
+    const responseType = isBinaryPath(file.filename!) ? "arraybuffer" : "text";
+    const { data } = await axios.get(file.raw_url!, {
+      responseType,
+      transformResponse: (data) => {
+        return data;
+      }
+    });
+
+    file.content = data;
   }
+
   return file.content!;
 }
 
@@ -37,11 +38,14 @@ export async function updateGistFiles(
     };
   }, {});
 
-  const response = await api.edit(id, { files });
+  const { body } = await api.edit(id, { files });
+  const gist = store.gists.find((gist) => gist.id === id)!;
 
-  const newGists = store.gists.filter((gist) => gist.id !== id);
-  newGists.push(response.body);
+  runInAction(() => {
+    gist.files = body.files;
+    gist.updated_at = body.updated_at;
+    gist.history = body.history;
+  });
 
-  store.gists = newGists;
-  return response.body;
+  return gist;
 }

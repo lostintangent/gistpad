@@ -8,6 +8,7 @@ import { store } from "./store";
 import { initializeAuth } from "./store/auth";
 import { initializeStorage } from "./store/storage";
 import { registerTreeProvider } from "./tree";
+import { registerTreeProvider as registerActiveGistTreeProvider } from "./tree/activeGist";
 import { registerProtocolHander } from "./uriHandler";
 import { getGistWorkspaceId, isGistWorkspace, openGistFiles } from "./utils";
 
@@ -20,6 +21,7 @@ export async function activate(context: vscode.ExtensionContext) {
   registerPlaygroundContentProvider();
   registerProtocolHander();
   registerTreeProvider(store, context.extensionPath);
+  registerActiveGistTreeProvider(store);
 
   if (isGistWorkspace()) {
     const gistId = getGistWorkspaceId();

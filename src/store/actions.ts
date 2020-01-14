@@ -1,4 +1,4 @@
-import { observable } from "mobx";
+import { observable, runInAction } from "mobx";
 import { window, workspace } from "vscode";
 import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
 import * as config from "../config";
@@ -67,14 +67,16 @@ export async function getUserAvatar(username: string) {
 
 export async function changeDescription(id: string, description: string) {
   const api = await getApi();
-  const gist = await api.edit(id, {
+  const { body } = await api.edit(id, {
     description
   });
 
-  const newGists = store.gists.filter((gist) => gist.id !== id);
-  newGists.push(gist.body);
+  const gist = store.gists.find((gist) => gist.id === id)!;
 
-  store.gists = newGists;
+  runInAction(() => {
+    gist.description = body.description;
+    gist.updated_at = body.updated_at;
+  });
 }
 
 export async function createGistComment(
@@ -219,26 +221,27 @@ export async function newGist(
 
 export async function refreshGists() {
   store.isLoading = true;
-  store.gists = await listGists();
-  store.starredGists = await starredGists();
 
-  if (storage.followedUsers.length > 0) {
-    store.followedUsers = storage.followedUsers.map((username) => ({
-      username,
-      gists: [],
-      isLoading: true
-    }));
-  }
+  await runInAction(async () => {
+    store.gists = await listGists();
+    store.starredGists = await starredGists();
 
-  store.isLoading = false;
-
-  if (storage.followedUsers.length > 0) {
-    for (const followedUser of store.followedUsers) {
-      followedUser.avatarUrl = await getUserAvatar(followedUser.username);
-      followedUser.gists = await listUserGists(followedUser.username);
-      followedUser.isLoading = false;
+    if (storage.followedUsers.length > 0) {
+      store.followedUsers = storage.followedUsers.map((username) => ({
+        username,
+        gists: [],
+        isLoading: true
+      }));
     }
-  }
+    store.isLoading = false;
+    if (storage.followedUsers.length > 0) {
+      for (const followedUser of store.followedUsers) {
+        followedUser.avatarUrl = await getUserAvatar(followedUser.username);
+        followedUser.gists = await listUserGists(followedUser.username);
+        followedUser.isLoading = false;
+      }
+    }
+  });
 }
 
 export async function starredGists(): Promise<Gist[]> {
@@ -255,26 +258,6 @@ export async function unfollowUser(username: string) {
   store.followedUsers = store.followedUsers.filter(
     (user) => user.username !== username
   );
-}
-
-// TODO: Replace this method with the updateGistFiles
-export async function updateGist(
-  id: string,
-  filename: string,
-  file: GistFile | null
-): Promise<Gist> {
-  const api = await getApi();
-  const response = await api.edit(id, {
-    files: {
-      [filename]: file
-    }
-  });
-
-  const newGists = store.gists.filter((gist) => gist.id !== id);
-  newGists.push(response.body);
-  store.gists = newGists;
-
-  return response.body;
 }
 
 export async function refreshGist(id: string) {

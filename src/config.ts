@@ -13,6 +13,7 @@ export function get(
   key: "playgrounds.layout"
 ): "grid" | "splitLeft" | "splitRight" | "splitTop";
 export function get(key: "playgrounds.includeMarkup"): boolean;
+export function get(key: "playgrounds.includeScript"): boolean;
 export function get(key: "playgrounds.includeStylesheet"): boolean;
 export function get(key: "playgrounds.markupLanguage"): "html" | "pug";
 export function get(
@@ -22,8 +23,7 @@ export function get(
   key: "playgrounds.stylesheetLanguage"
 ): "css" | "less" | "sass" | "scss";
 export function get(key: "playgrounds.showConsole"): boolean;
-export function get(key: "playgrounds.templates.galleries"): string[];
-export function get(key: "playgrounds.templates.tagName"): string;
+export function get(key: "playgrounds.templateGalleries"): string[];
 export function get(key: "comments.showThread"): string;
 export function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

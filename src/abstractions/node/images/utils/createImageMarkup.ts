@@ -10,7 +10,7 @@ export async function createImageMarkup(
 
   switch (languageId) {
     case DocumentLanguages.markdown:
-      const imageOutput = await config.get("images.markdownPasteFormat");
+      const imageOutput = config.get("images.markdownPasteFormat");
       return imageOutput === DocumentLanguages.markdown
         ? `![${imageAlt}](${imageSrc})`
         : htmlMarkup;

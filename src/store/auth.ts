@@ -37,7 +37,7 @@ const SCOPE_HEADER = "x-oauth-scopes";
 const GIST_SCOPE = "gist";
 
 async function testToken(token: string) {
-  const apiurl = await config.get("apiUrl");
+  const apiurl = config.get("apiUrl");
   const github = new GitHub({ apiurl, token });
   try {
     const response = await github.get("/user");
@@ -65,7 +65,7 @@ async function testToken(token: string) {
 
 // TODO: Support SSO when using username and password vs. just a token
 async function attemptGitLogin(): Promise<boolean> {
-  const gitSSO = await config.get("gitSSO");
+  const gitSSO = config.get("gitSSO");
   if (!gitSSO) {
     log.info("Git SSO disabled");
     return false;

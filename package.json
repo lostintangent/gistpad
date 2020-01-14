@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.43",
+  "version": "0.0.44",
   "extensionKind": [
     "ui",
     "web",
@@ -67,6 +67,11 @@
           "default": true,
           "type": "boolean",
           "description": "Specifies whether to enable single sign-in (SSO) with the Git CLI, when you've already authenticated with github.com."
+        },
+        "gistpad.treeIcons": {
+          "default": "true",
+          "type": "boolean",
+          "description": "Specifies whether to show the gist type icons in the gists tree."
         },
         "gistpad.comments.showThread": {
           "default": "whenNotEmpty",

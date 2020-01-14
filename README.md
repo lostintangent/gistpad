@@ -14,11 +14,11 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
 
    > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
 
-2. Open the `GistPad` tab *(look for the notebook icon in the activity bar)*. From there, you can open a Gist by ID/URL, or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone your own gists. To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
+2. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone your own gists. To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
 
    <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
-   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_. 
+   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_.
 
 3. Create new gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
 
@@ -58,9 +58,11 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 ## Interactive Playgrounds
 
-If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Web Playground`. This will create a new Gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
+If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Playground` or `New Secret Playground`. This will create a new gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
-![Playgrounds](https://user-images.githubusercontent.com/116461/71195678-47254700-2243-11ea-9b09-aa28ec526185.gif)
+When you create a new playground, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries you intend to use (e.g. React.js, Vue.js). You can also choose not to use a template, which will simply create a new playground, with an empty HTML, CSS and JavaScript file, which you can then [add libraries](#external-libraries) to as neccessary.
+
+![Playground](https://user-images.githubusercontent.com/116461/72381586-79a05380-36cc-11ea-824e-38f9afec136b.gif)
 
 Since the playground is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other playgrounds that you'd like to use, simply fork them and create your own playgrounds. That way, you can use Gists as "templates" for playground environments, and collaborate on them with others just like you would any other gist. When you're done with a playground, simply close the preview window and all other documents will be automatically closed. If you no longer need the playground, then delete it just like any other gist 👍
 
@@ -120,6 +122,34 @@ The playground also provides an output window in order to view any logs written 
 
 Additionally, if you create a playground that depends on the console, you can set the `showConsole` property in the playground's `playground.json` file to `true`. Then, when you or someone else opens this playground, the console will be automatically opened, regardless whether the end-user has configured it to show by default.
 
+### Template Galleries
+
+When you create a new playground, you'll see a list of "templates", which let you create playgrounds using a pre-defined set of files and external libraries (e.g. React.js, Vue). This makes it really easy to get started quickly, and reduce repetitive tasks/boilerplate. By default, GistPad includes a standard set of templates, but you can also define your own custom galleries and then share them with your team/friends/community. If you don't want to use any template galleries, then you can simply delete the items listed in the `GistPad > Playgrounds: Template Galleries` setting.
+
+A template gallery is simply a JSON file, which is hosted somewhere (e.g. a gist, a git repo, your own web server), and defines a set of templates. A template is simply a gist, which includes the neccessary files (e.g. HTML, JavaScript, CSS, etc.), and then defines a name and description. To see an example of how to define a template gallery, set the [standard GistPad gallery](https://github.com/vsls-contrib/gistpad/blob/master/galleries/web.json). Additionally, to see an example of a template, see the [React.js template](https://gist.github.com/lostintangent/f15a2e498523f364e36075691542af4c).
+
+When defining the template, you can use the `playground.json` file to indicate not only the JavaScript and CSS libraries that the playgroud needs, but also, the [layout](#layout) it should use by default, and whether or not the console should be automatically opened (e.g. because the playground relies on writing console logs). See [the docs](#playground-metadata) for more details on this file.
+
+### User Templates
+
+In addition to using/creating template galleries, you can also mark your own local playgrounds gists as being templates, by simply setting `"template": true` in the playground's `playground.json` file. Then, when you create a new playground, you'll see your template in the list. This option is good for defining your own templates, that you don't intend to share with others.
+
+Additionally, if you star a gist that is marked as a playground template, that will show up in the list of templates as well. That way, you can easily share templates with others, without needing to create a template gallery.
+
+### Playground Metadata
+
+Whenever you create a playground, it includes a `playground.json` file, which defines the metadata for the playground, including it's behavior, requirements and intended presentation.
+
+- `scripts` - An array of URLs that indicate the JavaScript libraries which should be added to the playground when run. This property can be managed via the `Add Library` command in the [playground toolbar](#toolbar), and therefore, it isn't neccesary to manually edit it. Defaults to `[]`.
+
+- `styles` - An array of URLs that indicate the CSS libraries which should be added to the playground when run. This property can be managed via the `Add Library` command in the [playground toolbar](#toolbar), and therefore, it isn't neccesary to manually edit it. Defaults to `[]`.
+
+- `showConsole` - Specifies whether to automatically open the [console](#console-output) when someone opens this playground. Note that this will take precendence over the user's configure console setting, and therefore, is useful when a playground relies on console output, and can ensure the playground is setup correctly without requiring the end-user to explicitly open the console.
+
+- `layout` - Specifies the [layout](#layout) to use when someone opens this playground. Note that this will take precedence over the user's configured default layout, and therefore, is useful when a playground is optimized for a specific layout, and therefore, can ensure the end-user has the best experience by default.
+
+- `template` - Indicates that this playground is intended to be used as a template for new playgrounds, and therefore, will appear in the list when creating a new playground. Defaults to `false`.
+
 ### CodePen
 
 If you export a pen to a [GitHub Gist](https://blog.codepen.io/documentation/features/exporting-pens/#save-as-github-gist-2), and then refresh the `Gists` tree in VS Code, you'll be able to see the pen and then can open/edit it like any other playground. This allows you to easily fork someone's pen and work on it within VS Code.
@@ -132,7 +162,7 @@ Additionally, if you develop a playground locally, and want to export it to Code
 
 ### Blocks
 
-[Bl.ocks](https://bl.ocks.org) is community for sharing interactive code samples/data visualizations, which are based on GitHub Gists. As a result, you can copy the URL for any Block, use it to open a gist wihtin GistPad, and immediately have an interactive environment for viewing/exploring the Block.
+[Bl.ocks](https://bl.ocks.org) is community for sharing interactive code samples/data visualizations, which are based on GitHub Gists. As a result, you can copy the URL for any Block, use it to open a gist within GistPad, and immediately have an interactive environment for viewing/exploring the Block.
 
 ## GistLog
 
@@ -193,7 +223,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 * `GistPad: New GistLog` - Creates a [GistLog](#gistlog).
 
 * `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
-*
+
 * `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
 
 * `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
@@ -206,12 +236,13 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `Gistpad: Git SSO` - Specifies whether to enable single sign-in (SSO) with the `git` CLI, when you've already authenticated with github.com. Defaults to `true`.
 
+- `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
+
 * `GistPad > Comments: Show Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
 
   - `always`: Always display the comment thread whenever you open a Gist file. You can manually collapse it as needed.
   - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.
   - `whenNotEmpty` _(default)_: Automatically display the comment thread whenever there are actually comments in a Gist file. Otherwise, leave it collapsed.
-  -
 
 - `Gistpad > Images: Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
 
@@ -234,7 +265,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 * `GistPad > Playgrounds: Include Markup` - Specifies whether to include a markup file (`index.html`) when creating new web playgrounds. Defaults to `true`.
 
 * `GistPad > Playgrounds: Include Script` - Specifies whether to include a script file (`script.js`) when creating new web playgrounds. Defaults to `true`.
-* 
+
 * `GistPad > Playgrounds: Include Stylesheet` - Specifies whether to include a stylesheet file (`style.css`) when creating new web playgrounds. Defaults to `true`.
 
 * `GistPad > Playgrounds: Layout` - Specifies how to layout the editor windows when opening a playground. Can be set to one of the following values:
@@ -265,6 +296,8 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `scss`: Will result in an `style.scss` file being created whenever you create a new web playground.
 
 * `GistPad > Playgrounds: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.
+
+* `GistPad > Playgrounds: Template Galleries` - Specifies the list of template galleries to use, when displaying the available templates when creating a new playground. Defaults to `["web"]`.
 
 ## Keyboard Shortcuts
 

@@ -17,7 +17,7 @@ const Gists = require("gists");
 
 export async function getApi(constructor = Gists) {
   const token = await getToken();
-  const apiurl = await config.get("apiUrl");
+  const apiurl = config.get("apiUrl");
 
   if (!apiurl) {
     const message = "No API URL is set.";

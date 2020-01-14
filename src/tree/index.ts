@@ -85,14 +85,16 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       if (this.store.gists.length === 0) {
         return [new CreateNewGistNode()];
       } else {
-        return sortGists(this.store.gists).map((gist) => new GistNode(gist));
+        return sortGists(this.store.gists).map(
+          (gist) => new GistNode(gist, this.extensionPath)
+        );
       }
     } else if (element instanceof StarredGistsNode) {
       if (this.store.starredGists.length === 0) {
         return [new NoStarredGistsNode()];
       } else {
         return sortGists(this.store.starredGists).map(
-          (gist) => new StarredGistNode(gist)
+          (gist) => new StarredGistNode(gist, this.extensionPath)
         );
       }
     } else if (element instanceof GistNode) {
@@ -110,7 +112,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         return [new NoUserGistsNode()];
       } else {
         return sortGists(element.user.gists).map(
-          (gist) => new FollowedUserGistNode(gist)
+          (gist) => new FollowedUserGistNode(gist, this.extensionPath)
         );
       }
     } else if (element instanceof FollowedUserGistNode) {

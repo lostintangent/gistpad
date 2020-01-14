@@ -51,10 +51,14 @@ export async function closeGistFiles(gist: Gist) {
   }
 }
 
-export function getGistDescription(gist: Gist): string {
-  return `${moment(gist.updated_at).calendar()}${
-    gist.public ? "" : " (Secret)"
-  }`;
+export function getGistDescription(
+  gist: Gist,
+  includeType: boolean = true
+): string {
+  const maybeSuffix = gist.public ? "" : " (Secret)";
+  const suffix = includeType ? maybeSuffix : "";
+
+  return `${moment(gist.updated_at).calendar()}${suffix}`;
 }
 
 export function withProgress<T>(title: string, action: () => Promise<T>) {
@@ -83,27 +87,6 @@ export function isGistWorkspace() {
   return (
     workspace.workspaceFolders &&
     workspace.workspaceFolders[0].uri.scheme === FS_SCHEME
-  );
-}
-
-export function isNotebookGist(gist: Gist) {
-  return Object.keys(gist.files).some((file) => file.endsWith("ipynb"));
-}
-
-export function isPlaygroundGist(gist: Gist) {
-  const gistFiles = Object.keys(gist.files);
-
-  // 1) GistPad-native playgrounds
-  // 2) CodePen/Bl.ocks.org/etc. playgrounds, which could have just an HTML file or just a script file.
-  //    In the case where they only have a script file, it's very likely they'd also have a "scripts"
-  //    file, which is hold they'd inject 3rd-party libraries. To make this more reliable, I also
-  //    always check for a markdown file, which would alwats exist
-  return (
-    gistFiles.includes(PLAYGROUND_FILE) ||
-    gistFiles.includes("index.html") ||
-    gistFiles.includes("index.pug") ||
-    (gistFiles.includes("scripts") &&
-      gistFiles.some((file) => path.extname(file) === ".markdown"))
   );
 }
 
@@ -207,4 +190,51 @@ export function stringToByteArray(value: string) {
 
 export function uriToFileName(uri: Uri): string {
   return decodeURIComponent(path.basename(uri.toString()));
+}
+
+const IMAGE_EXTENSIONS = [".png"];
+const METADATA_EXTENSIONS = [".yml", ".json"];
+const DOCUMENT_EXTENSIONS = [".adoc", ".md", ".markdown", ".txt"];
+const ALL_DOCUMENT_EXTENSIONS = [
+  ...IMAGE_EXTENSIONS,
+  ...METADATA_EXTENSIONS,
+  ...DOCUMENT_EXTENSIONS
+];
+
+export function isDocumentGist(gist: Gist) {
+  const gistFiles = Object.keys(gist.files);
+
+  const includesDocument = gistFiles.some((file) =>
+    DOCUMENT_EXTENSIONS.includes(path.extname(file))
+  );
+  return (
+    includesDocument &&
+    gistFiles.every((file) =>
+      ALL_DOCUMENT_EXTENSIONS.includes(path.extname(file))
+    )
+  );
+}
+
+export function isNotebookGist(gist: Gist) {
+  return Object.keys(gist.files).some(
+    (file) => path.extname(file) === ".ipynb"
+  );
+}
+
+export function isPlaygroundGist(gist: Gist) {
+  const gistFiles = Object.keys(gist.files);
+
+  // 1) GistPad-native playgrounds
+  // 2) CodePen/Bl.ocks.org/etc. playgrounds, which could have just an HTML file or just a script file.
+  //    In the case where they only have a script file, it's very likely they'd also have a "scripts"
+  //    file, which is hold they'd inject 3rd-party libraries. To make this more reliable, I also
+  //    always check for a markdown file, which would alwats exist
+
+  return (
+    gistFiles.includes(PLAYGROUND_FILE) ||
+    gistFiles.includes("index.html") ||
+    gistFiles.includes("index.pug") ||
+    (gistFiles.includes("scripts") &&
+      gistFiles.some((file) => path.extname(file) === ".markdown"))
+  );
 }

@@ -943,6 +943,9 @@ export async function registerPlaygroundCommands(
     )
   );
 
+  // Pre-cache the CDNJS, template galleries,
+  // and user templates, as soon as the user
+  // has logged in and their gists have been loaded.
   reaction(
     () => [store.isSignedIn, store.isLoading],
     ([isSignedIn, isLoading]) => {
@@ -954,6 +957,8 @@ export async function registerPlaygroundCommands(
     }
   );
 
+  // Reload the template galleries whenever the user changes
+  // them, that way, the list is always accurate.
   vscode.workspace.onDidChangeConfiguration((e) => {
     if (e.affectsConfiguration("gistpad.playgrounds.templateGalleries")) {
       loadGalleryTemplates();

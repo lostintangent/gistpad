@@ -1,4 +1,5 @@
 import axios from "axios";
+import { reaction } from "mobx";
 import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
 import {
@@ -16,6 +17,11 @@ export class PlaygroundWebview {
   private manifest: PlaygroundManifest | undefined;
   private baseUrl = "";
 
+  private updateBaseUrl() {
+    const owner = this.gist.owner ? this.gist.owner.login : "anonymous";
+    this.baseUrl = `https://gist.githack.com/${owner}/${this.gist.id}/raw/${this.gist.history[0].version}/`;
+  }
+
   constructor(
     private webview: vscode.Webview,
     output: vscode.OutputChannel,
@@ -23,8 +29,7 @@ export class PlaygroundWebview {
     private codePenScripts: string = "",
     private codePenStyles: string = ""
   ) {
-    const owner = this.gist.owner ? this.gist.owner.login : "anonymous";
-    this.baseUrl = `https://gist.githack.com/${owner}/${this.gist.id}/raw/${this.gist.history[0].version}/`;
+    this.updateBaseUrl();
 
     webview.onDidReceiveMessage(async ({ command, value }) => {
       switch (command) {
@@ -61,6 +66,14 @@ export class PlaygroundWebview {
           break;
       }
     });
+
+    reaction(
+      () => [this.gist.updated_at],
+      () => {
+        this.updateBaseUrl();
+        this.rebuildWebview();
+      }
+    );
   }
 
   public updateCSS(css: string, rebuild = false) {
@@ -174,7 +187,7 @@ export class PlaygroundWebview {
     <style id="${styleId}">
       ${this.css}
     </style>
-    <script src="https://unpkg.com/mock-xmlhttprequest@5.1.0/dist/mock-xmlhttprequest.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mock-xmlhttprequest@5.1.0/dist/mock-xmlhttprequest.min.js"></script>
     <script>
 
     // Wrap this code in braces, so that none of the variables
@@ -198,10 +211,19 @@ export class PlaygroundWebview {
         }
       });
     
+      function serializeMessage(message) {
+        if (typeof message === "string") {
+          return message
+        } else {
+          return JSON.stringify(message);
+        }
+      }
+
       window.alert = (message) => {
+        const value = serializeMessage(message);
         vscode.postMessage({
           command: "alert",
-          value: message
+          value
         });
       };
 
@@ -213,9 +235,10 @@ export class PlaygroundWebview {
       };
 
       console.log = (message) => {
+        const value = serializeMessage(message);
         vscode.postMessage({
           command: "log",
-          value: message
+          value
         });
       };
 

@@ -80,23 +80,41 @@ export class CreateNewGistNode extends TreeNode {
 }
 
 export class GistNode extends TreeNode {
-  constructor(public gist: Gist) {
-    super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
+  constructor(
+    public gist: Gist,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
+  ) {
+    super(getGistLabel(gist), collapsibleState);
 
     this.description = getGistDescription(gist);
+    this.tooltip = this.getTooltip(
+      `Type: ${gist.public ? "Public" : "Secret"}`
+    );
+    this.contextValue = this.getContextValue("gists.gist");
+  }
 
-    this.tooltip = `Description: ${this.label}
-Updated: ${moment(gist.updated_at).calendar()}
-Created: ${moment(gist.created_at).calendar()}
-Type: ${gist.public ? "Public" : "Secret"}`;
+  getContextValue(baseContext: string) {
+    let contextValue = baseContext;
 
-    this.contextValue = "gists.gist";
-
-    if (isNotebookGist(gist)) {
-      this.contextValue += ".notebook";
-    } else if (isPlaygroundGist(gist)) {
-      this.contextValue += ".playground";
+    if (isNotebookGist(this.gist)) {
+      contextValue += ".notebook";
+    } else if (isPlaygroundGist(this.gist)) {
+      contextValue += ".playground";
     }
+    return contextValue;
+  }
+
+  getTooltip(suffix?: string) {
+    let tooltip = `Description: ${this.label}
+Updated: ${moment(this.gist.updated_at).calendar()}
+Created: ${moment(this.gist.created_at).calendar()}`;
+
+    if (suffix) {
+      tooltip += `
+${suffix}`;
+    }
+
+    return tooltip;
   }
 }
 
@@ -139,25 +157,14 @@ export class NoStarredGistsNode extends TreeNode {
   }
 }
 
-export class StarredGistNode extends TreeNode {
+export class StarredGistNode extends GistNode {
   constructor(public gist: Gist) {
-    super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
-
-    this.description = getGistDescription(gist);
+    super(gist);
 
     const owner = gist.owner ? gist.owner.login : "Anonymous";
-    this.tooltip = `Description: ${this.label}
-Updated: ${moment(gist.updated_at).calendar()}
-Created: ${moment(gist.created_at).calendar()}
-Owner: ${owner}`;
+    this.tooltip = this.getTooltip(`Owner: ${owner}`);
 
-    this.contextValue = "starredGists.gist";
-
-    if (isNotebookGist(gist)) {
-      this.contextValue += ".notebook";
-    } else if (isPlaygroundGist(gist)) {
-      this.contextValue += ".playground";
-    }
+    this.contextValue = this.getContextValue("starredGists.gist");
   }
 }
 
@@ -183,23 +190,14 @@ export class NoUserGistsNode extends TreeNode {
     super("This user doesn't have any gists");
   }
 }
+export class FollowedUserGistNode extends GistNode {
+  constructor(
+    public gist: Gist,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
+  ) {
+    super(gist, collapsibleState);
 
-export class FollowedUserGistNode extends TreeNode {
-  constructor(public gist: Gist) {
-    super(getGistLabel(gist), TreeItemCollapsibleState.Collapsed);
-
-    this.description = getGistDescription(gist);
-
-    this.tooltip = `Description: ${this.label}
-Updated: ${moment(gist.updated_at).calendar()}
-Created: ${moment(gist.created_at).calendar()}`;
-
-    this.contextValue = "followedUser.gist";
-
-    if (isNotebookGist(gist)) {
-      this.contextValue += ".notebook";
-    } else if (isPlaygroundGist(gist)) {
-      this.contextValue += ".playground";
-    }
+    this.tooltip = this.getTooltip();
+    this.contextValue = this.getContextValue("followedUser.gist");
   }
 }

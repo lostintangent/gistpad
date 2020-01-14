@@ -10,12 +10,16 @@ import {
   workspace
 } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
-import { FS_SCHEME, PLAYGROUND_JSON_FILE } from "./constants";
+import { FS_SCHEME, PLAYGROUND_FILE } from "./constants";
 import { Gist, SortOrder, store } from "./store";
 import { getGist } from "./store/actions";
 
 export function byteArrayToString(value: Uint8Array) {
   return new TextDecoder().decode(value);
+}
+
+export function isOwnedGist(gistId: string): boolean {
+  return !!store.gists.find((gist) => gist.id === gistId);
 }
 
 export async function showGistQuickPick(gists: Gist[], placeHolder: string) {
@@ -95,7 +99,7 @@ export function isPlaygroundGist(gist: Gist) {
   //    file, which is hold they'd inject 3rd-party libraries. To make this more reliable, I also
   //    always check for a markdown file, which would alwats exist
   return (
-    gistFiles.includes(PLAYGROUND_JSON_FILE) ||
+    gistFiles.includes(PLAYGROUND_FILE) ||
     gistFiles.includes("index.html") ||
     gistFiles.includes("index.pug") ||
     (gistFiles.includes("scripts") &&
@@ -183,13 +187,17 @@ export function getGistDetailsFromUri(uri: Uri) {
 
 export function sortGists(gists: Gist[]) {
   if (store.sortOrder === SortOrder.alphabetical) {
-    return gists.sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
+    return gists
+      .slice()
+      .sort((a, b) => getGistLabel(a).localeCompare(getGistLabel(b)));
   } else {
-    return gists.sort(
-      (a, b) =>
-        Date.parse(b.updated_at || b.created_at) -
-        Date.parse(a.updated_at || a.created_at)
-    );
+    return gists
+      .slice()
+      .sort(
+        (a, b) =>
+          Date.parse(b.updated_at || b.created_at) -
+          Date.parse(a.updated_at || a.created_at)
+      );
   }
 }
 

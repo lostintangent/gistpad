@@ -87,10 +87,17 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
-
     let gist = this.store.gists.find((gist) => gist.id === gistId);
+
     if (!gist) {
-      gist = await getGist(gistId);
+      gist =
+        this.store.newTempGist?.id === gistId
+          ? this.store.newTempGist
+          : undefined;
+
+      if (!gist) {
+        gist = await getGist(gistId);
+      }
     }
 
     return gist.files[file];
@@ -257,10 +264,15 @@ export class GistFileSystemProvider implements FileSystemProvider {
     content: Uint8Array,
     options: { create: boolean; overwrite: boolean }
   ): Promise<void> {
-    await ensureAuthenticated();
-
     const { gistId } = getGistDetailsFromUri(uri);
-    if (!this.store.gists.find((gist) => gist.id === gistId)) {
+    const isNewTempGist = this.store.newTempGist?.id === gistId;
+    const isUserGist = this.store.gists.find((gist) => gist.id === gistId);
+
+    if (!isNewTempGist) {
+      await ensureAuthenticated();
+    }
+
+    if (!isUserGist && !isNewTempGist) {
       const response = await window.showInformationMessage(
         "You can't edit a Gist you don't own.",
         "Fork this Gist"

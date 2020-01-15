@@ -15,8 +15,26 @@ import { storage } from "./storage";
 
 const Gists = require("gists");
 
-export async function getApi(constructor = Gists) {
-  const token = await getToken();
+const GISTPAD_GH_TOKEN = "9a46e8821658e79ea796741fbddbf13846fcd916";
+
+interface ApiOptions {
+  apiConstructor?: any;
+  useDefaultToken?: boolean;
+}
+
+export async function getApi(
+  opts: ApiOptions = { apiConstructor: Gists, useDefaultToken: false }
+) {
+  if (!opts.apiConstructor) {
+    opts.apiConstructor = Gists;
+  }
+
+  let token = await getToken();
+
+  if (opts.useDefaultToken) {
+    token = GISTPAD_GH_TOKEN;
+  }
+
   const apiurl = config.get("apiUrl");
 
   if (!apiurl) {
@@ -25,7 +43,7 @@ export async function getApi(constructor = Gists) {
     throw new Error(message);
   }
 
-  return new constructor({ apiurl, token });
+  return new opts.apiConstructor({ apiurl, token });
 }
 
 export async function duplicateGist(
@@ -50,7 +68,7 @@ export async function duplicateGist(
 
 export async function getUser(username: string) {
   const GitHub = require("github-base");
-  const api = await getApi(GitHub);
+  const api = await getApi({ apiConstructor: GitHub });
 
   try {
     const response = await api.get(`/users/${username}`);
@@ -156,13 +174,23 @@ export async function forkGist(id: string) {
 }
 
 export async function getGist(id: string): Promise<Gist> {
-  const api = await getApi();
+  let useDefaultToken = false;
+  if (store.newTempGist?.id === id) {
+    useDefaultToken = true;
+  }
+
+  const api = await getApi({ useDefaultToken });
   const gist = await api.get(id);
   return gist.body;
 }
 
 export async function getGistComments(id: string): Promise<GistComment[]> {
-  const api = await getApi();
+  let useDefaultToken = false;
+  if (store.newTempGist?.id === id) {
+    useDefaultToken = true;
+  }
+
+  const api = await getApi({ useDefaultToken });
   const response = await api.listComments(id);
   return response.body;
 }
@@ -193,7 +221,8 @@ export async function newGist(
   description?: string,
   openAfterCreation: boolean = true
 ) {
-  const api = await getApi();
+  const { isSignedIn } = store;
+  const api = await getApi({ useDefaultToken: !isSignedIn });
 
   const files = gistFiles.reduce((accumulator, gistFile) => {
     return {
@@ -210,7 +239,12 @@ export async function newGist(
     files
   });
 
-  store.gists.unshift(gist.body);
+  if (isSignedIn) {
+    store.gists.unshift(gist.body);
+  } else {
+    // This is a temp gist
+    store.newTempGist = gist.body;
+  }
 
   if (openAfterCreation) {
     openGistFiles(gist.body.id);

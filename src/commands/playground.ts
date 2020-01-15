@@ -960,6 +960,19 @@ export async function registerPlaygroundCommands(
     }
   );
 
+  // Give the option to save new temp playgrounds into their
+  // own Gist account, if there is a new temp gist open, and
+  // the user is now signed in.
+  reaction(
+    () => [store.isSignedIn, store.newTempGist],
+    ([isSignedIn, newTempGist]) => {
+      if (isSignedIn && newTempGist) {
+        // TODO: finish forking, and clear up the temp gist
+        vscode.window.showInformationMessage("You can fork this now");
+      }
+    }
+  );
+
   // Reload the template galleries whenever the user changes
   // them, that way, the list is always accurate.
   vscode.workspace.onDidChangeConfiguration((e) => {

@@ -106,15 +106,8 @@ async function deleteToken() {
   await keytar.deletePassword(SERVICE, ACCOUNT);
 }
 
-const GISTPAD_GH_TOKEN = "9a46e8821658e79ea796741fbddbf13846fcd916";
-
 export async function getToken() {
   const token = await keytar.getPassword(SERVICE, ACCOUNT);
-
-  if (!token) {
-    return GISTPAD_GH_TOKEN;
-  }
-
   return token;
 }
 
@@ -173,7 +166,7 @@ export async function signIn() {
 function markUserAsSignedOut() {
   store.login = "";
   store.isSignedIn = false;
-  commands.executeCommand("setContext", STATE_CONTEXT_KEY, –);
+  commands.executeCommand("setContext", STATE_CONTEXT_KEY, STATE_SIGNED_OUT);
 }
 
 export async function signout() {

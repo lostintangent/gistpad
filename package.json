@@ -1020,12 +1020,11 @@
   },
   "scripts": {
     "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
-    "build:webpack": "webpack --config ./webpack/webpack.node.config.js",
+    "build:node": "webpack --config ./webpack/webpack.node.config.js",
     "compile": "tsc -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
-    "vscode:prepublish": "npm run build:webpack",
-    "watch": "tsc -watch -p ./",
-    "watch:webpack": "webpack --watch --progress --config ./webpack/webpack.node.config.js"
+    "vscode:prepublish": "npm run build:node",
+    "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
   },
   "dependencies": {
     "@types/debounce": "^1.2.0",

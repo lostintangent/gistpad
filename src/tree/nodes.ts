@@ -10,7 +10,8 @@ import {
   getGistLabel,
   isDocumentGist,
   isNotebookGist,
-  isPlaygroundGist
+  isPlaygroundGist,
+  isPlaygroundTemplateGist
 } from "../utils";
 
 export abstract class TreeNode extends TreeItem {
@@ -39,6 +40,10 @@ export abstract class TreeNode extends TreeItem {
   public getGistTypeIcon = (gist: Gist, extensionPath: string) => {
     if (!config.get("treeIcons")) {
       return;
+    }
+
+    if (isPlaygroundTemplateGist(gist)) {
+      return this.getIconPath(gist, "playground-template", extensionPath);
     }
 
     if (isPlaygroundGist(gist)) {

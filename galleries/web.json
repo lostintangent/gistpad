@@ -1,6 +1,11 @@
 {
   "templates": [
     {
+      "label": "Preact",
+      "description": "Simple Preact + JS modules/HTM starter playground",
+      "gist": "4387197641ea0e198aaec43a7ff25111"
+    },
+    {
       "label": "React",
       "description": "Simple React.js starter playground",
       "gist": "f15a2e498523f364e36075691542af4c"

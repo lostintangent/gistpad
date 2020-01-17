@@ -33,7 +33,7 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     this._isOwnedGist = isOwnedGist(gistId);
     this._gist = store.gists.find((gist) => gist.id === gistId)!;
 
-    if (this._isOwnedGist) {
+    if (this._gist && this._isOwnedGist) {
       reaction(
         () => [this._gist.description, this._gist.updated_at],
         () => {

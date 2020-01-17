@@ -23,12 +23,15 @@ import {
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
+export type ScriptType = "text/javascript" | "module";
+
 export interface PlaygroundManifest {
   scripts?: string[];
   styles?: string[];
   layout?: string;
   showConsole?: boolean;
   template?: boolean;
+  scriptType?: ScriptType;
 }
 
 export enum PlaygroundLibraryType {

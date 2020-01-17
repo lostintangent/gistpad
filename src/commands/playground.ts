@@ -453,7 +453,7 @@ function duplicatePlayground(
 const KnownGalleries = new Map([
   [
     "web",
-    "https://gist.githubusercontent.com/lostintangent/ce7e5c20f94a7f52a5cec1f22cebec18/raw/793777de81ea634ba5e84ecd5ded167b26baa45d/gallery.json"
+    "https://gist.githubusercontent.com/lostintangent/ece303a6b8c7cbf0293b850b600e3cb6/raw/gallery.json"
   ]
 ]);
 

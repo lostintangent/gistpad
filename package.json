@@ -490,18 +490,6 @@
         "category": "GistPad"
       }
     ],
-    "keybindings": [
-      {
-        "key": "ctrl+g ctrl+o",
-        "mac": "cmd+g cmd+o",
-        "command": "gistpad.openGist"
-      },
-      {
-        "key": "ctrl+g ctrl+n",
-        "mac": "cmd+g cmd+n",
-        "command": "gistpad.newPublicGist"
-      }
-    ],
     "menus": {
       "commandPalette": [
         {

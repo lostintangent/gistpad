@@ -1,6 +1,7 @@
 ## v0.0.45 (01/17/2020)
 
 - Added support for JavaScript modules, which allows you to `import` other modules, using either an [absolute URL](https://www.pika.dev/cdn), or a relative path to another JavaScript module in the gist. See an example [here](https://gist.github.com/lostintangent/21727eab0d79c7b9fd0dde92df7b1f50)
+- Removed the default keybindings, since they were conflicting with other VS Code keybindings
 
 ## v0.0.44 (01/06/2020)
 

@@ -305,13 +305,6 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 * `GistPad > Playgrounds: Template Galleries` - Specifies the list of template galleries to use, when displaying the available templates when creating a new playground. Defaults to `["web"]`.
 
-## Keyboard Shortcuts
-
-- **New Public Gist**: `ctrl+shift+n` _(Windows/Linux)_, `cmd+shift+n` _(macOS)_
-- **New Web Playground**: `ctrl+shift+p` _(Windows/Linux)_, `cmd+shift+p` _(macOS)_
-- **Open Gist**: `ctrl+shift+o` _(Windows/Linux)_, `cmd+shift+v` _(macOS)_
-- **Paste Image**: `ctrl+shift+i` _(Windows/Linux)_, `cmd+shift+i` _(macOS)_
-
 ## Supported Filesystem Operations
 
 Once you've opened a Gist, you can perform the following filesystem operations:

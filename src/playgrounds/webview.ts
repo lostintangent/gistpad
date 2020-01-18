@@ -179,6 +179,11 @@ export class PlaygroundWebview {
     const scripts = await this.resolveLibraries(PlaygroundLibraryType.script);
     const styles = await this.resolveLibraries(PlaygroundLibraryType.style);
 
+    const scriptType =
+      this.manifest && this.manifest.scriptType
+        ? this.manifest.scriptType
+        : "text/javascript";
+
     this.webview.html = `<html>
   <head>
     <base href="${this.baseUrl}" />
@@ -266,7 +271,7 @@ export class PlaygroundWebview {
   </head>
   <body>
     ${this.html}
-    <script>
+    <script type="${scriptType}">
       ${this.javascript}
     </script>
   </body>

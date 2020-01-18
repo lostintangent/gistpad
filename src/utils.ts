@@ -247,3 +247,20 @@ export function isPlaygroundGist(gist: Gist) {
       gistFiles.some((file) => path.extname(file) === ".markdown"))
   );
 }
+
+export function isPlaygroundTemplateGist(gist: Gist) {
+  const playgroundJson = gist.files[PLAYGROUND_FILE];
+
+  if (!playgroundJson) {
+    return false;
+  }
+
+  try {
+    const content = JSON.parse(playgroundJson.content || "{}");
+    if (content.template) {
+      return true;
+    }
+  } catch {
+    return false;
+  }
+}

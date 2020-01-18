@@ -23,12 +23,15 @@ import {
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
+export type ScriptType = "text/javascript" | "module";
+
 export interface PlaygroundManifest {
   scripts?: string[];
   styles?: string[];
   layout?: string;
   showConsole?: boolean;
   template?: boolean;
+  scriptType?: ScriptType;
 }
 
 export enum PlaygroundLibraryType {
@@ -447,10 +450,12 @@ function duplicatePlayground(
     duplicateGist(gistId, isPublic, description)
   );
 }
-
-const KNOWN_GALLERY_ROOT =
-  "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad/galleries/";
-const KnownGalleries = ["web"];
+const KnownGalleries = new Map([
+  [
+    "web",
+    "https://gist.githubusercontent.com/lostintangent/ce7e5c20f94a7f52a5cec1f22cebec18/raw/793777de81ea634ba5e84ecd5ded167b26baa45d/gallery.json"
+  ]
+]);
 
 let galleryTemplates: GalleryTemplate[] = [];
 
@@ -459,8 +464,8 @@ async function loadGalleryTemplates() {
   let templates: GalleryTemplate[] = [];
 
   for (let gallery of galleries) {
-    if (KnownGalleries.includes(gallery)) {
-      gallery = `${KNOWN_GALLERY_ROOT}${gallery}.json`;
+    if (KnownGalleries.has(gallery)) {
+      gallery = KnownGalleries.get(gallery)!;
     }
 
     try {

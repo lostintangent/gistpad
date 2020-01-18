@@ -122,6 +122,10 @@ The playground also provides an output window in order to view any logs written 
 
 Additionally, if you create a playground that depends on the console, you can set the `showConsole` property in the playground's `playground.json` file to `true`. Then, when you or someone else opens this playground, the console will be automatically opened, regardless whether the end-user has configured it to show by default.
 
+### Modules
+
+By default, playground's assume you're using "standard" JavaScript code (`<script type="text/javascript" />`), and allows you to add 3rd-party [libraries](#external-libraries), which are added via new `<script>` elements in the preview page. However, if you'd like to write JavaScript code using `import`/`export`, you can set the `scriptType` property to `module` in the playground's `playground.json` file, and then begin to `import` modules. To simplify the process of importing 3rd-party modules, we'd recommend using either [Unkpkg](https://unpkg.com) (adding the [`?module` parameter](https://unpkg.com/#query-params) to any URLs), or the [Pika CDN](https://www.pika.dev/cdn).
+
 ### Template Galleries
 
 When you create a new playground, you'll see a list of "templates", which let you create playgrounds using a pre-defined set of files and external libraries (e.g. React.js, Vue). This makes it really easy to get started quickly, and reduce repetitive tasks/boilerplate. By default, GistPad includes a standard set of templates, but you can also define your own custom galleries and then share them with your team/friends/community. If you don't want to use any template galleries, then you can simply delete the items listed in the `GistPad > Playgrounds: Template Galleries` setting.
@@ -148,6 +152,8 @@ Whenever you create a playground, it includes a `playground.json` file, which de
 
 - `layout` - Specifies the [layout](#layout) to use when someone opens this playground. Note that this will take precedence over the user's configured default layout, and therefore, is useful when a playground is optimized for a specific layout, and therefore, can ensure the end-user has the best experience by default.
 
+- `scriptType` - Indicates the value of `<script>` element's `type` attribute, when injected into the playground preview page. Can either be `text/javascript` or `module`. Defaults to `text/javascript`.
+-
 - `template` - Indicates that this playground is intended to be used as a template for new playgrounds, and therefore, will appear in the list when creating a new playground. Defaults to `false`.
 
 ### CodePen

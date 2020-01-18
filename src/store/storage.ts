@@ -4,11 +4,9 @@ import { SortOrder, store } from ".";
 
 const FOLLOW_KEY = "gistpad.followedUsers";
 const SORT_ORDER_KEY = "gistpad:sortOrder";
-const PLAYGROUNDS_KEY = "gistpad.playgrounds";
 
 export interface IStorage {
   followedUsers: string[];
-  playgroundIds: string[]; // Unauthenticated playgrounds
 }
 
 function updateSortOrder(context: ExtensionContext, sortOrder: SortOrder) {
@@ -24,12 +22,6 @@ export function initializeStorage(context: ExtensionContext) {
     },
     set followedUsers(followedUsers: string[]) {
       context.globalState.update(FOLLOW_KEY, followedUsers);
-    },
-    get playgroundIds() {
-      return context.globalState.get<string[]>(PLAYGROUNDS_KEY, []);
-    },
-    set playgroundIds(playgroundIds: string[]) {
-      context.globalState.update(FOLLOW_KEY, playgroundIds);
     }
   };
 

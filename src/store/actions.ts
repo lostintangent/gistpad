@@ -17,8 +17,8 @@ import { storage } from "./storage";
 
 const Gists = require("gists");
 
-export async function getApi(apiConstructor = Gists) {
-  let token = await getToken();
+export async function getApi(constructor = Gists) {
+  const token = await getToken();
 
   const apiurl = config.get("apiUrl");
 
@@ -28,7 +28,7 @@ export async function getApi(apiConstructor = Gists) {
     throw new Error(message);
   }
 
-  return new apiConstructor({ apiurl, token });
+  return new constructor({ apiurl, token });
 }
 
 export async function duplicateGist(
@@ -159,10 +159,6 @@ export async function forkGist(id: string) {
 }
 
 export async function getGist(id: string): Promise<Gist> {
-  if (isTempGistId(id)) {
-    // TODO
-  }
-
   const api = await getApi();
   const gist = await api.get(id);
   return gist.body;

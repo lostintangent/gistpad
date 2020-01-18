@@ -57,7 +57,7 @@ class InMemoryFileSystemProvider implements FileSystemProvider {
   }
 
   delete(uri: Uri, options: { recursive: boolean }): void | Thenable<void> {
-    throw new Error("Method not implemented.");
+    delete this.fileContents[uri.toString()];
   }
 
   rename(
@@ -65,7 +65,8 @@ class InMemoryFileSystemProvider implements FileSystemProvider {
     newUri: Uri,
     options: { overwrite: boolean }
   ): void | Thenable<void> {
-    throw new Error("Method not implemented.");
+    this.fileContents[newUri.toString()] = this.fileContents[oldUri.toString()];
+    this.delete(oldUri, { recursive: false });
   }
 }
 
@@ -102,9 +103,9 @@ export async function newGistInMemory(
       avatar_url: "",
       html_url: ""
     },
-    public: false,
-    created_at: "",
-    updated_at: "",
+    public: isPublic,
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
     history: [],
     git_pull_url: ""
   };

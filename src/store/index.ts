@@ -74,7 +74,6 @@ export interface Store {
   login: string;
   sortOrder: SortOrder;
   starredGists: Gist[];
-  newTempGist: Gist | undefined;
 }
 
 export const store: Store = observable({
@@ -85,6 +84,5 @@ export const store: Store = observable({
   isSignedIn: false,
   login: "",
   sortOrder: SortOrder.updatedTime,
-  starredGists: [],
-  newTempGist: undefined
+  starredGists: []
 });

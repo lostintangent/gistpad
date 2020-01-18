@@ -22,11 +22,10 @@ export async function getFileContents(file: GistFile) {
 }
 
 export async function updateGistFiles(
-  gistId: string,
+  id: string,
   gistFiles: Array<[string, GistFile | null]>
 ): Promise<Gist> {
-  const isNewTempGist = gistId === store.newTempGist?.id;
-  const api = await getApi({ useDefaultToken: isNewTempGist });
+  const api = await getApi();
 
   const files = gistFiles.reduce((accumulator, [filename, file]) => {
     if (file && file.content === "") {
@@ -39,10 +38,8 @@ export async function updateGistFiles(
     };
   }, {});
 
-  const { body } = await api.edit(gistId, { files });
-  const gist = isNewTempGist
-    ? store.newTempGist!
-    : store.gists.find((gist) => gist.id === gistId)!;
+  const { body } = await api.edit(id, { files });
+  const gist = store.gists.find((gist) => gist.id === id)!;
 
   runInAction(() => {
     gist.files = body.files;

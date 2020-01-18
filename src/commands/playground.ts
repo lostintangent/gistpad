@@ -767,8 +767,6 @@ export async function openPlayground(gist: Gist) {
         ) {
           await htmlView.rebuildWebview();
         }
-
-        console.log("on did save text doc");
       }
     );
   }
@@ -969,10 +967,10 @@ export async function registerPlaygroundCommands(
   // own Gist account, if there is a new temp gist open, and
   // the user is now signed in.
   reaction(
-    () => [store.isSignedIn, store.newTempGist],
-    ([isSignedIn, newTempGist]) => {
-      if (isSignedIn && newTempGist) {
-        // TODO: finish forking, and clear up the temp gist
+    () => [store.isSignedIn],
+    ([isSignedIn]) => {
+      // TODO: check if we have a temp gist, and if so, fork it
+      if (isSignedIn) {
         vscode.window.showInformationMessage("You can fork this now");
       }
     }

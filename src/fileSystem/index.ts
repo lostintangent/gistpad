@@ -92,14 +92,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     let gist = this.store.gists.find((gist) => gist.id === gistId);
 
     if (!gist) {
-      gist =
-        this.store.newTempGist?.id === gistId
-          ? this.store.newTempGist
-          : undefined;
-
-      if (!gist) {
-        gist = await getGist(gistId);
-      }
+      gist = await getGist(gistId);
     }
 
     return gist.files[file];

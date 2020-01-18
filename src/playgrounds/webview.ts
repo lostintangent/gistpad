@@ -19,7 +19,9 @@ export class PlaygroundWebview {
 
   private updateBaseUrl() {
     const owner = this.gist.owner ? this.gist.owner.login : "anonymous";
-    this.baseUrl = `https://gist.githack.com/${owner}/${this.gist.id}/raw/${this.gist.history[0].version}/`;
+    const version =
+      this.gist.history.length > 0 ? this.gist.history[0].version : "";
+    this.baseUrl = `https://gist.githack.com/${owner}/${this.gist.id}/raw/${version}/`;
   }
 
   constructor(

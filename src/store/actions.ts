@@ -3,10 +3,12 @@ import { window, workspace } from "vscode";
 import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
+import { newGistInMemory } from "../fileSystem/memory";
 import { log } from "../logger";
 import {
   byteArrayToString,
   fileNameToUri,
+  isTempGistId,
   openGistFiles,
   sortGists
 } from "../utils";
@@ -15,25 +17,8 @@ import { storage } from "./storage";
 
 const Gists = require("gists");
 
-const GISTPAD_GH_TOKEN = "9a46e8821658e79ea796741fbddbf13846fcd916";
-
-interface ApiOptions {
-  apiConstructor?: any;
-  useDefaultToken?: boolean;
-}
-
-export async function getApi(
-  opts: ApiOptions = { apiConstructor: Gists, useDefaultToken: false }
-) {
-  if (!opts.apiConstructor) {
-    opts.apiConstructor = Gists;
-  }
-
+export async function getApi(apiConstructor = Gists) {
   let token = await getToken();
-
-  if (opts.useDefaultToken) {
-    token = GISTPAD_GH_TOKEN;
-  }
 
   const apiurl = config.get("apiUrl");
 
@@ -43,7 +28,7 @@ export async function getApi(
     throw new Error(message);
   }
 
-  return new opts.apiConstructor({ apiurl, token });
+  return new apiConstructor({ apiurl, token });
 }
 
 export async function duplicateGist(
@@ -68,7 +53,7 @@ export async function duplicateGist(
 
 export async function getUser(username: string) {
   const GitHub = require("github-base");
-  const api = await getApi({ apiConstructor: GitHub });
+  const api = await getApi(GitHub);
 
   try {
     const response = await api.get(`/users/${username}`);
@@ -174,23 +159,21 @@ export async function forkGist(id: string) {
 }
 
 export async function getGist(id: string): Promise<Gist> {
-  let useDefaultToken = false;
-  if (store.newTempGist?.id === id) {
-    useDefaultToken = true;
+  if (isTempGistId(id)) {
+    // TODO
   }
 
-  const api = await getApi({ useDefaultToken });
+  const api = await getApi();
   const gist = await api.get(id);
   return gist.body;
 }
 
 export async function getGistComments(id: string): Promise<GistComment[]> {
-  let useDefaultToken = false;
-  if (store.newTempGist?.id === id) {
-    useDefaultToken = true;
+  if (isTempGistId(id)) {
+    return [];
   }
 
-  const api = await getApi({ useDefaultToken });
+  const api = await getApi();
   const response = await api.listComments(id);
   return response.body;
 }
@@ -220,37 +203,40 @@ export async function newGist(
   isPublic: boolean,
   description?: string,
   openAfterCreation: boolean = true
-) {
+): Promise<Gist> {
   const { isSignedIn } = store;
-  const api = await getApi({ useDefaultToken: !isSignedIn });
+  let gist;
 
-  const files = gistFiles.reduce((accumulator, gistFile) => {
-    return {
-      ...accumulator,
-      [gistFile.filename!.trim()]: {
-        content: gistFile.content || ZERO_WIDTH_SPACE
-      }
-    };
-  }, {});
-
-  const gist = await api.create({
-    description,
-    public: isPublic,
-    files
-  });
-
-  if (isSignedIn) {
-    store.gists.unshift(gist.body);
+  if (!isSignedIn) {
+    // A new "temp gist" will be created
+    gist = await newGistInMemory(gistFiles, isPublic, description);
   } else {
-    // This is a temp gist
-    store.newTempGist = gist.body;
+    const api = await getApi();
+
+    const files = gistFiles.reduce((accumulator, gistFile) => {
+      return {
+        ...accumulator,
+        [gistFile.filename!.trim()]: {
+          content: gistFile.content || ZERO_WIDTH_SPACE
+        }
+      };
+    }, {});
+
+    const rawGist = await api.create({
+      description,
+      public: isPublic,
+      files
+    });
+    gist = rawGist.body;
   }
+
+  store.gists.unshift(gist);
 
   if (openAfterCreation) {
-    openGistFiles(gist.body.id);
+    openGistFiles(gist.id);
   }
 
-  return gist.body;
+  return gist;
 }
 
 export async function refreshGists() {

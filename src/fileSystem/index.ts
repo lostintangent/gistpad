@@ -24,12 +24,14 @@ import { ensureAuthenticated } from "../store/auth";
 import {
   byteArrayToString,
   getGistDetailsFromUri,
+  isTempGistUri,
   openGistAsWorkspace,
   stringToByteArray,
   uriToFileName
 } from "../utils";
 import { getFileContents, updateGistFiles } from "./api";
 import { addFile, renameFile } from "./git";
+import { inMemoryFs } from "./memory";
 const isBinaryPath = require("is-binary-path");
 
 interface WriteOperation {
@@ -154,6 +156,10 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 
   async readFile(uri: Uri): Promise<Uint8Array> {
+    if (isTempGistUri(uri)) {
+      return inMemoryFs.readFile(uri);
+    }
+
     const file = await this.getFileFromUri(uri);
     let contents = await getFileContents(file);
 
@@ -264,15 +270,14 @@ export class GistFileSystemProvider implements FileSystemProvider {
     content: Uint8Array,
     options: { create: boolean; overwrite: boolean }
   ): Promise<void> {
-    const { gistId } = getGistDetailsFromUri(uri);
-    const isNewTempGist = this.store.newTempGist?.id === gistId;
-    const isUserGist = this.store.gists.find((gist) => gist.id === gistId);
-
-    if (!isNewTempGist) {
-      await ensureAuthenticated();
+    if (isTempGistUri(uri)) {
+      return inMemoryFs.writeFile(uri, content, options);
     }
 
-    if (!isUserGist && !isNewTempGist) {
+    const { gistId } = getGistDetailsFromUri(uri);
+    await ensureAuthenticated();
+
+    if (!this.store.gists.find((gist) => gist.id === gistId)) {
       const response = await window.showInformationMessage(
         "You can't edit a Gist you don't own.",
         "Fork this Gist"

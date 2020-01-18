@@ -1035,6 +1035,7 @@
     "axios": "^0.19.0",
     "case": "^1.6.2",
     "debounce": "^1.2.0",
+    "eventemitter3": "^4.0.0",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "is-binary-path": "^2.1.0",

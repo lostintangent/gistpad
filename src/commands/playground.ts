@@ -5,34 +5,18 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_FILE } from "../constants";
+import { IPlaygroundManifest } from "../interfaces/IPlaygroundManifest";
 import { log } from "../logger";
 import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { GistsNode } from "../tree/nodes";
-import {
-  byteArrayToString,
-  closeGistFiles,
-  fileNameToUri,
-  getGistDescription,
-  getGistLabel,
-  openGistAsWorkspace,
-  stringToByteArray,
-  withProgress
-} from "../utils";
+import { closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, openGistAsWorkspace, stringToByteArray, withProgress } from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
+import { DEFAULT_MANIFEST, MarkupLanguage, MARKUP_EXTENSIONS, REACT_EXTENSIONS, ScriptLanguage, SCRIPT_EXTENSIONS, StylesheetLanguage, STYLESHEET_EXTENSIONS } from "./constants";
 
 export type ScriptType = "text/javascript" | "module";
-
-export interface PlaygroundManifest {
-  scripts?: string[];
-  styles?: string[];
-  layout?: string;
-  showConsole?: boolean;
-  template?: boolean;
-  scriptType?: ScriptType;
-}
 
 export enum PlaygroundLibraryType {
   script = "scripts",
@@ -51,57 +35,6 @@ interface GalleryTemplate {
   description: string;
   gist: string;
 }
-
-export const DEFAULT_MANIFEST = {
-  scripts: [] as string[],
-  styles: [] as string[]
-};
-
-const MarkupLanguage = {
-  html: ".html",
-  pug: ".pug"
-};
-
-const MARKUP_EXTENSIONS = [MarkupLanguage.html, MarkupLanguage.pug];
-
-const StylesheetLanguage = {
-  css: ".css",
-  less: ".less",
-  sass: ".sass",
-  scss: ".scss"
-};
-
-const STYLESHEET_EXTENSIONS = [
-  StylesheetLanguage.css,
-  StylesheetLanguage.less,
-  StylesheetLanguage.sass,
-  StylesheetLanguage.scss
-];
-
-const ScriptLanguage = {
-  babel: ".babel",
-  javascript: ".js",
-  javascriptmodule: ".mjs",
-  javascriptreact: ".jsx",
-  typescript: ".ts",
-  typescriptreact: ".tsx"
-};
-
-const REACT_EXTENSIONS = [
-  ScriptLanguage.babel,
-  ScriptLanguage.javascriptreact,
-  ScriptLanguage.typescriptreact
-];
-
-const MODULE_EXTENSIONS = [ScriptLanguage.javascriptmodule];
-
-const TYPESCRIPT_EXTENSIONS = [ScriptLanguage.typescript, ...REACT_EXTENSIONS];
-
-const SCRIPT_EXTENSIONS = [
-  ScriptLanguage.javascript,
-  ...MODULE_EXTENSIONS,
-  ...TYPESCRIPT_EXTENSIONS
-];
 
 interface IPlayground {
   gist: Gist;
@@ -206,104 +139,6 @@ async function generateNewPlaygroundFiles() {
   });
 
   return files;
-}
-
-export function getScriptContent(
-  document: vscode.TextDocument,
-  manifest: PlaygroundManifest | undefined
-): string | null {
-  let content = document.getText();
-  if (content.trim() === "") {
-    return content;
-  }
-
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-
-  const includesJsx =
-    manifest && manifest.scripts && manifest.scripts.includes("react");
-  if (TYPESCRIPT_EXTENSIONS.includes(extension) || includesJsx) {
-    const typescript = require("typescript");
-    const compilerOptions: any = {
-      experimentalDecorators: true,
-      target: "ES2018"
-    };
-
-    if (includesJsx || REACT_EXTENSIONS.includes(extension)) {
-      compilerOptions.jsx = typescript.JsxEmit.React;
-    }
-
-    try {
-      return typescript.transpile(content, compilerOptions);
-    } catch (e) {
-      // Something failed when trying to transpile Pug,
-      // so don't attempt to return anything
-      return null;
-    }
-  } else {
-    return content;
-  }
-}
-
-function getMarkupContent(document: vscode.TextDocument): string | null {
-  let content = document.getText();
-  if (content.trim() === "") {
-    return content;
-  }
-
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  if (extension === MarkupLanguage.pug) {
-    const pug = require("pug");
-
-    try {
-      // Something failed when trying to transpile Pug,
-      // so don't attempt to return anything
-      return pug.render(content);
-    } catch (e) {
-      return null;
-    }
-  } else {
-    return content;
-  }
-}
-
-async function getStylesheetContent(
-  document: vscode.TextDocument
-): Promise<string | null> {
-  let content = document.getText();
-  if (content.trim() === "") {
-    return content;
-  }
-
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  if (
-    extension === StylesheetLanguage.scss ||
-    extension === StylesheetLanguage.sass
-  ) {
-    const sass = require("sass");
-
-    try {
-      return byteArrayToString(
-        sass.renderSync({
-          data: content,
-          indentedSyntax: extension === StylesheetLanguage.sass
-        }).css
-      );
-    } catch (e) {
-      // Something failed when trying to transpile SCSS,
-      // so don't attempt to return anything
-      return null;
-    }
-  } else if (extension === StylesheetLanguage.less) {
-    try {
-      const less = require("less").default;
-      const output = await less.render(content);
-      return output.css;
-    } catch (e) {
-      return null;
-    }
-  } else {
-    return content;
-  }
 }
 
 function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
@@ -576,7 +411,7 @@ export async function openPlayground(gist: Gist) {
   ).length;
 
   const manifestContent = getManifestContent(gist);
-  let manifest: PlaygroundManifest;
+  let manifest: IPlaygroundManifest;
   try {
     manifest = JSON.parse(manifestContent);
   } catch (e) {
@@ -710,11 +545,7 @@ export async function openPlayground(gist: Gist) {
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     debounce(async ({ document }) => {
       if (isPlaygroundDocument(gist, document, PlaygroundFileType.markup)) {
-        const content = getMarkupContent(document);
-
-        if (content !== null) {
-          htmlView.updateHTML(content, runOnEdit);
-        }
+        htmlView.updateHTML(document, runOnEdit);
       } else if (
         isPlaygroundDocument(gist, document, PlaygroundFileType.script)
       ) {
@@ -748,10 +579,7 @@ export async function openPlayground(gist: Gist) {
       } else if (
         isPlaygroundDocument(gist, document, PlaygroundFileType.stylesheet)
       ) {
-        const content = await getStylesheetContent(document);
-        if (content !== null) {
-          htmlView.updateCSS(content, runOnEdit);
-        }
+        htmlView.updateCSS(document, runOnEdit);
       }
     }, 100)
   );
@@ -771,12 +599,14 @@ export async function openPlayground(gist: Gist) {
   }
 
   htmlView.updateManifest(manifestContent);
-  htmlView.updateHTML(
-    !!markupFile ? getMarkupContent(htmlDocument!) || "" : ""
-  );
-  htmlView.updateCSS(
-    !!stylesheetFile ? (await getStylesheetContent(cssDocument!)) || "" : ""
-  );
+
+  if (!!markupFile) {
+    htmlView.updateHTML(htmlDocument!);
+  }
+
+  if (!!stylesheetFile) {
+    htmlView.updateCSS(cssDocument!);
+  }
 
   if (jsDocument!) {
     htmlView.updateJavaScript(jsDocument!);

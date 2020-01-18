@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
-import { PlaygroundManifest } from "../commands/playground";
 import { PLAYGROUND_FILE, URI_PATTERN } from "../constants";
+import { IPlaygroundManifest } from "../interfaces/IPlaygroundManifest";
 import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
 import {
   getCDNJSLibraries,
@@ -8,11 +8,8 @@ import {
   ICDNJSLibrarayVersion,
   ICDNJSLibrary
 } from "./cdnjs";
-import {
-  activePlayground,
-  DEFAULT_MANIFEST,
-  PlaygroundLibraryType
-} from "./playground";
+import { DEFAULT_MANIFEST } from "./constants";
+import { activePlayground, PlaygroundLibraryType } from "./playground";
 
 const SUPPORTED_DEFAULT_LIBRARIES = [
   "angular.js",
@@ -76,9 +73,9 @@ const filterOutCommonJsFiles = (versions: string[]) => {
   return result;
 };
 
-export const getPlaygroundJson = (text: string): PlaygroundManifest => {
+export const getPlaygroundJson = (text: string): IPlaygroundManifest => {
   try {
-    const json = JSON.parse(text) as PlaygroundManifest;
+    const json = JSON.parse(text) as IPlaygroundManifest;
 
     return {
       ...DEFAULT_MANIFEST,

@@ -11,10 +11,27 @@ import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { GistsNode } from "../tree/nodes";
-import { closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, openGistAsWorkspace, stringToByteArray, withProgress } from "../utils";
+import {
+  closeGistFiles,
+  fileNameToUri,
+  getGistDescription,
+  getGistLabel,
+  openGistAsWorkspace,
+  stringToByteArray,
+  withProgress
+} from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
-import { DEFAULT_MANIFEST, MarkupLanguage, MARKUP_EXTENSIONS, REACT_EXTENSIONS, ScriptLanguage, SCRIPT_EXTENSIONS, StylesheetLanguage, STYLESHEET_EXTENSIONS } from "./constants";
+import {
+  DEFAULT_MANIFEST,
+  MarkupLanguage,
+  MARKUP_EXTENSIONS,
+  REACT_EXTENSIONS,
+  ScriptLanguage,
+  SCRIPT_EXTENSIONS,
+  StylesheetLanguage,
+  STYLESHEET_EXTENSIONS
+} from "./constants";
 
 export type ScriptType = "text/javascript" | "module";
 

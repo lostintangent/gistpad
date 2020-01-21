@@ -1,6 +1,5 @@
 import { pasteImageCommand } from "@abstractions/images/pasteImage";
 import * as path from "path";
-import { GistFile } from "src/store";
 import {
   commands,
   env,
@@ -11,12 +10,13 @@ import {
   window,
   workspace
 } from "vscode";
+import { byteArrayToString } from "../byteArrayToString";
 import { EXTENSION_NAME } from "../constants";
+import { GistFile } from "../store";
 import { listGists, newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode } from "../tree/nodes";
 import {
-  byteArrayToString,
   fileNameToUri,
   getGistDescription,
   getGistLabel,

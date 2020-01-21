@@ -14,10 +14,6 @@ import { FS_SCHEME, PLAYGROUND_FILE } from "./constants";
 import { Gist, SortOrder, store } from "./store";
 import { getGist } from "./store/actions";
 
-export function byteArrayToString(value: Uint8Array) {
-  return new TextDecoder().decode(value);
-}
-
 export function isOwnedGist(gistId: string): boolean {
   return !!store.gists.find((gist) => gist.id === gistId);
 }

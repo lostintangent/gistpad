@@ -10,6 +10,7 @@ import {
   window,
   workspace
 } from "vscode";
+import { byteArrayToString } from "../byteArrayToString";
 import { EXTENSION_NAME } from "../constants";
 import { log } from "../logger";
 import { GistFile, SortOrder, store } from "../store";
@@ -33,7 +34,6 @@ import {
 } from "../tree/nodes";
 import { createGistPadOpenUrl } from "../uriHandler";
 import {
-  byteArrayToString,
   closeGistFiles,
   fileNameToUri,
   getGistDescription,

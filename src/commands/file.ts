@@ -9,11 +9,11 @@ import {
   window,
   workspace
 } from "vscode";
+import { byteArrayToString } from "../byteArrayToString";
 import { EXTENSION_NAME } from "../constants";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
 import {
-  byteArrayToString,
   fileNameToUri,
   getGistDetailsFromUri,
   openGistFile,

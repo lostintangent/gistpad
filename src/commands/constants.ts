@@ -42,3 +42,9 @@ export const SCRIPT_EXTENSIONS = [
   ...MODULE_EXTENSIONS,
   ...TYPESCRIPT_EXTENSIONS
 ];
+
+export const REACT_SCRIPTS = ["react", "react-dom"];
+
+export const MARKUP_BASE_NAME = "index";
+export const SCRIPT_BASE_NAME = "script";
+export const STYLESHEET_BASE_NAME = "style";

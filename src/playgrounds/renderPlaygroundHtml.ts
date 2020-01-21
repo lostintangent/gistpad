@@ -1,20 +1,32 @@
 import * as EventEmitter from "eventemitter3";
 import { getCDNJSLibraries } from "../commands/cdnjs";
-import { PlaygroundLibraryType } from "../commands/playground";
 import { CSS_ELEMENT_ID, URI_PATTERN } from "../constants";
 import { IPlaygroundManifest } from "../interfaces/IPlaygroundManifest";
+import {
+  PlaygroundFileType,
+  PlaygroundLibraryType
+} from "../interfaces/PlaygroundTypes";
 import { log } from "../logger";
 import { Gist } from "../store";
+import { getGistFileOfType } from "../utils/getGistFileOfType";
+import { getManifestContent } from "../utils/getManifestContent";
 import { transpileCss } from "./transpilers/cssTranspiler";
 import { htmlTranspiler } from "./transpilers/htmlTranspiler";
 import { transpileJs } from "./transpilers/jsTranspiler";
 
-export class RenderHtml {
+export class RenderPlaygroundHtml {
+  public markupFile: string | undefined;
+  public stylesheetFile: string | undefined;
+  public scriptFile: string | undefined;
+
   public baseUrl: string = "";
   private html: string = "";
   private css: string = "";
   private js: string = "";
   private manifest: IPlaygroundManifest = {};
+
+  private codePenScripts: string | undefined;
+  private codePenStyles: string | undefined;
 
   public on: (
     event: string,
@@ -26,14 +38,45 @@ export class RenderHtml {
 
   private emitter = new EventEmitter();
 
-  constructor(
-    private gist: Gist,
-    private additionalHeadContent: string = "",
-    private codePenScripts: string = "",
-    private codePenStyles: string = ""
-  ) {
+  constructor(private gist: Gist, private additionalHeadContent: string = "") {
     this.on = this.emitter.on.bind(this.emitter);
     this.setBaseUrl();
+
+    this.markupFile = getGistFileOfType(gist, PlaygroundFileType.markup);
+    this.stylesheetFile = getGistFileOfType(
+      gist,
+      PlaygroundFileType.stylesheet
+    );
+    this.scriptFile = getGistFileOfType(gist, PlaygroundFileType.script);
+
+    // In order to provide CodePen interop,
+    // we'll look for an optional "scripts"
+    // file, which includes the list of external
+    // scripts that were added to the pen.
+    if (gist.files["scripts"]) {
+      this.codePenStyles = gist.files["scripts"].content;
+    }
+    if (gist.files["styles"]) {
+      this.codePenStyles = gist.files["styles"].content;
+    }
+
+    const manifestConent = getManifestContent(gist);
+    this.setManifest(manifestConent);
+
+    if (!!this.markupFile) {
+      const file = gist.files[this.markupFile];
+      this.setHtml(file.filename!, file.content!);
+    }
+
+    if (!!this.stylesheetFile) {
+      const file = gist.files[this.stylesheetFile];
+      this.setCss(file.filename!, file.content!);
+    }
+
+    if (!!this.scriptFile) {
+      const file = gist.files[this.scriptFile];
+      this.setJs(file.filename!, file.content!);
+    }
   }
 
   public setBaseUrl = async () => {
@@ -98,7 +141,9 @@ export class RenderHtml {
     }
   };
 
-  private async resolveLibraries(libraryType: PlaygroundLibraryType) {
+  private async resolveLibraries(
+    libraryType: PlaygroundLibraryType
+  ): Promise<string> {
     let libraries =
       libraryType === PlaygroundLibraryType.script
         ? this.codePenScripts
@@ -109,8 +154,10 @@ export class RenderHtml {
       !this.manifest[libraryType] ||
       this.manifest[libraryType]!.length === 0
     ) {
-      return libraries;
+      return libraries || "";
     }
+
+    libraries = libraries || "";
 
     await Promise.all(
       this.manifest![libraryType]!.map(async (library) => {
@@ -157,21 +204,21 @@ export class RenderHtml {
     return `
     <html>
       <head>
-        <base href="${this.baseUrl}" />
+        <base href="${this.baseUrl || ""}" />
         <style>
           body { background-color: white; }
         </style>
-        ${styles}
+        ${styles || ""}
         <style id="${CSS_ELEMENT_ID}">
-          ${this.css}
+          ${this.css || ""}
         </style>
-        ${this.additionalHeadContent}
+        ${this.additionalHeadContent || ""}
       </head>
       <body>
-        ${this.html}
-        ${scripts}
+        ${this.html || ""}
+        ${scripts || ""}
         <script type="${scriptType}">
-          ${this.js}
+          ${this.js || ""}
         </script>
       </body>
     </html>

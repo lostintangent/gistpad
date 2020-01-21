@@ -17,12 +17,12 @@ import {
   window,
   workspace
 } from "vscode";
+import { byteArrayToString } from "../byteArrayToString";
 import { EXTENSION_NAME, FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
 import { GistFile, Store } from "../store";
 import { forkGist, getGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import {
-  byteArrayToString,
   getGistDetailsFromUri,
   openGistAsWorkspace,
   stringToByteArray,

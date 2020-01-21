@@ -1,9 +1,9 @@
 import * as path from "path";
-import { IPlaygroundManifest } from "src/interfaces/IPlaygroundManifest";
 import {
   REACT_EXTENSIONS,
   TYPESCRIPT_EXTENSIONS
 } from "../../commands/constants";
+import { IPlaygroundManifest } from "../../interfaces/IPlaygroundManifest";
 import { ITranspileFile } from "../../interfaces/ITranspileFile";
 
 export const transpileJs = async (

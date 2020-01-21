@@ -6,8 +6,15 @@ import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_FILE } from "../constants";
 import { IPlaygroundManifest } from "../interfaces/IPlaygroundManifest";
+import {
+  GalleryTemplate,
+  PlaygroundFileType,
+  PlaygroundLibraryType
+} from "../interfaces/PlaygroundTypes";
 import { log } from "../logger";
+import { RenderPlaygroundHtml } from "../playgrounds/renderPlaygroundHtml";
 import { PlaygroundWebview } from "../playgrounds/webview";
+import { webviewControlScript } from "../playgrounds/webviewControlScript";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { GistsNode } from "../tree/nodes";
@@ -17,41 +24,25 @@ import {
   getGistDescription,
   getGistLabel,
   openGistAsWorkspace,
-  stringToByteArray,
   withProgress
 } from "../utils";
+import { getManifestContent } from "../utils/getManifestContent";
+import { isReactFile } from "../utils/isReactFile";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 import {
   DEFAULT_MANIFEST,
   MarkupLanguage,
+  MARKUP_BASE_NAME,
   MARKUP_EXTENSIONS,
-  REACT_EXTENSIONS,
+  REACT_SCRIPTS,
   ScriptLanguage,
+  SCRIPT_BASE_NAME,
   SCRIPT_EXTENSIONS,
   StylesheetLanguage,
+  STYLESHEET_BASE_NAME,
   STYLESHEET_EXTENSIONS
 } from "./constants";
-
-export type ScriptType = "text/javascript" | "module";
-
-export enum PlaygroundLibraryType {
-  script = "scripts",
-  style = "styles"
-}
-
-export enum PlaygroundFileType {
-  markup,
-  script,
-  stylesheet,
-  manifest
-}
-
-interface GalleryTemplate {
-  label: string;
-  description: string;
-  gist: string;
-}
 
 interface IPlayground {
   gist: Gist;
@@ -67,50 +58,6 @@ export async function closeWebviewPanel(gistId: string) {
     activePlayground.webViewPanel.dispose();
   }
 }
-
-const isReactFile = (fileName: string) => {
-  return REACT_EXTENSIONS.includes(path.extname(fileName));
-};
-
-const REACT_SCRIPTS = ["react", "react-dom"];
-
-const includesReactFiles = (gist: Gist) => {
-  return Object.keys(gist.files).some(isReactFile);
-};
-
-const includesReactScripts = (scripts: string[]) => {
-  return REACT_SCRIPTS.every((script) => scripts.includes(script));
-};
-
-export const getManifestContent = (gist: Gist) => {
-  if (!gist.files[PLAYGROUND_FILE]) {
-    return "";
-  }
-
-  const manifest = gist.files[PLAYGROUND_FILE].content!;
-  if (includesReactFiles(gist)) {
-    const parsedManifest = JSON.parse(manifest);
-    if (!includesReactScripts(parsedManifest.scripts)) {
-      parsedManifest.scripts.push(...REACT_SCRIPTS);
-      parsedManifest.scripts = [...new Set(parsedManifest.scripts)];
-
-      const content = JSON.stringify(parsedManifest, null, 2);
-
-      vscode.workspace.fs.writeFile(
-        fileNameToUri(gist.id, PLAYGROUND_FILE),
-        stringToByteArray(content)
-      );
-
-      return content;
-    }
-  }
-
-  return manifest;
-};
-
-const MARKUP_BASE_NAME = "index";
-const SCRIPT_BASE_NAME = "script";
-const STYLESHEET_BASE_NAME = "style";
 
 async function generateNewPlaygroundFiles() {
   const manifest = {
@@ -220,7 +167,9 @@ function loadPlaygroundManifests() {
   store.gists.concat(store.starredGists).forEach((gist) => {
     const manifest = gist.files[PLAYGROUND_FILE];
     if (manifest) {
-      vscode.workspace.fs.readFile(fileNameToUri(gist.id, PLAYGROUND_FILE));
+      (vscode.workspace as any).fs.readFile(
+        fileNameToUri(gist.id, PLAYGROUND_FILE)
+      );
     }
   });
 }
@@ -232,32 +181,6 @@ enum PlaygroundLayout {
   splitRight = "splitRight",
   splitTop = "splitTop"
 }
-
-export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
-  let extensions: string[];
-  let fileBaseName: string;
-  switch (fileType) {
-    case PlaygroundFileType.markup:
-      extensions = MARKUP_EXTENSIONS;
-      fileBaseName = MARKUP_BASE_NAME;
-      break;
-    case PlaygroundFileType.script:
-      extensions = SCRIPT_EXTENSIONS;
-      fileBaseName = SCRIPT_BASE_NAME;
-      break;
-    case PlaygroundFileType.stylesheet:
-    default:
-      extensions = STYLESHEET_EXTENSIONS;
-      fileBaseName = STYLESHEET_BASE_NAME;
-      break;
-  }
-
-  const fileCandidates = extensions.map(
-    (extension) => `${fileBaseName}${extension}`
-  );
-
-  return Object.keys(gist.files).find((file) => fileCandidates.includes(file));
-};
 
 function isPlaygroundDocument(
   gist: Gist,
@@ -419,9 +342,9 @@ async function newPlaygroundInternal(
 }
 
 export async function openPlayground(gist: Gist) {
-  const markupFile = getGistFileOfType(gist, PlaygroundFileType.markup);
-  const stylesheetFile = getGistFileOfType(gist, PlaygroundFileType.stylesheet);
-  const scriptFile = getGistFileOfType(gist, PlaygroundFileType.script);
+  console.log(JSON.stringify(gist, null, 2));
+  const renderHtml = new RenderPlaygroundHtml(gist, webviewControlScript);
+  const { markupFile, stylesheetFile, scriptFile } = renderHtml;
 
   const includedFiles = [!!markupFile, !!stylesheetFile, !!scriptFile].filter(
     (file) => file
@@ -531,25 +454,11 @@ export async function openPlayground(gist: Gist) {
 
   const output = vscode.window.createOutputChannel("GistPad Playground");
 
-  // In order to provide CodePen interop,
-  // we'll look for an optional "scripts"
-  // file, which includes the list of external
-  // scripts that were added to the pen.
-  let scripts: string | undefined;
-  if (gist.files["scripts"]) {
-    scripts = gist.files["scripts"].content;
-  }
-  let styles: string | undefined;
-  if (gist.files["styles"]) {
-    styles = gist.files["styles"].content;
-  }
-
   const htmlView = new PlaygroundWebview(
     webViewPanel.webview,
     output,
     gist,
-    scripts,
-    styles
+    renderHtml
   );
 
   if (config.get("playgrounds.showConsole") || manifest.showConsole) {
@@ -613,20 +522,6 @@ export async function openPlayground(gist: Gist) {
         }
       }
     );
-  }
-
-  htmlView.updateManifest(manifestContent);
-
-  if (!!markupFile) {
-    htmlView.updateHTML(htmlDocument!);
-  }
-
-  if (!!stylesheetFile) {
-    htmlView.updateCSS(cssDocument!);
-  }
-
-  if (jsDocument!) {
-    htmlView.updateJavaScript(jsDocument!);
   }
 
   activePlayground = {

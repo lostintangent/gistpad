@@ -1,7 +1,9 @@
 import * as vscode from "vscode";
+import { byteArrayToString } from "../byteArrayToString";
 import { PLAYGROUND_FILE, URI_PATTERN } from "../constants";
 import { IPlaygroundManifest } from "../interfaces/IPlaygroundManifest";
-import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
+import { PlaygroundLibraryType } from "../interfaces/PlaygroundTypes";
+import { fileNameToUri, stringToByteArray } from "../utils";
 import {
   getCDNJSLibraries,
   getLibraryVersions,
@@ -9,7 +11,7 @@ import {
   ICDNJSLibrary
 } from "./cdnjs";
 import { DEFAULT_MANIFEST } from "./constants";
-import { activePlayground, PlaygroundLibraryType } from "./playground";
+import { activePlayground } from "./playground";
 
 const SUPPORTED_DEFAULT_LIBRARIES = [
   "angular.js",
@@ -95,7 +97,9 @@ async function addDependencyLink(
 
   let playgroundJSON;
   try {
-    const content = byteArrayToString(await vscode.workspace.fs.readFile(uri));
+    const content = byteArrayToString(
+      await (vscode.workspace as any).fs.readFile(uri)
+    );
     playgroundJSON = getPlaygroundJson(content);
   } catch (e) {
     playgroundJSON = DEFAULT_MANIFEST;
@@ -105,7 +109,10 @@ async function addDependencyLink(
   playgroundJSON[libraryType] = [...new Set(playgroundJSON[libraryType])];
 
   const updatedContent = JSON.stringify(playgroundJSON, null, 2);
-  vscode.workspace.fs.writeFile(uri, stringToByteArray(updatedContent));
+  (vscode.workspace as any).fs.writeFile(
+    uri,
+    stringToByteArray(updatedContent)
+  );
 
   if (activePlayground && activePlayground.gist.id === gistId) {
     activePlayground.webView.updateManifest(updatedContent, true);

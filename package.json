@@ -1024,7 +1024,10 @@
     "compile": "tsc -p ./",
     "postinstall": "node ./node_modules/vscode/bin/install",
     "vscode:prepublish": "npm run build:node",
-    "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
+    "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js",
+    "compile-test": "tsc -p ./",
+    "test1": "yarn run compile-test && mocha --file out/test/setup.js --require source-map-support/register out/test/ --recursive",
+    "test": "yarn jest"
   },
   "dependencies": {
     "@types/debounce": "^1.2.0",
@@ -1048,12 +1051,17 @@
     "simple-git": "^1.126.0"
   },
   "devDependencies": {
+    "@types/jest": "^24.9.0",
     "@types/keytar": "^4.4.2",
     "@types/node": "^8.10.25",
+    "chai": "^4.2.0",
     "copy-webpack-plugin": "^5.0.5",
+    "jest": "^24.9.0",
+    "node-html-parser": "^1.1.18",
+    "ts-jest": "^24.3.0",
     "ts-loader": "^6.2.1",
     "tslint": "^5.8.0",
-    "typescript": "^3.7.3",
+    "typescript": "^3.7.5",
     "vscode": "^1.1.25",
     "vscode-nls-dev": "^3.3.1",
     "webpack": "^4.41.2",

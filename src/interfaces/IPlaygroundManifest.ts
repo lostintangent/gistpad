@@ -1,4 +1,4 @@
-import { ScriptType } from "../commands/playground";
+import { ScriptType } from "./PlaygroundTypes";
 
 export interface IPlaygroundManifest {
   scripts?: string[];

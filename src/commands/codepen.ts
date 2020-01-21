@@ -1,11 +1,13 @@
 import * as path from "path";
-import { Gist } from "src/store";
 import * as vscode from "vscode";
+import { byteArrayToString } from "../byteArrayToString";
 import { EXTENSION_NAME, PLAYGROUND_FILE, URI_PATTERN } from "../constants";
+import { PlaygroundFileType } from "../interfaces/PlaygroundTypes";
+import { Gist } from "../store";
 import { GistNode } from "../tree/nodes";
-import { byteArrayToString, fileNameToUri, stringToByteArray } from "../utils";
+import { fileNameToUri, stringToByteArray } from "../utils";
 import { getCDNJSLibraries } from "./cdnjs";
-import { getGistFileOfType, PlaygroundFileType } from "./playground";
+import { getGistFileOfType } from "./playground";
 
 const CODEPEN_URI = "https://vsls-contrib.github.io/gistpad/codepen.html";
 const MARKER_FILE = ".codepen";

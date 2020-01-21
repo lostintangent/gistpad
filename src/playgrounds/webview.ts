@@ -2,26 +2,15 @@ import axios from "axios";
 import { reaction } from "mobx";
 import * as vscode from "vscode";
 import { Gist } from "../store";
-import { RenderHtml } from "./renderHtml";
-import { webviewControlScript } from "./webviewControlScript";
+import { RenderPlaygroundHtml } from "./renderPlaygroundHtml";
 
 export class PlaygroundWebview {
-  private renderHtml: RenderHtml;
-
   constructor(
     private webview: vscode.Webview,
     output: vscode.OutputChannel,
     private gist: Gist,
-    codePenScripts: string = "",
-    codePenStyles: string = ""
+    private renderHtml: RenderPlaygroundHtml
   ) {
-    this.renderHtml = new RenderHtml(
-      gist,
-      webviewControlScript,
-      codePenScripts,
-      codePenStyles
-    );
-
     this.renderHtml.on("change", (type, value) => {
       if (type === "css") {
         return this.webview.postMessage({ command: "updateCSS", value });

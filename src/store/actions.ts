@@ -1,15 +1,11 @@
 import { observable, runInAction } from "mobx";
 import { window, workspace } from "vscode";
 import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
+import { byteArrayToString } from "../byteArrayToString";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { log } from "../logger";
-import {
-  byteArrayToString,
-  fileNameToUri,
-  openGistFiles,
-  sortGists
-} from "../utils";
+import { fileNameToUri, openGistFiles, sortGists } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
 
@@ -37,7 +33,7 @@ export async function duplicateGist(
   const files = [];
   for (const filename of Object.keys(gist.files)) {
     const content = byteArrayToString(
-      await workspace.fs.readFile(fileNameToUri(gist.id, filename))
+      ((await workspace) as any).fs.readFile(fileNameToUri(gist.id, filename))
     );
     files.push({
       filename,

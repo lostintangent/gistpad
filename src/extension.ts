@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { registerCommands } from "./commands";
+import { setupPlaygroundLibraries } from "./commands/playground";
 import { registerCommentController } from "./comments";
 import { registerFileSystemProvider } from "./fileSystem";
 import { log } from "./logger";
@@ -30,4 +31,5 @@ export async function activate(context: vscode.ExtensionContext) {
 
   initializeStorage(context);
   initializeAuth();
+  setupPlaygroundLibraries();
 }

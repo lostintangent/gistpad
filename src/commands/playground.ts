@@ -451,17 +451,18 @@ function duplicatePlayground(
     duplicateGist(gistId, isPublic, description)
   );
 }
+
 const KnownGalleries = new Map([
   [
     "web",
-    "https://gist.githubusercontent.com/lostintangent/ce7e5c20f94a7f52a5cec1f22cebec18/raw/793777de81ea634ba5e84ecd5ded167b26baa45d/gallery.json"
+    "https://gist.githubusercontent.com/lostintangent/2c8209b16b9c3a6e20facb430d5424bc/raw/31763b55b9de5cb4575205dcc64db558107ec06c/gallery.json"
   ]
 ]);
 
 let galleryTemplates: GalleryTemplate[] = [];
 
 async function loadGalleryTemplates() {
-  const galleries: string[] = await config.get("playgrounds.templateGalleries");
+  const galleries: string[] = config.get("playgrounds.templateGalleries");
   let templates: GalleryTemplate[] = [];
 
   for (let gallery of galleries) {
@@ -846,6 +847,12 @@ export async function openPlayground(gist: Gist) {
   });
 }
 
+export function setupPlaygroundLibraries() {
+  getCDNJSLibraries();
+  loadGalleryTemplates();
+  loadPlaygroundManifests();
+}
+
 export async function registerPlaygroundCommands(
   context: vscode.ExtensionContext
 ) {
@@ -957,9 +964,7 @@ export async function registerPlaygroundCommands(
     () => [store.isSignedIn, store.isLoading],
     ([isSignedIn, isLoading]) => {
       if (isSignedIn && !isLoading) {
-        getCDNJSLibraries();
-        loadGalleryTemplates();
-        loadPlaygroundManifests();
+        setupPlaygroundLibraries();
       }
     }
   );

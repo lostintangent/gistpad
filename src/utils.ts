@@ -120,7 +120,9 @@ export function openGistAsWorkspace(id: string) {
 
 export async function openGistFiles(id: string) {
   try {
-    const gist = await getGist(id);
+    const gist = isTempGistId(id)
+      ? store.gists.find((gist) => gist.id === id)!
+      : await getGist(id);
 
     if (isPlaygroundGist(gist)) {
       await openPlayground(gist);

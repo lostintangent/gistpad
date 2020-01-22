@@ -3,10 +3,12 @@ import { window, workspace } from "vscode";
 import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
+import { newGistInMemory } from "../fileSystem/memory";
 import { log } from "../logger";
 import {
   byteArrayToString,
   fileNameToUri,
+  isTempGistId,
   openGistFiles,
   sortGists
 } from "../utils";
@@ -17,6 +19,7 @@ const Gists = require("gists");
 
 export async function getApi(constructor = Gists) {
   const token = await getToken();
+
   const apiurl = config.get("apiUrl");
 
   if (!apiurl) {
@@ -162,6 +165,10 @@ export async function getGist(id: string): Promise<Gist> {
 }
 
 export async function getGistComments(id: string): Promise<GistComment[]> {
+  if (isTempGistId(id)) {
+    return [];
+  }
+
   const api = await getApi();
   const response = await api.listComments(id);
   return response.body;
@@ -192,31 +199,40 @@ export async function newGist(
   isPublic: boolean,
   description?: string,
   openAfterCreation: boolean = true
-) {
-  const api = await getApi();
+): Promise<Gist> {
+  const { isSignedIn } = store;
+  let gist;
 
-  const files = gistFiles.reduce((accumulator, gistFile) => {
-    return {
-      ...accumulator,
-      [gistFile.filename!.trim()]: {
-        content: gistFile.content || ZERO_WIDTH_SPACE
-      }
-    };
-  }, {});
+  if (!isSignedIn) {
+    // A new "temp gist" will be created
+    gist = await newGistInMemory(gistFiles, isPublic, description);
+  } else {
+    const api = await getApi();
 
-  const gist = await api.create({
-    description,
-    public: isPublic,
-    files
-  });
+    const files = gistFiles.reduce((accumulator, gistFile) => {
+      return {
+        ...accumulator,
+        [gistFile.filename!.trim()]: {
+          content: gistFile.content || ZERO_WIDTH_SPACE
+        }
+      };
+    }, {});
 
-  store.gists.unshift(gist.body);
-
-  if (openAfterCreation) {
-    openGistFiles(gist.body.id);
+    const rawGist = await api.create({
+      description,
+      public: isPublic,
+      files
+    });
+    gist = rawGist.body;
   }
 
-  return gist.body;
+  store.gists.unshift(gist);
+
+  if (openAfterCreation) {
+    openGistFiles(gist.id);
+  }
+
+  return gist;
 }
 
 export async function refreshGists() {

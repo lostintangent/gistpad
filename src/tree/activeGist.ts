@@ -12,7 +12,7 @@ import {
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { Gist, Store, store } from "../store";
-import { isOwnedGist } from "../utils";
+import { isOwnedGist, isTempGistId } from "../utils";
 import {
   FollowedUserGistNode,
   GistFileNode,
@@ -23,6 +23,7 @@ import {
 class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
   private _isOwnedGist: boolean = false;
+  private _isTempGist: boolean = false;
   private _gist: Gist;
 
   private _onDidChangeTreeData = new EventEmitter<TreeNode>();
@@ -31,6 +32,7 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 
   constructor(gistId: string, private extensionPath: string) {
     this._isOwnedGist = isOwnedGist(gistId);
+    this._isTempGist = isTempGistId(gistId);
     this._gist = store.gists.find((gist) => gist.id === gistId)!;
 
     if (this._gist && this._isOwnedGist) {
@@ -49,17 +51,18 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 
   getChildren(element?: TreeNode): ProviderResult<TreeNode[]> {
     if (!element) {
-      const gistNode = this._isOwnedGist
-        ? new GistNode(
-            this._gist,
-            this.extensionPath,
-            TreeItemCollapsibleState.Expanded
-          )
-        : new FollowedUserGistNode(
-            this._gist,
-            this.extensionPath,
-            TreeItemCollapsibleState.Expanded
-          );
+      const gistNode =
+        this._isOwnedGist || this._isTempGist
+          ? new GistNode(
+              this._gist,
+              this.extensionPath,
+              TreeItemCollapsibleState.Expanded
+            )
+          : new FollowedUserGistNode(
+              this._gist,
+              this.extensionPath,
+              TreeItemCollapsibleState.Expanded
+            );
 
       return [gistNode];
     } else if (element instanceof GistNode) {

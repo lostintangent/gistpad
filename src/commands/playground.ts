@@ -1,4 +1,4 @@
-import Axios from "axios";
+import axios from "axios";
 import { debounce } from "debounce";
 import { reaction } from "mobx";
 import * as path from "path";
@@ -16,6 +16,7 @@ import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
+  hasTempGist,
   openGistAsWorkspace,
   stringToByteArray,
   withProgress
@@ -458,17 +459,18 @@ const KnownGalleries = new Map([
 ]);
 
 let galleryTemplates: GalleryTemplate[] = [];
+
 async function loadGalleryTemplates() {
   const galleries: string[] = await config.get("playgrounds.templateGalleries");
-
   let templates: GalleryTemplate[] = [];
+
   for (let gallery of galleries) {
     if (KnownGalleries.has(gallery)) {
       gallery = KnownGalleries.get(gallery)!;
     }
 
     try {
-      const { data } = await Axios.get(gallery);
+      const { data } = await axios.get(gallery);
       templates.push(...data.templates);
     } catch (e) {
       log.info(
@@ -958,6 +960,19 @@ export async function registerPlaygroundCommands(
         getCDNJSLibraries();
         loadGalleryTemplates();
         loadPlaygroundManifests();
+      }
+    }
+  );
+
+  // Give the option to save new temp playgrounds into their
+  // own Gist account, if there is a new temp gist open, and
+  // the user is now signed in.
+  reaction(
+    () => [store.isSignedIn],
+    async ([isSignedIn]) => {
+      if (hasTempGist(store)) {
+        // TODO: This is where we can migrate the temp gist into
+        // the user's Gist account, now that they have signed in.
       }
     }
   );

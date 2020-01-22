@@ -11,7 +11,7 @@ import {
 } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
 import { FS_SCHEME, PLAYGROUND_FILE, TEMP_GIST_ID } from "./constants";
-import { Gist, SortOrder, store } from "./store";
+import { Gist, SortOrder, store, Store } from "./store";
 import { getGist } from "./store/actions";
 
 export function byteArrayToString(value: Uint8Array) {
@@ -29,6 +29,10 @@ export function isTempGistId(gistId: string): boolean {
 export function isTempGistUri(uri: Uri): boolean {
   const { gistId } = getGistDetailsFromUri(uri);
   return isTempGistId(gistId);
+}
+
+export function hasTempGist(store: Store): boolean {
+  return !!store.gists.find((gist) => isTempGistId(gist.id));
 }
 
 export async function showGistQuickPick(gists: Gist[], placeHolder: string) {

@@ -16,6 +16,7 @@ import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
+  hasTempGist,
   openGistAsWorkspace,
   stringToByteArray,
   withProgress
@@ -968,10 +969,10 @@ export async function registerPlaygroundCommands(
   // the user is now signed in.
   reaction(
     () => [store.isSignedIn],
-    ([isSignedIn]) => {
-      // TODO: check if we have a temp gist, and if so, fork it
-      if (isSignedIn) {
-        vscode.window.showInformationMessage("You can fork this now");
+    async ([isSignedIn]) => {
+      if (hasTempGist(store)) {
+        // TODO: This is where we can migrate the temp gist into
+        // the user's Gist account, now that they have signed in.
       }
     }
   );

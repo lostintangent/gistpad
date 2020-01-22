@@ -264,7 +264,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     options: { create: boolean; overwrite: boolean }
   ): Promise<void> {
     if (isTempGistUri(uri)) {
-      return inMemoryFs.writeFile(uri, content, options);
+      return inMemoryFs.writeFile(uri, content);
     }
 
     const { gistId } = getGistDetailsFromUri(uri);

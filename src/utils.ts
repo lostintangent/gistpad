@@ -10,8 +10,8 @@ import {
   workspace
 } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
-import { FS_SCHEME, PLAYGROUND_FILE } from "./constants";
-import { Gist, SortOrder, store } from "./store";
+import { FS_SCHEME, PLAYGROUND_FILE, TEMP_GIST_ID } from "./constants";
+import { Gist, SortOrder, store, Store } from "./store";
 import { getGist } from "./store/actions";
 
 export function byteArrayToString(value: Uint8Array) {
@@ -20,6 +20,19 @@ export function byteArrayToString(value: Uint8Array) {
 
 export function isOwnedGist(gistId: string): boolean {
   return !!store.gists.find((gist) => gist.id === gistId);
+}
+
+export function isTempGistId(gistId: string): boolean {
+  return gistId === TEMP_GIST_ID;
+}
+
+export function isTempGistUri(uri: Uri): boolean {
+  const { gistId } = getGistDetailsFromUri(uri);
+  return isTempGistId(gistId);
+}
+
+export function hasTempGist(store: Store): boolean {
+  return !!store.gists.find((gist) => isTempGistId(gist.id));
 }
 
 export async function showGistQuickPick(gists: Gist[], placeHolder: string) {

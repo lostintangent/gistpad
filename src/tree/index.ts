@@ -19,6 +19,7 @@ import {
   GistNode,
   GistsNode,
   LoadingNode,
+  NewPlaygroundNode,
   NoStarredGistsNode,
   NoUserGistsNode,
   OpenGistNode,
@@ -58,7 +59,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   getChildren(element?: TreeNode): ProviderResult<TreeNode[]> {
     if (!element) {
       if (!this.store.isSignedIn) {
-        return [new OpenGistNode(), new SignInNode()];
+        return [new OpenGistNode(), new SignInNode(), new NewPlaygroundNode()];
       } else {
         if (this.store.isLoading) {
           return [new LoadingNode()];

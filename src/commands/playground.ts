@@ -9,7 +9,7 @@ import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { GistsNode } from "../tree/nodes";
-import { byteArrayToString, closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, openGistAsWorkspace, stringToByteArray, withProgress } from "../utils";
+import { byteArrayToString, closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, hasTempGist, openGistAsWorkspace, stringToByteArray, withProgress } from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
@@ -1020,6 +1020,19 @@ export async function registerPlaygroundCommands(
       if (isSignedIn && !isLoading) {
         getCDNJSLibraries();
         loadPlaygroundManifests();
+      }
+    }
+  );
+
+  // Give the option to save new temp playgrounds into their
+  // own Gist account, if there is a new temp gist open, and
+  // the user is now signed in.
+  reaction(
+    () => [store.isSignedIn],
+    async ([isSignedIn]) => {
+      if (hasTempGist(store)) {
+        // TODO: This is where we can migrate the temp gist into
+        // the user's Gist account, now that they have signed in.
       }
     }
   );

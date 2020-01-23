@@ -68,7 +68,7 @@ export class OpenGistNode extends TreeNode {
 
     this.command = {
       command: `${EXTENSION_NAME}.openGist`,
-      title: "Open Gist.."
+      title: "Open Gist..."
     };
   }
 }
@@ -80,6 +80,17 @@ export class SignInNode extends TreeNode {
     this.command = {
       command: `${EXTENSION_NAME}.signIn`,
       title: "Sign in to view your Gists..."
+    };
+  }
+}
+
+export class NewPlaygroundNode extends TreeNode {
+  constructor() {
+    super("New Playground...");
+
+    this.command = {
+      command: `${EXTENSION_NAME}.newPlayground`,
+      title: "New Playground..."
     };
   }
 }

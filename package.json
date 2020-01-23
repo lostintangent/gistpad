@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "extensionKind": [
     "ui",
     "web",
@@ -133,6 +133,7 @@
           "enum": [
             "grid",
             "preview",
+            "splitBottom",
             "splitLeft",
             "splitRight",
             "splitTop"
@@ -174,12 +175,24 @@
         },
         "gistpad.playgrounds.templateGalleries": {
           "default": [
-            "web"
+            "web:languages",
+            "web:libraries"
           ],
           "type": "array",
           "items": {
-            "type": "string",
-            "format": "uri"
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "web:languages",
+                  "web:libraries"
+                ]
+              },
+              {
+                "type": "string",
+                "format": "uri"
+              }
+            ]
           },
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
         }
@@ -1003,6 +1016,20 @@
         "filenames": [
           "script.babel"
         ]
+      }
+    ],
+    "gistpad.playgrounds.templateGalleries": [
+      {
+        "id": "web:basic",
+        "url": "https://gist.githubusercontent.com/lostintangent/5b8d7f1319cdf0321a6c3aeffa909876/raw/gallery.json"
+      },
+      {
+        "id": "web:languages",
+        "url": "https://gist.githubusercontent.com/lostintangent/2c8209b16b9c3a6e20facb430d5424bc/raw/gallery.json"
+      },
+      {
+        "id": "web:libraries",
+        "url": "https://gist.githubusercontent.com/lostintangent/ece303a6b8c7cbf0293b850b600e3cb6/raw/gallery.json"
       }
     ]
   },

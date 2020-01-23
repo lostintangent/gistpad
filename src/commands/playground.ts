@@ -1,25 +1,15 @@
-import Axios from "axios";
 import { debounce } from "debounce";
 import { reaction } from "mobx";
 import * as path from "path";
 import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_FILE } from "../constants";
-import { log } from "../logger";
+import { enableGalleries, loadGalleries } from "../playgrounds/galleryProvider";
 import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { GistsNode } from "../tree/nodes";
-import {
-  byteArrayToString,
-  closeGistFiles,
-  fileNameToUri,
-  getGistDescription,
-  getGistLabel,
-  openGistAsWorkspace,
-  stringToByteArray,
-  withProgress
-} from "../utils";
+import { byteArrayToString, closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, openGistAsWorkspace, stringToByteArray, withProgress } from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
@@ -44,12 +34,6 @@ export enum PlaygroundFileType {
   script,
   stylesheet,
   manifest
-}
-
-interface GalleryTemplate {
-  label: string;
-  description: string;
-  gist: string;
 }
 
 export const DEFAULT_MANIFEST = {
@@ -376,6 +360,7 @@ function loadPlaygroundManifests() {
 enum PlaygroundLayout {
   grid = "grid",
   preview = "preview",
+  splitBottom = "splitBottom",
   splitLeft = "splitLeft",
   splitRight = "splitRight",
   splitTop = "splitTop"
@@ -450,35 +435,6 @@ function duplicatePlayground(
     duplicateGist(gistId, isPublic, description)
   );
 }
-const KnownGalleries = new Map([
-  [
-    "web",
-    "https://gist.githubusercontent.com/lostintangent/ece303a6b8c7cbf0293b850b600e3cb6/raw/gallery.json"
-  ]
-]);
-
-let galleryTemplates: GalleryTemplate[] = [];
-async function loadGalleryTemplates() {
-  const galleries: string[] = await config.get("playgrounds.templateGalleries");
-
-  let templates: GalleryTemplate[] = [];
-  for (let gallery of galleries) {
-    if (KnownGalleries.has(gallery)) {
-      gallery = KnownGalleries.get(gallery)!;
-    }
-
-    try {
-      const { data } = await Axios.get(gallery);
-      templates.push(...data.templates);
-    } catch (e) {
-      log.info(
-        `Unable to load templates from the following gallery: ${gallery}`
-      );
-    }
-  }
-
-  galleryTemplates = templates.sort((a, b) => a.label.localeCompare(b.label));
-}
 
 const NO_TEMPLATE_GIST_ITEM = {
   label: "$(arrow-right) Continue without a template",
@@ -487,17 +443,10 @@ const NO_TEMPLATE_GIST_ITEM = {
 };
 
 async function newPlaygroundWithoutTemplate(
+  description: string | undefined,
   isPublic: boolean = true,
   openAsWorkspace: boolean = false
 ) {
-  const description = await vscode.window.showInputBox({
-    prompt: "Enter the description of the playground"
-  });
-
-  if (!description) {
-    return;
-  }
-
   const gist: Gist = await withProgress("Creating Playground...", async () =>
     newGist(await generateNewPlaygroundFiles(), isPublic, description, false)
   );
@@ -509,6 +458,87 @@ async function newPlaygroundWithoutTemplate(
   }
 }
 
+async function promptForPlaygroundDescription(
+  gistId: string | null,
+  isPublic: boolean,
+  openAsWorkspace: boolean,
+  inWizard: boolean = true
+) {
+  const inputBox = await vscode.window.createInputBox();
+
+  if (inWizard) {
+    inputBox.totalSteps = 2;
+    inputBox.step = 2;
+    inputBox.buttons = [vscode.QuickInputButtons.Back];
+    inputBox.onDidTriggerButton((e) => {
+      newPlaygroundInternal(isPublic, undefined, openAsWorkspace);
+    });
+  } else {
+    inputBox.buttons = [CONFIGURE_GALLERIES_BUTTON];
+    inputBox.onDidTriggerButton((e) => {
+      promptForGalleryConfiguration(isPublic, openAsWorkspace);
+    });
+  }
+
+  inputBox.prompt = "Enter the description of the playground (optional)";
+  inputBox.title = "Create new " + (isPublic ? "" : "secret ") + "playground";
+
+  inputBox.onDidAccept(() => {
+    inputBox.hide();
+
+    if (gistId) {
+      duplicatePlayground(gistId, isPublic, inputBox.value);
+    } else {
+      newPlaygroundWithoutTemplate(inputBox.value, isPublic, openAsWorkspace);
+    }
+  });
+
+  inputBox.show();
+}
+
+async function promptForGalleryConfiguration(
+  isPublic: boolean,
+  openAsWorkspace: boolean = false
+) {
+  const quickPick = vscode.window.createQuickPick();
+  quickPick.title = "Configure template galleries";
+  quickPick.placeholder =
+    "Select the galleries you'd like to display templates from";
+  quickPick.canSelectMany = true;
+
+  const galleries = (await loadGalleries()).sort((a, b) =>
+    a.label.localeCompare(b.label)
+  );
+
+  console.log("GP Loaded galleries: %o", galleries);
+
+  quickPick.items = galleries;
+  quickPick.selectedItems = galleries.filter((gallery) => gallery.enabled);
+
+  quickPick.buttons = [vscode.QuickInputButtons.Back];
+  quickPick.onDidTriggerButton((e) => {
+    if (e === vscode.QuickInputButtons.Back) {
+      return newPlaygroundInternal(isPublic, undefined, openAsWorkspace);
+    }
+  });
+
+  quickPick.onDidAccept(async () => {
+    const galleries = quickPick.selectedItems.map((item) => (item as any).id);
+
+    quickPick.busy = true;
+    await enableGalleries(galleries);
+    quickPick.busy = false;
+
+    quickPick.hide();
+
+    return newPlaygroundInternal(isPublic, undefined, openAsWorkspace);
+  });
+
+  quickPick.show();
+}
+
+let CONFIGURE_GALLERIES_BUTTON: vscode.QuickInputButton;
+
 async function newPlaygroundInternal(
   isPublic: boolean,
   node?: GistsNode,
@@ -517,8 +547,16 @@ async function newPlaygroundInternal(
   const quickPick = vscode.window.createQuickPick();
   quickPick.title = "Create new " + (isPublic ? "" : "secret ") + "playground";
   quickPick.placeholder = "Select the playground template to use";
+  quickPick.totalSteps = 2;
+  quickPick.step = 1;
+  quickPick.matchOnDescription = true;
 
-  const templates = [...galleryTemplates];
+  const galleries = await loadGalleries();
+
+  console.log("GP Viewing templates: %o", galleries);
+  const templates = galleries
+    .filter((gallery) => gallery.enabled)
+    .flatMap((gallery) => gallery.templates);
   for (const gist of store.gists.concat(store.starredGists)) {
     const manifest = gist.files[PLAYGROUND_FILE];
     if (manifest && manifest.content) {
@@ -538,7 +576,12 @@ async function newPlaygroundInternal(
   }
 
   if (templates.length === 0) {
-    return await newPlaygroundWithoutTemplate(isPublic, openAsWorkspace);
+    return await promptForPlaygroundDescription(
+      null,
+      isPublic,
+      openAsWorkspace,
+      false
+    );
   }
 
   quickPick.items = [
@@ -546,24 +589,24 @@ async function newPlaygroundInternal(
     NO_TEMPLATE_GIST_ITEM
   ];
 
-  quickPick.show();
+  quickPick.buttons = [CONFIGURE_GALLERIES_BUTTON];
+
+  quickPick.onDidTriggerButton((e) => {
+    promptForGalleryConfiguration(isPublic, openAsWorkspace);
+  });
 
   quickPick.onDidAccept(async () => {
     quickPick.hide();
 
     const template = quickPick.selectedItems[0];
-    switch (template.label) {
-      case NO_TEMPLATE_GIST_ITEM.label: {
-        await newPlaygroundWithoutTemplate(isPublic, openAsWorkspace);
-      }
-      default:
-        duplicatePlayground(
-          (<GalleryTemplate>template).gist,
-          isPublic,
-          template.label
-        );
-    }
+    promptForPlaygroundDescription(
+      (template as any).gist,
+      isPublic,
+      openAsWorkspace
+    );
   });
+
+  quickPick.show();
 }
 
 export async function openPlayground(gist: Gist) {
@@ -612,6 +655,14 @@ export async function openPlayground(gist: Gist) {
       ...editorLayout,
       orientation: EditorLayoutOrientation.vertical
     };
+  } else if (playgroundLayout === PlaygroundLayout.splitBottom) {
+    editorLayout = {
+      orientation: EditorLayoutOrientation.vertical,
+      groups: [...editorLayout.groups].reverse()
+    };
+
+    currentViewColumn = vscode.ViewColumn.Two;
+    previewViewColumn = vscode.ViewColumn.One;
   }
 
   await vscode.commands.executeCommand("workbench.action.closeAllEditors");
@@ -847,6 +898,18 @@ export async function openPlayground(gist: Gist) {
 export async function registerPlaygroundCommands(
   context: vscode.ExtensionContext
 ) {
+  CONFIGURE_GALLERIES_BUTTON = {
+    iconPath: {
+      dark: vscode.Uri.file(
+        context.asAbsolutePath("images/dark/configure.svg")
+      ),
+      light: vscode.Uri.file(
+        context.asAbsolutePath("images/dark/configure.svg")
+      )
+    },
+    tooltip: "Configure Template Galleries"
+  };
+
   context.subscriptions.push(
     vscode.commands.registerCommand(
       `${EXTENSION_NAME}.newPlayground`,
@@ -956,17 +1019,8 @@ export async function registerPlaygroundCommands(
     ([isSignedIn, isLoading]) => {
       if (isSignedIn && !isLoading) {
         getCDNJSLibraries();
-        loadGalleryTemplates();
         loadPlaygroundManifests();
       }
     }
   );
-
-  // Reload the template galleries whenever the user changes
-  // them, that way, the list is always accurate.
-  vscode.workspace.onDidChangeConfiguration((e) => {
-    if (e.affectsConfiguration("gistpad.playgrounds.templateGalleries")) {
-      loadGalleryTemplates();
-    }
-  });
 }

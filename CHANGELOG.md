@@ -1,3 +1,9 @@
+## v0.0.46 (01/18/2020)
+
+- Added UI for configuring playground template galleries when creating new playgrounds
+- Introduced the `web:languages` template gallery, which allows you to get started quickly with commonly-used web language configurations (e.g. Pug + Less + JS, HTML + SCSS + TS).
+- Added the `Split Bottom` playground layout mode.
+
 ## v0.0.45 (01/17/2020)
 
 - Added support for JavaScript modules, which allows you to `import` other modules, using either an [absolute URL](https://www.pika.dev/cdn), or a relative path to another JavaScript module in the gist. See an example [here](https://gist.github.com/lostintangent/21727eab0d79c7b9fd0dde92df7b1f50)

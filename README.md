@@ -60,7 +60,7 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Playground` or `New Secret Playground`. This will create a new gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
-When you create a new playground, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries you intend to use (e.g. React.js, Vue.js). You can also choose not to use a template, which will simply create a new playground, with an empty HTML, CSS and JavaScript file, which you can then [add libraries](#external-libraries) to as neccessary.
+When you create a new playground, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries and languages you intend to use (e.g. React.js, Vue.js). You can also choose not to use a template, which will simply create a new playground, with an empty HTML, CSS and JavaScript file, which you can then [add libraries](#external-libraries) to as neccessary.
 
 ![Playground](https://user-images.githubusercontent.com/116461/72381586-79a05380-36cc-11ea-824e-38f9afec136b.gif)
 
@@ -108,7 +108,7 @@ Behind the scenes, this command update the playground's manifest file (`playgrou
 
 ### Layout
 
-By default, when you create a playground, it will open in a "Split Left" layout, which vertically stacks the code editors on the left, and allows the preview window to occupy the fully IDE height on the right. However, if you want to change the layout, you can run the `GistPad: Change Playout Layout` command and select `Grid`, `Preview`, `Split Right`, or `Split Top`.
+By default, when you create a playground, it will open in a "Split Left" layout, which vertically stacks the code editors on the left, and allows the preview window to occupy the fully IDE height on the right. However, if you want to change the layout, you can run the `GistPad: Change Playout Layout` command and select `Grid`, `Preview`, `Split Bottom`, `Split Right`, or `Split Top`.
 
 ![Layout](https://user-images.githubusercontent.com/116461/71560396-5152fc80-2a1e-11ea-9cff-a9590e1ea779.gif)
 
@@ -128,9 +128,9 @@ By default, playground's assume you're using "standard" JavaScript code (`<scrip
 
 ### Template Galleries
 
-When you create a new playground, you'll see a list of "templates", which let you create playgrounds using a pre-defined set of files and external libraries (e.g. React.js, Vue). This makes it really easy to get started quickly, and reduce repetitive tasks/boilerplate. By default, GistPad includes a standard set of templates, but you can also define your own custom galleries and then share them with your team/friends/community. If you don't want to use any template galleries, then you can simply delete the items listed in the `GistPad > Playgrounds: Template Galleries` setting.
+When you create a new playground, you'll see a list of templates, which let you create playgrounds using a pre-defined set of files and external libraries (e.g. React.js, Vue). This makes it really easy to get started quickly, and reduce repetitive tasks/boilerplate. By default, GistPad includes a standard set of templates, which come from two built-in galleries: `web:languages` and `web:libraries`. If you don't intend to use one or both of these, you can disable them by clicking the gear icon when running the `New Playground` (or `New Secret Playground`) command, and de-selecting the galleries you don't want. Additionally, you can modify the `GistPad > Playgrounds: Template Galleries` setting.
 
-A template gallery is simply a JSON file, which is hosted somewhere (e.g. a gist, a git repo, your own web server), and defines a set of templates. A template is simply a gist, which includes the neccessary files (e.g. HTML, JavaScript, CSS, etc.), and then defines a name and description. To see an example of how to define a template gallery, set the [standard GistPad gallery](https://github.com/vsls-contrib/gistpad/blob/master/galleries/web.json). Additionally, to see an example of a template, see the [React.js template](https://gist.github.com/lostintangent/f15a2e498523f364e36075691542af4c).
+Behind the scenes, a template gallery is simply a JSON file, which is hosted somewhere (e.g. a gist, a git repo, your own web server), and defines a set of templates. A template is simply a gist, which includes the neccessary files (e.g. HTML, JavaScript, CSS, etc.), and then defines a name and description. To see an example of how to define a template gallery, see the built-in [`web:libraries` gallery](https://gist.githubusercontent.com/lostintangent/ece303a6b8c7cbf0293b850b600e3cb6/raw/gallery.jsonn). Additionally, to see an example of a template, see the [React.js template](https://gist.github.com/lostintangent/f15a2e498523f364e36075691542af4c).
 
 When defining the template, you can use the `playground.json` file to indicate not only the JavaScript and CSS libraries that the playgroud needs, but also, the [layout](#layout) it should use by default, and whether or not the console should be automatically opened (e.g. because the playground relies on writing console logs). See [the docs](#playground-metadata) for more details on this file.
 
@@ -278,9 +278,10 @@ In addition to the `Gists` view, this extension also provides the following comm
 
   - `grid`: Opens a 2x2 grid of editors, with the editors and preview window occupying an equal amount of space.
   - `preview`: Simply opens the full-screen preview window. This is useful for interacting with complex playgrounds or viewing other's playgrouds.
+  - `splitBottom`: Opens a split-level layout, with the editors horizontally stacked on the bottom, and the preview occupying the full IDE width on the top.
   - `splitLeft` _(default)_: Opens a split-level layout, with the editors vertically stacked on the left, and the preview occupying the full IDE height on the right.
   - `splitRight`: Opens a split-level layout, with the editors vertically stacked on the right, and the preview occupying the full IDE height on the left.
-  - `splitTop` _(default)_: Opens a split-level layout, with the editors horizontally stacked on the top, and the preview occupying the full IDE width on the bottom.
+  - `splitTop`: Opens a split-level layout, with the editors horizontally stacked on the top, and the preview occupying the full IDE width on the bottom.
 
 * `GistPad > Playgrounds: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
 

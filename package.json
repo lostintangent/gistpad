@@ -50,6 +50,7 @@
     "onCommand:gistpad.starredGists",
     "onFileSystem:gist",
     "onView:gistpad.gists",
+    "onView:gistpad.gists.explorer",
     "onUri"
   ],
   "main": "./out/prod/extension.js",

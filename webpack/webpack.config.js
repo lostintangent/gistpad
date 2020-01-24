@@ -2,7 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 
 const config = {
-  mode: "development",
+  mode: "production",
   target: "node",
   entry: "./src/extension.ts",
   output: {

@@ -1,4 +1,4 @@
-## v0.0.47 (01/18/2020)
+## v0.0.47 (01/24/2020)
 
 - Fixed a bug where the `Gists` view on the `Explorer` tab wasn't properly activating the extension
 - Don't ask for a description when an anonymous user creates a playground.

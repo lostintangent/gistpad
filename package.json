@@ -176,6 +176,7 @@
         },
         "gistpad.playgrounds.templateGalleries": {
           "default": [
+            "web:basic",
             "web:languages",
             "web:libraries"
           ],
@@ -185,6 +186,7 @@
               {
                 "type": "string",
                 "enum": [
+                  "web:basic",
                   "web:languages",
                   "web:libraries"
                 ]

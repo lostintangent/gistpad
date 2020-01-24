@@ -9,7 +9,17 @@ import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { GistsNode } from "../tree/nodes";
-import { byteArrayToString, closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, hasTempGist, openGistAsWorkspace, stringToByteArray, withProgress } from "../utils";
+import {
+  byteArrayToString,
+  closeGistFiles,
+  fileNameToUri,
+  getGistDescription,
+  getGistLabel,
+  hasTempGist,
+  openGistAsWorkspace,
+  stringToByteArray,
+  withProgress
+} from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
@@ -510,8 +520,6 @@ async function promptForGalleryConfiguration(
     a.label.localeCompare(b.label)
   );
 
-  console.log("GP Loaded galleries: %o", galleries);
-
   quickPick.items = galleries;
   quickPick.selectedItems = galleries.filter((gallery) => gallery.enabled);
 
@@ -553,7 +561,6 @@ async function newPlaygroundInternal(
 
   const galleries = await loadGalleries();
 
-  console.log("GP Viewing templates: %o", galleries);
   const templates = galleries
     .filter((gallery) => gallery.enabled)
     .flatMap((gallery) => gallery.templates);

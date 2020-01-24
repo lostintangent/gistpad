@@ -1,14 +1,6 @@
 import * as moment from "moment";
 import * as path from "path";
-import {
-  commands,
-  ProgressLocation,
-  TextDocument,
-  Uri,
-  ViewColumn,
-  window,
-  workspace
-} from "vscode";
+import { commands, ProgressLocation, TextDocument, Uri, ViewColumn, window, workspace } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
 import { FS_SCHEME, PLAYGROUND_FILE, TEMP_GIST_ID } from "./constants";
 import { Gist, SortOrder, store, Store } from "./store";
@@ -120,7 +112,9 @@ export function openGistAsWorkspace(id: string) {
 
 export async function openGistFiles(id: string) {
   try {
-    const gist = await getGist(id);
+    const gist = isTempGistId(id)
+      ? store.gists.find((gist) => gist.id === id)!
+      : await getGist(id);
 
     if (isPlaygroundGist(gist)) {
       await openPlayground(gist);

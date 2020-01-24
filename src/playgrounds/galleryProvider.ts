@@ -94,7 +94,6 @@ export async function enableGalleries(galleryIds: string[]) {
 vscode.extensions.onDidChange(loadGalleries);
 vscode.workspace.onDidChangeConfiguration((e) => {
   if (e.affectsConfiguration("gistpad.playgrounds.templateGalleries")) {
-    console.log("GP Reload-ing via didchange");
     loadGalleries();
   }
 });

@@ -1,7 +1,8 @@
 ## v0.0.46 (01/18/2020)
 
+- Allow creating temporary playgrounds without having to sign in.
 - Added UI for configuring playground template galleries when creating new playgrounds
-- Introduced the `web:languages` template gallery, which allows you to get started quickly with commonly-used web language configurations (e.g. Pug + Less + JS, HTML + SCSS + TS).
+- Introduced the `Basic` and `Languages` template galleries, which allows you to get started quickly with commonly-used web language configurations (e.g. Pug + Less + JS, HTML + SCSS + TS).
 - Added the `Split Bottom` playground layout mode.
 
 ## v0.0.45 (01/17/2020)

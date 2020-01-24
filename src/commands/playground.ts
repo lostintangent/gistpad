@@ -606,11 +606,24 @@ async function newPlaygroundInternal(
     quickPick.hide();
 
     const template = quickPick.selectedItems[0];
-    promptForPlaygroundDescription(
-      (template as any).gist,
-      isPublic,
-      openAsWorkspace
-    );
+    const gistId = (template as any).gist;
+
+    if (store.isSignedIn) {
+      promptForPlaygroundDescription(gistId, isPublic, openAsWorkspace);
+    } else {
+      // If the user is anonymous, and is creating a playground, then
+      // there's no value in asking them for a description, since
+      // the playground may be entirely ephemeral.
+      if (gistId) {
+        duplicatePlayground(gistId, isPublic, template.label);
+      } else {
+        newPlaygroundWithoutTemplate(
+          "New Playground",
+          isPublic,
+          openAsWorkspace
+        );
+      }
+    }
   });
 
   quickPick.show();

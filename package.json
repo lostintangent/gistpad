@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.47",
+  "version": "0.0.48",
   "extensionKind": [
     "ui",
     "web",
@@ -370,6 +370,11 @@
       {
         "command": "gistpad.openGistInBrowser",
         "title": "View Gist in GitHub",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openGistInBlocks",
+        "title": "View Gist in Bl.ocks",
         "category": "GistPad"
       },
       {
@@ -766,37 +771,42 @@
         },
         {
           "command": "gistpad.openGist",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "inline@1"
         },
         {
           "command": "gistpad.openGist",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "base@1"
         },
         {
           "command": "gistpad.openGistWorkspace",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "base@2"
         },
         {
           "command": "gistpad.copyGistUrl",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "browse@1"
         },
         {
           "command": "gistpad.copyGistPadUrl",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "browse@2"
         },
         {
           "command": "gistpad.openGistInBrowser",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "browse@3"
         },
         {
           "command": "gistpad.exportGistToCodePen",
-          "when": "viewItem == gists.gist.playground",
+          "when": "viewItem =~ /^gists.gist.playground$/",
+          "group": "browse@4"
+        },
+        {
+          "command": "gistpad.openGistInBlocks",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.playground.block$/",
           "group": "browse@4"
         },
         {
@@ -811,7 +821,7 @@
         },
         {
           "command": "gistpad.duplicateGist",
-          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^gists.gist/",
           "group": "copy@1"
         },
         {
@@ -821,27 +831,27 @@
         },
         {
           "command": "gistpad.cloneRepository",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "copy@2"
         },
         {
           "command": "gistpad.addFile",
-          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^gists.gist/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.uploadFileToGist",
-          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^gists.gist/",
           "group": "manage@2"
         },
         {
           "command": "gistpad.changeGistDescription",
-          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^gists.gist/",
           "group": "manage@3"
         },
         {
           "command": "gistpad.deleteGist",
-          "when": "viewItem =~ /^gists.gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^gists.gist/",
           "group": "manage@4"
         },
         {
@@ -851,7 +861,7 @@
         },
         {
           "command": "gistpad.starGist",
-          "when": "viewItem =~ /^(gists|followedUser).gist(.(notebook|playground))?$/",
+          "when": "viewItem =~ /^(gists|followedUser).gist/",
           "group": "star@1"
         },
         {
@@ -861,28 +871,28 @@
         },
         {
           "command": "gistpad.copyFileUrl",
-          "when": "viewItem =~ /^gists.gist.file(.readonly)?$/",
+          "when": "viewItem =~ /^gistFile/",
           "group": "base@1"
         },
         {
           "command": "gistpad.copyFileContents",
-          "when": "viewItem =~ /^gists.gist.file(.readonly)?$/",
+          "when": "viewItem =~ /^gistFile/",
           "group": "base@2"
         },
         {
           "command": "gistpad.addFileToGist",
-          "when": "viewItem =~ /^gists.gist.file(.readonly)?$/",
+          "when": "viewItem =~ /^gistFile/",
           "group": "base@3"
         },
         {
           "command": "gistpad.renameFile",
-          "when": "viewItem == gists.gist.file",
-          "group": "manage@2"
+          "when": "viewItem == gistFile.editable",
+          "group": "manage@1"
         },
         {
           "command": "gistpad.deleteFile",
-          "when": "viewItem == gists.gist.file",
-          "group": "manage@3"
+          "when": "viewItem == gistFile.editable",
+          "group": "manage@2"
         }
       ],
       "explorer/context": [
@@ -1022,6 +1032,12 @@
         "filenames": [
           "script.babel"
         ]
+      },
+      {
+        "id": "yaml",
+        "filenames": [
+          ".block"
+        ]
       }
     ],
     "gistpad.playgrounds.templateGalleries": [
@@ -1036,6 +1052,10 @@
       {
         "id": "web:libraries",
         "url": "https://gist.githubusercontent.com/lostintangent/ece303a6b8c7cbf0293b850b600e3cb6/raw/gallery.json"
+      },
+      {
+        "id": "web:blocks",
+        "url": "https://gist.githubusercontent.com/lostintangent/0c40492c59d607862ec9acfd17a980a1/raw/gallery.json"
       }
     ]
   },

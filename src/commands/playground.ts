@@ -4,12 +4,23 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as config from "../config";
 import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_FILE } from "../constants";
+import { getFileContents } from "../fileSystem/api";
 import { enableGalleries, loadGalleries } from "../playgrounds/galleryProvider";
 import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
-import { GistsNode } from "../tree/nodes";
-import { byteArrayToString, closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, hasTempGist, openGistAsWorkspace, stringToByteArray, withProgress } from "../utils";
+import { GistNode, GistsNode } from "../tree/nodes";
+import {
+  byteArrayToString,
+  closeGistFiles,
+  fileNameToUri,
+  getGistDescription,
+  getGistLabel,
+  hasTempGist,
+  openGistAsWorkspace,
+  stringToByteArray,
+  withProgress
+} from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
@@ -116,12 +127,12 @@ const includesReactScripts = (scripts: string[]) => {
   return REACT_SCRIPTS.every((script) => scripts.includes(script));
 };
 
-export const getManifestContent = (gist: Gist) => {
+export const getManifestContent = async (gist: Gist) => {
   if (!gist.files[PLAYGROUND_FILE]) {
     return "";
   }
 
-  const manifest = gist.files[PLAYGROUND_FILE].content!;
+  const manifest = await getFileContents(gist.files[PLAYGROUND_FILE]);
   if (includesReactFiles(gist)) {
     const parsedManifest = JSON.parse(manifest);
     if (!includesReactScripts(parsedManifest.scripts)) {
@@ -628,7 +639,7 @@ export async function openPlayground(gist: Gist) {
     (file) => file
   ).length;
 
-  const manifestContent = getManifestContent(gist);
+  const manifestContent = await getManifestContent(gist);
   let manifest: PlaygroundManifest;
   try {
     manifest = JSON.parse(manifestContent);
@@ -746,11 +757,11 @@ export async function openPlayground(gist: Gist) {
   // scripts that were added to the pen.
   let scripts: string | undefined;
   if (gist.files["scripts"]) {
-    scripts = gist.files["scripts"].content;
+    scripts = await getFileContents(gist.files["scripts"]);
   }
   let styles: string | undefined;
   if (gist.files["styles"]) {
-    styles = gist.files["styles"].content;
+    styles = await getFileContents(gist.files["styles"]);
   }
 
   const htmlView = new PlaygroundWebview(
@@ -792,7 +803,7 @@ export async function openPlayground(gist: Gist) {
             gist.files[path.basename(document.uri.toString())] = oldFile;
             delete gist.files[path.basename(jsDocument.uri.toString())];
 
-            htmlView.updateManifest(getManifestContent(gist), runOnEdit);
+            htmlView.updateManifest(await getManifestContent(gist), runOnEdit);
           }
         }
         htmlView.updateJavaScript(document, runOnEdit);
@@ -893,7 +904,7 @@ export async function openPlayground(gist: Gist) {
     }
 
     vscode.commands.executeCommand("workbench.action.closePanel");
-    vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false); 
+    vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false);
     store.activeGist = null;
   });
 }
@@ -1010,6 +1021,19 @@ export async function registerPlaygroundCommands(
 
           openPlayground(activePlayground!.gist);
         }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_NAME}.openGistInBlocks`,
+      async (node: GistNode) => {
+        vscode.env.openExternal(
+          vscode.Uri.parse(
+            `https://bl.ocks.org/${node.gist.owner.login}/${node.gist.id}`
+          )
+        );
       }
     )
   );

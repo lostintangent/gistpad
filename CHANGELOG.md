@@ -1,6 +1,9 @@
 ## v0.0.48 (01/25/2020)
 
+- Enabled playground's to load non-JSON files from their gist. Among other things, this supports playgrounds that need to use CSV/TSV files to load data for their visualuzations (e.g. [Basic US State Map](http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922))
 - Added the gist count to all top-level tree nodes
+- Added the ``View Gist in Bl.ocks` command to gist nodes that represent block playgrounds.
+- Added a new optional playground gallery called `Blocks` to enable [Bl.ocks](https://bl.ocks.org) development.
 - Added a JSON schema to make it easier to author `gallery.json` files.
 
 ## v0.0.47 (01/24/2020)

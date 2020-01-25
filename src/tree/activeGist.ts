@@ -70,10 +70,9 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       return [gistNode];
     } else if (element instanceof GistNode) {
       const { files, id } = element.gist;
-      const isOwned = isOwnedGist(id);
 
       return Object.entries(files).map(
-        ([_, file]) => new GistFileNode(id, file, !isOwned)
+        ([_, file]) => new GistFileNode(id, file)
       );
     }
   }

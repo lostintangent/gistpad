@@ -10,6 +10,7 @@ import {
   getGistLabel,
   isDocumentGist,
   isNotebookGist,
+  isOwnedGist,
   isPlaygroundGist,
   isPlaygroundTemplateGist
 } from "../utils";
@@ -146,6 +147,10 @@ export class GistNode extends TreeNode {
       contextValue += ".notebook";
     } else if (isPlaygroundGist(this.gist)) {
       contextValue += ".playground";
+
+      if (Object.keys(this.gist.files).includes(".block")) {
+        contextValue += ".block";
+      }
     }
     return contextValue;
   }
@@ -165,16 +170,11 @@ ${suffix}`;
 }
 
 export class GistFileNode extends TreeNode {
-  constructor(
-    public gistId: string,
-    public file: GistFile,
-    private isReadOnly = true
-  ) {
+  constructor(public gistId: string, public file: GistFile) {
     super(file.filename!);
 
     this.iconPath = ThemeIcon.File;
     this.resourceUri = fileNameToUri(gistId, file.filename!);
-    this.contextValue = "gists.gist.file";
 
     this.command = {
       command: "gistpad.openGistFile",
@@ -182,9 +182,13 @@ export class GistFileNode extends TreeNode {
       arguments: [this.resourceUri]
     };
 
-    if (this.isReadOnly) {
-      this.contextValue += ".readonly";
+    let contextValue = "gistFile";
+
+    if (isOwnedGist(gistId)) {
+      contextValue += ".editable";
     }
+
+    this.contextValue = contextValue;
   }
 }
 

@@ -1,3 +1,8 @@
+## v0.0.48 (01/25/2020)
+
+- Added the gist count to all top-level tree nodes
+- Added a JSON schema to make it easier to author `gallery.json` files.
+
 ## v0.0.47 (01/24/2020)
 
 - Fixed a bug where the `Gists` view on the `Explorer` tab wasn't properly activating the extension

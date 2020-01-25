@@ -1002,8 +1002,7 @@
         },
         {
           "id": "gistpad.activeGist",
-          "name": "Active Gist",
-          "when": "gistpad:activeGist"
+          "name": "Active Gist"
         }
       ]
     },
@@ -1011,6 +1010,10 @@
       {
         "fileMatch": "playground.json",
         "url": "https://gist.githubusercontent.com/lostintangent/21727eab0d79c7b9fd0dde92df7b1f50/raw/schema.json"
+      },
+      {
+        "fileMatch": "gallery.json",
+        "url": "https://gist.githubusercontent.com/lostintangent/091c0eec1f6443b526566d1cd3a85294/raw/schema.json"
       }
     ],
     "languages": [

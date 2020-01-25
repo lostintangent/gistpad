@@ -65,11 +65,20 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
           return [new LoadingNode()];
         } else {
           const nodes: TreeNode[] = [
-            new GistsNode(this.store.login, this.extensionPath)
+            new GistsNode(
+              this.store.gists.length,
+              this.store.login,
+              this.extensionPath
+            )
           ];
 
           if (this.store.starredGists.length > 0) {
-            nodes.push(new StarredGistsNode(this.extensionPath));
+            nodes.push(
+              new StarredGistsNode(
+                this.store.starredGists.length,
+                this.extensionPath
+              )
+            );
           }
 
           if (this.store.followedUsers.length > 0) {

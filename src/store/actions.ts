@@ -161,7 +161,7 @@ export async function forkGist(id: string) {
 export async function getGist(id: string): Promise<Gist> {
   const api = await getApi();
   const gist = await api.get(id);
-  return gist.body;
+  return observable(gist.body);
 }
 
 export async function getGistComments(id: string): Promise<GistComment[]> {

@@ -66,7 +66,7 @@ export enum SortOrder {
 }
 
 export interface Store {
-  activeGist: string | null;
+  activeGist: Gist | null;
   followedUsers: FollowedUser[];
   gists: Gist[];
   isLoading: boolean;

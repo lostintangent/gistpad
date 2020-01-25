@@ -102,11 +102,12 @@ export class LoadingNode extends TreeNode {
 }
 
 export class GistsNode extends TreeNode {
-  constructor(public login: string, extensionPath: string) {
+  constructor(gistCount: number, public login: string, extensionPath: string) {
     super("Your Gists", TreeItemCollapsibleState.Expanded);
 
     this.iconPath = path.join(extensionPath, "images/icon-small.png");
     this.contextValue = "gists";
+    this.description = gistCount.toString();
   }
 }
 
@@ -188,11 +189,12 @@ export class GistFileNode extends TreeNode {
 }
 
 export class StarredGistsNode extends TreeNode {
-  constructor(extensionPath: string) {
+  constructor(gistCount: number, extensionPath: string) {
     super("Starred Gists", TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = path.join(extensionPath, "images/star.svg");
     this.contextValue = "starredGists";
+    this.description = gistCount.toString();
   }
 }
 
@@ -227,6 +229,7 @@ export class FollowedUserGistsNode extends TreeNode {
     }
 
     this.contextValue = "followedUserGists";
+    this.description = user.gists.length.toString();
   }
 }
 

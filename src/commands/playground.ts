@@ -9,17 +9,7 @@ import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { GistsNode } from "../tree/nodes";
-import {
-  byteArrayToString,
-  closeGistFiles,
-  fileNameToUri,
-  getGistDescription,
-  getGistLabel,
-  hasTempGist,
-  openGistAsWorkspace,
-  stringToByteArray,
-  withProgress
-} from "../utils";
+import { byteArrayToString, closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, hasTempGist, openGistAsWorkspace, stringToByteArray, withProgress } from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
@@ -868,13 +858,7 @@ export async function openPlayground(gist: Gist) {
     true
   );
 
-  store.activeGist = gist.id;
-
-  await vscode.commands.executeCommand(
-    "setContext",
-    "gistpad:activeGist",
-    true
-  );
+  store.activeGist = gist;
 
   const autoSave = vscode.workspace
     .getConfiguration("files")
@@ -909,8 +893,7 @@ export async function openPlayground(gist: Gist) {
     }
 
     vscode.commands.executeCommand("workbench.action.closePanel");
-    vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false);
-    vscode.commands.executeCommand("setContext", "gistpad:activeGist", false);
+    vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false); 
     store.activeGist = null;
   });
 }

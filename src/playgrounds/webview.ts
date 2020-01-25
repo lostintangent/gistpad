@@ -19,8 +19,14 @@ export class PlaygroundWebview {
 
   private updateBaseUrl() {
     const owner = this.gist.owner ? this.gist.owner.login : "anonymous";
-    const version =
-      this.gist.history.length > 0 ? this.gist.history[0].version : "";
+
+    // By default, the gist doesn't include the commit iD for the latest revision,
+    // and so instead of trying to retrieve it from the server, we can simply grab
+    // it from the "url" property.
+    const version = this.gist.url
+      ? this.gist.url.substr(this.gist.url.lastIndexOf("/") + 1)
+      : "";
+
     this.baseUrl = `https://gist.githack.com/${owner}/${this.gist.id}/raw/${version}/`;
   }
 

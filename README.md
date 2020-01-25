@@ -172,6 +172,8 @@ Additionally, if you develop a playground locally, and want to export it to Code
 
 Additionally, you can create new blocks with GistPad by adding the optional `Blocks` gallery, and then creating a new playground using one of the block templates. From there you can edit HTML, use the included D3 library, upload data files (e.g. JSON, CSV, TSV) and watch the preview update in real-time. If you'd like to view/share the playground, you can right-click the gist and select `View Gist in Bl.ocks`.
 
+![blocks](https://user-images.githubusercontent.com/116461/73127896-28217f80-3f7c-11ea-99a6-e7ab0be0aabf.gif)
+
 ## GistLog
 
 In addition to being able to use Gists to share code snippets/files, you can also use it as a mini-blog, thanks to integration with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new Gist that includes two files: `blog.md` and `gistlog.yml`.

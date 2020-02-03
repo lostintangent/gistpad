@@ -1,3 +1,8 @@
+## v0.0.49 (02/03/2020)
+
+- Introduced the concept of a playground readme, which allows you to define a readme for the playground in markdown, which is then rendered above/below the preview.
+- Added the `Split Left Tabbed` and `Split Right Tabbed` playground layout options.
+
 ## v0.0.48 (01/25/2020)
 
 - Enabled playground's to load non-JSON files from their gist. Among other things, this supports playgrounds that need to use CSV/TSV files to load data for their visualuzations (e.g. [Basic US State Map](http://bl.ocks.org/michellechandra/0b2ce4923dc9b5809922))

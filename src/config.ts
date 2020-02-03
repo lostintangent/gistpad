@@ -17,6 +17,9 @@ export function get(key: "playgrounds.includeScript"): boolean;
 export function get(key: "playgrounds.includeStylesheet"): boolean;
 export function get(key: "playgrounds.markupLanguage"): "html" | "pug";
 export function get(
+  key: "playgrounds.readmeBehavior"
+): "none" | "previewFooter" | "previewHeader";
+export function get(
   key: "playgrounds.scriptLanguage"
 ): "javascript" | "javascriptreact" | "typescript" | "typescriptreact";
 export function get(

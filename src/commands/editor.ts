@@ -104,7 +104,11 @@ export function registerEditorCommands(context: ExtensionContext) {
       ) => {
         await ensureAuthenticated();
 
-        const nodes = multiSelectNodes || [targetNode];
+        const nodes =
+          multiSelectNodes && !("editorIndex" in multiSelectNodes)
+            ? multiSelectNodes
+            : [targetNode];
+
         const files = [];
 
         for (const node of nodes) {

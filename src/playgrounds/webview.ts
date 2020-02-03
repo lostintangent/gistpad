@@ -7,6 +7,7 @@ import {
   PlaygroundLibraryType,
   PlaygroundManifest
 } from "../commands/playground";
+import * as config from "../config";
 import { URI_PATTERN } from "../constants";
 import { Gist } from "../store";
 
@@ -15,6 +16,7 @@ export class PlaygroundWebview {
   private html: string = "";
   private javascript: string = "";
   private manifest: PlaygroundManifest | undefined;
+  private readme: string = "";
   private baseUrl = "";
 
   private updateBaseUrl() {
@@ -88,6 +90,14 @@ export class PlaygroundWebview {
 
     if (rebuild) {
       this.webview.postMessage({ command: "updateCSS", value: css });
+    }
+  }
+
+  public async updateReadme(readme: string, rebuild = false) {
+    this.readme = readme;
+
+    if (rebuild) {
+      await this.rebuildWebview();
     }
   }
 
@@ -189,6 +199,13 @@ export class PlaygroundWebview {
         ? this.manifest.scriptType
         : "text/javascript";
 
+    const readmeBehavior =
+      (this.manifest && this.manifest.readmeBehavior) ||
+      (await config.get("playgrounds.readmeBehavior"));
+
+    const header = readmeBehavior === "previewHeader" ? this.readme : "";
+    const footer = readmeBehavior === "previewFooter" ? this.readme : "";
+
     this.webview.html = `<html>
   <head>
     <base href="${this.baseUrl}" />
@@ -271,11 +288,26 @@ export class PlaygroundWebview {
       mockXHRServer.install(window);
     }
 
+    document.addEventListener("DOMContentLoaded", () => {
+      const codeLinks = Array.from(document.querySelectorAll("a[href^='code:'"]));
+      for (const codeLink of codeLinks) {
+        codeLink.addEventListener("click", () => {
+          vscode.postMessage({
+            command: "navigateCode",
+            value: P
+            
+          })
+        })
+      }
+    });
+
     </script>
     ${scripts}
   </head>
   <body>
+    ${header}
     ${this.html}
+    ${footer}
     <script type="${scriptType}">
       ${this.javascript}
     </script>

@@ -112,7 +112,7 @@ By default, when you create a playground, it will open in a "Split Left" layout,
 
 ![Layout](https://user-images.githubusercontent.com/116461/71560396-5152fc80-2a1e-11ea-9cff-a9590e1ea779.gif)
 
-Additionally, if you create a playground, that looks best in a specific layout, you can set the `layout` property in the playground's `playground.json` file to either: `grid`, `preview`, `splitLeft`, `splitRight`, or `splitTop`. Then, when you or someone else opens this playground, it will be opened with the specified layout, as opposed to the user's configured default layout.
+Additionally, if you create a playground, that looks best in a specific layout, you can set the `layout` property in the playground's `playground.json` file to either: `grid`, `preview`, `splitLeft`, `splitLeftTabbed`, `splitRight`, `splitRightTabbed` or `splitTop`. Then, when you or someone else opens this playground, it will be opened with the specified layout, as opposed to the user's configured default layout.
 
 ### Console Output
 
@@ -121,6 +121,10 @@ The playground also provides an output window in order to view any logs written 
 <img width="503" src="https://user-images.githubusercontent.com/116461/71384593-0a38b780-2597-11ea-8bba-73f784f6ec76.png" />
 
 Additionally, if you create a playground that depends on the console, you can set the `showConsole` property in the playground's `playground.json` file to `true`. Then, when you or someone else opens this playground, the console will be automatically opened, regardless whether the end-user has configured it to show by default.
+
+### Readme
+
+If you'd like to give your playground an introduction, you can create a file in the playground called `README.md` (or `README.markdown`), and by default, it's contents will be rendered above the playground code in the preview window.
 
 ### Modules
 
@@ -284,13 +288,21 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `preview`: Simply opens the full-screen preview window. This is useful for interacting with complex playgrounds or viewing other's playgrouds.
   - `splitBottom`: Opens a split-level layout, with the editors horizontally stacked on the bottom, and the preview occupying the full IDE width on the top.
   - `splitLeft` _(default)_: Opens a split-level layout, with the editors vertically stacked on the left, and the preview occupying the full IDE height on the right.
+  - `splitLeftTabbed`: Opens a split-level layout, with the editors grouped into a single tab on the left, and the preview occupying the full IDE height on the right.
   - `splitRight`: Opens a split-level layout, with the editors vertically stacked on the right, and the preview occupying the full IDE height on the left.
+  - `splitRightTabbed`: Opens a split-level layout, with the editors grouped into a single tab on the right, and the preview occupying the full IDE height on the right.
   - `splitTop`: Opens a split-level layout, with the editors horizontally stacked on the top, and the preview occupying the full IDE width on the bottom.
 
 * `GistPad > Playgrounds: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `html` _(default)_: Will result in an `index.html` file being created whenever you create a new web playground.
   - `pug`: Will result in an `index.pug` file being created whenever you create a new web playground.
+
+* `GistPad > Playgrounds: Readme Behavior` - Specifies how to display the contents of a playground's readme, if it has one. Can be set to one of the following values:
+
+  - `none`: If a playground has a readme, then it won't be displayed automatically when someone opens it.
+  - `previewFooter`: If a playground has a readme, then its contents will be rendered as the footer of the preview window.
+  - `previewHeader` _(default)_: If a playground has a readme, then its contents will be rendered as the header of the preview window.
 
 * `GistPad > Playgrounds: Script Language` - Specifies the default scripting language to use when creating new web playgrounds. Can be set to one of the following values:
 

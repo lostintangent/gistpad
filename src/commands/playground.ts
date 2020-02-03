@@ -25,6 +25,7 @@ import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
 export type ScriptType = "text/javascript" | "module";
+export type ReadmeBehavior = "none" | "previewHeader" | "previewFooter";
 
 export interface PlaygroundManifest {
   scripts?: string[];
@@ -33,6 +34,7 @@ export interface PlaygroundManifest {
   showConsole?: boolean;
   template?: boolean;
   scriptType?: ScriptType;
+  readmeBehavior?: ReadmeBehavior;
 }
 
 export enum PlaygroundLibraryType {
@@ -44,7 +46,8 @@ export enum PlaygroundFileType {
   markup,
   script,
   stylesheet,
-  manifest
+  manifest,
+  readme
 }
 
 export const DEFAULT_MANIFEST = {
@@ -97,6 +100,8 @@ const SCRIPT_EXTENSIONS = [
   ...MODULE_EXTENSIONS,
   ...TYPESCRIPT_EXTENSIONS
 ];
+
+const README_EXTENSIONS = [".md", ".markdown"];
 
 interface IPlayground {
   gist: Gist;
@@ -156,6 +161,7 @@ export const getManifestContent = async (gist: Gist) => {
 const MARKUP_BASE_NAME = "index";
 const SCRIPT_BASE_NAME = "script";
 const STYLESHEET_BASE_NAME = "style";
+const README_BASE_NAME = "README";
 
 async function generateNewPlaygroundFiles() {
   const manifest = {
@@ -258,6 +264,22 @@ function getMarkupContent(document: vscode.TextDocument): string | null {
     }
   } else {
     return content;
+  }
+}
+
+function getReadmeContent(readme: string): string | null {
+  if (readme.trim() === "") {
+    return readme;
+  }
+
+  const markdown = require("markdown-it")();
+
+  try {
+    // Something failed when trying to transpile Pug,
+    // so don't attempt to return anything
+    return markdown.render(readme);
+  } catch (e) {
+    return null;
   }
 }
 
@@ -373,7 +395,9 @@ enum PlaygroundLayout {
   preview = "preview",
   splitBottom = "splitBottom",
   splitLeft = "splitLeft",
+  splitLeftTabbed = "splitLeftTabbed",
   splitRight = "splitRight",
+  splitRightTabbed = "splitRightTabbed",
   splitTop = "splitTop"
 }
 
@@ -388,6 +412,10 @@ export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
     case PlaygroundFileType.script:
       extensions = SCRIPT_EXTENSIONS;
       fileBaseName = SCRIPT_BASE_NAME;
+      break;
+    case PlaygroundFileType.readme:
+      extensions = README_EXTENSIONS;
+      fileBaseName = README_BASE_NAME;
       break;
     case PlaygroundFileType.stylesheet:
     default:
@@ -422,6 +450,10 @@ function isPlaygroundDocument(
     case PlaygroundFileType.script:
       extensions = SCRIPT_EXTENSIONS;
       fileBaseName = SCRIPT_BASE_NAME;
+      break;
+    case PlaygroundFileType.readme:
+      extensions = README_EXTENSIONS;
+      fileBaseName = README_BASE_NAME;
       break;
     case PlaygroundFileType.stylesheet:
     default:
@@ -634,6 +666,7 @@ export async function openPlayground(gist: Gist) {
   const markupFile = getGistFileOfType(gist, PlaygroundFileType.markup);
   const stylesheetFile = getGistFileOfType(gist, PlaygroundFileType.stylesheet);
   const scriptFile = getGistFileOfType(gist, PlaygroundFileType.script);
+  const readmeFile = getGistFileOfType(gist, PlaygroundFileType.readme);
 
   const includedFiles = [!!markupFile, !!stylesheetFile, !!scriptFile].filter(
     (file) => file
@@ -684,6 +717,14 @@ export async function openPlayground(gist: Gist) {
 
     currentViewColumn = vscode.ViewColumn.Two;
     previewViewColumn = vscode.ViewColumn.One;
+  } else if (playgroundLayout === PlaygroundLayout.splitLeftTabbed) {
+    editorLayout = EditorLayouts.splitOne;
+    previewViewColumn = vscode.ViewColumn.Two;
+  } else if (playgroundLayout === PlaygroundLayout.splitRightTabbed) {
+    editorLayout = EditorLayouts.splitOne;
+
+    currentViewColumn = vscode.ViewColumn.Two;
+    previewViewColumn = vscode.ViewColumn.One;
   }
 
   await vscode.commands.executeCommand("workbench.action.closeAllEditors");
@@ -706,9 +747,16 @@ export async function openPlayground(gist: Gist) {
     if (playgroundLayout !== PlaygroundLayout.preview) {
       vscode.window.showTextDocument(htmlDocument, {
         preview: false,
-        viewColumn: currentViewColumn++,
+        viewColumn: currentViewColumn,
         preserveFocus: false
       });
+
+      if (
+        playgroundLayout !== PlaygroundLayout.splitLeftTabbed &&
+        playgroundLayout !== PlaygroundLayout.splitRightTabbed
+      ) {
+        currentViewColumn++;
+      }
     }
   }
 
@@ -721,9 +769,16 @@ export async function openPlayground(gist: Gist) {
     if (playgroundLayout !== PlaygroundLayout.preview) {
       vscode.window.showTextDocument(cssDocument, {
         preview: false,
-        viewColumn: currentViewColumn++,
+        viewColumn: currentViewColumn,
         preserveFocus: true
       });
+
+      if (
+        playgroundLayout !== PlaygroundLayout.splitLeftTabbed &&
+        playgroundLayout !== PlaygroundLayout.splitRightTabbed
+      ) {
+        currentViewColumn++;
+      }
     }
   }
 
@@ -736,7 +791,7 @@ export async function openPlayground(gist: Gist) {
     if (playgroundLayout !== PlaygroundLayout.preview) {
       vscode.window.showTextDocument(jsDocument, {
         preview: false,
-        viewColumn: currentViewColumn++,
+        viewColumn: currentViewColumn,
         preserveFocus: true
       });
     }
@@ -781,6 +836,7 @@ export async function openPlayground(gist: Gist) {
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     debounce(async ({ document }) => {
+      console.log("GP Document changed: %o", document.fileName);
       if (isPlaygroundDocument(gist, document, PlaygroundFileType.markup)) {
         const content = getMarkupContent(document);
 
@@ -824,6 +880,15 @@ export async function openPlayground(gist: Gist) {
         if (content !== null) {
           htmlView.updateCSS(content, runOnEdit);
         }
+      } else if (
+        isPlaygroundDocument(gist, document, PlaygroundFileType.readme)
+      ) {
+        console.log("GP Readme updated");
+        const content = await getReadmeContent(document.getText());
+        console.log("GP Readme updated: %o", content);
+        if (content !== null) {
+          htmlView.updateReadme(content, runOnEdit);
+        }
       }
     }, 100)
   );
@@ -852,6 +917,16 @@ export async function openPlayground(gist: Gist) {
 
   if (jsDocument!) {
     htmlView.updateJavaScript(jsDocument!);
+  }
+
+  if (readmeFile) {
+    const content = getReadmeContent(
+      byteArrayToString(
+        await vscode.workspace.fs.readFile(fileNameToUri(gist.id, readmeFile))
+      )
+    );
+
+    htmlView.updateReadme(content || "");
   }
 
   activePlayground = {

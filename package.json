@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.48",
+  "version": "0.0.49",
   "extensionKind": [
     "ui",
     "web",
@@ -136,10 +136,21 @@
             "preview",
             "splitBottom",
             "splitLeft",
+            "splitLeftTabbed",
             "splitRight",
+            "splitRightTabbed",
             "splitTop"
           ],
           "description": "Specifies how to layout the editor windows when opening a playground."
+        },
+        "gistpad.playgrounds.readmeBehavior": {
+          "default": "previewHeader",
+          "enum": [
+            "none",
+            "previewFooter",
+            "previewHeader"
+          ],
+          "description": "Specifies how the playground's readme content should be displayed."
         },
         "gistpad.playgrounds.markupLanguage": {
           "default": "html",
@@ -1080,6 +1091,7 @@
     "github-base": "^1.0.0",
     "is-binary-path": "^2.1.0",
     "less": "^3.10.3",
+    "markdown-it": "^10.0.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
     "pug": "^2.0.4",

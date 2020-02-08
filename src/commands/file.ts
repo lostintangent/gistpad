@@ -102,11 +102,24 @@ export function registerFileCommands(context: ExtensionContext) {
     )
   );
 
+  const DELETE_RESPONSE = "Delete";
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.deleteFile`,
       async (targetNode: GistFileNode, multiSelectNodes?: GistFileNode[]) => {
         await ensureAuthenticated();
+
+        const suffix = multiSelectNodes
+          ? "selected files"
+          : `"${targetNode.label}" file`;
+
+        const response = await window.showInformationMessage(
+          `Are you sure you want to delete the ${suffix}?`,
+          DELETE_RESPONSE
+        );
+        if (response !== DELETE_RESPONSE) {
+          return;
+        }
 
         await withProgress("Deleting file(s)...", () => {
           const fileNodes = multiSelectNodes || [targetNode];

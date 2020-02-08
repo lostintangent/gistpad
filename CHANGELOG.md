@@ -1,3 +1,11 @@
+## v0.0.50
+
+- Added a confirmation prompt when attempting to delete gist files
+- Improved the peformance of the `Copy File to Gist`, `Delete Gist`, and `Open Gist` commands
+- Updated playgrounds to treat any `.mjs` file as being a JavaScript module, regardless if the `playground.json` file sets the `scriptType` property to `module` or not.
+- Enabled CodePens to be opened as playgrounds, even if they only include a JavaScript file (e.g. [Lines](https://codepen.io/Dillo/pen/ExjxvxY)).
+- Introduced the ability to add `gist:` links to a playground, which will open/navigate to a file
+
 ## v0.0.49 (02/03/2020)
 
 - Introduced the concept of a playground readme, which allows you to define a readme for the playground in markdown, which is then rendered above/below the preview.

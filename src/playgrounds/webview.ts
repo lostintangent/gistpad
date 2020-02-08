@@ -10,11 +10,13 @@ import {
 import * as config from "../config";
 import { URI_PATTERN } from "../constants";
 import { Gist } from "../store";
+import { fileNameToUri } from "../utils";
 
 export class PlaygroundWebview {
   private css: string = "";
   private html: string = "";
   private javascript: string = "";
+  private isJavaScriptModule: boolean = false;
   private manifest: PlaygroundManifest | undefined;
   private readme: string = "";
   private baseUrl = "";
@@ -71,6 +73,26 @@ export class PlaygroundWebview {
               headers: JSON.stringify(response.headers || {})
             }
           });
+          break;
+
+        case "navigateCode":
+          const file = fileNameToUri(gist.id, value.file);
+          const editor = vscode.window.visibleTextEditors.find(
+            (editor) => editor.document.uri.toString() === file.toString()
+          );
+
+          const line = value.line - 1;
+          const column = value.column - 1;
+          const range = new vscode.Range(line, column, line, 1000);
+
+          if (editor) {
+            editor.selection = new vscode.Selection(range.start, range.end);
+          } else {
+            vscode.commands.executeCommand("vscode.open", file, {
+              selection: range,
+              preserveFocus: true
+            });
+          }
 
           break;
       }
@@ -113,12 +135,13 @@ export class PlaygroundWebview {
     textDocument: vscode.TextDocument,
     rebuild = false
   ) {
-    const content = getScriptContent(textDocument, this.manifest);
-    if (content === null) {
+    const data = getScriptContent(textDocument, this.manifest);
+    if (data === null) {
       return;
     }
 
-    this.javascript = content;
+    this.javascript = data[0];
+    this.isJavaScriptModule = data[1];
 
     if (rebuild) {
       await this.rebuildWebview();
@@ -194,10 +217,11 @@ export class PlaygroundWebview {
     const scripts = await this.resolveLibraries(PlaygroundLibraryType.script);
     const styles = await this.resolveLibraries(PlaygroundLibraryType.style);
 
-    const scriptType =
-      this.manifest && this.manifest.scriptType
-        ? this.manifest.scriptType
-        : "text/javascript";
+    const scriptType = this.isJavaScriptModule
+      ? "module"
+      : this.manifest && this.manifest.scriptType
+      ? this.manifest.scriptType
+      : "text/javascript";
 
     const readmeBehavior =
       (this.manifest && this.manifest.readmeBehavior) ||
@@ -210,7 +234,12 @@ export class PlaygroundWebview {
   <head>
     <base href="${this.baseUrl}" />
     <style>
-      body { background-color: white; }
+
+      body {
+        background-color: white;
+        font-size: var(---vscode-font-size);
+      }
+
     </style>
     ${styles}
     <style id="${styleId}">
@@ -230,7 +259,7 @@ export class PlaygroundWebview {
       let httpRequestId = 1;
       const pendingHttpRequests = new Map();
 
-      window.addEventListener("message", ({ data }) => {    
+      window.addEventListener("message", ({ data }) => {  
         if (data.command === "updateCSS") {
           style.textContent = data.value;
         } else if (data.command === "httpResponse") {
@@ -263,12 +292,15 @@ export class PlaygroundWebview {
         });
       };
 
-      console.log = (message) => {
+      const originalLog = console.log;
+      console.log = (message, ...args) => {
         const value = serializeMessage(message);
         vscode.postMessage({
           command: "log",
           value
         });
+        
+        originalLog.call(console, message, ...args);
       };
 
       const mockXHRServer = MockXMLHttpRequest.newServer();
@@ -286,20 +318,27 @@ export class PlaygroundWebview {
         });
       });
       mockXHRServer.install(window);
-    }
 
-    document.addEventListener("DOMContentLoaded", () => {
-      const codeLinks = Array.from(document.querySelectorAll("a[href^='code:'"]));
-      for (const codeLink of codeLinks) {
-        codeLink.addEventListener("click", () => {
+      const LINK_PREFIX = "gist:";
+      document.addEventListener("click", (e) => {
+        if (e.target.href && e.target.href.startsWith(LINK_PREFIX)) {
+          e.preventDefault();
+
+          const href = e.target.href.replace(LINK_PREFIX, "");
+          const [file, lineColumn] = href.split("@");
+          const [line, column] = lineColumn ? lineColumn.split(":") : [];
+
           vscode.postMessage({
             command: "navigateCode",
-            value: P
-            
-          })
-        })
-      }
-    });
+            value: {
+              file, 
+              line: Number(line) || 1,
+              column: Number(column) || 1
+            }
+          });
+        }
+      });
+    }
 
     </script>
     ${scripts}

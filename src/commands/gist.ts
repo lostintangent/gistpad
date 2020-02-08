@@ -17,7 +17,6 @@ import {
   changeDescription,
   deleteGist,
   forkGist,
-  listGists,
   newGist,
   refreshGists,
   starGist,
@@ -42,7 +41,8 @@ import {
   isGistWorkspace,
   openGist,
   openGistFiles,
-  sortGists
+  sortGists,
+  withProgress
 } from "../utils";
 
 const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
@@ -154,7 +154,7 @@ async function openGistInternal(
 
   let gistItems: GistQuickPickItem[] = [];
   if (await isAuthenticated()) {
-    const gists = await listGists();
+    const gists = store.gists;
 
     if (gists.length > 0) {
       gistItems = gists.map((gist) => {
@@ -343,7 +343,7 @@ export async function registerGistCommands(context: ExtensionContext) {
           deleteGist(gistId);
           commands.executeCommand("workbench.action.closeFolder");
         } else {
-          const gists = await listGists();
+          const gists = store.gists;
 
           if (gists.length === 0) {
             return window.showInformationMessage(
@@ -364,9 +364,10 @@ export async function registerGistCommands(context: ExtensionContext) {
             return;
           }
 
-          await deleteGist(gist.id);
-          await closeGistFiles(gists.find((gist) => gist.id === gist.id)!);
-          await window.showInformationMessage("Gist deleted!");
+          await withProgress("Deleting gist...", async () => {
+            await deleteGist(gist.id);
+            await closeGistFiles(gists.find((gist) => gist.id === gist.id)!);
+          });
         }
       }
     )

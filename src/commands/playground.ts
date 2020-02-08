@@ -212,13 +212,14 @@ async function generateNewPlaygroundFiles() {
 export function getScriptContent(
   document: vscode.TextDocument,
   manifest: PlaygroundManifest | undefined
-): string | null {
+): [string, boolean] | null {
+  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
+  const isModule = MODULE_EXTENSIONS.includes(extension);
+
   let content = document.getText();
   if (content.trim() === "") {
-    return content;
+    return [content, isModule];
   }
-
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
 
   const includesJsx =
     manifest && manifest.scripts && manifest.scripts.includes("react");
@@ -234,14 +235,14 @@ export function getScriptContent(
     }
 
     try {
-      return typescript.transpile(content, compilerOptions);
+      return [typescript.transpile(content, compilerOptions), isModule];
     } catch (e) {
       // Something failed when trying to transpile Pug,
       // so don't attempt to return anything
       return null;
     }
   } else {
-    return content;
+    return [content, isModule];
   }
 }
 
@@ -836,7 +837,6 @@ export async function openPlayground(gist: Gist) {
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     debounce(async ({ document }) => {
-      console.log("GP Document changed: %o", document.fileName);
       if (isPlaygroundDocument(gist, document, PlaygroundFileType.markup)) {
         const content = getMarkupContent(document);
 
@@ -883,9 +883,7 @@ export async function openPlayground(gist: Gist) {
       } else if (
         isPlaygroundDocument(gist, document, PlaygroundFileType.readme)
       ) {
-        console.log("GP Readme updated");
         const content = await getReadmeContent(document.getText());
-        console.log("GP Readme updated: %o", content);
         if (content !== null) {
           htmlView.updateReadme(content, runOnEdit);
         }

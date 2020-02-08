@@ -1,6 +1,5 @@
 import { pasteImageCommand } from "@abstractions/images/pasteImage";
 import * as path from "path";
-import { GistFile } from "src/store";
 import {
   commands,
   env,
@@ -12,7 +11,8 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { listGists, newGist } from "../store/actions";
+import { GistFile, store } from "../store";
+import { newGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode } from "../tree/nodes";
 import {
@@ -34,8 +34,8 @@ async function askForFileName() {
 const CREATE_PUBLIC_GIST_ITEM = "$(gist-new) Create new Gist...";
 const CREATE_SECRET_GIST_ITEM = "$(gist-private) Create new secret Gist...";
 const CREATE_GIST_ITEMS = [
-  { label: CREATE_PUBLIC_GIST_ITEM },
-  { label: CREATE_SECRET_GIST_ITEM }
+  { label: CREATE_PUBLIC_GIST_ITEM, alwaysShow: true },
+  { label: CREATE_SECRET_GIST_ITEM, alwaysShow: true }
 ];
 
 async function newGistWithFiles(isPublic: boolean, files: GistFile[]) {
@@ -52,8 +52,7 @@ async function newGistWithFiles(isPublic: boolean, files: GistFile[]) {
 }
 
 async function promptForGistSelection(files: GistFile[]) {
-  const gists = await listGists();
-  const gistItems = gists.map((gist) => {
+  const gistItems = store.gists.map((gist) => {
     return <GistQuickPickItem>{
       label: getGistLabel(gist),
       description: getGistDescription(gist),
@@ -162,8 +161,8 @@ export function registerEditorCommands(context: ExtensionContext) {
       async (editor: TextEditor) => {
         await ensureAuthenticated();
 
-        const gists = await listGists();
-        const gistItems = gists.map((gist) => ({
+        const gists = store.gists;
+        const gistItems = store.gists.map((gist) => ({
           label: getGistLabel(gist),
           description: getGistDescription(gist),
           id: gist.id

@@ -1,4 +1,4 @@
-## v0.0.50
+## v0.0.50 (02/07/2020)
 
 - Added a confirmation prompt when attempting to delete gist files
 - Improved the peformance of the `Copy File to Gist`, `Delete Gist`, and `Open Gist` commands

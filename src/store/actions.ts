@@ -3,7 +3,7 @@ import { window, workspace } from "vscode";
 import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
-import { newGistInMemory } from "../fileSystem/memory";
+import { newTempGist } from "../fileSystem/temp";
 import { log } from "../logger";
 import {
   byteArrayToString,
@@ -34,7 +34,8 @@ export async function getApi(constructor = Gists) {
 export async function duplicateGist(
   id: string,
   isPublic: boolean = true,
-  description?: string
+  description?: string,
+  saveGist: boolean = true
 ) {
   const gist = await getGist(id);
   const files = [];
@@ -48,7 +49,13 @@ export async function duplicateGist(
     });
   }
 
-  newGist(files, isPublic, description || gist.description);
+  return newGist(
+    files,
+    isPublic,
+    description || gist.description,
+    true,
+    saveGist
+  );
 }
 
 export async function getUser(username: string) {
@@ -198,14 +205,14 @@ export async function newGist(
   gistFiles: GistFile[],
   isPublic: boolean,
   description?: string,
-  openAfterCreation: boolean = true
+  openAfterCreation: boolean = true,
+  saveGist: boolean = true
 ): Promise<Gist> {
   const { isSignedIn } = store;
   let gist;
 
-  if (!isSignedIn) {
-    // A new "temp gist" will be created
-    gist = await newGistInMemory(gistFiles, isPublic, description);
+  if (!isSignedIn || !saveGist) {
+    gist = await newTempGist(gistFiles, isPublic, description);
   } else {
     const api = await getApi();
 

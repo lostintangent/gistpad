@@ -8,7 +8,7 @@ import {
   TreeItem,
   window
 } from "vscode";
-import { EXTENSION_NAME } from "../constants";
+import { EXTENSION_NAME, TEMP_GIST_ID } from "../constants";
 import { Store } from "../store";
 import { sortGists } from "../utils";
 import {
@@ -94,9 +94,9 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       if (this.store.gists.length === 0) {
         return [new CreateNewGistNode()];
       } else {
-        return sortGists(this.store.gists).map(
-          (gist) => new GistNode(gist, this.extensionPath)
-        );
+        return sortGists(this.store.gists)
+          .filter((gist) => gist.id !== TEMP_GIST_ID)
+          .map((gist) => new GistNode(gist, this.extensionPath));
       }
     } else if (element instanceof StarredGistsNode) {
       if (this.store.starredGists.length === 0) {

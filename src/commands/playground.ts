@@ -473,10 +473,11 @@ function isPlaygroundDocument(
 function duplicatePlayground(
   gistId: string,
   isPublic: boolean,
-  description: string
+  description: string,
+  saveGist: boolean = true
 ) {
   withProgress("Creating Playground...", () =>
-    duplicateGist(gistId, isPublic, description)
+    duplicateGist(gistId, isPublic, description, saveGist)
   );
 }
 
@@ -489,10 +490,17 @@ const NO_TEMPLATE_GIST_ITEM = {
 async function newPlaygroundWithoutTemplate(
   description: string | undefined,
   isPublic: boolean = true,
-  openAsWorkspace: boolean = false
+  openAsWorkspace: boolean = false,
+  saveGist: boolean = true
 ) {
   const gist: Gist = await withProgress("Creating Playground...", async () =>
-    newGist(await generateNewPlaygroundFiles(), isPublic, description, false)
+    newGist(
+      await generateNewPlaygroundFiles(),
+      isPublic,
+      description,
+      false,
+      saveGist
+    )
   );
 
   if (openAsWorkspace) {
@@ -506,16 +514,32 @@ async function promptForPlaygroundDescription(
   gistId: string | null,
   isPublic: boolean,
   openAsWorkspace: boolean,
-  inWizard: boolean = true
+  inWizard: boolean = true,
+  description?: string
 ) {
   const inputBox = await vscode.window.createInputBox();
 
   if (inWizard) {
     inputBox.totalSteps = 2;
     inputBox.step = 2;
-    inputBox.buttons = [vscode.QuickInputButtons.Back];
-    inputBox.onDidTriggerButton((e) => {
-      newPlaygroundInternal(isPublic, undefined, openAsWorkspace);
+    inputBox.buttons = [vscode.QuickInputButtons.Back, NO_GIST_BUTTON];
+    inputBox.onDidTriggerButton((button) => {
+      if (button === vscode.QuickInputButtons.Back) {
+        newPlaygroundInternal(isPublic, undefined, openAsWorkspace);
+      } else {
+        inputBox.hide();
+
+        if (gistId) {
+          duplicatePlayground(gistId, isPublic, description!, false);
+        } else {
+          newPlaygroundWithoutTemplate(
+            "New Playground",
+            isPublic,
+            openAsWorkspace,
+            false
+          );
+        }
+      }
     });
   } else {
     inputBox.buttons = [CONFIGURE_GALLERIES_BUTTON];
@@ -580,6 +604,7 @@ async function promptForGalleryConfiguration(
 }
 
 let CONFIGURE_GALLERIES_BUTTON: vscode.QuickInputButton;
+let NO_GIST_BUTTON: vscode.QuickInputButton;
 
 async function newPlaygroundInternal(
   isPublic: boolean,
@@ -631,7 +656,6 @@ async function newPlaygroundInternal(
   ];
 
   quickPick.buttons = [CONFIGURE_GALLERIES_BUTTON];
-
   quickPick.onDidTriggerButton((e) => {
     promptForGalleryConfiguration(isPublic, openAsWorkspace);
   });
@@ -643,7 +667,13 @@ async function newPlaygroundInternal(
     const gistId = (template as any).gist;
 
     if (store.isSignedIn) {
-      promptForPlaygroundDescription(gistId, isPublic, openAsWorkspace);
+      promptForPlaygroundDescription(
+        gistId,
+        isPublic,
+        openAsWorkspace,
+        true,
+        template.label
+      );
     } else {
       // If the user is anonymous, and is creating a playground, then
       // there's no value in asking them for a description, since
@@ -991,10 +1021,18 @@ export async function registerPlaygroundCommands(
         context.asAbsolutePath("images/dark/configure.svg")
       ),
       light: vscode.Uri.file(
-        context.asAbsolutePath("images/dark/configure.svg")
+        context.asAbsolutePath("images/light/configure.svg")
       )
     },
     tooltip: "Configure Template Galleries"
+  };
+
+  NO_GIST_BUTTON = {
+    iconPath: {
+      dark: vscode.Uri.file(context.asAbsolutePath("images/dark/cancel.svg")),
+      light: vscode.Uri.file(context.asAbsolutePath("images/light/cancel.svg"))
+    },
+    tooltip: "Don't create gist"
   };
 
   context.subscriptions.push(

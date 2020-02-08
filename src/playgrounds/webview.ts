@@ -23,7 +23,11 @@ export class PlaygroundWebview {
 
   private updateBaseUrl() {
     const owner = this.gist.owner ? this.gist.owner.login : "anonymous";
-    const version = this.gist.history ? this.gist.history[0].version + "/" : "";
+
+    const version =
+      this.gist.history && this.gist.history[0]
+        ? `${this.gist.history[0].version}/`
+        : "";
 
     this.baseUrl = `https://gist.githack.com/${owner}/${this.gist.id}/raw/${version}`;
   }
@@ -77,7 +81,7 @@ export class PlaygroundWebview {
 
         case "navigateCode":
           const file = fileNameToUri(gist.id, value.file);
-          const editor = vscode.window.visibleTextEditors.find(
+          let editor = vscode.window.visibleTextEditors.find(
             (editor) => editor.document.uri.toString() === file.toString()
           );
 
@@ -88,12 +92,13 @@ export class PlaygroundWebview {
           if (editor) {
             editor.selection = new vscode.Selection(range.start, range.end);
           } else {
-            vscode.commands.executeCommand("vscode.open", file, {
+            editor = await vscode.window.showTextDocument(file, {
               selection: range,
               preserveFocus: true
             });
           }
 
+          editor.revealRange(range);
           break;
       }
     });

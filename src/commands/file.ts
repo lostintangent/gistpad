@@ -106,12 +106,30 @@ export function registerFileCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.deleteFile`,
-      async (targetNode: GistFileNode, multiSelectNodes?: GistFileNode[]) => {
+      async (
+        targetNode: GistFileNode | Uri,
+        multiSelectNodes?: GistFileNode[]
+      ) => {
         await ensureAuthenticated();
 
-        const suffix = multiSelectNodes
-          ? "selected files"
-          : `"${targetNode.label}" file`;
+        let uris: Uri[];
+        let fileLabel: string;
+
+        if (targetNode instanceof GistFileNode) {
+          uris = (multiSelectNodes || [targetNode]).map((node) =>
+            fileNameToUri(node.gistId, node.file.filename!)
+          );
+
+          fileLabel = targetNode.label!;
+        } else {
+          uris = [targetNode];
+          fileLabel = path.basename(targetNode.toString());
+        }
+
+        const suffix =
+          multiSelectNodes && !("editorIndex" in multiSelectNodes) // TODO: Remove this hack
+            ? "selected files"
+            : `"${fileLabel}" file`;
 
         const response = await window.showInformationMessage(
           `Are you sure you want to delete the ${suffix}?`,
@@ -122,12 +140,9 @@ export function registerFileCommands(context: ExtensionContext) {
         }
 
         await withProgress("Deleting file(s)...", () => {
-          const fileNodes = multiSelectNodes || [targetNode];
           return Promise.all(
-            fileNodes.map((fileNode) => {
-              workspace.fs.delete(
-                fileNameToUri(fileNode.gistId, fileNode.file.filename!)
-              );
+            uris.map((uri) => {
+              workspace.fs.delete(uri);
             })
           );
         });

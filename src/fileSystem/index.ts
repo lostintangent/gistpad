@@ -31,7 +31,7 @@ import {
 } from "../utils";
 import { getFileContents, updateGistFiles } from "./api";
 import { addFile, renameFile } from "./git";
-import { inMemoryFs } from "./memory";
+import * as tempFS from "./temp";
 const isBinaryPath = require("is-binary-path");
 
 interface WriteOperation {
@@ -134,6 +134,10 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 
   async delete(uri: Uri, options: { recursive: boolean }): Promise<void> {
+    if (isTempGistUri(uri)) {
+      return tempFS.deleteFile(uri);
+    }
+
     await ensureAuthenticated();
 
     const { gistId, file } = getGistDetailsFromUri(uri);
@@ -150,7 +154,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
   async readFile(uri: Uri): Promise<Uint8Array> {
     if (isTempGistUri(uri)) {
-      return inMemoryFs.readFile(uri);
+      return tempFS.readFile(uri);
     }
 
     const file = await this.getFileFromUri(uri);
@@ -203,6 +207,10 @@ export class GistFileSystemProvider implements FileSystemProvider {
     newUri: Uri,
     options: { overwrite: boolean }
   ): Promise<void> {
+    if (isTempGistUri(oldUri)) {
+      return tempFS.renameFile(oldUri, newUri);
+    }
+
     await ensureAuthenticated();
 
     const file = await this.getFileFromUri(oldUri);
@@ -264,7 +272,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     options: { create: boolean; overwrite: boolean }
   ): Promise<void> {
     if (isTempGistUri(uri)) {
-      return inMemoryFs.writeFile(uri, content);
+      return tempFS.writeFile(uri, content);
     }
 
     const { gistId } = getGistDetailsFromUri(uri);

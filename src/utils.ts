@@ -251,8 +251,8 @@ export function isPlaygroundGist(gist: Gist) {
     gistFiles.includes("index.html") ||
     gistFiles.includes("index.pug") ||
     gistFiles.includes("scripts") ||
-      (gistFiles.includes("script.js") &&
-        gistFiles.some((file) => path.extname(file) === ".markdown"))
+    (gistFiles.includes("script.js") &&
+      gistFiles.some((file) => path.extname(file) === ".markdown"))
   );
 }
 

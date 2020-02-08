@@ -1,6 +1,6 @@
 ## v0.0.51 (02/08/2020)
 
-- Added support for creating playgrounds without backing gists
+- Added support for creating "temporary playgrounds", that don't have a backing gist
 - Added support for adding, renaming and deleting files within a temp playground
 - Added the `Delete File` command to the editor context menu
 

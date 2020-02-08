@@ -847,12 +847,12 @@
         },
         {
           "command": "gistpad.addFile",
-          "when": "viewItem =~ /^gists.gist/",
+          "when": "viewItem =~ /^gists.gist/ || viewItem =~ /^tempGist\\./",
           "group": "manage@1"
         },
         {
           "command": "gistpad.uploadFileToGist",
-          "when": "viewItem =~ /^gists.gist/",
+          "when": "viewItem =~ /^gists.gist/ || viewItem =~ /^tempGist\\./",
           "group": "manage@2"
         },
         {
@@ -897,12 +897,12 @@
         },
         {
           "command": "gistpad.renameFile",
-          "when": "viewItem == gistFile.editable",
+          "when": "viewItem == gistFile.editable || viewItem =~ /^tempGistFile/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.deleteFile",
-          "when": "viewItem == gistFile.editable",
+          "when": "viewItem == gistFile.editable || viewItem =~ /^tempGistFile/",
           "group": "manage@2"
         }
       ],

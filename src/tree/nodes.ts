@@ -2,7 +2,7 @@ import * as moment from "moment";
 import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import * as config from "../config";
-import { EXTENSION_NAME } from "../constants";
+import { EXTENSION_NAME, TEMP_GIST_ID } from "../constants";
 import { FollowedUser, Gist, GistFile } from "../store";
 import {
   fileNameToUri,
@@ -137,7 +137,9 @@ export class GistNode extends TreeNode {
     this.tooltip = this.getTooltip(
       `Type: ${gist.public ? "Public" : "Secret"}`
     );
-    this.contextValue = this.getContextValue("gists.gist");
+
+    const context = gist.id === TEMP_GIST_ID ? "tempGist" : "gists.gist";
+    this.contextValue = this.getContextValue(context);
   }
 
   getContextValue(baseContext: string) {
@@ -182,7 +184,7 @@ export class GistFileNode extends TreeNode {
       arguments: [this.resourceUri]
     };
 
-    let contextValue = "gistFile";
+    let contextValue = gistId === TEMP_GIST_ID ? "tempGistFile" : "gistFile";
 
     if (isOwnedGist(gistId)) {
       contextValue += ".editable";

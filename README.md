@@ -130,6 +130,14 @@ If you'd like to give your playground an introduction, you can create a file in 
 
 By default, playground's assume you're using "standard" JavaScript code (`<script type="text/javascript" />`), and allows you to add 3rd-party [libraries](#external-libraries), which are added via new `<script>` elements in the preview page. However, if you'd like to write JavaScript code using `import`/`export`, you can set the `scriptType` property to `module` in the playground's `playground.json` file, and then begin to `import` modules. To simplify the process of importing 3rd-party modules, we'd recommend using either [Unkpkg](https://unpkg.com) (adding the [`?module` parameter](https://unpkg.com/#query-params) to any URLs), or the [Pika CDN](https://www.pika.dev/cdn).
 
+### Temporary Playgrounds
+
+If you'd like to create a playground, without persisting it as a gist, you can create a "temporary playground" by selecting the `Don't create gist` button on the playground creation form (as opposed to giving it a description). You'll be able to edit, add, delete, and rename files just like a normal gist, but the changes are only kept in memory, and therefore, represent a great solution for exploring ideas quickly, and then moving on.
+
+<img width="600px" src="https://user-images.githubusercontent.com/116461/74090056-40a19780-4a5c-11ea-896b-dfbb03e7f7d6.png" />
+
+Note that temporary gists don't appear in the main `Gists` explorer tree, and therefore, to manage files within a temporary gist, you need to use the `Active Gist` tree on the `GistPad` tab.
+
 ### Template Galleries
 
 When you create a new playground, you'll see a list of templates, which let you create playgrounds using a pre-defined set of files and external libraries (e.g. React.js, Vue). This makes it really easy to get started quickly, and reduce repetitive tasks/boilerplate. By default, GistPad includes a standard set of templates, which come from two built-in galleries: `web:languages` and `web:libraries`. If you don't intend to use one or both of these, you can disable them by clicking the gear icon when running the `New Playground` (or `New Secret Playground`) command, and de-selecting the galleries you don't want. Additionally, you can modify the `GistPad > Playgrounds: Template Galleries` setting.

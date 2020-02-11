@@ -1,50 +1,14 @@
 import { runInAction } from "mobx";
 import { URL } from "url";
-import {
-  commands,
-  env,
-  ExtensionContext,
-  ProgressLocation,
-  QuickPickItem,
-  Uri,
-  window,
-  workspace
-} from "vscode";
+import { commands, env, ExtensionContext, ProgressLocation, QuickPickItem, Uri, window, workspace } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { log } from "../logger";
 import { GistFile, SortOrder, store } from "../store";
-import {
-  changeDescription,
-  deleteGist,
-  forkGist,
-  newGist,
-  refreshGists,
-  starGist,
-  starredGists,
-  unstarGist
-} from "../store/actions";
+import { changeDescription, deleteGist, forkGist, getForks, newGist, refreshGists, starGist, starredGists, unstarGist } from "../store/actions";
 import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
-import {
-  FollowedUserGistNode,
-  GistNode,
-  GistsNode,
-  StarredGistNode
-} from "../tree/nodes";
+import { FollowedUserGistNode, GistNode, GistsNode, StarredGistNode } from "../tree/nodes";
 import { createGistPadOpenUrl } from "../uriHandler";
-import {
-  byteArrayToString,
-  closeGistFiles,
-  fileNameToUri,
-  getGistDescription,
-  getGistLabel,
-  getGistWorkspaceId,
-  isGistWorkspace,
-  openGist,
-  openGistFiles,
-  sortGists,
-  withProgress
-} from "../utils";
-
+import { byteArrayToString, closeGistFiles, fileNameToUri, getGistDescription, getGistLabel, getGistWorkspaceId, isGistWorkspace, openGist, openGistFiles, sortGists, withProgress } from "../utils";
 const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -286,7 +250,7 @@ export async function registerGistCommands(context: ExtensionContext) {
         // in it, and the API doesn't support that URL format
         const url = `https://gist.github.com/${node.gist.owner!.login}/${
           node.gist.id
-        }`;
+          }`;
         env.clipboard.writeText(url);
       }
     )
@@ -403,6 +367,44 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.viewForkedGist`,
+      async (node?: StarredGistNode | FollowedUserGistNode) => {
+        await ensureAuthenticated();
+
+        if (node) {
+          const forks = await getForks(node.gist.id);
+
+          const items = sortGists(forks).map((g) => ({
+            label: getGistLabel(g),
+            description: getGistDescription(g),
+            owner: g.owner.login,
+            id: g.id
+          }));
+
+          if (items.length === 0) {
+            const message = `Oops, this Gist doesn't have any forks.`;
+            return window.showInformationMessage(message);
+          }
+
+          const selected = await window.showQuickPick(items, {
+            placeHolder: "Select the forked Gist you'd like to open...",
+            matchOnDescription: true
+          });
+
+          if (selected) {
+            openGistFiles(selected.id);
+          }
+
+        } else {
+          const message = `Oops, there's an error finding the Gist.`;
+          return window.showInformationMessage(message);
+        }
+      }
+    )
+  );
+
+  context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_NAME}.newPublicGist`, newPublicGist)
   );
 
@@ -420,8 +422,8 @@ export async function registerGistCommands(context: ExtensionContext) {
         // don't pass on the tree node object to the open gist method.
         const gistNode =
           node instanceof GistNode ||
-          node instanceof StarredGistNode ||
-          node instanceof FollowedUserGistNode
+            node instanceof StarredGistNode ||
+            node instanceof FollowedUserGistNode
             ? node
             : undefined;
         openGistInternal({ node: gistNode });

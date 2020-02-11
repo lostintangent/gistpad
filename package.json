@@ -48,6 +48,7 @@
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
+    "onCommand:gistpad.viewForkedGist",
     "onFileSystem:gist",
     "onView:gistpad.gists",
     "onView:gistpad.gists.explorer",
@@ -520,6 +521,11 @@
         "command": "gistpad.uploadFileToGist",
         "title": "Upload File(s)",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.viewForkedGist",
+        "title": "View Forked Gist",
+        "category": "GistPad"
       }
     ],
     "menus": {
@@ -715,6 +721,10 @@
         {
           "command": "gistpad.unstarGist",
           "when": "false"
+        },
+        {
+          "command": "gistpad.viewForkedGist",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -894,6 +904,11 @@
           "command": "gistpad.addFileToGist",
           "when": "viewItem =~ /^gistFile/",
           "group": "base@3"
+        },
+        {
+          "command": "gistpad.viewForkedGist",
+          "when": "viewItem =~ /^gists.gist/",
+          "group": "fork@1"
         },
         {
           "command": "gistpad.renameFile",

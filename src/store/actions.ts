@@ -5,13 +5,7 @@ import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { newTempGist } from "../fileSystem/temp";
 import { log } from "../logger";
-import {
-  byteArrayToString,
-  fileNameToUri,
-  isTempGistId,
-  openGistFiles,
-  sortGists
-} from "../utils";
+import { byteArrayToString, fileNameToUri, isTempGistId, openGistFiles, sortGists } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
 
@@ -163,6 +157,17 @@ export async function forkGist(id: string) {
   store.gists.unshift(gist.body);
 
   openGistFiles(gist.body.id);
+}
+
+export async function getForks(id: string) {
+  const api = await getApi();
+  const response = await api.forks(id);
+
+  console.log(response.body);
+
+  return response.body.sort(
+    (a: Gist, b: Gist) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
+  );
 }
 
 export async function getGist(id: string): Promise<Gist> {

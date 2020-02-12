@@ -17,6 +17,7 @@ import {
   changeDescription,
   deleteGist,
   forkGist,
+  getForks,
   newGist,
   refreshGists,
   starGist,
@@ -44,7 +45,6 @@ import {
   sortGists,
   withProgress
 } from "../utils";
-
 const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -398,6 +398,38 @@ export async function registerGistCommands(context: ExtensionContext) {
           { location: ProgressLocation.Notification, title: "Forking Gist..." },
           () => forkGist(gistId!)
         );
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.viewForks`,
+      async (node?: StarredGistNode | FollowedUserGistNode) => {
+        if (node) {
+          const forks = await getForks(node.gist.id);
+
+          const items = sortGists(forks).map((g) => ({
+            label: `${g.owner.login} / ${getGistLabel(g)}`,
+            description: getGistDescription(g),
+            owner: g.owner.login,
+            id: g.id
+          }));
+
+          if (items.length === 0) {
+            const message = `Oops, this Gist doesn't have any forks.`;
+            return window.showInformationMessage(message);
+          }
+
+          const selected = await window.showQuickPick(items, {
+            placeHolder: "Select the forked Gist you'd like to open...",
+            matchOnDescription: true
+          });
+
+          if (selected) {
+            openGistFiles(selected.id);
+          }
+        }
       }
     )
   );

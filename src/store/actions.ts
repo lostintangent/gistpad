@@ -165,6 +165,15 @@ export async function forkGist(id: string) {
   openGistFiles(gist.body.id);
 }
 
+export async function getForks(id: string) {
+  const api = await getApi();
+  const response = await api.forks(id);
+
+  return response.body.sort(
+    (a: Gist, b: Gist) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
+  );
+}
+
 export async function getGist(id: string): Promise<Gist> {
   const api = await getApi();
   const gist = await api.get(id);

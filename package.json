@@ -48,6 +48,7 @@
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
+    "onCommand:gistpad.viewForks",
     "onFileSystem:gist",
     "onView:gistpad.gists",
     "onView:gistpad.gists.explorer",
@@ -520,6 +521,11 @@
         "command": "gistpad.uploadFileToGist",
         "title": "Upload File(s)",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.viewForks",
+        "title": "View Fork(s)",
+        "category": "GistPad"
       }
     ],
     "menus": {
@@ -715,6 +721,10 @@
         {
           "command": "gistpad.unstarGist",
           "when": "false"
+        },
+        {
+          "command": "gistpad.viewForks",
+          "when": "false"
         }
       ],
       "view/title": [
@@ -868,12 +878,17 @@
         {
           "command": "gistpad.unstarGist",
           "when": "viewItem =~ /^starredGists.gist/",
+          "group": "star@2"
+        },
+        {
+          "command": "gistpad.viewForks",
+          "when": "viewItem =~ /^gists.gist/",
           "group": "star@1"
         },
         {
           "command": "gistpad.starGist",
           "when": "viewItem =~ /^(gists|followedUser).gist/",
-          "group": "star@1"
+          "group": "star@2"
         },
         {
           "command": "gistpad.unfollowUser",

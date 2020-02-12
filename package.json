@@ -878,7 +878,7 @@
         {
           "command": "gistpad.unstarGist",
           "when": "viewItem =~ /^starredGists.gist/",
-          "group": "star@1"
+          "group": "star@2"
         },
         {
           "command": "gistpad.viewForks",

@@ -48,7 +48,7 @@
     "onCommand:gistpad.signIn",
     "onCommand:gistpad.signOut",
     "onCommand:gistpad.starredGists",
-    "onCommand:gistpad.viewForkedGist",
+    "onCommand:gistpad.viewForks",
     "onFileSystem:gist",
     "onView:gistpad.gists",
     "onView:gistpad.gists.explorer",
@@ -523,8 +523,8 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.viewForkedGist",
-        "title": "View Forked Gist",
+        "command": "gistpad.viewForks",
+        "title": "View Fork(s)",
         "category": "GistPad"
       }
     ],
@@ -723,7 +723,7 @@
           "when": "false"
         },
         {
-          "command": "gistpad.viewForkedGist",
+          "command": "gistpad.viewForks",
           "when": "false"
         }
       ],
@@ -881,9 +881,14 @@
           "group": "star@1"
         },
         {
+          "command": "gistpad.viewForks",
+          "when": "viewItem =~ /^gists.gist/",
+          "group": "star@1"
+        },
+        {
           "command": "gistpad.starGist",
           "when": "viewItem =~ /^(gists|followedUser).gist/",
-          "group": "star@1"
+          "group": "star@2"
         },
         {
           "command": "gistpad.unfollowUser",
@@ -904,11 +909,6 @@
           "command": "gistpad.addFileToGist",
           "when": "viewItem =~ /^gistFile/",
           "group": "base@3"
-        },
-        {
-          "command": "gistpad.viewForkedGist",
-          "when": "viewItem =~ /^gists.gist/",
-          "group": "fork@1"
         },
         {
           "command": "gistpad.renameFile",

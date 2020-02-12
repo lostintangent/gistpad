@@ -9,6 +9,7 @@ import { enableGalleries, loadGalleries } from "../playgrounds/galleryProvider";
 import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
+import { storage } from "../store/storage";
 import { GistNode, GistsNode } from "../tree/nodes";
 import {
   byteArrayToString,
@@ -35,6 +36,7 @@ export interface PlaygroundManifest {
   template?: boolean;
   scriptType?: ScriptType;
   readmeBehavior?: ReadmeBehavior;
+  tutorial?: string;
 }
 
 export enum PlaygroundLibraryType {
@@ -324,13 +326,21 @@ async function getStylesheetContent(
   }
 }
 
-function isPlaygroundManifestFile(gist: Gist, document: vscode.TextDocument) {
+function isPlaygroundManifestFile(
+  gist: Gist,
+  document: vscode.TextDocument,
+  currentTutorialStep?: number
+) {
   if (gist.id !== document.uri.authority) {
     return false;
   }
 
   const fileName = path.basename(document.uri.toString().toLowerCase());
-  return fileName === PLAYGROUND_FILE;
+  return (
+    fileName === PLAYGROUND_FILE ||
+    (currentTutorialStep &&
+      fileName === `${currentTutorialStep}.${PLAYGROUND_FILE}`)
+  );
 }
 
 enum EditorLayoutOrientation {
@@ -402,7 +412,11 @@ enum PlaygroundLayout {
   splitTop = "splitTop"
 }
 
-export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
+export const getGistFileOfType = (
+  gist: Gist,
+  fileType: PlaygroundFileType,
+  currentTutorialStep?: number
+) => {
   let extensions: string[];
   let fileBaseName: string;
   switch (fileType) {
@@ -425,8 +439,9 @@ export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
       break;
   }
 
+  const prefix = currentTutorialStep ? `${currentTutorialStep}.` : "";
   const fileCandidates = extensions.map(
-    (extension) => `${fileBaseName}${extension}`
+    (extension) => `${prefix}${fileBaseName}${extension}`
   );
 
   return Object.keys(gist.files).find((file) => fileCandidates.includes(file));
@@ -435,7 +450,8 @@ export const getGistFileOfType = (gist: Gist, fileType: PlaygroundFileType) => {
 function isPlaygroundDocument(
   gist: Gist,
   document: vscode.TextDocument,
-  fileType: PlaygroundFileType
+  fileType: PlaygroundFileType,
+  currentTutorialStep?: number
 ) {
   if (gist.id !== document.uri.authority) {
     return false;
@@ -463,8 +479,9 @@ function isPlaygroundDocument(
       break;
   }
 
+  const prefix = currentTutorialStep ? `${currentTutorialStep}.` : "";
   const fileCandidates = extensions.map(
-    (extension) => `${fileBaseName}${extension}`
+    (extension) => `${prefix}${fileBaseName}${extension}`
   );
 
   return fileCandidates.includes(path.basename(document.uri.toString()));
@@ -694,15 +711,6 @@ async function newPlaygroundInternal(
 }
 
 export async function openPlayground(gist: Gist) {
-  const markupFile = getGistFileOfType(gist, PlaygroundFileType.markup);
-  const stylesheetFile = getGistFileOfType(gist, PlaygroundFileType.stylesheet);
-  const scriptFile = getGistFileOfType(gist, PlaygroundFileType.script);
-  const readmeFile = getGistFileOfType(gist, PlaygroundFileType.readme);
-
-  const includedFiles = [!!markupFile, !!stylesheetFile, !!scriptFile].filter(
-    (file) => file
-  ).length;
-
   const manifestContent = await getManifestContent(gist);
   let manifest: PlaygroundManifest;
   try {
@@ -710,6 +718,62 @@ export async function openPlayground(gist: Gist) {
   } catch (e) {
     manifest = {};
   }
+
+  let currentTutorialStep: number | undefined;
+  let totalTutorialSteps: number | undefined;
+
+  if (manifest.tutorial) {
+    currentTutorialStep = storage.currentTutorialStep(gist.id);
+    const files = Object.keys(gist.files).filter((file) =>
+      file.match(/^\d+\./)
+    );
+    totalTutorialSteps = files.reduce((maxStep, fileName) => {
+      const step = Number(fileName.split(".")[0]);
+      if (step > maxStep) {
+        return step;
+      } else {
+        return maxStep;
+      }
+    }, 0);
+
+    const stepManifestName = `${currentTutorialStep}.playground.json`;
+    if (Object.keys(gist.files).includes(stepManifestName)) {
+      const stepManifest = byteArrayToString(
+        await vscode.workspace.fs.readFile(
+          fileNameToUri(gist.id, stepManifestName)
+        )
+      );
+      manifest = {
+        ...manifest,
+        ...JSON.parse(stepManifest)
+      };
+    }
+  }
+
+  const markupFile = getGistFileOfType(
+    gist,
+    PlaygroundFileType.markup,
+    currentTutorialStep
+  );
+  const stylesheetFile = getGistFileOfType(
+    gist,
+    PlaygroundFileType.stylesheet,
+    currentTutorialStep
+  );
+  const scriptFile = getGistFileOfType(
+    gist,
+    PlaygroundFileType.script,
+    currentTutorialStep
+  );
+  const readmeFile = getGistFileOfType(
+    gist,
+    PlaygroundFileType.readme,
+    currentTutorialStep
+  );
+
+  const includedFiles = [!!markupFile, !!stylesheetFile, !!scriptFile].filter(
+    (file) => file
+  ).length;
 
   const playgroundLayout = manifest.layout || config.get("playgrounds.layout");
 
@@ -855,7 +919,9 @@ export async function openPlayground(gist: Gist) {
     output,
     gist,
     scripts,
-    styles
+    styles,
+    totalTutorialSteps,
+    manifest.tutorial
   );
 
   if (config.get("playgrounds.showConsole") || manifest.showConsole) {
@@ -867,14 +933,26 @@ export async function openPlayground(gist: Gist) {
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     debounce(async ({ document }) => {
-      if (isPlaygroundDocument(gist, document, PlaygroundFileType.markup)) {
+      if (
+        isPlaygroundDocument(
+          gist,
+          document,
+          PlaygroundFileType.markup,
+          currentTutorialStep
+        )
+      ) {
         const content = getMarkupContent(document);
 
         if (content !== null) {
           htmlView.updateHTML(content, runOnEdit);
         }
       } else if (
-        isPlaygroundDocument(gist, document, PlaygroundFileType.script)
+        isPlaygroundDocument(
+          gist,
+          document,
+          PlaygroundFileType.script,
+          currentTutorialStep
+        )
       ) {
         // If the user renamed the script file (e.g. from *.js to *.jsx)
         // than we need to update the manifest in case new scripts
@@ -893,7 +971,9 @@ export async function openPlayground(gist: Gist) {
           }
         }
         htmlView.updateJavaScript(document, runOnEdit);
-      } else if (isPlaygroundManifestFile(gist, document)) {
+      } else if (
+        isPlaygroundManifestFile(gist, document, currentTutorialStep)
+      ) {
         htmlView.updateManifest(document.getText(), runOnEdit);
 
         if (jsDocument) {
@@ -904,14 +984,24 @@ export async function openPlayground(gist: Gist) {
           htmlView.updateJavaScript(jsDocument, runOnEdit);
         }
       } else if (
-        isPlaygroundDocument(gist, document, PlaygroundFileType.stylesheet)
+        isPlaygroundDocument(
+          gist,
+          document,
+          PlaygroundFileType.stylesheet,
+          currentTutorialStep
+        )
       ) {
         const content = await getStylesheetContent(document);
         if (content !== null) {
           htmlView.updateCSS(content, runOnEdit);
         }
       } else if (
-        isPlaygroundDocument(gist, document, PlaygroundFileType.readme)
+        isPlaygroundDocument(
+          gist,
+          document,
+          PlaygroundFileType.readme,
+          currentTutorialStep
+        )
       ) {
         const content = await getReadmeContent(document.getText());
         if (content !== null) {

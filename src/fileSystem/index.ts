@@ -30,7 +30,7 @@ import {
   uriToFileName
 } from "../utils";
 import { getFileContents, updateGistFiles } from "./api";
-import { addFile, renameFile } from "./git";
+import * as gitFS from "./git";
 import * as tempFS from "./temp";
 const isBinaryPath = require("is-binary-path");
 
@@ -218,7 +218,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     const newFileName = uriToFileName(newUri);
 
     if (isBinaryPath(file.filename!)) {
-      await renameFile(gistId, file.filename!, newFileName);
+      await gitFS.renameFile(gistId, file.filename!, newFileName);
     } else {
       await updateGistFiles(gistId, [
         [
@@ -298,7 +298,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     }
 
     if (isBinaryPath(uri.path)) {
-      await addFile(gistId, path.basename(uri.path), content);
+      await gitFS.addFile(gistId, path.basename(uri.path), content);
 
       this._onDidChangeFile.fire([
         {

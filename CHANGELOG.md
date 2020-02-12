@@ -1,3 +1,7 @@
+## v0.0.52 (02/11/2020)
+
+- Introduced the concept of playground "tutorials"
+
 ## v0.0.51 (02/08/2020)
 
 - Added support for creating "temporary playgrounds", that don't have a backing gist

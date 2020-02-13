@@ -12,7 +12,7 @@ import {
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { log } from "../logger";
-import { GistFile, SortOrder, store } from "../store";
+import { Gist, GistFile, SortOrder, store } from "../store";
 import {
   changeDescription,
   deleteGist,
@@ -409,21 +409,25 @@ export async function registerGistCommands(context: ExtensionContext) {
         if (node) {
           const forks = await getForks(node.gist.id);
 
+          if (forks.length === 0) {
+            return window.showInformationMessage(
+              "This gist doesn't have any forks."
+            );
+          }
+
+          const getDescription = (gist: Gist) => {
+            const isModified = gist.created_at !== gist.updated_at;
+            return `${getGistDescription(gist)}${isModified ? " $(edit)" : ""}`;
+          };
+
           const items = sortGists(forks).map((g) => ({
-            label: `${g.owner.login} / ${getGistLabel(g)}`,
-            description: getGistDescription(g),
-            owner: g.owner.login,
+            label: g.owner.login,
+            description: getDescription(g),
             id: g.id
           }));
 
-          if (items.length === 0) {
-            const message = `Oops, this Gist doesn't have any forks.`;
-            return window.showInformationMessage(message);
-          }
-
           const selected = await window.showQuickPick(items, {
-            placeHolder: "Select the forked Gist you'd like to open...",
-            matchOnDescription: true
+            placeHolder: "Select the forked gist you'd like to open..."
           });
 
           if (selected) {

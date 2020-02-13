@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.51",
+  "version": "0.0.52",
   "extensionKind": [
     "ui",
     "web",
@@ -524,7 +524,7 @@
       },
       {
         "command": "gistpad.viewForks",
-        "title": "View Fork(s)",
+        "title": "View Forks",
         "category": "GistPad"
       }
     ],
@@ -876,18 +876,18 @@
           "group": "manage@4"
         },
         {
-          "command": "gistpad.unstarGist",
-          "when": "viewItem =~ /^starredGists.gist/",
-          "group": "star@2"
-        },
-        {
           "command": "gistpad.viewForks",
-          "when": "viewItem =~ /^gists.gist/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "star@1"
         },
         {
           "command": "gistpad.starGist",
           "when": "viewItem =~ /^(gists|followedUser).gist/",
+          "group": "star@2"
+        },
+        {
+          "command": "gistpad.unstarGist",
+          "when": "viewItem =~ /^starredGists.gist/",
           "group": "star@2"
         },
         {

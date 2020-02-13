@@ -1,6 +1,7 @@
 ## v0.0.52 (02/11/2020)
 
 - Introduced the concept of playground "tutorials"
+- Added the `View Forks` command to the tree view, which allows you to view a gist's forks
 
 ## v0.0.51 (02/08/2020)
 

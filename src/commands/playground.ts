@@ -3,7 +3,13 @@ import { reaction } from "mobx";
 import * as path from "path";
 import * as vscode from "vscode";
 import * as config from "../config";
-import { EXTENSION_NAME, FS_SCHEME, PLAYGROUND_FILE } from "../constants";
+import {
+  DIRECTORY_SEPERATOR,
+  ENCODED_DIRECTORY_SEPERATOR,
+  EXTENSION_NAME,
+  FS_SCHEME,
+  PLAYGROUND_FILE
+} from "../constants";
 import { getFileContents } from "../fileSystem/api";
 import { enableGalleries, loadGalleries } from "../playgrounds/galleryProvider";
 import { PlaygroundWebview } from "../playgrounds/webview";
@@ -14,6 +20,7 @@ import { GistNode, GistsNode } from "../tree/nodes";
 import {
   byteArrayToString,
   closeGistFiles,
+  decodeDirectoryUri,
   fileNameToUri,
   getGistDescription,
   getGistLabel,
@@ -439,7 +446,10 @@ export const getGistFileOfType = (
       break;
   }
 
-  const prefix = currentTutorialStep ? `${currentTutorialStep}.` : "";
+  const prefix = currentTutorialStep
+    ? `${currentTutorialStep}${ENCODED_DIRECTORY_SEPERATOR}`
+    : "";
+
   const fileCandidates = extensions.map(
     (extension) => `${prefix}${fileBaseName}${extension}`
   );
@@ -479,12 +489,14 @@ function isPlaygroundDocument(
       break;
   }
 
-  const prefix = currentTutorialStep ? `${currentTutorialStep}.` : "";
+  const prefix = currentTutorialStep
+    ? `${DIRECTORY_SEPERATOR}${currentTutorialStep}${DIRECTORY_SEPERATOR}`
+    : DIRECTORY_SEPERATOR;
   const fileCandidates = extensions.map(
     (extension) => `${prefix}${fileBaseName}${extension}`
   );
 
-  return fileCandidates.includes(path.basename(document.uri.toString()));
+  return fileCandidates.includes(document.uri.path);
 }
 
 function duplicatePlayground(
@@ -725,10 +737,10 @@ export async function openPlayground(gist: Gist) {
   if (manifest.tutorial) {
     currentTutorialStep = storage.currentTutorialStep(gist.id);
     const files = Object.keys(gist.files).filter((file) =>
-      file.match(/^\d+\./)
+      file.match(/^\d+\---/)
     );
     totalTutorialSteps = files.reduce((maxStep, fileName) => {
-      const step = Number(fileName.split(".")[0]);
+      const step = Number(fileName.split(ENCODED_DIRECTORY_SEPERATOR)[0]);
       if (step > maxStep) {
         return step;
       } else {
@@ -736,7 +748,7 @@ export async function openPlayground(gist: Gist) {
       }
     }, 0);
 
-    const stepManifestName = `${currentTutorialStep}.playground.json`;
+    const stepManifestName = `${currentTutorialStep}${ENCODED_DIRECTORY_SEPERATOR}playground.json`;
     if (Object.keys(gist.files).includes(stepManifestName)) {
       const stepManifest = byteArrayToString(
         await vscode.workspace.fs.readFile(
@@ -836,7 +848,7 @@ export async function openPlayground(gist: Gist) {
   let htmlDocument: vscode.TextDocument;
   if (markupFile) {
     htmlDocument = await vscode.workspace.openTextDocument(
-      fileNameToUri(gist.id, markupFile)
+      decodeDirectoryUri(fileNameToUri(gist.id, markupFile))
     );
 
     if (playgroundLayout !== PlaygroundLayout.preview) {
@@ -858,7 +870,7 @@ export async function openPlayground(gist: Gist) {
   let cssDocument: vscode.TextDocument;
   if (stylesheetFile) {
     cssDocument = await vscode.workspace.openTextDocument(
-      fileNameToUri(gist.id, stylesheetFile)
+      decodeDirectoryUri(fileNameToUri(gist.id, stylesheetFile))
     );
 
     if (playgroundLayout !== PlaygroundLayout.preview) {
@@ -880,7 +892,7 @@ export async function openPlayground(gist: Gist) {
   let jsDocument: vscode.TextDocument;
   if (scriptFile) {
     jsDocument = await vscode.workspace.openTextDocument(
-      fileNameToUri(gist.id, scriptFile!)
+      decodeDirectoryUri(fileNameToUri(gist.id, scriptFile!))
     );
 
     if (playgroundLayout !== PlaygroundLayout.preview) {

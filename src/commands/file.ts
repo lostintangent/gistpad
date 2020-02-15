@@ -14,6 +14,7 @@ import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
 import {
   byteArrayToString,
+  decodeDirectoryName,
   fileNameToUri,
   getGistDetailsFromUri,
   openGistFile,
@@ -165,7 +166,7 @@ export function registerFileCommands(context: ExtensionContext) {
         let gistId, fileName;
         if (nodeOrUri instanceof GistFileNode) {
           gistId = nodeOrUri.gistId;
-          fileName = nodeOrUri.file.filename!;
+          fileName = decodeDirectoryName(nodeOrUri.file.filename!);
         } else {
           const details = getGistDetailsFromUri(nodeOrUri);
           gistId = details.gistId;

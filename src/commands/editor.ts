@@ -17,6 +17,7 @@ import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode } from "../tree/nodes";
 import {
   byteArrayToString,
+  decodeDirectoryName,
   fileNameToUri,
   getGistDescription,
   getGistLabel,
@@ -27,7 +28,7 @@ import { GistQuickPickItem } from "./gist";
 async function askForFileName() {
   return window.showInputBox({
     prompt: "Enter a name to give to this file",
-    value: "foo.txt"
+    placeHolder: "foo.txt"
   });
 }
 
@@ -177,7 +178,7 @@ export function registerEditorCommands(context: ExtensionContext) {
 
         const gist = gists.find((gist) => gist.id === selectedGist!.id);
 
-        const fileItems = Object.keys(gist!.files);
+        const fileItems = Object.keys(gist!.files).map(decodeDirectoryName);
 
         let selectedFile: string | undefined;
         if (fileItems.length === 1) {

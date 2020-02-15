@@ -10,7 +10,13 @@ import {
   workspace
 } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
-import { FS_SCHEME, PLAYGROUND_FILE, TEMP_GIST_ID } from "./constants";
+import {
+  DIRECTORY_SEPERATOR,
+  ENCODED_DIRECTORY_SEPERATOR,
+  FS_SCHEME,
+  PLAYGROUND_FILE,
+  TEMP_GIST_ID
+} from "./constants";
 import { Gist, SortOrder, store, Store } from "./store";
 import { getGist } from "./store/actions";
 
@@ -131,7 +137,7 @@ export async function openGistFiles(id: string) {
       Object.entries(gist.files)
         .reverse()
         .forEach(async ([_, file], index) => {
-          const uri = fileNameToUri(id, file.filename!);
+          const uri = decodeDirectoryUri(fileNameToUri(id, file.filename!));
 
           //if (!isNew && path.extname(file.filename!) === ".md") {
           //  commands.executeCommand("markdown.showPreview", uri);
@@ -173,13 +179,47 @@ export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
   commands.executeCommand(commandName, uri);
 }
 
-export function fileNameToUri(gistId: string, filename: string): Uri {
+export function encodeDirectoryName(filename: string) {
+  return filename.replace(DIRECTORY_SEPERATOR, ENCODED_DIRECTORY_SEPERATOR);
+}
+
+export function decodeDirectoryName(filename: string) {
+  return filename.replace(ENCODED_DIRECTORY_SEPERATOR, DIRECTORY_SEPERATOR);
+}
+
+export function encodeDirectoryUri(uri: Uri) {
+  if (uri.path.substr(1).includes(DIRECTORY_SEPERATOR)) {
+    return uri.with({
+      path: `${DIRECTORY_SEPERATOR}${uri.path
+        .substr(1)
+        .replace(DIRECTORY_SEPERATOR, ENCODED_DIRECTORY_SEPERATOR)}`
+    });
+  }
+  return uri;
+}
+
+export function decodeDirectoryUri(uri: Uri) {
+  if (uri.path.includes(ENCODED_DIRECTORY_SEPERATOR)) {
+    return uri.with({
+      path: uri.path.replace(ENCODED_DIRECTORY_SEPERATOR, DIRECTORY_SEPERATOR)
+    });
+  }
+  return uri;
+}
+
+export function fileNameToUri(gistId: string, filename: string = ""): Uri {
   return Uri.parse(`${FS_SCHEME}://${gistId}/${encodeURIComponent(filename)}`);
 }
 
 export function getGistDetailsFromUri(uri: Uri) {
+  const pathWithoutPrefix = uri.path.substr(1);
+  const directory = pathWithoutPrefix.includes(DIRECTORY_SEPERATOR)
+    ? pathWithoutPrefix.split(DIRECTORY_SEPERATOR)[0]
+    : "";
+
   return {
     gistId: uri.authority,
+    directory: decodeURIComponent(directory),
     file: decodeURIComponent(path.basename(uri.path))
   };
 }

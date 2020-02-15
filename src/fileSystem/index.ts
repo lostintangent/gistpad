@@ -17,12 +17,19 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_NAME, FS_SCHEME, ZERO_WIDTH_SPACE } from "../constants";
+import {
+  DIRECTORY_SEPERATOR,
+  ENCODED_DIRECTORY_SEPERATOR,
+  EXTENSION_NAME,
+  FS_SCHEME,
+  ZERO_WIDTH_SPACE
+} from "../constants";
 import { GistFile, Store } from "../store";
 import { forkGist, getGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import {
   byteArrayToString,
+  encodeDirectoryUri,
   getGistDetailsFromUri,
   isTempGistUri,
   openGistAsWorkspace,
@@ -87,6 +94,20 @@ export class GistFileSystemProvider implements FileSystemProvider {
       });
   }
 
+  private async isDirectory(uri: Uri): Promise<boolean> {
+    const { gistId } = getGistDetailsFromUri(uri);
+    let gist = this.store.gists.find((gist) => gist.id === gistId);
+
+    if (!gist) {
+      gist = await getGist(gistId);
+    }
+
+    const prefix = uri.path
+      .substr(1)
+      .replace(DIRECTORY_SEPERATOR, ENCODED_DIRECTORY_SEPERATOR);
+    return !!Object.keys(gist.files).find((file) => file.startsWith(prefix));
+  }
+
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
     let gist = this.store.gists.find((gist) => gist.id === gistId);
@@ -128,12 +149,15 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 
   createDirectory(uri: Uri): void {
-    throw FileSystemError.NoPermissions(
-      "Directories aren't supported by GitHub Gist."
-    );
+    // Gist doesn't actually support directories, so
+    // we just no-op this function so that VS Code thinks
+    // the directory was created when a file within a
+    // directory is created (e.g. "/foo/bar.txt")
   }
 
   async delete(uri: Uri, options: { recursive: boolean }): Promise<void> {
+    uri = encodeDirectoryUri(uri);
+
     if (isTempGistUri(uri)) {
       return tempFS.deleteFile(uri);
     }
@@ -153,6 +177,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 
   async readFile(uri: Uri): Promise<Uint8Array> {
+    uri = encodeDirectoryUri(uri);
+
     if (isTempGistUri(uri)) {
       return tempFS.readFile(uri);
     }
@@ -186,19 +212,72 @@ export class GistFileSystemProvider implements FileSystemProvider {
         );
       }
 
-      const gist = await getGist(gistId);
+      let gist = this.store.gists
+        .concat(this.store.starredGists)
+        .find((gist) => gist.id === gistId);
 
-      // TODO: Check to see if the file list is truncated, and if
-      // so, retrieve the full contents from the service.
-      const files = Object.keys(gist.files).map((file) => [
-        file,
-        FileType.File
-      ]);
+      if (!gist) {
+        gist = await getGist(gistId);
+      }
+
+      const seenDirectories: string[] = [];
 
       // @ts-ignore
+      const files: [string, FileType][] = Object.keys(gist.files)
+        .map((file) => {
+          if (file.includes(ENCODED_DIRECTORY_SEPERATOR)) {
+            const directory = file.split(ENCODED_DIRECTORY_SEPERATOR)[0];
+            return [directory, FileType.Directory];
+          } else {
+            return [file, FileType.File];
+          }
+        })
+        .filter(([file, fileType]) => {
+          if (fileType === FileType.File) return true;
+
+          // @ts-ignore
+          if (seenDirectories.includes(file)) {
+            return false;
+          } else {
+            // @ts-ignore
+            seenDirectories.push(file);
+            return true;
+          }
+        });
+
       return files;
     } else {
-      throw FileSystemError.FileNotFound;
+      const { gistId } = getGistDetailsFromUri(uri);
+
+      let gist = this.store.gists
+        .concat(this.store.starredGists)
+        .find((gist) => gist.id === gistId);
+
+      if (!gist) {
+        gist = await getGist(gistId);
+      }
+
+      const prefix = uri.path
+        .substr(1)
+        .replace(DIRECTORY_SEPERATOR, ENCODED_DIRECTORY_SEPERATOR);
+
+      const files: [string, FileType][] = Object.keys(gist.files)
+        .filter((file) => file.startsWith(prefix))
+        .map((file) => {
+          const updatedFile = file.split(prefix)[1];
+          if (updatedFile.includes(ENCODED_DIRECTORY_SEPERATOR)) {
+            const directory = file.split(ENCODED_DIRECTORY_SEPERATOR)[0];
+            return [directory, FileType.Directory];
+          } else {
+            return [updatedFile, FileType.File];
+          }
+        });
+
+      if (files.length > 0) {
+        return files;
+      } else {
+        throw FileSystemError.FileNotFound;
+      }
     }
   }
 
@@ -207,6 +286,9 @@ export class GistFileSystemProvider implements FileSystemProvider {
     newUri: Uri,
     options: { overwrite: boolean }
   ): Promise<void> {
+    oldUri = encodeDirectoryUri(oldUri);
+    newUri = encodeDirectoryUri(newUri);
+
     if (isTempGistUri(oldUri)) {
       return tempFS.renameFile(oldUri, newUri);
     }
@@ -243,14 +325,27 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 
   async stat(uri: Uri): Promise<FileStat> {
-    if (uri.path === "/") {
+    if (uri.path === DIRECTORY_SEPERATOR) {
       return {
         type: FileType.Directory,
         size: 0,
         ctime: 0,
         mtime: 0
       };
+    } else if (uri.path.endsWith(DIRECTORY_SEPERATOR)) {
+      if (this.isDirectory(uri)) {
+        return {
+          type: FileType.Directory,
+          size: 0,
+          ctime: 0,
+          mtime: 0
+        };
+      }
+
+      throw FileSystemError.FileNotFound(uri);
     }
+
+    uri = encodeDirectoryUri(uri);
 
     const file = await this.getFileFromUri(uri);
 
@@ -271,6 +366,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
     content: Uint8Array,
     options: { create: boolean; overwrite: boolean }
   ): Promise<void> {
+    uri = encodeDirectoryUri(uri);
+
     if (isTempGistUri(uri)) {
       return tempFS.writeFile(uri, content);
     }

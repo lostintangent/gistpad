@@ -7,6 +7,7 @@ export function get(key: "apiUrl"): string;
 export function get(key: "gitSSO"): boolean;
 export function get(key: "images.markdownPasteFormat"): "markdown" | "html";
 export function get(key: "images.pasteType"): "file" | "base64";
+export function get(key: "images.directoryName"): string;
 export function get(key: "playgrounds.autoRun"): "onEdit" | "onSave" | "never";
 export function get(key: "playgrounds.autoSave"): boolean;
 export function get(

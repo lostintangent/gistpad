@@ -85,6 +85,11 @@
           ],
           "description": "Specifies when to display the comment thread when you open a Gist file."
         },
+        "gistpad.images.directoryName": {
+          "default": "images",
+          "type": "string",
+          "description": "Specifies the name of the directory that pasted images are uploaded to."
+        },
         "gistpad.images.markdownPasteFormat": {
           "default": "markdown",
           "enum": [
@@ -215,6 +220,11 @@
     },
     "commands": [
       {
+        "command": "gistpad.addDirectoryFile",
+        "title": "Add New File(s)",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.addFile",
         "title": "Add New File(s)",
         "category": "GistPad"
@@ -281,6 +291,11 @@
       {
         "command": "gistpad.copyGistUrl",
         "title": "Copy GitHub URL",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.deleteDirectory",
+        "title": "Delete Directory",
         "category": "GistPad"
       },
       {
@@ -447,6 +462,11 @@
         }
       },
       {
+        "command": "gistpad.renameDirectory",
+        "title": "Rename Directory",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.renameFile",
         "title": "Rename File",
         "category": "GistPad"
@@ -515,6 +535,11 @@
       {
         "command": "gistpad.unstarGist",
         "title": "Unstar Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.uploadFileToDirectory",
+        "title": "Upload File(s)",
         "category": "GistPad"
       },
       {
@@ -603,6 +628,10 @@
           "when": "gistpad:inPlayground"
         },
         {
+          "command": "gistpad.addDirectoryFile",
+          "when": "false"
+        },
+        {
           "command": "gistpad.addFile",
           "when": "false"
         },
@@ -640,6 +669,10 @@
         },
         {
           "command": "gistpad.copyFileUrl",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.deleteDirectory",
           "when": "false"
         },
         {
@@ -695,6 +728,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.renameDirectory",
+          "when": "false"
+        },
+        {
           "command": "gistpad.renameFile",
           "when": "false"
         },
@@ -708,6 +745,10 @@
         },
         {
           "command": "gistpad.sortGistsByUpdatedTime",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.uploadFileToDirectory",
           "when": "false"
         },
         {
@@ -919,6 +960,26 @@
           "command": "gistpad.deleteFile",
           "when": "viewItem == gistFile.editable || viewItem =~ /^tempGistFile/",
           "group": "manage@2"
+        },
+        {
+          "command": "gistpad.addDirectoryFile",
+          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "group": "manage@1"
+        },
+        {
+          "command": "gistpad.uploadFileToDirectory",
+          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "group": "manage@2"
+        },
+        {
+          "command": "gistpad.renameDirectory",
+          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "group": "mutate@1"
+        },
+        {
+          "command": "gistpad.deleteDirectory",
+          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "group": "mutate@1"
         }
       ],
       "explorer/context": [

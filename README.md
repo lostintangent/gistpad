@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly used config, programming-related notes/documentation, and [interactive/runnable samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code 🚀
+GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly used config, programming-related notes/documentation, and [interactive samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -14,25 +14,33 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
 
    > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
 
-2. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone your own gists. To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
+1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone your own gists. To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
 
    <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
    > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_.
 
-3. Create new gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
+1. Create new gist by clicking the `+` icon in the `Gists` toolbar and specifying the files to seed it with (including support for [directories](#files-and-directories)!). Additionally, you can create gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
 
    <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
-4. View and reply to comments in a Gist by scrolling to the bottom of a Gist file and interacting with the thread (including embedded code snippets!)
+1. View and reply to comments in a Gist by scrolling to the bottom of a Gist file and interacting with the thread (including embedded code snippets!)
 
    <img width="450px" src="https://user-images.githubusercontent.com/116461/70117955-a9633280-161b-11ea-88a5-ac8a15a3b7a0.png" />
 
-5. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
+1. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
 
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
-6. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Playground` (or `New Secret Playground`. This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
+1. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Playground` (or `New Secret Playground`. This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
+
+## Files and Directories
+
+When you create a gist via the `New Gist` (or `New Secret Gist`) command, you can specify a comma-seperated list of file names to seed the gist with. Furthermore, you could add `/` to your filenames, in order to add them to a sub-directory within the gist. For example, if you create a new gist, and specify `todos/personal.txt,todos/work.txt,reminders.txt`, the gist will include a `reminders.txt` file at the root of the gist, and `personal.txt` and `reminders.txt` files within a new directory called `todos`.
+
+<img width="200px" src="https://user-images.githubusercontent.com/116461/74593846-7b6b7880-4fe4-11ea-9bf8-722bf7887ef1.png" />
+
+At any time, you can add new files to a gist or directory by right-clicking them and selecting `Add New File(s)` or `Upload File(s)`. You can also rename/delete directories as well, by right-clicking them in the tree and selecting the appropriate command. If you'd like to move a file from one directory to another, simply right-click the file, select `Rename File` and edit the directory name that it's in. It's that simple!
 
 ## Gist Commenting
 
@@ -49,6 +57,8 @@ In order to make it easy to author markdown and HTML/Pug files that include imag
 ![paste-image](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
 
 By default, when you paste an image into a Gist file, it's uploaded as a `.png` to the gist, and the appropriate reference is added to it from the document (e.g. inserting an `<img />`). However, this behavior can be changed by using the `GistPad > Images: Paste Format` and/or `GistPad > Images: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details.
+
+By default, when you paste an image, it is uploaded to a directory called `images` within the gist. However, if you'd like to change this (e.g. to `assets` instead), you can set the `GistPad > Images: Directory Name` setting.
 
 ## Following Users
 
@@ -124,7 +134,7 @@ Additionally, if you create a playground that depends on the console, you can se
 
 ### Readme
 
-If you'd like to give your playground an introduction, you can create a file in the playground called `README.md` (or `README.markdown`), and by default, it's contents will be rendered above the playground code in the preview window.
+If you'd like to give your playground an introduction, you can create a file in the playground called `README.md` (or `README.markdown`), and by default, it's contents will be rendered above the playground code in the preview window. When a playground is opened, the `README.md` file isn't opened, which allows the playground to be focused on the core code assets (e.g. `index.html`, `script.js`), and allow the preview window to include embedded documentation.
 
 ### Modules
 
@@ -141,6 +151,18 @@ Note that temporary gists don't appear in the main `Gists` explorer tree, and th
 ### Gist Links
 
 If you'd like to add a link in your gist/readme, which references a file and/or line/column within a file in the gist, simply add a hyperlink, whose `href` value uses the `gist:` scheme (kind of like a `mailto:`), and specifies the file name you'd like to open (e.g. `gist:index.html`). Optionally, you can specify a line and column number as well (e.g. `gist:index.html@23:5`), which allows you to highlight a specific line/span of code when the end-user clicks on it.
+
+### Tutorials
+
+By default, a playground represents a single interactive sample. However, they can also represent multi-step tutorials, by making two simple changes:
+
+1. Specifying a tutorial title, by setting the `tutorial` property in the playground's `playground.json` file
+
+2. Defining each step as a numerical [directory](#files-and-directories), starting with `1`. The contents of the directory match that of a standard playground (e.g. an `index.html`, `script.js` file, etc.), and it's encouraged that each step have a [readme](#readme) that includes instructions.
+
+When a user opens up a tutorial playground, they'll only see the contents of the current step, and the preview window will include a navigation header that allows moving forward and backwards in the tutorial. To try an example, view the [Learning MobX Tutorial](https://gist.github.com/lostintangent/c3bcd4bff4a13b2e1b3fc4a26332e2b6).
+
+![MobX](https://user-images.githubusercontent.com/116461/74594536-95a95480-4fec-11ea-9d94-80e6f038b1b2.gif)
 
 ### Template Galleries
 
@@ -279,6 +301,8 @@ In addition to the `Gists` view, this extension also provides the following comm
 
   - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to file it's pasted into.
   - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
+
+- `Gistpad > Images: Upload Directory Name`: Specifies the name of the directory to upload images to. Defaults to `images`.
 
 * `GistPad > Playgrounds: Auto Run` - Specifies when to automatically run the code for a playground. Can be set to one of the following values:
 

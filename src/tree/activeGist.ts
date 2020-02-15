@@ -9,12 +9,13 @@ import {
   TreeItemCollapsibleState,
   window
 } from "vscode";
+import { getGistFiles } from ".";
 import { EXTENSION_NAME } from "../constants";
 import { Store, store } from "../store";
 import { isOwnedGist, isTempGistId } from "../utils";
 import {
   FollowedUserGistNode,
-  GistFileNode,
+  GistDirectoryNode,
   GistNode,
   OpenGistNode,
   TreeNode
@@ -69,11 +70,9 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 
       return [gistNode];
     } else if (element instanceof GistNode) {
-      const { files, id } = element.gist;
-
-      return Object.entries(files).map(
-        ([_, file]) => new GistFileNode(id, file)
-      );
+      return getGistFiles(element.gist);
+    } else if (element instanceof GistDirectoryNode) {
+      return getGistFiles(element.gist, element.directory);
     }
   }
 

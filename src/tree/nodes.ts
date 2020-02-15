@@ -2,9 +2,14 @@ import * as moment from "moment";
 import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import * as config from "../config";
-import { EXTENSION_NAME, TEMP_GIST_ID } from "../constants";
+import {
+  ENCODED_DIRECTORY_SEPERATOR,
+  EXTENSION_NAME,
+  TEMP_GIST_ID
+} from "../constants";
 import { FollowedUser, Gist, GistFile } from "../store";
 import {
+  decodeDirectoryName,
   fileNameToUri,
   getGistDescription,
   getGistLabel,
@@ -171,12 +176,23 @@ ${suffix}`;
   }
 }
 
+function getFileDisplayName(file: GistFile) {
+  if (file.filename?.includes(ENCODED_DIRECTORY_SEPERATOR)) {
+    return file.filename.split(ENCODED_DIRECTORY_SEPERATOR)[1];
+  }
+
+  return file.filename!;
+}
+
 export class GistFileNode extends TreeNode {
   constructor(public gistId: string, public file: GistFile) {
-    super(file.filename!);
+    super(getFileDisplayName(file));
 
     this.iconPath = ThemeIcon.File;
-    this.resourceUri = fileNameToUri(gistId, file.filename!);
+    this.resourceUri = fileNameToUri(
+      gistId,
+      decodeDirectoryName(file.filename!)
+    );
 
     this.command = {
       command: "gistpad.openGistFile",
@@ -187,6 +203,23 @@ export class GistFileNode extends TreeNode {
     let contextValue = gistId === TEMP_GIST_ID ? "tempGistFile" : "gistFile";
 
     if (isOwnedGist(gistId)) {
+      contextValue += ".editable";
+    }
+
+    this.contextValue = contextValue;
+  }
+}
+
+export class GistDirectoryNode extends TreeNode {
+  constructor(public gist: Gist, public directory: string) {
+    super(directory, TreeItemCollapsibleState.Collapsed);
+
+    this.iconPath = ThemeIcon.Folder;
+
+    let contextValue =
+      gist.id === TEMP_GIST_ID ? "tempGistDirectory" : "gistDirectory";
+
+    if (isOwnedGist(gist.id)) {
       contextValue += ".editable";
     }
 

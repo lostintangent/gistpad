@@ -3,18 +3,20 @@ import {
   Disposable,
   Event,
   EventEmitter,
-  ProviderResult,
+  FileType,
   TreeDataProvider,
   TreeItem,
-  window
+  window,
+  workspace
 } from "vscode";
 import { EXTENSION_NAME, TEMP_GIST_ID } from "../constants";
-import { Store } from "../store";
-import { sortGists } from "../utils";
+import { Gist, Store } from "../store";
+import { encodeDirectoryName, fileNameToUri, sortGists } from "../utils";
 import {
   CreateNewGistNode,
   FollowedUserGistNode,
   FollowedUserGistsNode,
+  GistDirectoryNode,
   GistFileNode,
   GistNode,
   GistsNode,
@@ -28,6 +30,24 @@ import {
   StarredGistsNode,
   TreeNode
 } from "./nodes";
+
+export async function getGistFiles(gist: Gist, subDirectory?: string) {
+  const directory = subDirectory ? `${subDirectory}/` : "";
+  const files = await workspace.fs.readDirectory(
+    fileNameToUri(gist.id, directory)
+  );
+
+  return files
+    .sort(([_, typeA], [__, typeB]) => typeB - typeA)
+    .map(([file, fileType]) => {
+      return fileType === FileType.Directory
+        ? new GistDirectoryNode(gist, file)
+        : new GistFileNode(
+            gist.id,
+            gist.files[`${encodeDirectoryName(directory)}${file}`]
+          );
+    });
+}
 
 class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
@@ -56,7 +76,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     return node;
   }
 
-  getChildren(element?: TreeNode): ProviderResult<TreeNode[]> {
+  async getChildren(element?: TreeNode): Promise<TreeNode[] | undefined> {
     if (!element) {
       if (!this.store.isSignedIn) {
         return [new OpenGistNode(), new NewPlaygroundNode(), new SignInNode()];
@@ -107,13 +127,9 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         );
       }
     } else if (element instanceof GistNode) {
-      return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file)
-      );
+      return getGistFiles(element.gist);
     } else if (element instanceof StarredGistNode) {
-      return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file)
-      );
+      return getGistFiles(element.gist);
     } else if (element instanceof FollowedUserGistsNode) {
       if (element.user.isLoading) {
         return [new LoadingNode()];
@@ -125,9 +141,9 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         );
       }
     } else if (element instanceof FollowedUserGistNode) {
-      return Object.entries(element.gist.files).map(
-        ([_, file]) => new GistFileNode(element.gist.id, file)
-      );
+      return getGistFiles(element.gist);
+    } else if (element instanceof GistDirectoryNode) {
+      return getGistFiles(element.gist, element.directory);
     }
   }
 

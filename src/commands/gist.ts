@@ -35,6 +35,7 @@ import { createGistPadOpenUrl } from "../uriHandler";
 import {
   byteArrayToString,
   closeGistFiles,
+  encodeDirectoryName,
   fileNameToUri,
   getGistDescription,
   getGistLabel,
@@ -96,7 +97,9 @@ async function newGistInternal(isPublic: boolean = true) {
       return window.withProgress(
         { location: ProgressLocation.Notification, title: "Creating Gist..." },
         () => {
-          const files = fileName.split(",").map((filename) => ({ filename }));
+          const files = fileName
+            .split(",")
+            .map((filename) => ({ filename: encodeDirectoryName(filename) }));
           return newGist(files, isPublic, description);
         }
       );

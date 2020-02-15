@@ -1,12 +1,12 @@
 ## v0.0.52 (02/15/2020)
 
-- Introduced support for directories within a gist
+- Introduced support for creating directories within a gist, as well as a new setting called `GistPad > Images: Directory name`, which defines the name of the directory that pasted images are uploaded to.
 
   <img width="200px" src="https://user-images.githubusercontent.com/116461/74593846-7b6b7880-4fe4-11ea-9bf8-722bf7887ef1.png" />
 
-- Introduced the `GistPad > Images: Directory name` setting, which defines the name of the directory that pasted images are uploaded to.
-
 - Introduced the concept of playground "tutorials", which allow you to create multi-step playgrounds.
+
+  ![MobX](https://user-images.githubusercontent.com/116461/74594536-95a95480-4fec-11ea-9d94-80e6f038b1b2.gif)
 
 - Added the `View Forks` command to the tree view, which allows you to view a gist's forks
 

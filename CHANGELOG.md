@@ -4,9 +4,9 @@
 
   <img width="200px" src="https://user-images.githubusercontent.com/116461/74593846-7b6b7880-4fe4-11ea-9bf8-722bf7887ef1.png" />
 
-- Introduced the concept of playground "tutorials", which allow you to create multi-step playgrounds.
+- Introduced the concept of playground "tutorials", which allow you to create multi-step playgrounds, based on the new support for gist directories.
 
-  ![MobX](https://user-images.githubusercontent.com/116461/74594536-95a95480-4fec-11ea-9d94-80e6f038b1b2.gif)
+  ![MobX](https://user-images.githubusercontent.com/116461/74594741-8d521900-4fee-11ea-97ac-1fdfac132724.gif)
 
 - Added the `View Forks` command to the tree view, which allows you to view a gist's forks
 

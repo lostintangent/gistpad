@@ -162,7 +162,7 @@ By default, a playground represents a single interactive sample. However, they c
 
 When a user opens up a tutorial playground, they'll only see the contents of the current step, and the preview window will include a navigation header that allows moving forward and backwards in the tutorial. To try an example, view the [Learning MobX Tutorial](https://gist.github.com/lostintangent/c3bcd4bff4a13b2e1b3fc4a26332e2b6).
 
-![MobX](https://user-images.githubusercontent.com/116461/74594536-95a95480-4fec-11ea-9d94-80e6f038b1b2.gif)
+![MobX](https://user-images.githubusercontent.com/116461/74594741-8d521900-4fee-11ea-97ac-1fdfac132724.gif)
 
 ### Template Galleries
 

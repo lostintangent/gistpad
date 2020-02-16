@@ -1,3 +1,9 @@
+## v0.0.53
+
+- Added support for markdown-based markup files in playgrounds. Simply rename your `index.html` file to `index.md` and you can write playgrounds with Markdown
+- Gist directories can now include spaces in their names, and playground tutorials now allow each step to include a title in their name (e.g. `1 - Intro`)
+- Playgrounds can now consist of only a readme file, which among other thing, is useful for tutorials to include an "intro" step that doesn't actually require any code
+
 ## v0.0.52 (02/15/2020)
 
 - Introduced support for creating directories within a gist, as well as a new setting called `GistPad > Images: Directory name`, which defines the name of the directory that pasted images are uploaded to.

@@ -102,6 +102,7 @@ By default, new playgrounds create an HTML, CSS and JavaScript file. However, if
 
 - **SCSS/Sass** - Rename the `style.css` file to `style.scss` or `style.sass`. \*Note: While VS Code ships with language support for SCSS out-of-the-box, it doesn't ship support for Sass (the "indentended" syntax). So if you plan to author playgrounds with that syntax, it's recommended that you install [this extension](https://marketplace.visualstudio.com/items?itemName=Syler.sass-indented) along with GistPad.
 - **Less** - Rename the `style.css` file to `style.less`
+- **Markdown** - Rename the `index.html` file to `index.md`
 - **Pug** - Rename the `index.html` file to `index.pug`
 - **TypeScript** - Rename the `script.js` file to `script.ts` (or `script.tsx`, in order to use JSX in your code)
 - **JSX** - Rename the `script.js` file to `script.jsx` in order to enable JSX to be written in "vanilla" JavaScript files. Additionally, if you add the [`react` library](#external-libraries) to your gist's `playground.json` file, then `*.js` files can also include JSX.
@@ -154,13 +155,13 @@ If you'd like to add a link in your gist/readme, which references a file and/or 
 
 ### Tutorials
 
-By default, a playground represents a single interactive sample. However, they can also represent multi-step tutorials, by making two simple changes:
+By default, a playground represents a single interactive sample. However, they can also represent multi-step tutorials/presentations, by making two simple changes:
 
 1. Specifying a tutorial title, by setting the `tutorial` property in the playground's `playground.json` file
 
-2. Defining each step as a numerical [directory](#files-and-directories), starting with `1`. The contents of the directory match that of a standard playground (e.g. an `index.html`, `script.js` file, etc.), and it's encouraged that each step have a [readme](#readme) that includes instructions.
+1. Defining a series of steps as gist [directories](#files-and-directories), whose name starts with the step number and includes an optional description (e.g. `1`, `1 - Discussion of text`, `#1 - Intro`). The contents of the directory match that of a standard playground (e.g. an `index.html`, `script.js` file, etc.), and it's encouraged that each step have a [readme](#readme) that includes instructions. The number of steps in the tutorial is determined by the number of directories in the gist that follow the aforementioned pattern.
 
-When a user opens up a tutorial playground, they'll only see the contents of the current step, and the preview window will include a navigation header that allows moving forward and backwards in the tutorial. To try an example, view the [Learning MobX Tutorial](https://gist.github.com/lostintangent/c3bcd4bff4a13b2e1b3fc4a26332e2b6).
+When a user opens up a tutorial playground, they'll only see the contents of the current step, and the preview window will include a navigation header that allows moving forward and backwards in the tutorial. Additionally, the user's current step will be persisted so that they can take a tutorial and pick up where they left off when they re-open the tutorial. To try an example, view the [Learning MobX Tutorial](https://gist.github.com/lostintangent/c3bcd4bff4a13b2e1b3fc4a26332e2b6).
 
 ![MobX](https://user-images.githubusercontent.com/116461/74594741-8d521900-4fee-11ea-97ac-1fdfac132724.gif)
 
@@ -332,6 +333,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 * `GistPad > Playgrounds: Markup Language` - Specifies the default markup language to use when creating new web playgrounds. Can be set to one of the following values:
 
   - `html` _(default)_: Will result in an `index.html` file being created whenever you create a new web playground.
+  - `markdown`: Will result in an `index.md` file being created whenever you create a new web playground.
   - `pug`: Will result in an `index.pug` file being created whenever you create a new web playground.
 
 * `GistPad > Playgrounds: Readme Behavior` - Specifies how to display the contents of a playground's readme, if it has one. Can be set to one of the following values:

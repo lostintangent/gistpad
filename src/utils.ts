@@ -290,6 +290,7 @@ export function isPlaygroundGist(gist: Gist) {
     gistFiles.includes(PLAYGROUND_FILE) ||
     gistFiles.includes("index.html") ||
     gistFiles.includes("index.pug") ||
+    gistFiles.includes("index.md") ||
     gistFiles.includes("scripts") ||
     (gistFiles.includes("script.js") &&
       gistFiles.some((file) => path.extname(file) === ".markdown"))

@@ -66,10 +66,15 @@ export const DEFAULT_MANIFEST = {
 
 const MarkupLanguage = {
   html: ".html",
+  markdown: ".md",
   pug: ".pug"
 };
 
-const MARKUP_EXTENSIONS = [MarkupLanguage.html, MarkupLanguage.pug];
+const MARKUP_EXTENSIONS = [
+  MarkupLanguage.html,
+  MarkupLanguage.markdown,
+  MarkupLanguage.pug
+];
 
 const StylesheetLanguage = {
   css: ".css",
@@ -256,24 +261,25 @@ export function getScriptContent(
 }
 
 function getMarkupContent(document: vscode.TextDocument): string | null {
-  let content = document.getText();
+  const content = document.getText();
   if (content.trim() === "") {
     return content;
   }
 
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  if (extension === MarkupLanguage.pug) {
-    const pug = require("pug");
 
-    try {
-      // Something failed when trying to transpile Pug,
-      // so don't attempt to return anything
+  try {
+    if (extension === MarkupLanguage.pug) {
+      const pug = require("pug");
       return pug.render(content);
-    } catch (e) {
-      return null;
+    } else if (extension === MarkupLanguage.markdown) {
+      const markdown = require("markdown-it")();
+      return markdown.render(content);
+    } else {
+      return content;
     }
-  } else {
-    return content;
+  } catch {
+    return null;
   }
 }
 
@@ -331,23 +337,6 @@ async function getStylesheetContent(
   } else {
     return content;
   }
-}
-
-function isPlaygroundManifestFile(
-  gist: Gist,
-  document: vscode.TextDocument,
-  currentTutorialStep?: number
-) {
-  if (gist.id !== document.uri.authority) {
-    return false;
-  }
-
-  const fileName = path.basename(document.uri.toString().toLowerCase());
-  return (
-    fileName === PLAYGROUND_FILE ||
-    (currentTutorialStep &&
-      fileName === `${currentTutorialStep}.${PLAYGROUND_FILE}`)
-  );
 }
 
 enum EditorLayoutOrientation {
@@ -439,6 +428,10 @@ export const getGistFileOfType = (
       extensions = README_EXTENSIONS;
       fileBaseName = README_BASE_NAME;
       break;
+    case PlaygroundFileType.manifest:
+      extensions = [""];
+      fileBaseName = PLAYGROUND_FILE;
+      break;
     case PlaygroundFileType.stylesheet:
     default:
       extensions = STYLESHEET_EXTENSIONS;
@@ -447,14 +440,16 @@ export const getGistFileOfType = (
   }
 
   const prefix = currentTutorialStep
-    ? `${currentTutorialStep}${ENCODED_DIRECTORY_SEPERATOR}`
+    ? `#?${currentTutorialStep}[^\/]*${ENCODED_DIRECTORY_SEPERATOR}`
     : "";
 
   const fileCandidates = extensions.map(
-    (extension) => `${prefix}${fileBaseName}${extension}`
+    (extension) => new RegExp(`${prefix}${fileBaseName}${extension}`)
   );
 
-  return Object.keys(gist.files).find((file) => fileCandidates.includes(file));
+  return Object.keys(gist.files).find((file) =>
+    fileCandidates.find((candidate) => candidate.test(file))
+  );
 };
 
 function isPlaygroundDocument(
@@ -482,6 +477,10 @@ function isPlaygroundDocument(
       extensions = README_EXTENSIONS;
       fileBaseName = README_BASE_NAME;
       break;
+    case PlaygroundFileType.manifest:
+      extensions = [""];
+      fileBaseName = PLAYGROUND_FILE;
+      break;
     case PlaygroundFileType.stylesheet:
     default:
       extensions = STYLESHEET_EXTENSIONS;
@@ -490,13 +489,14 @@ function isPlaygroundDocument(
   }
 
   const prefix = currentTutorialStep
-    ? `${DIRECTORY_SEPERATOR}${currentTutorialStep}${DIRECTORY_SEPERATOR}`
+    ? `${DIRECTORY_SEPERATOR}#?${currentTutorialStep}[^\/]*${DIRECTORY_SEPERATOR}`
     : DIRECTORY_SEPERATOR;
+
   const fileCandidates = extensions.map(
-    (extension) => `${prefix}${fileBaseName}${extension}`
+    (extension) => new RegExp(`${prefix}${fileBaseName}${extension}`)
   );
 
-  return fileCandidates.includes(document.uri.path);
+  return fileCandidates.find((candidate) => candidate.test(document.uri.path));
 }
 
 function duplicatePlayground(
@@ -722,6 +722,7 @@ async function newPlaygroundInternal(
   quickPick.show();
 }
 
+const TUTORIAL_STEP_PATTERN = /^#?(?<step>\d+)[^\/]*---/;
 export async function openPlayground(gist: Gist) {
   const manifestContent = await getManifestContent(gist);
   let manifest: PlaygroundManifest;
@@ -737,10 +738,11 @@ export async function openPlayground(gist: Gist) {
   if (manifest.tutorial) {
     currentTutorialStep = storage.currentTutorialStep(gist.id);
     const files = Object.keys(gist.files).filter((file) =>
-      file.match(/^\d+\---/)
+      file.match(TUTORIAL_STEP_PATTERN)
     );
     totalTutorialSteps = files.reduce((maxStep, fileName) => {
-      const step = Number(fileName.split(ENCODED_DIRECTORY_SEPERATOR)[0]);
+      const step = Number(TUTORIAL_STEP_PATTERN.exec(fileName)!.groups!.step);
+
       if (step > maxStep) {
         return step;
       } else {
@@ -748,11 +750,16 @@ export async function openPlayground(gist: Gist) {
       }
     }, 0);
 
-    const stepManifestName = `${currentTutorialStep}${ENCODED_DIRECTORY_SEPERATOR}playground.json`;
-    if (Object.keys(gist.files).includes(stepManifestName)) {
+    const stepManifestFile = getGistFileOfType(
+      gist,
+      PlaygroundFileType.manifest,
+      currentTutorialStep
+    );
+
+    if (stepManifestFile) {
       const stepManifest = byteArrayToString(
         await vscode.workspace.fs.readFile(
-          fileNameToUri(gist.id, stepManifestName)
+          fileNameToUri(gist.id, stepManifestFile)
         )
       );
       manifest = {
@@ -767,16 +774,19 @@ export async function openPlayground(gist: Gist) {
     PlaygroundFileType.markup,
     currentTutorialStep
   );
+
   const stylesheetFile = getGistFileOfType(
     gist,
     PlaygroundFileType.stylesheet,
     currentTutorialStep
   );
+
   const scriptFile = getGistFileOfType(
     gist,
     PlaygroundFileType.script,
     currentTutorialStep
   );
+
   const readmeFile = getGistFileOfType(
     gist,
     PlaygroundFileType.readme,
@@ -838,7 +848,7 @@ export async function openPlayground(gist: Gist) {
 
   // The preview layout mode only shows a single file,
   // so there's no need to set a custom editor layout for it.
-  if (playgroundLayout !== PlaygroundLayout.preview) {
+  if (includedFiles > 0 && playgroundLayout !== PlaygroundLayout.preview) {
     await vscode.commands.executeCommand(
       "vscode.setEditorLayout",
       editorLayout
@@ -984,7 +994,12 @@ export async function openPlayground(gist: Gist) {
         }
         htmlView.updateJavaScript(document, runOnEdit);
       } else if (
-        isPlaygroundManifestFile(gist, document, currentTutorialStep)
+        isPlaygroundDocument(
+          gist,
+          document,
+          PlaygroundFileType.manifest,
+          currentTutorialStep
+        )
       ) {
         htmlView.updateManifest(document.getText(), runOnEdit);
 
@@ -1037,7 +1052,7 @@ export async function openPlayground(gist: Gist) {
     );
   }
 
-  htmlView.updateManifest(manifestContent);
+  htmlView.updateManifest(manifest ? JSON.stringify(manifest) : "");
   htmlView.updateHTML(
     !!markupFile ? getMarkupContent(htmlDocument!) || "" : ""
   );

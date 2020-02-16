@@ -98,7 +98,7 @@ export class PlaygroundWebview {
           } else {
             editor = await vscode.window.showTextDocument(file, {
               selection: range,
-              preserveFocus: true
+              preserveFocus: false
             });
           }
 

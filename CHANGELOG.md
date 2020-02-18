@@ -1,4 +1,8 @@
-## v0.0.53
+## v0.0.54 (02/18/2020)
+
+- Introduced the new `Showcase` view in the GistPad tab.
+
+## v0.0.53 (02/17/2020)
 
 - Added support for markdown-based markup files in playgrounds. Simply rename your `index.html` file to `index.md` and you can write playgrounds with Markdown
 - Gist directories can now include spaces in their names, and playground tutorials now allow each step to include a title in their name (e.g. `1 - Intro`)

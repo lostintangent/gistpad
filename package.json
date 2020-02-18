@@ -218,7 +218,7 @@
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
         },
         "gistpad.showcaseUrl": {
-          "default": "https://gist.githubusercontent.com/lostintangent/84ea4ea789832b452776341e65c8c066/raw/showcase.json",
+          "default": "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad/manifests/showcase.json",
           "type": "string",
           "description": "Specifies the URL of the showcase to display gists from."
         }

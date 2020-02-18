@@ -3,8 +3,8 @@
     {
       "title": "Playgrounds",
       "gists": [
-        "133df7116d8a4ca9fd829241730d5066",
-        "429b1c092452da95276e1e28b18635e0"
+        "ecdf56c499e809ad671c4d85d5c2b90a",
+        "9bd7c0d391237874fcc9c8c216c86c4d"
       ]
     },
     {
@@ -13,11 +13,18 @@
     },
     {
       "title": "Data Visualizations",
-      "gists": ["cb8dcc8a5b34fa6e40309f2365377f3c"]
+      "gists": ["6459889", "1341281", "ded69192b8269a78d2d97e24211e64e0"]
     },
     {
       "title": "Code Samples",
       "gists": ["c4d472ce3c61feec6376"]
+    },
+    {
+      "title": "Reference Materials",
+      "gists": [
+        "61171a9b81586f5bc4c0ca1e2beb59ab",
+        "af774c9aed9b05cccab6fd6a4ebba172"
+      ]
     }
   ]
 }

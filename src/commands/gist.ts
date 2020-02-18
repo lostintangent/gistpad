@@ -20,6 +20,7 @@ import {
   getForks,
   newGist,
   refreshGists,
+  refreshShowcase,
   starGist,
   starredGists,
   unstarGist
@@ -498,6 +499,13 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_NAME}.refreshGists`, refreshGists)
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.refreshShowcase`,
+      refreshShowcase
+    )
   );
 
   context.subscriptions.push(

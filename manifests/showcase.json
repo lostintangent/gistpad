@@ -1,0 +1,23 @@
+{
+  "categories": [
+    {
+      "title": "Playgrounds",
+      "gists": [
+        "133df7116d8a4ca9fd829241730d5066",
+        "429b1c092452da95276e1e28b18635e0"
+      ]
+    },
+    {
+      "title": "Tutorials",
+      "gists": ["c3bcd4bff4a13b2e1b3fc4a26332e2b6"]
+    },
+    {
+      "title": "Data Visualizations",
+      "gists": ["cb8dcc8a5b34fa6e40309f2365377f3c"]
+    },
+    {
+      "title": "Code Samples",
+      "gists": ["c4d472ce3c61feec6376"]
+    }
+  ]
+}

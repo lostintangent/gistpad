@@ -1,6 +1,14 @@
+import axios from "axios";
 import { observable, runInAction } from "mobx";
 import { window, workspace } from "vscode";
-import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
+import {
+  FollowedUser,
+  Gist,
+  GistComment,
+  GistFile,
+  GistShowcaseCategory,
+  store
+} from ".";
 import * as config from "../config";
 import { ZERO_WIDTH_SPACE } from "../constants";
 import { newTempGist } from "../fileSystem/temp";
@@ -180,6 +188,10 @@ export async function getGist(id: string): Promise<Gist> {
   return observable(gist.body);
 }
 
+export async function getGists(ids: string[]): Promise<Gist[]> {
+  return Promise.all(ids.map(getGist));
+}
+
 export async function getGistComments(id: string): Promise<GistComment[]> {
   if (isTempGistId(id)) {
     return [];
@@ -272,6 +284,30 @@ export async function refreshGists() {
         followedUser.gists = await listUserGists(followedUser.username);
         followedUser.isLoading = false;
       }
+    }
+  });
+}
+
+export async function refreshShowcase() {
+  store.showcase.isLoading = true;
+
+  await runInAction(async () => {
+    const showcaseUrl = await config.get("showcaseUrl");
+    const showcase = await axios.get(showcaseUrl);
+    store.showcase.categories = showcase.data.categories.map(
+      (category: GistShowcaseCategory) => ({
+        title: category.title,
+        gists: [],
+        _gists: category.gists,
+        isLoading: true
+      })
+    );
+
+    store.showcase.isLoading = false;
+    for (const category of store.showcase.categories) {
+      // @ts-ignore
+      category.gists = await getGists(category._gists);
+      category.isLoading = false;
     }
   });
 }

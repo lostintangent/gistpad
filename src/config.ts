@@ -28,6 +28,7 @@ export function get(
 ): "css" | "less" | "sass" | "scss";
 export function get(key: "playgrounds.showConsole"): boolean;
 export function get(key: "playgrounds.templateGalleries"): string[];
+export function get(key: "showcaseUrl"): string;
 export function get(key: "comments.showThread"): string;
 export function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

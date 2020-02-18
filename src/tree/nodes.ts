@@ -7,7 +7,7 @@ import {
   EXTENSION_NAME,
   TEMP_GIST_ID
 } from "../constants";
-import { FollowedUser, Gist, GistFile } from "../store";
+import { FollowedUser, Gist, GistFile, GistShowcaseCategory } from "../store";
 import {
   decodeDirectoryName,
   fileNameToUri,
@@ -103,7 +103,7 @@ export class NewPlaygroundNode extends TreeNode {
 
 export class LoadingNode extends TreeNode {
   constructor() {
-    super("Loading Gists...");
+    super("Loading gists...");
   }
 }
 
@@ -287,5 +287,18 @@ export class FollowedUserGistNode extends GistNode {
 
     this.tooltip = this.getTooltip();
     this.contextValue = this.getContextValue("followedUser.gist");
+  }
+}
+
+export class LoadingShowcaseNode extends TreeNode {
+  constructor() {
+    super("Loading showcase...");
+  }
+}
+
+export class GistShowcaseCategoryNode extends TreeNode {
+  constructor(public category: GistShowcaseCategory) {
+    super(category.title, TreeItemCollapsibleState.Expanded);
+    this.contextValue = "showcase.category";
   }
 }

@@ -22,6 +22,17 @@ export interface GistRevisionStatus {
   deletions: number;
 }
 
+export interface GistShowcaseCategory {
+  title: string;
+  gists: Gist[];
+  isLoading: boolean;
+}
+
+export interface GistShowcase {
+  categories: GistShowcaseCategory[];
+  isLoading: boolean;
+}
+
 export interface GistRevision {
   user: User;
   version: string;
@@ -74,6 +85,8 @@ export interface Store {
   login: string;
   sortOrder: SortOrder;
   starredGists: Gist[];
+  showcaseEnabled: boolean;
+  showcase: GistShowcase;
 }
 
 export const store: Store = observable({
@@ -84,5 +97,10 @@ export const store: Store = observable({
   isSignedIn: false,
   login: "",
   sortOrder: SortOrder.updatedTime,
-  starredGists: []
+  starredGists: [],
+  showcaseEnabled: false,
+  showcase: {
+    categories: [],
+    isLoading: false
+  }
 });

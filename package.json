@@ -216,6 +216,11 @@
             ]
           },
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
+        },
+        "gistpad.showcaseUrl": {
+          "default": "https://gist.githubusercontent.com/lostintangent/84ea4ea789832b452776341e65c8c066/raw/showcase.json",
+          "type": "string",
+          "description": "Specifies the URL of the showcase to display gists from."
         }
       }
     },
@@ -456,6 +461,15 @@
       {
         "command": "gistpad.refreshGists",
         "title": "Refresh Gists",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/refresh.svg",
+          "light": "images/light/refresh.svg"
+        }
+      },
+      {
+        "command": "gistpad.refreshShowcase",
+        "title": "Refresh Showcase",
         "category": "GistPad",
         "icon": {
           "dark": "images/dark/refresh.svg",
@@ -794,6 +808,11 @@
           "command": "gistpad.refreshGists",
           "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn",
           "group": "navigation@4"
+        },
+        {
+          "command": "gistpad.refreshShowcase",
+          "when": "view == gistpad.showcase",
+          "group": "navigation@1"
         }
       ],
       "view/item/context": [
@@ -1103,8 +1122,13 @@
           "name": "Gists"
         },
         {
+          "id": "gistpad.showcase",
+          "name": "Showcase"
+        },
+        {
           "id": "gistpad.activeGist",
-          "name": "Active Gist"
+          "name": "Active Gist",
+          "when": "gistpad:inPlayground"
         }
       ]
     },
@@ -1116,6 +1140,10 @@
       {
         "fileMatch": "gallery.json",
         "url": "https://gist.githubusercontent.com/lostintangent/091c0eec1f6443b526566d1cd3a85294/raw/schema.json"
+      },
+      {
+        "fileMatch": "showcase.json",
+        "url": "https://gist.githubusercontent.com/lostintangent/5290f684afc38cfe713246226c1d0f72/raw/schema.json"
       }
     ],
     "languages": [

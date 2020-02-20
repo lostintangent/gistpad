@@ -543,6 +543,12 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.submitShowcaseEntry",
+        "title": "Submit Entry",
+        "category": "GistPad",
+        "icon": "$(megaphone)"
+      },
+      {
         "command": "gistpad.unfollowUser",
         "title": "Unfollow User",
         "category": "GistPad"
@@ -810,9 +816,14 @@
           "group": "navigation@4"
         },
         {
-          "command": "gistpad.refreshShowcase",
+          "command": "gistpad.submitShowcaseEntry",
           "when": "view == gistpad.showcase",
           "group": "navigation@1"
+        },
+        {
+          "command": "gistpad.refreshShowcase",
+          "when": "view == gistpad.showcase",
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [

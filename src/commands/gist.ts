@@ -509,6 +509,12 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_NAME}.submitShowcaseEntry`, () => {
+      env.openExternal(Uri.parse("https://aka.ms/gistpad-showcase"));
+    })
+  );
+
+  context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.sortGistsAlphabetically`,
       () => {

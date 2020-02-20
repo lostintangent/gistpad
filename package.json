@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.53",
+  "version": "0.0.54",
   "extensionKind": [
     "ui",
     "web",
@@ -218,7 +218,7 @@
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
         },
         "gistpad.showcaseUrl": {
-          "default": "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad/manifests/showcase.json",
+          "default": "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad@master/manifests/showcase.json",
           "type": "string",
           "description": "Specifies the URL of the showcase to display gists from."
         }

@@ -1,3 +1,7 @@
+## v0.0.55 (02/20/2020)
+
+- Added a command to submit showcase entries from the `Showcase` view
+
 ## v0.0.54 (02/18/2020)
 
 - Introduced the new `Showcase` view in the GistPad tab.

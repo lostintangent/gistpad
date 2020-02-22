@@ -110,7 +110,9 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
   private async getFileFromUri(uri: Uri): Promise<GistFile> {
     const { gistId, file } = getGistDetailsFromUri(uri);
-    let gist = this.store.gists.find((gist) => gist.id === gistId);
+    let gist = this.store.gists
+      .concat(this.store.starredGists)
+      .find((gist) => gist.id === gistId);
 
     if (!gist) {
       gist = await getGist(gistId);

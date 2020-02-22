@@ -12,7 +12,7 @@ import {
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { log } from "../logger";
-import { Gist, GistFile, SortOrder, store } from "../store";
+import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
   changeDescription,
   deleteGist,
@@ -526,6 +526,18 @@ export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_NAME}.sortGistsByUpdatedTime`, () => {
       store.sortOrder = SortOrder.updatedTime;
+    })
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_NAME}.groupGists`, () => {
+      store.groupType = GroupType.type;
+    })
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_NAME}.ungroupGists`, () => {
+      store.groupType = GroupType.none;
     })
   );
 

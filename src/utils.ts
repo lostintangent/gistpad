@@ -19,6 +19,7 @@ import {
 } from "./constants";
 import { Gist, SortOrder, store, Store } from "./store";
 import { getGist } from "./store/actions";
+import { getViewerCommand } from "./viewerProvider";
 
 export function byteArrayToString(value: Uint8Array) {
   return new TextDecoder().decode(value);
@@ -138,16 +139,7 @@ export async function openGistFiles(id: string) {
         .reverse()
         .forEach(async ([_, file], index) => {
           const uri = decodeDirectoryUri(fileNameToUri(id, file.filename!));
-
-          //if (!isNew && path.extname(file.filename!) === ".md") {
-          //  commands.executeCommand("markdown.showPreview", uri);
-          //} else {
-          // TODO: Improve the view column arrangement for more than 2 files
-          await window.showTextDocument(uri, {
-            preview: false,
-            viewColumn: ViewColumn.Beside
-          });
-          //}
+          openGistFile(uri);
         });
     }
   } catch (e) {
@@ -158,25 +150,11 @@ export async function openGistFiles(id: string) {
 }
 
 export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
-  const extension = path
-    .extname(uri.toString())
-    .toLocaleLowerCase()
-    .substr(1);
-
-  let commandName = "vscode.open";
-
-  if (allowPreview) {
-    switch (extension) {
-      case "md":
-        commandName = "markdown.showPreview";
-        break;
-      //case "ipynb":
-      //  commandName = "python.datascience.opennotebook";
-      //  break;
-    }
-  }
-
-  commands.executeCommand(commandName, uri);
+  const commandName = getViewerCommand(uri) || "vscode.open";
+  commands.executeCommand(commandName, uri, {
+    preview: true,
+    viewColumn: ViewColumn.Active
+  });
 }
 
 export function encodeDirectoryName(filename: string) {
@@ -238,6 +216,26 @@ export function sortGists(gists: Gist[]) {
           Date.parse(a.updated_at || a.created_at)
       );
   }
+}
+
+export function updateGistTypes(gist: Gist | Gist[]) {
+  const gists = Array.isArray(gist) ? gist : [gist];
+  return gists.map((gist) => {
+    if (isPlaygroundTemplateGist(gist)) {
+      gist.type = "playground-template";
+    } else if (isTutorialGist(gist)) {
+      gist.type = "tutorial";
+    } else if (isPlaygroundGist(gist)) {
+      gist.type = "playground";
+    } else if (isNotebookGist(gist)) {
+      gist.type = "notebook";
+    } else if (isDocumentGist(gist)) {
+      gist.type = "doc";
+    } else {
+      gist.type = "code-snippet";
+    }
+    return gist;
+  });
 }
 
 export function stringToByteArray(value: string) {
@@ -309,6 +307,21 @@ export function isPlaygroundTemplateGist(gist: Gist) {
     if (content.template) {
       return true;
     }
+  } catch {
+    return false;
+  }
+}
+
+export function isTutorialGist(gist: Gist) {
+  const playgroundJson = gist.files[PLAYGROUND_FILE];
+
+  if (!playgroundJson) {
+    return false;
+  }
+
+  try {
+    const content = JSON.parse(playgroundJson.content || "{}");
+    return content.tutorial;
   } catch {
     return false;
   }

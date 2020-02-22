@@ -6,11 +6,12 @@ import {
   FileType,
   TreeDataProvider,
   TreeItem,
+  TreeItemCollapsibleState,
   window,
   workspace
 } from "vscode";
 import { EXTENSION_NAME, TEMP_GIST_ID } from "../constants";
-import { Gist, Store } from "../store";
+import { Gist, GroupType, Store } from "../store";
 import { encodeDirectoryName, fileNameToUri, sortGists } from "../utils";
 import {
   CreateNewGistNode,
@@ -18,6 +19,7 @@ import {
   FollowedUserGistsNode,
   GistDirectoryNode,
   GistFileNode,
+  GistGroupNode,
   GistNode,
   GistsNode,
   LoadingNode,
@@ -60,11 +62,12 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     reaction(
       () => [
         store.gists.map((gist) => [gist.description, gist.updated_at]),
-        store.starredGists.length,
+        store.starredGists.map((gist) => [gist.description, gist.updated_at]),
         store.followedUsers.map((user) => user.isLoading),
         store.isLoading,
         store.isSignedIn,
-        store.sortOrder
+        store.sortOrder,
+        store.groupType
       ],
       () => {
         this._onDidChangeTreeData.fire();
@@ -74,6 +77,44 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 
   getTreeItem(node: TreeNode): TreeItem {
     return node;
+  }
+
+  groupGists(
+    gists: Gist[],
+    nodeConstructor: new (
+      gist: Gist,
+      extensionPath: string,
+      showIcon?: boolean
+    ) => GistNode,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded
+  ) {
+    if (this.store.groupType !== GroupType.none) {
+      const types = gists
+        .reduce((acc, gist) => {
+          // @ts-ignore
+          if (!acc.includes(gist.type)) {
+            // @ts-ignore
+            acc.push(gist.type);
+          }
+          return acc;
+        }, [])
+        .sort();
+
+      return types.map(
+        (type) =>
+          new GistGroupNode(
+            type,
+            sortGists(gists.filter((gist) => gist.type === type)),
+            nodeConstructor,
+            this.extensionPath,
+            collapsibleState
+          )
+      );
+    } else {
+      return sortGists(gists)
+        .filter((gist) => gist.id !== TEMP_GIST_ID)
+        .map((gist) => new nodeConstructor(gist, this.extensionPath));
+    }
   }
 
   async getChildren(element?: TreeNode): Promise<TreeNode[] | undefined> {
@@ -114,18 +155,24 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       if (this.store.gists.length === 0) {
         return [new CreateNewGistNode()];
       } else {
-        return sortGists(this.store.gists)
-          .filter((gist) => gist.id !== TEMP_GIST_ID)
-          .map((gist) => new GistNode(gist, this.extensionPath));
+        return this.groupGists(this.store.gists, GistNode);
       }
     } else if (element instanceof StarredGistsNode) {
       if (this.store.starredGists.length === 0) {
         return [new NoStarredGistsNode()];
       } else {
-        return sortGists(this.store.starredGists).map(
-          (gist) => new StarredGistNode(gist, this.extensionPath)
+        return this.groupGists(
+          this.store.starredGists,
+          StarredGistNode,
+          TreeItemCollapsibleState.Collapsed
         );
       }
+    } else if (element instanceof GistGroupNode) {
+      const showIcons = this.store.groupType === GroupType.none;
+      return element.gists.map(
+        (gist) =>
+          new element.nodeConstructor(gist, this.extensionPath, showIcons)
+      );
     } else if (element instanceof GistNode) {
       return getGistFiles(element.gist);
     } else if (element instanceof StarredGistNode) {
@@ -136,8 +183,10 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       } else if (element.user.gists.length === 0) {
         return [new NoUserGistsNode()];
       } else {
-        return sortGists(element.user.gists).map(
-          (gist) => new FollowedUserGistNode(gist, this.extensionPath)
+        return this.groupGists(
+          element.user.gists,
+          FollowedUserGistNode,
+          TreeItemCollapsibleState.Collapsed
         );
       }
     } else if (element instanceof FollowedUserGistNode) {

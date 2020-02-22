@@ -60,11 +60,13 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         ? new GistNode(
             store.activeGist,
             this.extensionPath,
+            true,
             TreeItemCollapsibleState.Expanded
           )
         : new FollowedUserGistNode(
             store.activeGist,
             this.extensionPath,
+            true,
             TreeItemCollapsibleState.Expanded
           );
 

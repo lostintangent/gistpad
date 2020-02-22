@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.55",
+  "version": "0.0.56",
   "extensionKind": [
     "ui",
     "web",
@@ -515,6 +515,18 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.groupGists",
+        "title": "Group Gists by Type",
+        "category": "GistPad",
+        "icon": "$(group-by-ref-type)"
+      },
+      {
+        "command": "gistpad.ungroupGists",
+        "title": "Ungroup Gists",
+        "category": "GistPad",
+        "icon": "$(ungroup-by-ref-type)"
+      },
+      {
         "command": "gistpad.sortGistsAlphabetically",
         "title": "Sort Gists Alphabetically",
         "category": "GistPad",
@@ -713,6 +725,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.groupGists",
+          "when": "false"
+        },
+        {
           "command": "gistpad.starGist",
           "when": "false"
         },
@@ -781,6 +797,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.ungroupGists",
+          "when": "false"
+        },
+        {
           "command": "gistpad.unstarGist",
           "when": "false"
         },
@@ -811,9 +831,19 @@
           "group": "navigation@3"
         },
         {
+          "command": "gistpad.groupGists",
+          "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn && gistpad:groupType == none",
+          "group": "navigation@4"
+        },
+        {
+          "command": "gistpad.ungroupGists",
+          "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn && gistpad:groupType != none",
+          "group": "navigation@4"
+        },
+        {
           "command": "gistpad.refreshGists",
           "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn",
-          "group": "navigation@4"
+          "group": "navigation@5"
         },
         {
           "command": "gistpad.submitShowcaseEntry",
@@ -1214,6 +1244,7 @@
     "markdown-it": "^10.0.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
+    "pluralize": "^8.0.0",
     "pug": "^2.0.4",
     "rxjs": "^6.5.4",
     "sass": "^1.24.0",

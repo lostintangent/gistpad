@@ -40,6 +40,14 @@ export interface GistRevision {
   change_status: GistRevisionStatus;
 }
 
+export type GistType =
+  | "code-snippet"
+  | "doc"
+  | "playground"
+  | "playground-template"
+  | "notebook"
+  | "tutorial";
+
 export interface Gist {
   id: string;
   files: { [fileName: string]: GistFile };
@@ -53,6 +61,7 @@ export interface Gist {
   updated_at: string;
   history: GistRevision[];
   git_pull_url: string;
+  type?: GistType;
 }
 
 export interface GistComment {
@@ -76,6 +85,11 @@ export enum SortOrder {
   updatedTime = "updatedTime"
 }
 
+export enum GroupType {
+  none = "none",
+  type = "type"
+}
+
 export interface Store {
   activeGist: Gist | null;
   followedUsers: FollowedUser[];
@@ -84,6 +98,7 @@ export interface Store {
   isSignedIn: boolean;
   login: string;
   sortOrder: SortOrder;
+  groupType: GroupType;
   starredGists: Gist[];
   showcaseEnabled: boolean;
   showcase: GistShowcase;
@@ -97,6 +112,7 @@ export const store: Store = observable({
   isSignedIn: false,
   login: "",
   sortOrder: SortOrder.updatedTime,
+  groupType: GroupType.none,
   starredGists: [],
   showcaseEnabled: false,
   showcase: {

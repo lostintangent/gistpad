@@ -27,6 +27,7 @@ import {
   hasTempGist,
   openGistAsWorkspace,
   stringToByteArray,
+  updateGistTypes,
   withProgress
 } from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
@@ -389,10 +390,14 @@ const EditorLayouts = {
 };
 
 function loadPlaygroundManifests() {
-  store.gists.concat(store.starredGists).forEach((gist) => {
+  store.gists.concat(store.starredGists).forEach(async (gist) => {
     const manifest = gist.files[PLAYGROUND_FILE];
     if (manifest) {
-      vscode.workspace.fs.readFile(fileNameToUri(gist.id, PLAYGROUND_FILE));
+      await vscode.workspace.fs.readFile(
+        fileNameToUri(gist.id, PLAYGROUND_FILE)
+      );
+
+      updateGistTypes(gist);
     }
   });
 }

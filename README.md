@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly used config, programming-related notes/documentation, and [interactive samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code 🚀
+GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly used config/scripts, programming-related notes/documentation, and [interactive samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -20,7 +20,7 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
 
    > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_.
 
-1. Create new gist by clicking the `+` icon in the `Gists` toolbar and specifying the files to seed it with (including support for [directories](#files-and-directories)!). Additionally, you can create gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
+1. Create a new gist by clicking the `+` icon in the `Gists` toolbar and specifying the files to seed it with (including support for [directories](#files-and-directories)!). Additionally, you can create gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
 
    <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
@@ -33,6 +33,27 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
    <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
 1. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Playground` (or `New Secret Playground`. This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
+
+## Sorting and Grouping
+
+By default, the `Gists` tree sorts gist by their update-time, which allows you to focus on the most recently used gists. However, if you'd like to sort your gists alphabetically, you can click the sort toggle button on the `Gists` tree's toolbar.
+
+<img width="200px" src="https://user-images.githubusercontent.com/116461/75098896-65276480-5570-11ea-9880-a76347a15f73.png" />
+
+Additionally, by default, your gists are displayed as a flat list. However, if you'd like to group them by type, you can click the group toggle button on the `Gists` tree's toolbar.
+
+ <img width="200px" src="https://user-images.githubusercontent.com/116461/75098775-3fe62680-556f-11ea-8253-3198b00837e1.png" />
+
+### Gist Types
+
+When grouping is enabled, gists are grouped into the following types:
+
+- **Docs** - Gists that are composed of nothing but `.txt` and `.md` files
+- **Notebooks** - Gists that are compose of nothing by Jupyter Notebook files (`.ipynb`)
+- **Playgrounds** - Gists that include either a `playground.json` file and/or an `index.html` file. Read more about playgrounds [here](#interactive-playgrounds).
+- **Playground Templates** - Playgrounds whose `playground.json` file sets the `template` property to `true`. Read more about playground templates [here](#user-templates).
+- **Tutorials** - Playgrounds whose `playground.json` file specifies a `tutorial` property. Read more about tutorials [here](#tutorials).
+- **Code Snippets** - Gists that don't match any of the above more-specific types.
 
 ## Files and Directories
 

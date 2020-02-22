@@ -1,10 +1,11 @@
 import { reaction } from "mobx";
 import { commands, ExtensionContext } from "vscode";
-import { SortOrder, store } from ".";
+import { GroupType, SortOrder, store } from ".";
 
 const TUTORIAL_KEY = "gistpad.tutorials";
 const FOLLOW_KEY = "gistpad.followedUsers";
 const SORT_ORDER_KEY = "gistpad:sortOrder";
+const GROUP_TYPE_KEY = "gistpad:groupType";
 
 export interface IStorage {
   followedUsers: string[];
@@ -15,6 +16,11 @@ export interface IStorage {
 function updateSortOrder(context: ExtensionContext, sortOrder: SortOrder) {
   context.globalState.update(SORT_ORDER_KEY, sortOrder);
   commands.executeCommand("setContext", SORT_ORDER_KEY, sortOrder);
+}
+
+function updateGroupType(context: ExtensionContext, groupType: GroupType) {
+  context.globalState.update(GROUP_TYPE_KEY, groupType);
+  commands.executeCommand("setContext", GROUP_TYPE_KEY, groupType);
 }
 
 type TutorialStatus = [string, number];
@@ -66,5 +72,15 @@ export function initializeStorage(context: ExtensionContext) {
   reaction(
     () => [store.sortOrder],
     () => updateSortOrder(context, store.sortOrder)
+  );
+
+  const groupType = context.globalState.get(GROUP_TYPE_KEY, GroupType.none);
+
+  store.groupType = groupType;
+  commands.executeCommand("setContext", GROUP_TYPE_KEY, groupType);
+
+  reaction(
+    () => [store.groupType],
+    () => updateGroupType(context, store.groupType)
   );
 }

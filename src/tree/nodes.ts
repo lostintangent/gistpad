@@ -7,17 +7,21 @@ import {
   EXTENSION_NAME,
   TEMP_GIST_ID
 } from "../constants";
-import { FollowedUser, Gist, GistFile, GistShowcaseCategory } from "../store";
+import {
+  FollowedUser,
+  Gist,
+  GistFile,
+  GistShowcaseCategory,
+  GistType
+} from "../store";
 import {
   decodeDirectoryName,
   fileNameToUri,
   getGistDescription,
   getGistLabel,
-  isDocumentGist,
   isNotebookGist,
   isOwnedGist,
-  isPlaygroundGist,
-  isPlaygroundTemplateGist
+  isPlaygroundGist
 } from "../utils";
 
 export abstract class TreeNode extends TreeItem {
@@ -29,11 +33,13 @@ export abstract class TreeNode extends TreeItem {
   }
 
   private getIconPath = (
-    gist: Gist,
-    iconName: string,
+    gistType: GistType,
+    isPublic: boolean,
     extensionPath: string
   ) => {
-    if (!gist.public) {
+    let iconName = gistType;
+
+    if (!isPublic) {
       iconName += "-secret";
     }
 
@@ -43,28 +49,16 @@ export abstract class TreeNode extends TreeItem {
     };
   };
 
-  public getGistTypeIcon = (gist: Gist, extensionPath: string) => {
+  public getGistTypeIcon = (
+    gistType: GistType,
+    isPublic: boolean,
+    extensionPath: string
+  ) => {
     if (!config.get("treeIcons")) {
       return;
     }
 
-    if (isPlaygroundTemplateGist(gist)) {
-      return this.getIconPath(gist, "playground-template", extensionPath);
-    }
-
-    if (isPlaygroundGist(gist)) {
-      return this.getIconPath(gist, "playground", extensionPath);
-    }
-
-    if (isNotebookGist(gist)) {
-      return this.getIconPath(gist, "jupyter", extensionPath);
-    }
-
-    if (isDocumentGist(gist)) {
-      return this.getIconPath(gist, "blog-post", extensionPath);
-    }
-
-    return this.getIconPath(gist, "gist", extensionPath);
+    return this.getIconPath(gistType, isPublic, extensionPath);
   };
 }
 
@@ -132,12 +126,20 @@ export class GistNode extends TreeNode {
   constructor(
     public gist: Gist,
     extensionPath: string,
+    showIcon: boolean = true,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
     super(getGistLabel(gist), collapsibleState);
 
     this.description = getGistDescription(gist, !config.get("treeIcons"));
-    this.iconPath = this.getGistTypeIcon(gist, extensionPath);
+
+    if (showIcon) {
+      this.iconPath = this.getGistTypeIcon(
+        gist.type!,
+        gist.public,
+        extensionPath
+      );
+    }
 
     this.tooltip = this.getTooltip(
       `Type: ${gist.public ? "Public" : "Secret"}`
@@ -244,8 +246,12 @@ export class NoStarredGistsNode extends TreeNode {
 }
 
 export class StarredGistNode extends GistNode {
-  constructor(public gist: Gist, extensionPath: string) {
-    super(gist, extensionPath);
+  constructor(
+    public gist: Gist,
+    extensionPath: string,
+    showIcon: boolean = true
+  ) {
+    super(gist, extensionPath, showIcon);
 
     const owner = gist.owner ? gist.owner.login : "Anonymous";
     this.tooltip = this.getTooltip(`Owner: ${owner}`);
@@ -281,9 +287,10 @@ export class FollowedUserGistNode extends GistNode {
   constructor(
     public gist: Gist,
     extensionPath: string,
+    showIcon: boolean = true,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
-    super(gist, extensionPath, collapsibleState);
+    super(gist, extensionPath, showIcon, collapsibleState);
 
     this.tooltip = this.getTooltip();
     this.contextValue = this.getContextValue("followedUser.gist");
@@ -293,6 +300,28 @@ export class FollowedUserGistNode extends GistNode {
 export class LoadingShowcaseNode extends TreeNode {
   constructor() {
     super("Loading showcase...");
+  }
+}
+
+const { title } = require("case");
+const pluralize = require("pluralize");
+
+export class GistGroupNode extends TreeNode {
+  constructor(
+    public type: GistType,
+    public gists: Gist[],
+    public nodeConstructor: new (
+      gist: Gist,
+      extensionPath: string,
+      showIcon?: boolean
+    ) => GistNode,
+    extensionPath: string,
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded
+  ) {
+    super(pluralize(title(type)), collapsibleState);
+    this.contextValue = "gistType";
+    this.description = gists.length.toString();
+    this.iconPath = this.getGistTypeIcon(type, true, extensionPath);
   }
 }
 

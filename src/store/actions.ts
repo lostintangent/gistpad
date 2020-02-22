@@ -18,7 +18,8 @@ import {
   fileNameToUri,
   isTempGistId,
   openGistFiles,
-  sortGists
+  sortGists,
+  updateGistTypes
 } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
@@ -168,6 +169,8 @@ export async function forkGist(id: string) {
   const api = await getApi();
 
   const gist = await api.fork(id);
+  updateGistTypes(gist.body);
+
   store.gists.unshift(gist.body);
 
   openGistFiles(gist.body.id);
@@ -254,6 +257,8 @@ export async function newGist(
     gist = rawGist.body;
   }
 
+  updateGistTypes(gist);
+
   store.gists.unshift(gist);
 
   if (openAfterCreation) {
@@ -267,8 +272,8 @@ export async function refreshGists() {
   store.isLoading = true;
 
   await runInAction(async () => {
-    store.gists = await listGists();
-    store.starredGists = await starredGists();
+    store.gists = updateGistTypes(await listGists());
+    store.starredGists = updateGistTypes(await starredGists());
 
     if (storage.followedUsers.length > 0) {
       store.followedUsers = storage.followedUsers.map((username) => ({
@@ -277,11 +282,14 @@ export async function refreshGists() {
         isLoading: true
       }));
     }
+
     store.isLoading = false;
     if (storage.followedUsers.length > 0) {
       for (const followedUser of store.followedUsers) {
         followedUser.avatarUrl = await getUserAvatar(followedUser.username);
-        followedUser.gists = await listUserGists(followedUser.username);
+        followedUser.gists = updateGistTypes(
+          await listUserGists(followedUser.username)
+        );
         followedUser.isLoading = false;
       }
     }
@@ -306,7 +314,7 @@ export async function refreshShowcase() {
     store.showcase.isLoading = false;
     for (const category of store.showcase.categories) {
       // @ts-ignore
-      category.gists = await getGists(category._gists);
+      category.gists = updateGistTypes(await getGists(category._gists));
       category.isLoading = false;
     }
   });

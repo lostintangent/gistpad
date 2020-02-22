@@ -1,3 +1,11 @@
+## v0.0.56 (02/20/2020)
+
+- Added the ability to group gists by type (e.g. docs, code snippets, playgrounds)
+
+  <img width="200px" src="https://user-images.githubusercontent.com/116461/75098775-3fe62680-556f-11ea-8253-3198b00837e1.png" />
+
+- Added the ability for extensions to contribute custom viewers
+
 ## v0.0.55 (02/20/2020)
 
 - Added a command to submit showcase entries from the `Showcase` view

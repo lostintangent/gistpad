@@ -320,7 +320,7 @@ export class GistGroupNode extends TreeNode {
       showIcon?: boolean
     ) => GistNode,
     extensionPath: string,
-    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
     super(label, collapsibleState);
 

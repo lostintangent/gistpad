@@ -86,7 +86,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       extensionPath: string,
       showIcon?: boolean
     ) => GistNode,
-    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded
+    collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
     if (this.store.groupType != GroupType.none) {
       const types = gists.map((gist) => gist.type);

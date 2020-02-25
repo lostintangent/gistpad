@@ -4,6 +4,7 @@
       "title": "Playgrounds",
       "gists": [
         "4366463886437d01568a04a6885522f1",
+        "f375af6bd8444c728b803f9d69cb58f7",
         "ecdf56c499e809ad671c4d85d5c2b90a",
         "9bd7c0d391237874fcc9c8c216c86c4d"
       ]
@@ -17,13 +18,15 @@
       "gists": ["6459889", "1341281", "ded69192b8269a78d2d97e24211e64e0"]
     },
     {
-      "title": "Code Samples",
-      "gists": ["c4d472ce3c61feec6376"]
+      "title": "Code Samples / Starters",
+      "gists": ["fvcproductions/1bfc2d4aecb01a834b46", "c4d472ce3c61feec6376"]
     },
     {
-      "title": "Reference Materials",
+      "title": "\"Cheat Sheets\"",
       "gists": [
-        "af774c9aed9b05cccab6fd6a4ebba172"
+        "af774c9aed9b05cccab6fd6a4ebba172",
+        "2961058",
+        "1bfc2d4aecb01a834b46"
       ]
     }
   ]

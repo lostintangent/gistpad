@@ -11,8 +11,10 @@ import {
   FollowedUser,
   Gist,
   GistFile,
+  GistGroupType,
   GistShowcaseCategory,
-  GistType
+  GistType,
+  GistTypes
 } from "../store";
 import {
   decodeDirectoryName,
@@ -33,7 +35,7 @@ export abstract class TreeNode extends TreeItem {
   }
 
   private getIconPath = (
-    gistType: GistType,
+    gistType: GistGroupType,
     isPublic: boolean,
     extensionPath: string
   ) => {
@@ -50,7 +52,7 @@ export abstract class TreeNode extends TreeItem {
   };
 
   public getGistTypeIcon = (
-    gistType: GistType,
+    gistType: GistGroupType,
     isPublic: boolean,
     extensionPath: string
   ) => {
@@ -129,7 +131,7 @@ export class GistNode extends TreeNode {
     showIcon: boolean = true,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
-    super(getGistLabel(gist), collapsibleState);
+    super(getGistLabel(gist, !showIcon), collapsibleState);
 
     this.description = getGistDescription(gist, !config.get("treeIcons"));
 
@@ -168,6 +170,11 @@ export class GistNode extends TreeNode {
     let tooltip = `Description: ${this.label}
 Updated: ${moment(this.gist.updated_at).calendar()}
 Created: ${moment(this.gist.created_at).calendar()}`;
+
+    if (this.gist.tags && this.gist.tags.length) {
+      tooltip += `
+Tags: ${this.gist.tags.join(", ")}`;
+    }
 
     if (suffix) {
       tooltip += `
@@ -303,12 +310,9 @@ export class LoadingShowcaseNode extends TreeNode {
   }
 }
 
-const { title } = require("case");
-const pluralize = require("pluralize");
-
 export class GistGroupNode extends TreeNode {
   constructor(
-    public type: GistType,
+    public label: string,
     public gists: Gist[],
     public nodeConstructor: new (
       gist: Gist,
@@ -318,10 +322,16 @@ export class GistGroupNode extends TreeNode {
     extensionPath: string,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded
   ) {
-    super(pluralize(title(type)), collapsibleState);
+    super(label, collapsibleState);
+
     this.contextValue = "gistType";
     this.description = gists.length.toString();
-    this.iconPath = this.getGistTypeIcon(type, true, extensionPath);
+
+    const iconType = GistTypes.includes(label as GistType)
+      ? (label as GistType)
+      : "tag";
+
+    this.iconPath = this.getGistTypeIcon(iconType, true, extensionPath);
   }
 }
 

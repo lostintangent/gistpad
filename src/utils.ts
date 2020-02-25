@@ -91,8 +91,20 @@ export function withProgress<T>(title: string, action: () => Promise<T>) {
   );
 }
 
-export function getGistLabel(gist: Gist): string {
-  return gist.description || `${Object.keys(gist.files)[0]}`;
+export function getGistLabel(gist: Gist, stripTags: boolean = false): string {
+  if (gist.description) {
+    let description = gist.description;
+
+    if (stripTags && gist.tags) {
+      gist.tags?.forEach(
+        (tag) => (description = description.replace(`#${tag}`, ""))
+      );
+    }
+
+    return description;
+  }
+
+  return `${Object.keys(gist.files)[0]}`;
 }
 
 export function getGistWorkspaceId() {
@@ -218,7 +230,11 @@ export function sortGists(gists: Gist[]) {
   }
 }
 
-export function updateGistTypes(gist: Gist | Gist[]) {
+// TODO Convert this into a computed property
+// on the gist object itself
+const TAG_PATTERN = /\s+#[\w\d-]+\b(?!\s+[^#])/gi;
+
+export function updateGistTags(gist: Gist | Gist[]) {
   const gists = Array.isArray(gist) ? gist : [gist];
   return gists.map((gist) => {
     if (isPlaygroundTemplateGist(gist)) {
@@ -234,6 +250,10 @@ export function updateGistTypes(gist: Gist | Gist[]) {
     } else {
       gist.type = "code-snippet";
     }
+
+    const tags = gist.description.match(TAG_PATTERN);
+    gist.tags = tags ? tags.map((tag) => tag.trim().substr(1)) : [];
+
     return gist;
   });
 }

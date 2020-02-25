@@ -27,7 +27,7 @@ import {
   hasTempGist,
   openGistAsWorkspace,
   stringToByteArray,
-  updateGistTypes,
+  updateGistTags,
   withProgress
 } from "../utils";
 import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
@@ -397,7 +397,7 @@ function loadPlaygroundManifests() {
         fileNameToUri(gist.id, PLAYGROUND_FILE)
       );
 
-      updateGistTypes(gist);
+      updateGistTags(gist);
     }
   });
 }

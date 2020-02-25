@@ -46,14 +46,18 @@ Additionally, by default, your gists are displayed as a flat list. However, if y
 
 ### Gist Types
 
-When grouping is enabled, gists are grouped into the following types:
+When grouping is enabled, gists are grouped into the following built-in types:
 
-- **Docs** - Gists that are composed of nothing but `.txt`, `.md`/`.markdown` or `.adoc` files
-- **Notebooks** - Gists that are compose of nothing by Jupyter Notebook files (`.ipynb`)
-- **Playgrounds** - Gists that include either a `playground.json` file and/or an `index.html` file. Read more about playgrounds [here](#interactive-playgrounds).
-- **Playground Templates** - Playgrounds whose `playground.json` file sets the `template` property to `true`. Read more about playground templates [here](#user-templates).
-- **Tutorials** - Playgrounds whose `playground.json` file specifies a `tutorial` property. Read more about tutorials [here](#tutorials).
-- **Code Snippets** - Gists that don't match any of the above more-specific types.
+- **docs** - Gists that are composed of nothing but `.txt`, `.md`/`.markdown` or `.adoc` files
+- **notebooks** - Gists that are compose of nothing by Jupyter Notebook files (`.ipynb`)
+- **playgrounds** - Gists that include either a `playground.json` file and/or an `index.html` file. Read more about playgrounds [here](#interactive-playgrounds).
+- **playground-emplates** - Playgrounds whose `playground.json` file sets the `template` property to `true`. Read more about playground templates [here](#user-templates).
+- **tutorials** - Playgrounds whose `playground.json` file specifies a `tutorial` property. Read more about tutorials [here](#tutorials).
+- **code-snippets** - Gists that don't match any of the above more-specific types.
+
+Additionally, if you want to group gists by your own custom types, then simply add a tag to the end of the gist's description, using the following format: `#tag` (or `#tag-name`). Then, when you enable grouping of gists, your gists will be grouped by both the aforementioned types, as well as your custom tag types. You can identify tag groups by the use of the `#` icon next to them.
+
+<img width="200px" src="https://user-images.githubusercontent.com/116461/75264671-9c7e5700-57a4-11ea-9bee-eb61cfb9d2f0.png" />
 
 ## Files and Directories
 

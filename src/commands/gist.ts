@@ -531,7 +531,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_NAME}.groupGists`, () => {
-      store.groupType = GroupType.type;
+      store.groupType = GroupType.tagAndType;
     })
   );
 

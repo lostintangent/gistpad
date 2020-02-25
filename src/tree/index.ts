@@ -88,23 +88,21 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     ) => GistNode,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Expanded
   ) {
-    if (this.store.groupType !== GroupType.none) {
-      const types = gists
-        .reduce((acc, gist) => {
-          // @ts-ignore
-          if (!acc.includes(gist.type)) {
-            // @ts-ignore
-            acc.push(gist.type);
-          }
-          return acc;
-        }, [])
-        .sort();
+    if (this.store.groupType != GroupType.none) {
+      const types = gists.map((gist) => gist.type);
+      const tags = gists.flatMap((gist) => gist.tags);
 
-      return types.map(
-        (type) =>
+      const tagsAndTypes = new Set(tags.concat(types).sort());
+
+      return Array.from(tagsAndTypes).map(
+        (tag) =>
           new GistGroupNode(
-            type,
-            sortGists(gists.filter((gist) => gist.type === type)),
+            tag!,
+            sortGists(
+              gists.filter(
+                (gist) => gist.type === tag || gist.tags?.includes(tag!)
+              )
+            ),
             nodeConstructor,
             this.extensionPath,
             collapsibleState
@@ -168,7 +166,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         );
       }
     } else if (element instanceof GistGroupNode) {
-      const showIcons = this.store.groupType === GroupType.none;
+      const showIcons = this.store.groupType == GroupType.none;
       return element.gists.map(
         (gist) =>
           new element.nodeConstructor(gist, this.extensionPath, showIcons)

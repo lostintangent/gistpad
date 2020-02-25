@@ -1,3 +1,9 @@
+## v0.0.57 (0/25/2020)
+
+- Introduced the ability to add "tags" to a gist, and then group gists by those tags
+
+<img width="200px" src="https://user-images.githubusercontent.com/116461/75264671-9c7e5700-57a4-11ea-9bee-eb61cfb9d2f0.png" />
+
 ## v0.0.56 (02/20/2020)
 
 - Added the ability to group gists by type (e.g. docs, code snippets, playgrounds)

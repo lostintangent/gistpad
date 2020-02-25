@@ -40,6 +40,15 @@ export interface GistRevision {
   change_status: GistRevisionStatus;
 }
 
+export const GistTypes: GistType[] = [
+  "code-snippet",
+  "doc",
+  "playground",
+  "playground-template",
+  "notebook",
+  "tutorial"
+];
+
 export type GistType =
   | "code-snippet"
   | "doc"
@@ -47,6 +56,8 @@ export type GistType =
   | "playground-template"
   | "notebook"
   | "tutorial";
+
+export type GistGroupType = GistType | "tag";
 
 export interface Gist {
   id: string;
@@ -62,6 +73,7 @@ export interface Gist {
   history: GistRevision[];
   git_pull_url: string;
   type?: GistType;
+  tags?: string[];
 }
 
 export interface GistComment {
@@ -87,7 +99,8 @@ export enum SortOrder {
 
 export enum GroupType {
   none = "none",
-  type = "type"
+  tag = "tag",
+  tagAndType = "tagAndType"
 }
 
 export interface Store {

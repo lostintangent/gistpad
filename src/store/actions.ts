@@ -19,7 +19,7 @@ import {
   isTempGistId,
   openGistFiles,
   sortGists,
-  updateGistTypes
+  updateGistTags
 } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
@@ -96,6 +96,8 @@ export async function changeDescription(id: string, description: string) {
     gist.description = body.description;
     gist.updated_at = body.updated_at;
   });
+
+  updateGistTags(gist);
 }
 
 export async function createGistComment(
@@ -169,7 +171,7 @@ export async function forkGist(id: string) {
   const api = await getApi();
 
   const gist = await api.fork(id);
-  updateGistTypes(gist.body);
+  updateGistTags(gist.body);
 
   store.gists.unshift(gist.body);
 
@@ -257,7 +259,7 @@ export async function newGist(
     gist = rawGist.body;
   }
 
-  updateGistTypes(gist);
+  updateGistTags(gist);
 
   store.gists.unshift(gist);
 
@@ -272,8 +274,8 @@ export async function refreshGists() {
   store.isLoading = true;
 
   await runInAction(async () => {
-    store.gists = updateGistTypes(await listGists());
-    store.starredGists = updateGistTypes(await starredGists());
+    store.gists = updateGistTags(await listGists());
+    store.starredGists = updateGistTags(await starredGists());
 
     if (storage.followedUsers.length > 0) {
       store.followedUsers = storage.followedUsers.map((username) => ({
@@ -287,7 +289,7 @@ export async function refreshGists() {
     if (storage.followedUsers.length > 0) {
       for (const followedUser of store.followedUsers) {
         followedUser.avatarUrl = await getUserAvatar(followedUser.username);
-        followedUser.gists = updateGistTypes(
+        followedUser.gists = updateGistTags(
           await listUserGists(followedUser.username)
         );
         followedUser.isLoading = false;
@@ -314,7 +316,7 @@ export async function refreshShowcase() {
     store.showcase.isLoading = false;
     for (const category of store.showcase.categories) {
       // @ts-ignore
-      category.gists = updateGistTypes(await getGists(category._gists));
+      category.gists = updateGistTags(await getGists(category._gists));
       category.isLoading = false;
     }
   });

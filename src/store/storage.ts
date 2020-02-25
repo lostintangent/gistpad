@@ -75,7 +75,6 @@ export function initializeStorage(context: ExtensionContext) {
   );
 
   const groupType = context.globalState.get(GROUP_TYPE_KEY, GroupType.none);
-
   store.groupType = groupType;
   commands.executeCommand("setContext", GROUP_TYPE_KEY, groupType);
 

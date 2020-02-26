@@ -251,7 +251,7 @@ export function updateGistTags(gist: Gist | Gist[]) {
       gist.type = "code-snippet";
     }
 
-    const tags = gist.description.match(TAG_PATTERN);
+    const tags = gist.description ? gist.description.match(TAG_PATTERN) : null;
     gist.tags = tags ? tags.map((tag) => tag.trim().substr(1)) : [];
 
     return gist;

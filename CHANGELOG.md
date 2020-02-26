@@ -1,4 +1,8 @@
-## v0.0.57 (0/25/2020)
+## v0.0.58 (0/26/2020)
+
+- Fixed a bug where gists without descriptions weren't loading properly
+
+## v0.0.57 (02/25/2020)
 
 - Introduced the ability to add "tags" to a gist, and then group gists by those tags
 

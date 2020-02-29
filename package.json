@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.58",
+  "version": "0.0.59",
   "extensionKind": [
     "ui",
     "web",
@@ -332,6 +332,11 @@
       {
         "command": "gistpad.exportGistToCodePen",
         "title": "Export to CodePen",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.exportToRepo",
+        "title": "Export to Repository",
         "category": "GistPad"
       },
       {
@@ -725,6 +730,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.exportToRepo",
+          "when": "false"
+        },
+        {
           "command": "gistpad.groupGists",
           "when": "false"
         },
@@ -956,6 +965,11 @@
           "command": "gistpad.cloneRepository",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "copy@2"
+        },
+        {
+          "command": "gistpad.exportToRepo",
+          "when": "viewItem =~ /^gists.gist/",
+          "group": "copy@3"
         },
         {
           "command": "gistpad.addFile",

@@ -229,11 +229,13 @@ export function getScriptContent(
   manifest: PlaygroundManifest | undefined
 ): [string, boolean] | null {
   const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  const isModule = MODULE_EXTENSIONS.includes(extension);
+  let isModule = MODULE_EXTENSIONS.includes(extension);
 
   let content = document.getText();
   if (content.trim() === "") {
     return [content, isModule];
+  } else {
+    isModule = isModule || content.trim().startsWith("import ");
   }
 
   const includesJsx =

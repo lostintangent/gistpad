@@ -35,12 +35,21 @@ const STATE_SIGNED_OUT = "SignedOut";
 
 const SCOPE_HEADER = "x-oauth-scopes";
 const GIST_SCOPE = "gist";
+const REPO_SCOPE = "repo";
+
+export async function getApi(newToken?: string) {
+  const token = newToken || (await getToken());
+  const apiurl = config.get("apiUrl");
+
+  return new GitHub({ apiurl, token });
+}
 
 async function testToken(token: string) {
-  const apiurl = config.get("apiUrl");
-  const github = new GitHub({ apiurl, token });
+  const github = await getApi(token);
+
   try {
     const response = await github.get("/user");
+
     const scopeHeaderIndex = response.rawHeaders.findIndex(
       (item: string) => item.toLowerCase() === SCOPE_HEADER
     );
@@ -56,6 +65,8 @@ async function testToken(token: string) {
     }
 
     store.login = response.body.login;
+    store.canCreateRepos = tokenScopes.includes(REPO_SCOPE);
+
     return true;
   } catch (e) {
     log.info(`Token test failed: ${e.message}`);

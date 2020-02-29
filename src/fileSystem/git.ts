@@ -68,3 +68,14 @@ export async function renameFile(
 
   return refreshGist(gistId);
 }
+
+export async function exportToRepo(gistId: string, repoName: string) {
+  const [, repo] = await ensureRepo(gistId);
+
+  const token = await getToken();
+
+  const remote = `https://${store.login}:${token}@github.com/${store.login}/${repoName}.git`;
+
+  await repo.addRemote("export", remote);
+  await repo.push("export", "master");
+}

@@ -11,6 +11,7 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
+import { exportToRepo } from "../fileSystem/git";
 import { log } from "../logger";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
@@ -25,7 +26,12 @@ import {
   starredGists,
   unstarGist
 } from "../store/actions";
-import { ensureAuthenticated, isAuthenticated, signIn } from "../store/auth";
+import {
+  ensureAuthenticated,
+  getApi,
+  isAuthenticated,
+  signIn
+} from "../store/auth";
 import {
   FollowedUserGistNode,
   GistNode,
@@ -545,6 +551,42 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.starredGists`,
       starredGistsInternal
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.exportToRepo`,
+      async (node: GistNode) => {
+        if (!store.canCreateRepos) {
+          return window.showErrorMessage(
+            'The token you used to login doesn\'t include the "repo" scope.'
+          );
+        }
+
+        const repoName = await window.showInputBox({
+          prompt: "Specify the name of the repository to create",
+          value: node.gist.description || ""
+        });
+
+        if (!repoName) {
+          return;
+        }
+
+        withProgress("Exporting to repository...", async () => {
+          const api = await getApi();
+
+          const name = repoName.replace(/\s/g, "-").replace(/[^\w\d-_]/g, "");
+          const response = await api.post("/user/repos", {
+            name,
+            description: node.gist.description,
+            private: !node.gist.public
+          });
+
+          await exportToRepo(node.gist.id, name);
+          return env.openExternal(response.body.html_url);
+        });
+      }
     )
   );
 

@@ -115,6 +115,7 @@ export interface Store {
   starredGists: Gist[];
   showcaseEnabled: boolean;
   showcase: GistShowcase;
+  canCreateRepos: boolean;
 }
 
 export const store: Store = observable({
@@ -131,5 +132,6 @@ export const store: Store = observable({
   showcase: {
     categories: [],
     isLoading: false
-  }
+  },
+  canCreateRepos: false
 });

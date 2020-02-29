@@ -583,6 +583,13 @@ export async function registerGistCommands(context: ExtensionContext) {
             private: !node.gist.public
           });
 
+          await api.put(`/repos/${store.login}/${name}/topics`, {
+            names: ["gistpad"],
+            headers: {
+              accept: "application/vnd.github.mercy-preview+json"
+            }
+          });
+
           await exportToRepo(node.gist.id, name);
           return env.openExternal(response.body.html_url);
         });

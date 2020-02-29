@@ -95,7 +95,7 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). In that event, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
 
-> In order for this command to work, the token you authenticate with needs to also have the `repo` scope in order to work (in addition to the `gist` scope).
+In order to use this command, the token you authenticate with needs to also have the `repo` scope, in addition to the `gist` scope. If it doesn't, simply generate a new token with the appropriate scopes, run the `GistPad: Sign Out` command, and then sign in again with the updated token.
 
 ## Showcase
 

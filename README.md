@@ -51,7 +51,7 @@ When grouping is enabled, gists are grouped into the following built-in types:
 - **docs** - Gists that are composed of nothing but `.txt`, `.md`/`.markdown` or `.adoc` files
 - **notebooks** - Gists that are compose of nothing by Jupyter Notebook files (`.ipynb`)
 - **playgrounds** - Gists that include either a `playground.json` file and/or an `index.html` file. Read more about playgrounds [here](#interactive-playgrounds).
-- **playground-emplates** - Playgrounds whose `playground.json` file sets the `template` property to `true`. Read more about playground templates [here](#user-templates).
+- **playground-templates** - Playgrounds whose `playground.json` file sets the `template` property to `true`. Read more about playground templates [here](#user-templates).
 - **tutorials** - Playgrounds whose `playground.json` file specifies a `tutorial` property. Read more about tutorials [here](#tutorials).
 - **code-snippets** - Gists that don't match any of the above more-specific types.
 
@@ -90,6 +90,12 @@ By default, when you paste an image, it is uploaded to a directory called `image
 GitHub Gists already allows you to star other user's gists, and when you do that, those will appear in the `Gists` tree, underneath a `Starred Gists` node. However, if you want to follow a GitHub user, and easily browse all of their current and future gists (without having to star each one!), you can run the `GistPad: Follow User` command and specify their GitHub user name. Once you've done that, you'll see a new node in the `Gists` tree which displays all of their public gists, and allows you to open/fork/clone/star them just like any other gist.
 
 <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
+
+## Exporting to Repositories
+
+At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). In that event, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
+
+> In order for this command to work, the token you authenticate with needs to also have the `repo` scope in order to work (in addition to the `gist` scope).
 
 ## Showcase
 

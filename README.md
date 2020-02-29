@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly used config/scripts, programming-related notes/documentation, and [interactive samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code 🚀
+GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly used config/scripts, programming-related notes/documentation, and [interactive samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code. When needed, you can export gists to GitHub repositories, CodePen, and other services, so that you can start with simple code samples and then seamlessly grow them over time. 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 

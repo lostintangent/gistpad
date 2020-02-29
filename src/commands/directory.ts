@@ -128,6 +128,34 @@ export function registerDirectoryCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
+      `${EXTENSION_NAME}.duplicateDirectory`,
+      async (node: GistDirectoryNode) => {
+        await ensureAuthenticated();
+
+        const uris = getDirectoryFiles([node]);
+        const duplicateDirectoryName = `${node.directory} - Copy`;
+
+        await withProgress(`Duplicating directory...`, () =>
+          Promise.all(
+            uris.map(async (uri) => {
+              const contents = await workspace.fs.readFile(uri);
+              const duplicateFileName = `${duplicateDirectoryName}${DIRECTORY_SEPERATOR}${path.basename(
+                uri.path
+              )}`;
+
+              return workspace.fs.writeFile(
+                fileNameToUri(node.gist.id, duplicateFileName),
+                contents
+              );
+            })
+          )
+        );
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
       `${EXTENSION_NAME}.renameDirectory`,
       async (node: GistDirectoryNode) => {
         await ensureAuthenticated();
@@ -148,7 +176,6 @@ export function registerDirectoryCommands(context: ExtensionContext) {
               const newFileName = `${newDirectoryName}${DIRECTORY_SEPERATOR}${fileName}`;
               const newUri = fileNameToUri(node.gist.id, newFileName);
 
-              console.log("GP Rename: %o %o", uri, newUri);
               await workspace.fs.rename(uri, newUri);
             }
           });

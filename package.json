@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.59",
+  "version": "0.0.60",
   "extensionKind": [
     "ui",
     "web",
@@ -218,7 +218,7 @@
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
         },
         "gistpad.showcaseUrl": {
-          "default": "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad@master/manifests/showcase.json",
+          "default": "https://aka.ms/gistpad-showcase",
           "type": "string",
           "description": "Specifies the URL of the showcase to display gists from."
         }
@@ -317,6 +317,16 @@
       {
         "command": "gistpad.deleteGistComment",
         "title": "Delete Comment",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.duplicateDirectory",
+        "title": "Duplicate Directory",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.duplicateFile",
+        "title": "Duplicate File",
         "category": "GistPad"
       },
       {
@@ -722,6 +732,14 @@
           "when": "false"
         },
         {
+          "command": "gistpad.duplicateFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.duplicateDirectory",
+          "when": "false"
+        },
+        {
           "command": "gistpad.duplicateGist",
           "when": "false"
         },
@@ -1032,9 +1050,14 @@
           "group": "manage@1"
         },
         {
-          "command": "gistpad.deleteFile",
+          "command": "gistpad.duplicateFile",
           "when": "viewItem == gistFile.editable || viewItem =~ /^tempGistFile/",
           "group": "manage@2"
+        },
+        {
+          "command": "gistpad.deleteFile",
+          "when": "viewItem == gistFile.editable || viewItem =~ /^tempGistFile/",
+          "group": "manage@3"
         },
         {
           "command": "gistpad.addDirectoryFile",
@@ -1052,9 +1075,14 @@
           "group": "mutate@1"
         },
         {
+          "command": "gistpad.duplicateDirectory",
+          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "group": "mutate@2"
+        },
+        {
           "command": "gistpad.deleteDirectory",
           "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
-          "group": "mutate@1"
+          "group": "mutate@3"
         }
       ],
       "explorer/context": [
@@ -1177,13 +1205,13 @@
           "name": "Gists"
         },
         {
-          "id": "gistpad.showcase",
-          "name": "Showcase"
-        },
-        {
           "id": "gistpad.activeGist",
           "name": "Active Gist",
           "when": "gistpad:inPlayground"
+        },
+        {
+          "id": "gistpad.showcase",
+          "name": "Showcase"
         }
       ]
     },

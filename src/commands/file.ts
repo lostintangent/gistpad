@@ -96,6 +96,28 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
+      `${EXTENSION_NAME}.duplicateFile`,
+      async (node: GistFileNode) => {
+        withProgress("Duplicating file...", async () => {
+          const contents = await workspace.fs.readFile(
+            fileNameToUri(node.gistId, node.file.filename!)
+          );
+
+          const extension = path.extname(node.file.filename!);
+          const rootFileName = node.file.filename?.replace(extension, "");
+          const duplicateFileName = `${rootFileName} - Copy${extension}`;
+
+          return workspace.fs.writeFile(
+            fileNameToUri(node.gistId, duplicateFileName),
+            contents
+          );
+        });
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
       `${EXTENSION_NAME}.copyFileUrl`,
       async (node: GistFileNode) => {
         await env.clipboard.writeText(node.file.raw_url!);

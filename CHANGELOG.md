@@ -1,4 +1,8 @@
-## v0.0.59 (02/29/2020)
+## v0.0.60 (02/29/2020)
+
+- Added the `Duplicate File` and `Duplicate Directory` commands to the `Gists` tree.
+
+## v0.0.59 (02/28/2020)
 
 - Introduced the `Export to Repository` command to the `Gists` tree, which allows you export any of your gists to new GitHub repositories
 - Added support for adding `import` statements to playgrounds, without needing to use the `.mjs` extension and/or setting the `scriptType` property in the `playground.json` file.

@@ -38,9 +38,12 @@ export async function updateGistFiles(
     };
   }, {});
 
-  console.log("GP Edit: %o", files);
   const { body } = await api.edit(id, { files });
-  const gist = store.gists.find((gist) => gist.id === id)!;
+
+  const gist =
+    store.scratchGist && store.scratchGist.id === id
+      ? store.scratchGist
+      : store.gists.find((gist) => gist.id === id)!;
 
   runInAction(() => {
     gist.files = body.files;

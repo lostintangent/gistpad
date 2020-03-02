@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly used config/scripts, programming-related notes/documentation, and [interactive samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code. When needed, you can export gists to GitHub repositories, CodePen, and other services, so that you can start with simple code samples and then seamlessly grow them over time. 🚀
+GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, and [interactive samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code. When needed, you can export gists to GitHub repositories, CodePen, and other services, so that you can start with simple code samples and then seamlessly grow them over time. 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -102,6 +102,18 @@ In order to use this command, the token you authenticate with needs to also have
 In order to illustrate what you can do with gists and [playgrounds](#interactive-playgrounds), as well as keep up-to-date with the cool stuff that folks in the community are building, you can check out the `Showcase` view in the `GistPad` tab. This shows a list of categories, which are meant to highlight different use cases for gists, along with some examples. Simply click the `Open` button for any gist in order to explore it, or expand the gist to see its file contents. If you have a gist that you think is worth showcasing, please open an issue and let us know about it. Otherwise, we'll keep the showcase updated periodically, to highlight new and interesting things. So stay tuned!
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/74891549-2c9f4500-533c-11ea-9bbb-c5907d41a589.png" />
+
+### Scratch Notes
+
+To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by running the `GistPad: New Scratch Note` command. A scratch note is simply a text document, whose name is formatted based on the time it was created. By default, scratch notes create Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: Extension` setting.
+
+In order to help differentiate scratch notes from your "permanent notes", scratch notes appear as children of a top-level `Scratch Notes` node in the `Gists` tree. This makes it easy to view your outstanding scratch notes, so you can periodically audit them, in order to migrate any meaningful content to a more appropriate location (e.g. a new or existing gist).
+
+<img width="200px" src="https://user-images.githubusercontent.com/116461/75699016-908f0b00-5c64-11ea-95d9-e8c8faf93738.png" />
+
+You can create as many scratch notes as you need, and when you're done with them, you can delete indiviual notes and/or clear all of your notes by right-clicking the `Scratch Notes` node in the tree and selecting `Clear Scratch Notes`. Since scratch notes are meant to be ephemeral, you can't rename or duplicate them like other gist files.
+
+> Behind the scenes, scratch notes are simply files that are managed within a "special" gist on your behalf. This way, you can focus entirely on the epeheraml nature of the notes, and not worry about creating/deleting gists.
 
 ## Interactive Playgrounds
 
@@ -302,6 +314,8 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 * `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-seperated list of names (e.g. `foo.txt,bar.js`).
 
+* `GistPad: New Scratch Note` - Creates a new "scratch note", which is a file whose name is derived from the `GistPad > Scratch Notes: Extension` and `Gist > Scratch Notes: Format` settings.
+
 * `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
 * `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
@@ -396,6 +410,23 @@ In addition to the `Gists` view, this extension also provides the following comm
 * `GistPad > Playgrounds: Show Console` - Specifies whether to always show the console when opening a playground. Defaults to `false`.
 
 * `GistPad > Playgrounds: Template Galleries` - Specifies the list of template galleries to use, when displaying the available templates when creating a new playground. Defaults to `["web"]`.
+
+* `GistPad > Scratch Notes: Extension` - Specifies the file extension to use when generating new scratch notes. Defaults to `.md`.
+
+* `GistPad > Scratch Notes: Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new scratch notes. Defaults to `LLL`.
+
+* `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
+
+## Extensibility
+
+In order to allow other extensions to extend the default behavior and/or settings of GistPad, the following extensiblity points are provided:
+
+### Template Galleries
+
+By default, GistPad ships with a new of template galleries, however, extensions can contribute new ones by adding a `gistpad.playgrounds.templateGalleries` contribution to their `package.json` file. This contribution is simply an array of objects with the following properties:
+
+- `id` - A unique ID that will be used to persist the enabled/disabled state of the gallery. Note that the display name of the gallery comes from the gallery definition itself.
+- `url` - A URL that points at the actual template gallery. This URL must refer to a JSON file that conforms to the [GistPad template gallery schema](https://gist.githubusercontent.com/lostintangent/091c0eec1f6443b526566d1cd3a85294/raw/3c1413b49052a677b1f5d192c5c37d6b2c2b9fae/schema.json).
 
 ## Supported Filesystem Operations
 

@@ -3,7 +3,6 @@ import { reaction } from "mobx";
 import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
 import {
-  getScriptContent,
   openPlayground,
   PlaygroundLibraryType,
   PlaygroundManifest
@@ -13,6 +12,7 @@ import { URI_PATTERN } from "../constants";
 import { Gist } from "../store";
 import { storage } from "../store/storage";
 import { fileNameToUri } from "../utils";
+import { getScriptContent } from "./languages/script";
 
 export class PlaygroundWebview {
   private css: string = "";

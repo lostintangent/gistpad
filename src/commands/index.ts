@@ -9,6 +9,7 @@ import { registerFollowCommands } from "./follow";
 import { registerGistCommands } from "./gist";
 import { registerGistLogCommands } from "./gistLog";
 import { registerPlaygroundCommands } from "./playground";
+import { registerScratchCommands } from "./scratch";
 
 export function registerCommands(context: ExtensionContext) {
   registerAuthCommands(context);
@@ -21,4 +22,5 @@ export function registerCommands(context: ExtensionContext) {
   registerPlaygroundCommands(context);
   registerCodePenCommands(context);
   registerDirectoryCommands(context);
+  registerScratchCommands(context);
 }

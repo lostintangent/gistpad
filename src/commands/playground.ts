@@ -12,8 +12,38 @@ import {
 } from "../constants";
 import { getFileContents } from "../fileSystem/api";
 import { enableGalleries, loadGalleries } from "../playgrounds/galleryProvider";
+import {
+  getMarkupContent,
+  getNewMarkupFilename,
+  MARKUP_BASE_NAME,
+  MARKUP_EXTENSIONS
+} from "../playgrounds/languages/markup";
+import {
+  getReadmeContent,
+  README_BASE_NAME,
+  README_EXTENSIONS
+} from "../playgrounds/languages/readme";
+import {
+  getNewScriptFileName,
+  includesReactFiles,
+  includesReactScripts,
+  isReactFile,
+  REACT_SCRIPTS,
+  SCRIPT_BASE_NAME,
+  SCRIPT_EXTENSIONS
+} from "../playgrounds/languages/script";
+import {
+  getNewStylesheetFilename,
+  getStylesheetContent,
+  STYLESHEET_BASE_NAME,
+  STYLESHEET_EXTENSIONS
+} from "../playgrounds/languages/stylesheet";
+import {
+  createLayoutManager,
+  PlaygroundLayout
+} from "../playgrounds/layoutManager";
 import { PlaygroundWebview } from "../playgrounds/webview";
-import { Gist, store } from "../store";
+import { Gist, GistFile, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
 import { storage } from "../store/storage";
 import { GistNode, GistsNode } from "../tree/nodes";
@@ -65,59 +95,6 @@ export const DEFAULT_MANIFEST = {
   styles: [] as string[]
 };
 
-const MarkupLanguage = {
-  html: ".html",
-  markdown: ".md",
-  pug: ".pug"
-};
-
-const MARKUP_EXTENSIONS = [
-  MarkupLanguage.html,
-  MarkupLanguage.markdown,
-  MarkupLanguage.pug
-];
-
-const StylesheetLanguage = {
-  css: ".css",
-  less: ".less",
-  sass: ".sass",
-  scss: ".scss"
-};
-
-const STYLESHEET_EXTENSIONS = [
-  StylesheetLanguage.css,
-  StylesheetLanguage.less,
-  StylesheetLanguage.sass,
-  StylesheetLanguage.scss
-];
-
-const ScriptLanguage = {
-  babel: ".babel",
-  javascript: ".js",
-  javascriptmodule: ".mjs",
-  javascriptreact: ".jsx",
-  typescript: ".ts",
-  typescriptreact: ".tsx"
-};
-
-const REACT_EXTENSIONS = [
-  ScriptLanguage.babel,
-  ScriptLanguage.javascriptreact,
-  ScriptLanguage.typescriptreact
-];
-
-const MODULE_EXTENSIONS = [ScriptLanguage.javascriptmodule];
-
-const TYPESCRIPT_EXTENSIONS = [ScriptLanguage.typescript, ...REACT_EXTENSIONS];
-
-const SCRIPT_EXTENSIONS = [
-  ScriptLanguage.javascript,
-  ...MODULE_EXTENSIONS,
-  ...TYPESCRIPT_EXTENSIONS
-];
-
-const README_EXTENSIONS = [".md", ".markdown"];
-
 interface IPlayground {
   gist: Gist;
   webView: PlaygroundWebview;
@@ -132,20 +109,6 @@ export async function closeWebviewPanel(gistId: string) {
     activePlayground.webViewPanel.dispose();
   }
 }
-
-const isReactFile = (fileName: string) => {
-  return REACT_EXTENSIONS.includes(path.extname(fileName));
-};
-
-const REACT_SCRIPTS = ["react", "react-dom"];
-
-const includesReactFiles = (gist: Gist) => {
-  return Object.keys(gist.files).some(isReactFile);
-};
-
-const includesReactScripts = (scripts: string[]) => {
-  return REACT_SCRIPTS.every((script) => scripts.includes(script));
-};
 
 export const getManifestContent = async (gist: Gist) => {
   if (!gist.files[PLAYGROUND_FILE]) {
@@ -173,12 +136,7 @@ export const getManifestContent = async (gist: Gist) => {
   return manifest;
 };
 
-const MARKUP_BASE_NAME = "index";
-const SCRIPT_BASE_NAME = "script";
-const STYLESHEET_BASE_NAME = "style";
-const README_BASE_NAME = "README";
-
-async function generateNewPlaygroundFiles() {
+async function generateNewPlaygroundFiles(): Promise<GistFile[]> {
   const manifest = {
     ...DEFAULT_MANIFEST
   };
@@ -186,8 +144,7 @@ async function generateNewPlaygroundFiles() {
   const files = [];
 
   if (await config.get("playgrounds.includeScript")) {
-    const scriptLanguage = await config.get("playgrounds.scriptLanguage");
-    const scriptFileName = `${SCRIPT_BASE_NAME}${ScriptLanguage[scriptLanguage]}`;
+    const scriptFileName = await getNewScriptFileName();
 
     files.push({
       filename: scriptFileName
@@ -199,8 +156,7 @@ async function generateNewPlaygroundFiles() {
   }
 
   if (config.get("playgrounds.includeStylesheet")) {
-    const stylesheetLanguage = config.get("playgrounds.stylesheetLanguage");
-    const stylesheetFileName = `${STYLESHEET_BASE_NAME}${StylesheetLanguage[stylesheetLanguage]}`;
+    const stylesheetFileName = await getNewStylesheetFilename();
 
     files.push({
       filename: stylesheetFileName
@@ -208,8 +164,7 @@ async function generateNewPlaygroundFiles() {
   }
 
   if (config.get("playgrounds.includeMarkup")) {
-    const markupLanguage = config.get("playgrounds.markupLanguage");
-    const markupFileName = `${MARKUP_BASE_NAME}${MarkupLanguage[markupLanguage]}`;
+    const markupFileName = await getNewMarkupFilename();
 
     files.push({
       filename: markupFileName
@@ -224,173 +179,6 @@ async function generateNewPlaygroundFiles() {
   return files;
 }
 
-export function getScriptContent(
-  document: vscode.TextDocument,
-  manifest: PlaygroundManifest | undefined
-): [string, boolean] | null {
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  let isModule = MODULE_EXTENSIONS.includes(extension);
-
-  let content = document.getText();
-  if (content.trim() === "") {
-    return [content, isModule];
-  } else {
-    isModule = isModule || content.trim().startsWith("import ");
-  }
-
-  const includesJsx =
-    manifest && manifest.scripts && manifest.scripts.includes("react");
-  if (TYPESCRIPT_EXTENSIONS.includes(extension) || includesJsx) {
-    const typescript = require("typescript");
-    const compilerOptions: any = {
-      experimentalDecorators: true,
-      target: "ES2018"
-    };
-
-    if (includesJsx || REACT_EXTENSIONS.includes(extension)) {
-      compilerOptions.jsx = typescript.JsxEmit.React;
-    }
-
-    try {
-      return [typescript.transpile(content, compilerOptions), isModule];
-    } catch (e) {
-      // Something failed when trying to transpile Pug,
-      // so don't attempt to return anything
-      return null;
-    }
-  } else {
-    return [content, isModule];
-  }
-}
-
-function getMarkupContent(document: vscode.TextDocument): string | null {
-  const content = document.getText();
-  if (content.trim() === "") {
-    return content;
-  }
-
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-
-  try {
-    if (extension === MarkupLanguage.pug) {
-      const pug = require("pug");
-      return pug.render(content);
-    } else if (extension === MarkupLanguage.markdown) {
-      const markdown = require("markdown-it")();
-      return markdown.render(content);
-    } else {
-      return content;
-    }
-  } catch {
-    return null;
-  }
-}
-
-function getReadmeContent(readme: string): string | null {
-  if (readme.trim() === "") {
-    return readme;
-  }
-
-  const markdown = require("markdown-it")();
-
-  try {
-    // Something failed when trying to transpile Pug,
-    // so don't attempt to return anything
-    return markdown.render(readme);
-  } catch (e) {
-    return null;
-  }
-}
-
-async function getStylesheetContent(
-  document: vscode.TextDocument
-): Promise<string | null> {
-  let content = document.getText();
-  if (content.trim() === "") {
-    return content;
-  }
-
-  const extension = path.extname(document.uri.toString()).toLocaleLowerCase();
-  if (
-    extension === StylesheetLanguage.scss ||
-    extension === StylesheetLanguage.sass
-  ) {
-    const sass = require("sass");
-
-    try {
-      return byteArrayToString(
-        sass.renderSync({
-          data: content,
-          indentedSyntax: extension === StylesheetLanguage.sass
-        }).css
-      );
-    } catch (e) {
-      // Something failed when trying to transpile SCSS,
-      // so don't attempt to return anything
-      return null;
-    }
-  } else if (extension === StylesheetLanguage.less) {
-    try {
-      const less = require("less").default;
-      const output = await less.render(content);
-      return output.css;
-    } catch (e) {
-      return null;
-    }
-  } else {
-    return content;
-  }
-}
-
-enum EditorLayoutOrientation {
-  horizontal = 0,
-  vertical = 1
-}
-
-const EditorLayouts = {
-  splitOne: {
-    orientation: EditorLayoutOrientation.horizontal,
-    groups: [{}, {}]
-  },
-  splitTwo: {
-    orientation: EditorLayoutOrientation.horizontal,
-    groups: [
-      {
-        orientation: EditorLayoutOrientation.vertical,
-        groups: [{}, {}],
-        size: 0.5
-      },
-      { groups: [{}], size: 0.5 }
-    ]
-  },
-  splitThree: {
-    orientation: EditorLayoutOrientation.horizontal,
-    groups: [
-      {
-        orientation: EditorLayoutOrientation.vertical,
-        groups: [{}, {}, {}],
-        size: 0.5
-      },
-      { groups: [{}], size: 0.5 }
-    ]
-  },
-  grid: {
-    orientation: EditorLayoutOrientation.horizontal,
-    groups: [
-      {
-        orientation: EditorLayoutOrientation.vertical,
-        groups: [{}, {}],
-        size: 0.5
-      },
-      {
-        orientation: EditorLayoutOrientation.vertical,
-        groups: [{}, {}],
-        size: 0.5
-      }
-    ]
-  }
-};
-
 function loadPlaygroundManifests() {
   store.gists.concat(store.starredGists).forEach(async (gist) => {
     const manifest = gist.files[PLAYGROUND_FILE];
@@ -402,17 +190,6 @@ function loadPlaygroundManifests() {
       updateGistTags(gist);
     }
   });
-}
-
-enum PlaygroundLayout {
-  grid = "grid",
-  preview = "preview",
-  splitBottom = "splitBottom",
-  splitLeft = "splitLeft",
-  splitLeftTabbed = "splitLeftTabbed",
-  splitRight = "splitRight",
-  splitRightTabbed = "splitRightTabbed",
-  splitTop = "splitTop"
 }
 
 export const getGistFileOfType = (
@@ -804,63 +581,10 @@ export async function openPlayground(gist: Gist) {
     (file) => file
   ).length;
 
-  const playgroundLayout = manifest.layout || config.get("playgrounds.layout");
-
-  let editorLayout: any;
-  if (includedFiles === 3) {
-    editorLayout =
-      playgroundLayout === PlaygroundLayout.grid
-        ? EditorLayouts.grid
-        : EditorLayouts.splitThree;
-  } else if (includedFiles === 2) {
-    editorLayout = EditorLayouts.splitTwo;
-  } else {
-    editorLayout = EditorLayouts.splitOne;
-  }
-
-  let currentViewColumn = vscode.ViewColumn.One;
-  let previewViewColumn = includedFiles + 1;
-  if (playgroundLayout === PlaygroundLayout.splitRight) {
-    editorLayout = {
-      ...editorLayout,
-      groups: [...editorLayout.groups].reverse()
-    };
-
-    currentViewColumn = vscode.ViewColumn.Two;
-    previewViewColumn = vscode.ViewColumn.One;
-  } else if (playgroundLayout === PlaygroundLayout.splitTop) {
-    editorLayout = {
-      ...editorLayout,
-      orientation: EditorLayoutOrientation.vertical
-    };
-  } else if (playgroundLayout === PlaygroundLayout.splitBottom) {
-    editorLayout = {
-      orientation: EditorLayoutOrientation.vertical,
-      groups: [...editorLayout.groups].reverse()
-    };
-
-    currentViewColumn = vscode.ViewColumn.Two;
-    previewViewColumn = vscode.ViewColumn.One;
-  } else if (playgroundLayout === PlaygroundLayout.splitLeftTabbed) {
-    editorLayout = EditorLayouts.splitOne;
-    previewViewColumn = vscode.ViewColumn.Two;
-  } else if (playgroundLayout === PlaygroundLayout.splitRightTabbed) {
-    editorLayout = EditorLayouts.splitOne;
-
-    currentViewColumn = vscode.ViewColumn.Two;
-    previewViewColumn = vscode.ViewColumn.One;
-  }
-
-  await vscode.commands.executeCommand("workbench.action.closeAllEditors");
-
-  // The preview layout mode only shows a single file,
-  // so there's no need to set a custom editor layout for it.
-  if (includedFiles > 0 && playgroundLayout !== PlaygroundLayout.preview) {
-    await vscode.commands.executeCommand(
-      "vscode.setEditorLayout",
-      editorLayout
-    );
-  }
+  const layoutManager = await createLayoutManager(
+    includedFiles,
+    manifest.layout
+  );
 
   let htmlDocument: vscode.TextDocument;
   if (markupFile) {
@@ -868,20 +592,7 @@ export async function openPlayground(gist: Gist) {
       decodeDirectoryUri(fileNameToUri(gist.id, markupFile))
     );
 
-    if (playgroundLayout !== PlaygroundLayout.preview) {
-      vscode.window.showTextDocument(htmlDocument, {
-        preview: false,
-        viewColumn: currentViewColumn,
-        preserveFocus: false
-      });
-
-      if (
-        playgroundLayout !== PlaygroundLayout.splitLeftTabbed &&
-        playgroundLayout !== PlaygroundLayout.splitRightTabbed
-      ) {
-        currentViewColumn++;
-      }
-    }
+    layoutManager.showDocument(htmlDocument, false);
   }
 
   let cssDocument: vscode.TextDocument;
@@ -890,20 +601,7 @@ export async function openPlayground(gist: Gist) {
       decodeDirectoryUri(fileNameToUri(gist.id, stylesheetFile))
     );
 
-    if (playgroundLayout !== PlaygroundLayout.preview) {
-      vscode.window.showTextDocument(cssDocument, {
-        preview: false,
-        viewColumn: currentViewColumn,
-        preserveFocus: true
-      });
-
-      if (
-        playgroundLayout !== PlaygroundLayout.splitLeftTabbed &&
-        playgroundLayout !== PlaygroundLayout.splitRightTabbed
-      ) {
-        currentViewColumn++;
-      }
-    }
+    layoutManager.showDocument(cssDocument);
   }
 
   let jsDocument: vscode.TextDocument;
@@ -912,19 +610,13 @@ export async function openPlayground(gist: Gist) {
       decodeDirectoryUri(fileNameToUri(gist.id, scriptFile!))
     );
 
-    if (playgroundLayout !== PlaygroundLayout.preview) {
-      vscode.window.showTextDocument(jsDocument, {
-        preview: false,
-        viewColumn: currentViewColumn,
-        preserveFocus: true
-      });
-    }
+    layoutManager.showDocument(jsDocument);
   }
 
   const webViewPanel = vscode.window.createWebviewPanel(
     "gistpad.playgroundPreview",
     "Preview",
-    { viewColumn: previewViewColumn, preserveFocus: true },
+    { viewColumn: layoutManager.previewViewColumn, preserveFocus: true },
     { enableScripts: true }
   );
 

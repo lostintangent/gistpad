@@ -104,6 +104,7 @@ export enum GroupType {
 }
 
 export interface Store {
+  scratchGist: Gist | null;
   activeGist: Gist | null;
   followedUsers: FollowedUser[];
   gists: Gist[];
@@ -119,6 +120,7 @@ export interface Store {
 }
 
 export const store: Store = observable({
+  scratchGist: null,
   activeGist: null,
   followedUsers: [],
   gists: [],

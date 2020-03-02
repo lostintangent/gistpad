@@ -31,6 +31,7 @@ import {
   byteArrayToString,
   encodeDirectoryUri,
   getGistDetailsFromUri,
+  isOwnedGist,
   isTempGistUri,
   openGistAsWorkspace,
   stringToByteArray,
@@ -377,7 +378,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     const { gistId } = getGistDetailsFromUri(uri);
     await ensureAuthenticated();
 
-    if (!this.store.gists.find((gist) => gist.id === gistId)) {
+    if (!isOwnedGist(gistId)) {
       const response = await window.showInformationMessage(
         "You can't edit a Gist you don't own.",
         "Fork this Gist"

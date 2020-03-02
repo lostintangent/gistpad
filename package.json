@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.60",
+  "version": "0.0.61",
   "extensionKind": [
     "ui",
     "web",
@@ -217,6 +217,16 @@
           },
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
         },
+        "gistpad.scratchNotes.extension": {
+          "default": ".md",
+          "type": "string",
+          "description": "Specifies the file extension to use when generating new scratch notes."
+        },
+        "gistpad.scratchNotes.format": {
+          "default": "LLL",
+          "type": "string",
+          "description": "Specifies the moment.js format string to use when generating new scratch notes."
+        },
         "gistpad.showcaseUrl": {
           "default": "https://aka.ms/gistpad-showcase",
           "type": "string",
@@ -275,6 +285,11 @@
         }
       },
       {
+        "command": "gistpad.clearScratchNotes",
+        "title": "Clear Scratch Notes",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.cloneRepository",
         "title": "Clone Repository",
         "category": "GistPad"
@@ -317,6 +332,11 @@
       {
         "command": "gistpad.deleteGistComment",
         "title": "Delete Comment",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.deleteScratchNote",
+        "title": "Delete Scratch Note",
         "category": "GistPad"
       },
       {
@@ -372,6 +392,15 @@
         "command": "gistpad.newPlayground",
         "title": "New Playground",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.newScratchNote",
+        "title": "New Scratch Note",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add.svg",
+          "light": "images/light/add.svg"
+        }
       },
       {
         "command": "gistpad.newSecretPlayground",
@@ -640,6 +669,10 @@
           "when": "gistpad:state == SignedIn"
         },
         {
+          "command": "gistpad.newScratchNote",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
           "command": "gistpad.newSecretPlayground",
           "when": "gistpad:state == SignedIn"
         },
@@ -700,6 +733,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.clearScratchNotes",
+          "when": "false"
+        },
+        {
           "command": "gistpad.cloneRepository",
           "when": "false"
         },
@@ -732,6 +769,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.deleteScratchNote",
+          "when": "false"
+        },
+        {
           "command": "gistpad.duplicateFile",
           "when": "false"
         },
@@ -761,6 +802,10 @@
         },
         {
           "command": "gistpad.openGistFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openGistInBlocks",
           "when": "false"
         },
         {
@@ -809,6 +854,10 @@
         },
         {
           "command": "gistpad.sortGistsByUpdatedTime",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.submitShowcaseEntry",
           "when": "false"
         },
         {
@@ -1083,6 +1132,26 @@
           "command": "gistpad.deleteDirectory",
           "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
           "group": "mutate@3"
+        },
+        {
+          "command": "gistpad.newScratchNote",
+          "when": "viewItem == scratchGist",
+          "group": "inline@1"
+        },
+        {
+          "command": "gistpad.newScratchNote",
+          "when": "viewItem == scratchGist",
+          "group": "base@1"
+        },
+        {
+          "command": "gistpad.clearScratchNotes",
+          "when": "viewItem == scratchGist",
+          "group": "manage@2"
+        },
+        {
+          "command": "gistpad.deleteScratchNote",
+          "when": "viewItem == scratchGist.file",
+          "group": "base@1"
         }
       ],
       "explorer/context": [

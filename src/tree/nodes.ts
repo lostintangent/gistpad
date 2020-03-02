@@ -341,3 +341,34 @@ export class GistShowcaseCategoryNode extends TreeNode {
     this.contextValue = "showcase.category";
   }
 }
+
+export class ScratchGistNode extends TreeNode {
+  constructor(public gist: Gist, extensionPath: string) {
+    super("Scratch Notes", TreeItemCollapsibleState.Expanded);
+
+    this.contextValue = "scratchGist";
+    this.description = Object.keys(gist.files).length.toString();
+
+    this.iconPath = path.join(extensionPath, "images/scratch.svg");
+  }
+}
+
+export class ScratchGistFileNode extends TreeNode {
+  constructor(public gistId: string, public file: GistFile) {
+    super(getFileDisplayName(file));
+
+    this.iconPath = ThemeIcon.File;
+    this.resourceUri = fileNameToUri(
+      gistId,
+      decodeDirectoryName(file.filename!)
+    );
+
+    this.command = {
+      command: "gistpad.openGistFile",
+      title: "Open Gist File",
+      arguments: [this.resourceUri]
+    };
+
+    this.contextValue = "scratchGist.file";
+  }
+}

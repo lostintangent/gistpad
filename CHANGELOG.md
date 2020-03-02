@@ -1,3 +1,9 @@
+## v0.0.61 (03/01/2020)
+
+- Introduced the concept of "scratch notes", which allow you to easily track fleeting/ephemeral notes, along with your "permanent" gists.
+
+<img width="200px" src="https://user-images.githubusercontent.com/116461/75699016-908f0b00-5c64-11ea-95d9-e8c8faf93738.png" />
+
 ## v0.0.60 (02/29/2020)
 
 - Added the `Duplicate File` and `Duplicate Directory` commands to the `Gists` tree.

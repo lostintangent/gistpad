@@ -8,3 +8,4 @@ export const ZERO_WIDTH_SPACE = "‎‎\u200B";
 export const TEMP_GIST_ID = "temp";
 export const DIRECTORY_SEPERATOR = "/";
 export const ENCODED_DIRECTORY_SEPERATOR = "---";
+export const SCRATCH_GIST_NAME = "gistpad-scratch";

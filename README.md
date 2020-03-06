@@ -105,15 +105,15 @@ In order to illustrate what you can do with gists and [playgrounds](#interactive
 
 ### Scratch Notes
 
-To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by running the `GistPad: New Scratch Note` command. A scratch note is simply a text document, whose name is formatted based on the time it was created. By default, scratch notes create Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: Extension` setting.
+To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document, whose name is formatted based on the time it was created. By default, scratch notes create Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting.
 
 In order to help differentiate scratch notes from your "permanent notes", scratch notes appear as children of a top-level `Scratch Notes` node in the `Gists` tree. This makes it easy to view your outstanding scratch notes, so you can periodically audit them, in order to migrate any meaningful content to a more appropriate location (e.g. a new or existing gist).
 
 <img width="200px" src="https://user-images.githubusercontent.com/116461/75699016-908f0b00-5c64-11ea-95d9-e8c8faf93738.png" />
 
-You can create as many scratch notes as you need, and when you're done with them, you can delete indiviual notes and/or clear all of your notes by right-clicking the `Scratch Notes` node in the tree and selecting `Clear Scratch Notes`. Since scratch notes are meant to be ephemeral, you can't rename or duplicate them like other gist files.
+You can create as many scratch notes as you need, and when you're done with them, you can delete indiviual notes and/or clear all of your notes by right-clicking the `Scratch Notes` node in the tree and selecting `Clear Scratch Notes`.
 
-> Behind the scenes, scratch notes are simply files that are managed within a "special" gist on your behalf. This way, you can focus entirely on the epeheraml nature of the notes, and not worry about creating/deleting gists.
+> Behind the scenes, scratch notes are simply files that are managed within a "special" secret gist on your behalf. This way, you can focus entirely on the epeheraml nature of the notes, and not worry about creating/deleting gists.
 
 ## Interactive Playgrounds
 
@@ -411,9 +411,13 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 * `GistPad > Playgrounds: Template Galleries` - Specifies the list of template galleries to use, when displaying the available templates when creating a new playground. Defaults to `["web"]`.
 
-* `GistPad > Scratch Notes: Extension` - Specifies the file extension to use when generating new scratch notes. Defaults to `.md`.
+* `GistPad > Scratch Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new scratch notes. Defaults to `LL` (e.g. `March 6, 2020`).
+*
+* `GistPad > Scratch Notes: File Extension` - Specifies the file extension to use when generating new scratch notes. Defaults to `.md`.
 
-* `GistPad > Scratch Notes: Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new scratch notes. Defaults to `LLL`.
+* `GistPad > Scratch Notes: File Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new scratch notes. Defaults to `LT` (e.g. `2:52 PM`).
+
+* `GistPad > Scratch Notes: Show` - Specifies whether or not to display the scratch notes node in the gists tree view. Defaults to `true`.
 
 * `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 

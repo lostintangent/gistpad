@@ -343,32 +343,23 @@ export class GistShowcaseCategoryNode extends TreeNode {
 }
 
 export class ScratchGistNode extends TreeNode {
-  constructor(public gist: Gist, extensionPath: string) {
+  constructor(extensionPath: string, public gist: Gist | null = null) {
     super("Scratch Notes", TreeItemCollapsibleState.Expanded);
 
     this.contextValue = "scratchGist";
-    this.description = Object.keys(gist.files).length.toString();
+    this.description = gist ? Object.keys(gist.files).length.toString() : "";
 
     this.iconPath = path.join(extensionPath, "images/scratch.svg");
   }
 }
 
-export class ScratchGistFileNode extends TreeNode {
-  constructor(public gistId: string, public file: GistFile) {
-    super(getFileDisplayName(file));
-
-    this.iconPath = ThemeIcon.File;
-    this.resourceUri = fileNameToUri(
-      gistId,
-      decodeDirectoryName(file.filename!)
-    );
+export class NewScratchNoteNode extends TreeNode {
+  constructor() {
+    super("New scratch note...");
 
     this.command = {
-      command: "gistpad.openGistFile",
-      title: "Open Gist File",
-      arguments: [this.resourceUri]
+      command: `${EXTENSION_NAME}.newScratchNote`,
+      title: "New scratch note..."
     };
-
-    this.contextValue = "scratchGist.file";
   }
 }

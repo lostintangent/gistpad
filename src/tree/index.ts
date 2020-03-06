@@ -24,10 +24,10 @@ import {
   GistsNode,
   LoadingNode,
   NewPlaygroundNode,
+  NewScratchNoteNode,
   NoStarredGistsNode,
   NoUserGistsNode,
   OpenGistNode,
-  ScratchGistFileNode,
   ScratchGistNode,
   SignInNode,
   StarredGistNode,
@@ -63,7 +63,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   constructor(private store: Store, private extensionPath: string) {
     reaction(
       () => [
-        store.scratchGist ? store.scratchGist.updated_at : null,
+        store.scratchNotes.gist ? store.scratchNotes.gist.updated_at : null,
+        store.scratchNotes.show,
         store.gists.map((gist) => [gist.description, gist.updated_at]),
         store.starredGists.map((gist) => [gist.description, gist.updated_at]),
         store.followedUsers.map((user) => user.isLoading),
@@ -134,9 +135,12 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
             )
           ];
 
-          if (this.store.scratchGist) {
+          if (this.store.scratchNotes.show) {
             nodes.unshift(
-              new ScratchGistNode(this.store.scratchGist, this.extensionPath)
+              new ScratchGistNode(
+                this.extensionPath,
+                this.store.scratchNotes.gist
+              )
             );
           }
 
@@ -201,10 +205,11 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     } else if (element instanceof GistDirectoryNode) {
       return getGistFiles(element.gist, element.directory);
     } else if (element instanceof ScratchGistNode) {
-      return Object.keys(element.gist.files).map(
-        (file) =>
-          new ScratchGistFileNode(element.gist.id, element.gist.files[file])
-      );
+      if (!element.gist || Object.keys(element.gist.files).length === 0) {
+        return [new NewScratchNoteNode()];
+      } else {
+        return getGistFiles(element.gist);
+      }
     }
   }
 

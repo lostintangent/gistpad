@@ -1,11 +1,15 @@
 import { reaction } from "mobx";
-import { commands, ExtensionContext } from "vscode";
+import { commands, ExtensionContext, workspace } from "vscode";
 import { GroupType, SortOrder, store } from ".";
+import * as config from "../config";
+import { EXTENSION_NAME } from "../constants";
 
 const TUTORIAL_KEY = "gistpad.tutorials";
 const FOLLOW_KEY = "gistpad.followedUsers";
 const SORT_ORDER_KEY = "gistpad:sortOrder";
 const GROUP_TYPE_KEY = "gistpad:groupType";
+
+const SHOW_SCRATCH_NOTES_KEY = "scratchNotes.show";
 
 export interface IStorage {
   followedUsers: string[];
@@ -26,7 +30,7 @@ function updateGroupType(context: ExtensionContext, groupType: GroupType) {
 type TutorialStatus = [string, number];
 
 export let storage: IStorage;
-export function initializeStorage(context: ExtensionContext) {
+export async function initializeStorage(context: ExtensionContext) {
   storage = {
     get followedUsers() {
       return context.globalState.get<string[]>(FOLLOW_KEY, []).sort();
@@ -82,4 +86,12 @@ export function initializeStorage(context: ExtensionContext) {
     () => [store.groupType],
     () => updateGroupType(context, store.groupType)
   );
+
+  store.scratchNotes.show = await config.get(SHOW_SCRATCH_NOTES_KEY);
+
+  workspace.onDidChangeConfiguration(async (e) => {
+    if (e.affectsConfiguration(`${EXTENSION_NAME}.${SHOW_SCRATCH_NOTES_KEY}`)) {
+      store.scratchNotes.show = await config.get(SHOW_SCRATCH_NOTES_KEY);
+    }
+  });
 }

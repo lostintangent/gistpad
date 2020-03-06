@@ -1,11 +1,8 @@
 import { commands, ExtensionContext, window } from "vscode";
+import * as config from "../config";
 import { EXTENSION_NAME } from "../constants";
-import {
-  clearScratchNotes,
-  deleteScratchNote,
-  newScratchNote
-} from "../store/actions";
-import { ScratchGistFileNode } from "../tree/nodes";
+import { store } from "../store";
+import { clearScratchNotes, newScratchNote } from "../store/actions";
 import { withProgress } from "../utils";
 
 export async function registerScratchCommands(context: ExtensionContext) {
@@ -16,14 +13,10 @@ export async function registerScratchCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(
-      `${EXTENSION_NAME}.deleteScratchNote`,
-      (node: ScratchGistFileNode) => {
-        withProgress("Deletign scratch note...", () =>
-          deleteScratchNote(node.file.filename!)
-        );
-      }
-    )
+    commands.registerCommand(`${EXTENSION_NAME}.hideScratchNotes`, () => {
+      store.scratchNotes.show = false;
+      config.set("scratchNotes.show", false);
+    })
   );
 
   context.subscriptions.push(

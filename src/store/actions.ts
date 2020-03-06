@@ -10,12 +10,17 @@ import {
   store
 } from ".";
 import * as config from "../config";
-import { SCRATCH_GIST_NAME, ZERO_WIDTH_SPACE } from "../constants";
+import {
+  DIRECTORY_SEPERATOR,
+  SCRATCH_GIST_NAME,
+  ZERO_WIDTH_SPACE
+} from "../constants";
 import { newTempGist } from "../fileSystem/temp";
 import { log } from "../logger";
 import {
   byteArrayToString,
   closeGistFiles,
+  encodeDirectoryName,
   fileNameToUri,
   isTempGistId,
   openGistFiles,
@@ -270,48 +275,50 @@ export async function newGist(
 }
 
 export async function newScratchNote() {
-  const format = config.get("scratchNotes.format");
-  const extension = config.get("scratchNotes.extension");
-  const filename = `${moment().format(format)}${extension}`;
+  const directoryFormat = config.get("scratchNotes.directoryFormat");
+  const fileFormat = config.get("scratchNotes.fileFormat");
+  const extension = config.get("scratchNotes.fileExtension");
 
-  if (!store.scratchGist) {
+  const sharedMoment = moment();
+  const directory = directoryFormat
+    ? `${sharedMoment.format(directoryFormat)}${DIRECTORY_SEPERATOR}`
+    : "";
+
+  const file = sharedMoment.format(fileFormat);
+
+  const filename = `${directory}${file}${extension}`;
+
+  if (!store.scratchNotes.gist) {
     const api = await getApi();
+
     const response = await api.create({
-      SCRATCH_GIST_NAME,
+      description: SCRATCH_GIST_NAME,
       public: false,
       files: {
-        [filename]: {
+        [encodeDirectoryName(filename)]: {
           content: ZERO_WIDTH_SPACE
         }
       }
     });
 
-    store.scratchGist = response.body;
+    store.scratchNotes.gist = response.body;
   } else {
     await workspace.fs.writeFile(
-      fileNameToUri(store.scratchGist.id, filename),
+      fileNameToUri(store.scratchNotes.gist.id, filename),
       stringToByteArray("")
     );
   }
 
-  const uri = fileNameToUri(store.scratchGist!.id, filename);
+  const uri = fileNameToUri(store.scratchNotes.gist!.id, filename);
   window.showTextDocument(uri);
-}
-
-export async function deleteScratchNote(noteId: string) {
-  if (Object.keys(store.scratchGist!.files).length > 1) {
-    await workspace.fs.delete(fileNameToUri(store.scratchGist!.id, noteId));
-  } else {
-    clearScratchNotes();
-  }
 }
 
 export async function clearScratchNotes() {
   const api = await getApi();
-  await api.delete(store.scratchGist!.id);
+  await api.delete(store.scratchNotes.gist!.id);
 
-  closeGistFiles(store.scratchGist!);
-  store.scratchGist = null;
+  closeGistFiles(store.scratchNotes.gist!);
+  store.scratchNotes.gist = null;
 }
 
 export async function refreshGists() {
@@ -319,10 +326,10 @@ export async function refreshGists() {
 
   await runInAction(async () => {
     const gists = updateGistTags(await listGists());
-    store.scratchGist =
+    store.scratchNotes.gist =
       gists.find((gist) => gist.description === SCRATCH_GIST_NAME) || null;
 
-    store.gists = store.scratchGist
+    store.gists = store.scratchNotes.gist
       ? gists.filter((gist) => gist.description !== SCRATCH_GIST_NAME)
       : gists;
 

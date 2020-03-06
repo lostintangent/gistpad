@@ -28,8 +28,10 @@ export function get(
 ): "css" | "less" | "sass" | "scss";
 export function get(key: "playgrounds.showConsole"): boolean;
 export function get(key: "playgrounds.templateGalleries"): string[];
-export function get(key: "scratchNotes.extension"): string;
-export function get(key: "scratchNotes.format"): string;
+export function get(key: "scratchNotes.directoryFormat"): string;
+export function get(key: "scratchNotes.fileExtension"): string;
+export function get(key: "scratchNotes.fileFormat"): string;
+export function get(key: "scratchNotes.show"): boolean;
 export function get(key: "showcaseUrl"): string;
 export function get(key: "comments.showThread"): string;
 export function get(key: any) {

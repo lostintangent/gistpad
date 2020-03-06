@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.61",
+  "version": "0.0.62",
   "extensionKind": [
     "ui",
     "web",
@@ -217,15 +217,25 @@
           },
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
         },
-        "gistpad.scratchNotes.extension": {
+        "gistpad.scratchNotes.directoryFormat": {
+          "default": "LL",
+          "type": "string",
+          "description": "Specifies the moment.js format string to use when generating new scratch notes."
+        },
+        "gistpad.scratchNotes.fileFormat": {
+          "default": "LT",
+          "type": "string",
+          "description": "Specifies the moment.js format string to use when generating new scratch notes."
+        },
+        "gistpad.scratchNotes.fileExtension": {
           "default": ".md",
           "type": "string",
           "description": "Specifies the file extension to use when generating new scratch notes."
         },
-        "gistpad.scratchNotes.format": {
-          "default": "LLL",
-          "type": "string",
-          "description": "Specifies the moment.js format string to use when generating new scratch notes."
+        "gistpad.scratchNotes.show": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether or not to display the scratch notes node in the gists tree view."
         },
         "gistpad.showcaseUrl": {
           "default": "https://aka.ms/gistpad-showcase",
@@ -335,11 +345,6 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.deleteScratchNote",
-        "title": "Delete Scratch Note",
-        "category": "GistPad"
-      },
-      {
         "command": "gistpad.duplicateDirectory",
         "title": "Duplicate Directory",
         "category": "GistPad"
@@ -381,6 +386,11 @@
       {
         "command": "gistpad.forkGist",
         "title": "Fork Gist",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.hideScratchNotes",
+        "title": "Hide Scratch Notes",
         "category": "GistPad"
       },
       {
@@ -769,10 +779,6 @@
           "when": "false"
         },
         {
-          "command": "gistpad.deleteScratchNote",
-          "when": "false"
-        },
-        {
           "command": "gistpad.duplicateFile",
           "when": "false"
         },
@@ -794,6 +800,10 @@
         },
         {
           "command": "gistpad.groupGists",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.hideScratchNotes",
           "when": "false"
         },
         {
@@ -1146,12 +1156,12 @@
         {
           "command": "gistpad.clearScratchNotes",
           "when": "viewItem == scratchGist",
-          "group": "manage@2"
+          "group": "manage@1"
         },
         {
-          "command": "gistpad.deleteScratchNote",
-          "when": "viewItem == scratchGist.file",
-          "group": "base@1"
+          "command": "gistpad.hideScratchNotes",
+          "when": "viewItem == scratchGist",
+          "group": "manage@2"
         }
       ],
       "explorer/context": [

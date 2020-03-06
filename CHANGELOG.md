@@ -1,3 +1,7 @@
+## v0.0.62 (03/06/2020)
+
+- Updated scratch notes to be written to directories by default, and introduced the new `GistPad > Scratch Notes: Directory Name Format` setting.
+
 ## v0.0.61 (03/01/2020)
 
 - Introduced the concept of "scratch notes", which allow you to easily track fleeting/ephemeral notes, along with your "permanent" gists.

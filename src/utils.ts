@@ -28,7 +28,7 @@ export function byteArrayToString(value: Uint8Array) {
 export function isOwnedGist(gistId: string): boolean {
   return (
     !!store.gists.find((gist) => gist.id === gistId) ||
-    (store.scratchGist ? store.scratchGist.id === gistId : false)
+    (store.scratchNotes.gist ? store.scratchNotes.gist.id === gistId : false)
   );
 }
 

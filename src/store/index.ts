@@ -103,8 +103,13 @@ export enum GroupType {
   tagAndType = "tagAndType"
 }
 
+export interface ScratchNotes {
+  gist: Gist | null;
+  show: boolean;
+}
+
 export interface Store {
-  scratchGist: Gist | null;
+  scratchNotes: ScratchNotes;
   activeGist: Gist | null;
   followedUsers: FollowedUser[];
   gists: Gist[];
@@ -114,13 +119,15 @@ export interface Store {
   sortOrder: SortOrder;
   groupType: GroupType;
   starredGists: Gist[];
-  showcaseEnabled: boolean;
   showcase: GistShowcase;
   canCreateRepos: boolean;
 }
 
 export const store: Store = observable({
-  scratchGist: null,
+  scratchNotes: {
+    gist: null,
+    show: false
+  },
   activeGist: null,
   followedUsers: [],
   gists: [],
@@ -130,7 +137,6 @@ export const store: Store = observable({
   sortOrder: SortOrder.updatedTime,
   groupType: GroupType.none,
   starredGists: [],
-  showcaseEnabled: false,
   showcase: {
     categories: [],
     isLoading: false

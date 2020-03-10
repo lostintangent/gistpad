@@ -376,7 +376,7 @@
 - Improved the `GistPad: Open Gist` command, by allowing you to select one of your Gists from a list, instead of just providing a Gist ID
 - Updated the default behavior of opening gists, to open them as "loose files" instead of as a workspace
 - Introduced a new `GistPad: Open Gist as Workspace` command, which behaves the same as `GistPad: Open Gist`, but opens the Gist as a workspace instead of "loose files"
-- Added support for being able to seed multiple files when creating a Gist, by specifying a comma-seperated list of files names
+- Added support for being able to seed multiple files when creating a Gist, by specifying a comma-separated list of files names
 - Added a progress indicator when creating a new Gist
 - Introduced a new `GistPad: Sign In` command, to explicitly sign in to your GitHub account
 - When opening the files for a Gist, Markdown files are now displayed in preview mode by default

@@ -72,7 +72,7 @@ async function newGistInternal(isPublic: boolean = true) {
   const fileNameInputBox = window.createInputBox();
   fileNameInputBox.title = title;
   fileNameInputBox.prompt =
-    "Enter the files name(s) to seed the Gist with (can be a comma-seperated list)";
+    "Enter the files name(s) to seed the Gist with (can be a comma-separated list)";
   fileNameInputBox.step = currentStep++;
   fileNameInputBox.totalSteps = totalSteps;
   fileNameInputBox.placeholder = "foo.md";

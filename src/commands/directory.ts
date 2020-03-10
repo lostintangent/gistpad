@@ -35,7 +35,7 @@ export function registerDirectoryCommands(context: ExtensionContext) {
 
         const fileName = await window.showInputBox({
           prompt:
-            "Enter the files name(s) to add to the directory (can be a comma-seperated list)",
+            "Enter the files name(s) to add to the directory (can be a comma-separated list)",
           placeHolder: "foo.md"
         });
 

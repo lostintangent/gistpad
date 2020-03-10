@@ -61,7 +61,7 @@ Additionally, if you want to group gists by your own custom types, then simply a
 
 ## Files and Directories
 
-When you create a gist via the `New Gist` (or `New Secret Gist`) command, you can specify a comma-seperated list of file names to seed the gist with. Furthermore, you could add `/` to your filenames, in order to add them to a sub-directory within the gist. For example, if you create a new gist, and specify `todos/personal.txt,todos/work.txt,reminders.txt`, the gist will include a `reminders.txt` file at the root of the gist, and `personal.txt` and `reminders.txt` files within a new directory called `todos`.
+When you create a gist via the `New Gist` (or `New Secret Gist`) command, you can specify a comma-separated list of file names to seed the gist with. Furthermore, you could add `/` to your filenames, in order to add them to a sub-directory within the gist. For example, if you create a new gist, and specify `todos/personal.txt,todos/work.txt,reminders.txt`, the gist will include a `reminders.txt` file at the root of the gist, and `personal.txt` and `reminders.txt` files within a new directory called `todos`.
 
 <img width="200px" src="https://user-images.githubusercontent.com/116461/74593846-7b6b7880-4fe4-11ea-9bf8-722bf7887ef1.png" />
 
@@ -312,7 +312,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 * `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, istead of "loose files".
 
-* `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-seperated list of names (e.g. `foo.txt,bar.js`).
+* `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-separated list of names (e.g. `foo.txt,bar.js`).
 
 * `GistPad: New Scratch Note` - Creates a new "scratch note", which is a file whose name is derived from the `GistPad > Scratch Notes: Extension` and `Gist > Scratch Notes: Format` settings.
 

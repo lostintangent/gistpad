@@ -42,6 +42,12 @@ import {
   createLayoutManager,
   PlaygroundLayout
 } from "../playgrounds/layoutManager";
+import {
+  endCurrentTour,
+  isCodeTourInstalled,
+  startTourFromFile,
+  TOUR_FILE
+} from "../playgrounds/tour";
 import { PlaygroundWebview } from "../playgrounds/webview";
 import { Gist, GistFile, store } from "../store";
 import { duplicateGist, newGist } from "../store/actions";
@@ -55,6 +61,7 @@ import {
   getGistDescription,
   getGistLabel,
   hasTempGist,
+  isOwnedGist,
   openGistAsWorkspace,
   stringToByteArray,
   updateGistTags,
@@ -87,7 +94,8 @@ export enum PlaygroundFileType {
   script,
   stylesheet,
   manifest,
-  readme
+  readme,
+  tour
 }
 
 export const DEFAULT_MANIFEST = {
@@ -100,6 +108,7 @@ interface IPlayground {
   webView: PlaygroundWebview;
   webViewPanel: vscode.WebviewPanel;
   console: vscode.OutputChannel;
+  hasTour: boolean;
 }
 
 export let activePlayground: IPlayground | null;
@@ -215,6 +224,10 @@ export const getGistFileOfType = (
     case PlaygroundFileType.manifest:
       extensions = [""];
       fileBaseName = PLAYGROUND_FILE;
+      break;
+    case PlaygroundFileType.tour:
+      extensions = [""];
+      fileBaseName = TOUR_FILE;
       break;
     case PlaygroundFileType.stylesheet:
     default:
@@ -777,7 +790,8 @@ export async function openPlayground(gist: Gist) {
     gist,
     webView: htmlView,
     webViewPanel,
-    console: output
+    console: output,
+    hasTour: false
   };
 
   await htmlView.rebuildWebview();
@@ -813,6 +827,15 @@ export async function openPlayground(gist: Gist) {
       documentSaveDisposeable.dispose();
     }
 
+    if (activePlayground?.hasTour) {
+      endCurrentTour();
+      vscode.commands.executeCommand(
+        "setContext",
+        "gistpad:allowCodeTourRecording",
+        false
+      );
+    }
+
     activePlayground = null;
 
     closeGistFiles(gist);
@@ -826,6 +849,34 @@ export async function openPlayground(gist: Gist) {
     vscode.commands.executeCommand("setContext", "gistpad:inPlayground", false);
     store.activeGist = null;
   });
+
+  if (await isCodeTourInstalled()) {
+    const tourFileName = getGistFileOfType(
+      gist,
+      PlaygroundFileType.tour,
+      currentTutorialStep
+    );
+
+    const canEdit = isOwnedGist(gist.id);
+
+    if (tourFileName) {
+      activePlayground!.hasTour = true;
+
+      const tourFilePath = decodeDirectoryUri(
+        fileNameToUri(gist.id, tourFileName)
+      ).toString();
+
+      const workspaceRoot = vscode.Uri.parse(path.dirname(tourFilePath));
+      const tourFile = gist.files[tourFileName];
+      startTourFromFile(tourFile, workspaceRoot, false, canEdit);
+    } else if (canEdit) {
+      await vscode.commands.executeCommand(
+        "setContext",
+        "gistpad:allowCodeTourRecording",
+        true
+      );
+    }
+  }
 }
 
 export async function registerPlaygroundCommands(

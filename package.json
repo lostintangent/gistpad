@@ -3,10 +3,9 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.62",
+  "version": "0.0.63",
   "extensionKind": [
     "ui",
-    "web",
     "workspace"
   ],
   "icon": "images/icon.png",
@@ -513,6 +512,10 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.recordCodeTour",
+        "title": "Record CodeTour"
+      },
+      {
         "command": "gistpad.refreshGists",
         "title": "Refresh Gists",
         "category": "GistPad",
@@ -804,6 +807,10 @@
         },
         {
           "command": "gistpad.hideScratchNotes",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.recordCodeTour",
           "when": "false"
         },
         {
@@ -1223,6 +1230,11 @@
         {
           "command": "gistpad.deleteFile",
           "when": "resourceScheme == gist"
+        },
+        {
+          "command": "gistpad.recordCodeTour",
+          "when": "gistpad:inPlayground && gistpad:allowCodeTourRecording",
+          "group": "codetour@1"
         }
       ],
       "editor/title/context": [

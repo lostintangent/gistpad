@@ -10,6 +10,7 @@ import { registerGistCommands } from "./gist";
 import { registerGistLogCommands } from "./gistLog";
 import { registerPlaygroundCommands } from "./playground";
 import { registerScratchCommands } from "./scratch";
+import { registerTourCommands } from "./tour";
 
 export function registerCommands(context: ExtensionContext) {
   registerAuthCommands(context);
@@ -22,5 +23,6 @@ export function registerCommands(context: ExtensionContext) {
   registerPlaygroundCommands(context);
   registerCodePenCommands(context);
   registerDirectoryCommands(context);
+  registerTourCommands(context);
   registerScratchCommands(context);
 }

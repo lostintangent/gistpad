@@ -1,3 +1,8 @@
+## v0.0.63 (03/15/2020)
+
+- Added integration with the [CodeTour](https://aka.ms/codetour) extension, so that you can record/playback tours for playgrounds.
+- Fixed an issue where GistPad couldn't be installed within the VS Online web editor
+
 ## v0.0.62 (03/06/2020)
 
 - Updated scratch notes to be written to directories by default, and introduced the new `GistPad > Scratch Notes: Directory Name Format` setting.

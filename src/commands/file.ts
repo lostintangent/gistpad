@@ -31,7 +31,7 @@ export function registerFileCommands(context: ExtensionContext) {
 
         const fileName = await window.showInputBox({
           prompt:
-            "Enter the files name(s) to add to the gist (can be a comma-seperated list)",
+            "Enter the files name(s) to add to the gist (can be a comma-separated list)",
           placeHolder: "foo.md"
         });
 

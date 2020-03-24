@@ -51,7 +51,8 @@
     "onFileSystem:gist",
     "onView:gistpad.gists",
     "onView:gistpad.gists.explorer",
-    "onUri"
+    "onUri",
+    "onLanguage:markdown"
   ],
   "main": "./out/prod/extension.js",
   "contributes": {
@@ -640,6 +641,11 @@
       {
         "command": "gistpad.viewForks",
         "title": "View Forks",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.runInlineEval",
+        "title": "Run inline code eval",
         "category": "GistPad"
       }
     ],
@@ -1380,7 +1386,8 @@
     "pug": "^2.0.4",
     "rxjs": "^6.5.4",
     "sass": "^1.24.0",
-    "simple-git": "^1.126.0"
+    "simple-git": "^1.126.0",
+    "vm2": "^3.9.0"
   },
   "devDependencies": {
     "@types/keytar": "^4.4.2",

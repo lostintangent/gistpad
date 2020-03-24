@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { inlineEvalCodeLensProvider } from "./codelens";
 import { registerCommands } from "./commands";
 import { registerCommentController } from "./comments";
 import { registerFileSystemProvider } from "./fileSystem";
@@ -24,6 +25,11 @@ export async function activate(context: vscode.ExtensionContext) {
   registerProtocolHander();
   registerTreeProvider(store, context.extensionPath);
   registerActiveGistTreeProvider(store, context.extensionPath);
+
+  vscode.languages.registerCodeLensProvider(
+    { scheme: "file", language: "markdown" },
+    inlineEvalCodeLensProvider
+  );
 
   if (isGistWorkspace()) {
     const gistId = getGistWorkspaceId();

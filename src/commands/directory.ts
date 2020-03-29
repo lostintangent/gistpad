@@ -132,14 +132,22 @@ export function registerDirectoryCommands(context: ExtensionContext) {
       async (node: GistDirectoryNode) => {
         await ensureAuthenticated();
 
+        const directory = await window.showInputBox({
+          placeHolder: "Specify the name of the new duplicated directory",
+          value: `${node.directory} - Copy`
+        });
+
+        if (!directory) {
+          return;
+        }
+
         const uris = getDirectoryFiles([node]);
-        const duplicateDirectoryName = `${node.directory} - Copy`;
 
         await withProgress(`Duplicating directory...`, () =>
           Promise.all(
             uris.map(async (uri) => {
               const contents = await workspace.fs.readFile(uri);
-              const duplicateFileName = `${duplicateDirectoryName}${DIRECTORY_SEPERATOR}${path.basename(
+              const duplicateFileName = `${directory}${DIRECTORY_SEPERATOR}${path.basename(
                 uri.path
               )}`;
 

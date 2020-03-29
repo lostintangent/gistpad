@@ -2,8 +2,8 @@
   "name": "gistfs",
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
-  "publisher": "vsls-contrib",
-  "version": "0.0.63",
+  "publisher": "vsl-contrib",
+  "version": "0.0.64",
   "extensionKind": [
     "ui",
     "workspace"
@@ -1361,6 +1361,9 @@
     "vscode:prepublish": "npm run build:node",
     "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
   },
+  "extensionPack": [
+    "vsls-contrib.codetour"
+  ],
   "dependencies": {
     "@types/debounce": "^1.2.0",
     "@types/less": "^3.0.1",

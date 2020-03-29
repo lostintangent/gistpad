@@ -97,12 +97,6 @@ At some point, your code/notes might outgrow the feature set offered by Gists (e
 
 In order to use this command, the token you authenticate with needs to also have the `repo` scope, in addition to the `gist` scope. If it doesn't, simply generate a new token with the appropriate scopes, run the `GistPad: Sign Out` command, and then sign in again with the updated token.
 
-## Showcase
-
-In order to illustrate what you can do with gists and [playgrounds](#interactive-playgrounds), as well as keep up-to-date with the cool stuff that folks in the community are building, you can check out the `Showcase` view in the `GistPad` tab. This shows a list of categories, which are meant to highlight different use cases for gists, along with some examples. Simply click the `Open` button for any gist in order to explore it, or expand the gist to see its file contents. If you have a gist that you think is worth showcasing, please open an issue and let us know about it. Otherwise, we'll keep the showcase updated periodically, to highlight new and interesting things. So stay tuned!
-
-<img width="250px" src="https://user-images.githubusercontent.com/116461/74891549-2c9f4500-533c-11ea-9bbb-c5907d41a589.png" />
-
 ### Scratch Notes
 
 To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document, whose name is formatted based on the time it was created. By default, scratch notes create Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting.
@@ -115,7 +109,13 @@ You can create as many scratch notes as you need, and when you're done with them
 
 > Behind the scenes, scratch notes are simply files that are managed within a "special" secret gist on your behalf. This way, you can focus entirely on the epeheraml nature of the notes, and not worry about creating/deleting gists.
 
-## Interactive Playgrounds
+## Showcase
+
+In order to illustrate what you can do with gists and [playgrounds](#interactive-playgrounds), as well as keep up-to-date with the cool stuff that folks in the community are building, you can check out the `Showcase` view in the `GistPad` tab. This shows a list of categories, which are meant to highlight different use cases for gists, along with some examples. Simply click the `Open` button for any gist in order to explore it, or expand the gist to see its file contents. If you have a gist that you think is worth showcasing, please open an issue and let us know about it. Otherwise, we'll keep the showcase updated periodically, to highlight new and interesting things. So stay tuned!
+
+<img width="250px" src="https://user-images.githubusercontent.com/116461/74891549-2c9f4500-533c-11ea-9bbb-c5907d41a589.png" />
+
+## Playgrounds
 
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can right-click the `Your Gists` node and select `New Playground` or `New Secret Playground`. This will create a new gist, seeded with an HTML, CSS and JavaScript file, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
@@ -186,6 +186,8 @@ Additionally, if you create a playground that depends on the console, you can se
 
 If you'd like to give your playground an introduction, you can create a file in the playground called `README.md` (or `README.markdown`), and by default, it's contents will be rendered above the playground code in the preview window. When a playground is opened, the `README.md` file isn't opened, which allows the playground to be focused on the core code assets (e.g. `index.html`, `script.js`), and allow the preview window to include embedded documentation.
 
+Your playground can customize how the readme is rendered by setting the `readmeBehavior` property in your `playground.json` file to either `previewFooter` (which renders the content beneath the preview), `inputTour` (which renders the content beneath an [input file](#input)), or `none` (which doesn't render the contents at all).
+
 ### Modules
 
 By default, playground's assume you're using "standard" JavaScript code (`<script type="text/javascript" />`), and allows you to add 3rd-party [libraries](#external-libraries), which are added via new `<script>` elements in the preview page. However, if you'd like to write JavaScript code using `import`/`export`, you can set the `scriptType` property to `module` in the playground's `playground.json` file, and then begin to `import` modules. To simplify the process of importing 3rd-party modules, we'd recommend using either [Unkpkg](https://unpkg.com) (adding the [`?module` parameter](https://unpkg.com/#query-params) to any URLs), or the [Pika CDN](https://www.pika.dev/cdn).
@@ -202,6 +204,30 @@ Note that temporary gists don't appear in the main `Gists` explorer tree, and th
 
 If you'd like to add a link in your gist/readme, which references a file and/or line/column within a file in the gist, simply add a hyperlink, whose `href` value uses the `gist:` scheme (kind of like a `mailto:`), and specifies the file name you'd like to open (e.g. `gist:index.html`). Optionally, you can specify a line and column number as well (e.g. `gist:index.html@23:5`), which allows you to highlight a specific line/span of code when the end-user clicks on it.
 
+#### Config
+
+If you need to customize the appearance/behavior of a playground and/or each step within your tutorial, you can create a `config.json` file with your playground to indicate the playground's configuration settings. This file will be automatically loaded/parsed, and exposed to your code via the `widow.config` global variable. This makes it really easy to customize your playground, without needing to write the code to load the step config manually.
+
+#### Input
+
+If your playground needs to accept user input (e.g. to allow a user to take a challenge, play a game), then you can set the `input` property of your `playground.json` file to an object that includes two properties:
+
+- `fileName` - Indicates the "file name" of the virtual input file that will be created and displayed to the end-user. Note that this is mostly valuable for two reasons: setting the context to the end-user of what input the file expects (e.g. `CSS Selector`), and triggering colorization/language support by setting a file extension.
+
+- `prompt` - Indicates an optional prompt (e.g. `Specify the name of the CSS selector`) that is rendered to the right of the input.
+
+As the user types into the input file, the playground will look for a global function called `checkInput`, and if present, it will call that function, passing it the current value of the input file. This function should return a `boolean` which indicates whether or not the user completed the challenge.
+
+Once completed, a modal dialog will appear, indicating to the user that they finished the challenge, and asking if they want to continue or exit the playground. If you'd like to customize the message that appears upon completion, simply set the `input.completionMessage` property to the desired string.
+
+> Note: If you want to provide additionally help information for your input, you can create a `README.md` file in your playground/tutorial and set the `readmeBehavior` property in your `playground.json` manifest to `inputTour`. This will render the contents of the readme as a inline code comment, directly beneath the input file.
+
+#### Canvas
+
+If your playground requires a custom/interactive experience, but you don't want to place that HTML/JavaScript/CSS code in the `index.html` file (because it would open up for your end-users to see it), you can define a `canvas.html` file in your playground, which will be used as the main markup content for the playground.
+
+For example, you could create a playground with a `canvas.html` file that contains your playground's HTML content, and a `style.css` file that's intended to include user-entered CSS. Because you define the HTML via `canvas.html` instead of `index.html`, then the HTML file wouldn't automatically open up, and therefore, the user could focus entirely on the CSS.
+
 ### Tutorials
 
 By default, a playground represents a single interactive sample. However, they can also represent multi-step tutorials/presentations, by making two simple changes:
@@ -217,8 +243,6 @@ When a user opens up a tutorial playground, they'll only see the contents of the
 ### CodeTour
 
 GistPad includes integration with [CodeTour](https://aka.ms/codetour), which allows you to author interactive walkthroughs of a codebase. This can be helpful for annotating relevant "markers" within a playground, and encouraging users/yourself where to focus. In order to create a code tour for a playground, simply open the playground, and click the `...` menu in the editor window of any of the playground's document or the preview window. Select `Record CodeTour` and then start adding step annotations to your playground's code. Then, anytime you or someone else opens your playground, the tour will be automatically started.
-
-> Note: In order to record and playback tours, you need to install the [CodeTour](https://aka.ms/codetour) extension seperately. For more details on how to record/play tours, refer to the extension's readme.
 
 ### Template Galleries
 
@@ -247,8 +271,14 @@ Whenever you create a playground, it includes a `playground.json` file, which de
 - `layout` - Specifies the [layout](#layout) to use when someone opens this playground. Note that this will take precedence over the user's configured default layout, and therefore, is useful when a playground is optimized for a specific layout, and therefore, can ensure the end-user has the best experience by default.
 
 - `scriptType` - Indicates the value of `<script>` element's `type` attribute, when injected into the playground preview page. Can either be `text/javascript` or `module`. Defaults to `text/javascript`.
+
+- `template` - Indicates that this playground is intended to be used as a [template for new playgrounds](#user-templates), and therefore, will appear in the list when creating a new playground. Defaults to `false`.
+
+- `readmeBehavior` - Indicates how the playground's [readme](#readme) (if it has one) will be rendered to the end-user. Defaults to `previewHeader`.
 -
-- `template` - Indicates that this playground is intended to be used as a template for new playgrounds, and therefore, will appear in the list when creating a new playground. Defaults to `false`.
+- `tutorial` - Indicates that this playground is intended to be used as a [multi-step tutorial](#tutorials). When set, this property indicates the title of the tutorial.
+
+- `input` - Indicates that this playground requires [user input](#input), and also specifies an optional input file name, prompt message and completion message.
 
 ### CodePen
 

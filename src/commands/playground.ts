@@ -8,6 +8,7 @@ import {
   ENCODED_DIRECTORY_SEPERATOR,
   EXTENSION_NAME,
   FS_SCHEME,
+  INPUT_SCHEME,
   PLAYGROUND_FILE
 } from "../constants";
 import { getFileContents } from "../fileSystem/api";
@@ -45,6 +46,7 @@ import {
 import {
   endCurrentTour,
   isCodeTourInstalled,
+  startTour,
   startTourFromFile,
   TOUR_FILE
 } from "../playgrounds/tour";
@@ -71,7 +73,20 @@ import { addPlaygroundLibraryCommand } from "./addPlaygroundLibraryCommand";
 import { getCDNJSLibraries } from "./cdnjs";
 
 export type ScriptType = "text/javascript" | "module";
-export type ReadmeBehavior = "none" | "previewHeader" | "previewFooter";
+export type ReadmeBehavior =
+  | "none"
+  | "inputTour"
+  | "previewHeader"
+  | "previewFooter";
+
+const CONFIG_FILE = "config.json";
+const CANVAS_FILE = "canvas.html";
+
+export interface PlaygroundInput {
+  fileName?: string;
+  prompt?: string;
+  completionMessage?: string;
+}
 
 export interface PlaygroundManifest {
   scripts?: string[];
@@ -82,6 +97,7 @@ export interface PlaygroundManifest {
   scriptType?: ScriptType;
   readmeBehavior?: ReadmeBehavior;
   tutorial?: string;
+  input?: PlaygroundInput;
 }
 
 export enum PlaygroundLibraryType {
@@ -90,6 +106,7 @@ export enum PlaygroundLibraryType {
 }
 
 export enum PlaygroundFileType {
+  config,
   markup,
   script,
   stylesheet,
@@ -118,6 +135,14 @@ export async function closeWebviewPanel(gistId: string) {
     activePlayground.webViewPanel.dispose();
   }
 }
+
+export const getCanvasContent = async (gist: Gist) => {
+  if (!gist.files[CANVAS_FILE]) {
+    return "";
+  }
+
+  return await getFileContents(gist.files[CANVAS_FILE]);
+};
 
 export const getManifestContent = async (gist: Gist) => {
   if (!gist.files[PLAYGROUND_FILE]) {
@@ -229,6 +254,10 @@ export const getGistFileOfType = (
       extensions = [""];
       fileBaseName = TOUR_FILE;
       break;
+    case PlaygroundFileType.config:
+      extensions = [""];
+      fileBaseName = CONFIG_FILE;
+      break;
     case PlaygroundFileType.stylesheet:
     default:
       extensions = STYLESHEET_EXTENSIONS;
@@ -277,6 +306,10 @@ function isPlaygroundDocument(
     case PlaygroundFileType.manifest:
       extensions = [""];
       fileBaseName = PLAYGROUND_FILE;
+      break;
+    case PlaygroundFileType.config:
+      extensions = [""];
+      fileBaseName = CONFIG_FILE;
       break;
     case PlaygroundFileType.stylesheet:
     default:
@@ -590,9 +623,23 @@ export async function openPlayground(gist: Gist) {
     currentTutorialStep
   );
 
-  const includedFiles = [!!markupFile, !!stylesheetFile, !!scriptFile].filter(
-    (file) => file
-  ).length;
+  const configFile = getGistFileOfType(
+    gist,
+    PlaygroundFileType.config,
+    currentTutorialStep
+  );
+
+  const inputFile =
+    manifest.input && manifest.input.fileName
+      ? `${INPUT_SCHEME}:///${manifest.input.fileName}`
+      : "";
+
+  const includedFiles = [
+    !!markupFile,
+    !!stylesheetFile,
+    !!scriptFile,
+    !!inputFile
+  ].filter((file) => file).length;
 
   const layoutManager = await createLayoutManager(
     includedFiles,
@@ -624,6 +671,46 @@ export async function openPlayground(gist: Gist) {
     );
 
     layoutManager.showDocument(jsDocument);
+  }
+
+  let inputDocument: vscode.TextDocument;
+  if (inputFile) {
+    // Clear any previous content from the input file.
+    await vscode.workspace.fs.writeFile(
+      vscode.Uri.parse(inputFile),
+      stringToByteArray("")
+    );
+
+    inputDocument = await vscode.workspace.openTextDocument(
+      vscode.Uri.parse(inputFile)
+    );
+
+    const editor = await layoutManager.showDocument(inputDocument, false);
+
+    const prompt = manifest.input!.prompt;
+    if (prompt) {
+      const decoration = vscode.window.createTextEditorDecorationType({
+        after: {
+          contentText: prompt,
+          margin: "0 0 0 30px",
+          fontStyle: "italic",
+          color: new vscode.ThemeColor("editorLineNumber.foreground")
+        },
+        isWholeLine: true
+      });
+
+      editor?.setDecorations(decoration, [new vscode.Range(0, 0, 0, 1000)]);
+    }
+
+    // Continusouly save this file so that it doesn't ask
+    // the user to save it upon closing
+    const interval = setInterval(() => {
+      if (inputDocument) {
+        inputDocument.save();
+      } else {
+        clearInterval(interval);
+      }
+    }, 100);
   }
 
   const webViewPanel = vscode.window.createWebviewPanel(
@@ -664,6 +751,31 @@ export async function openPlayground(gist: Gist) {
 
   const autoRun = config.get("playgrounds.autoRun");
   const runOnEdit = autoRun === "onEdit";
+
+  function processReadme(rawContent: string, runOnEdit: boolean = false) {
+    // @ts-ignore
+    if (manifest.readmeBehavior === "inputTour" && inputDocument) {
+      startTour(
+        {
+          title: gist.description,
+          steps: [
+            {
+              uri: inputDocument.uri.toString(),
+              description: rawContent
+            }
+          ]
+        },
+        vscode.Uri.parse(`${INPUT_SCHEME}://`),
+        false,
+        false
+      );
+
+      activePlayground!.hasTour = true;
+    } else {
+      const htmlContent = getReadmeContent(rawContent);
+      htmlView.updateReadme(htmlContent || "", runOnEdit);
+    }
+  }
 
   const documentChangeDisposable = vscode.workspace.onDidChangeTextDocument(
     debounce(async ({ document }) => {
@@ -742,10 +854,19 @@ export async function openPlayground(gist: Gist) {
           currentTutorialStep
         )
       ) {
-        const content = await getReadmeContent(document.getText());
-        if (content !== null) {
-          htmlView.updateReadme(content, runOnEdit);
-        }
+        const rawContent = document.getText();
+        processReadme(rawContent, runOnEdit);
+      } else if (
+        isPlaygroundDocument(
+          gist,
+          document,
+          PlaygroundFileType.config,
+          currentTutorialStep
+        )
+      ) {
+        htmlView.updateConfig(document.getText(), runOnEdit);
+      } else if (document.uri.scheme === INPUT_SCHEME) {
+        htmlView.updateInput(document.getText(), runOnEdit);
       }
     }, 100)
   );
@@ -765,8 +886,11 @@ export async function openPlayground(gist: Gist) {
   }
 
   htmlView.updateManifest(manifest ? JSON.stringify(manifest) : "");
+
   htmlView.updateHTML(
-    !!markupFile ? getMarkupContent(htmlDocument!) || "" : ""
+    !!markupFile
+      ? getMarkupContent(htmlDocument!) || ""
+      : await getCanvasContent(gist)
   );
   htmlView.updateCSS(
     !!stylesheetFile ? (await getStylesheetContent(cssDocument!)) || "" : ""
@@ -776,16 +900,6 @@ export async function openPlayground(gist: Gist) {
     htmlView.updateJavaScript(jsDocument!);
   }
 
-  if (readmeFile) {
-    const content = getReadmeContent(
-      byteArrayToString(
-        await vscode.workspace.fs.readFile(fileNameToUri(gist.id, readmeFile))
-      )
-    );
-
-    htmlView.updateReadme(content || "");
-  }
-
   activePlayground = {
     gist,
     webView: htmlView,
@@ -793,6 +907,22 @@ export async function openPlayground(gist: Gist) {
     console: output,
     hasTour: false
   };
+
+  if (readmeFile) {
+    const rawContent = byteArrayToString(
+      await vscode.workspace.fs.readFile(fileNameToUri(gist.id, readmeFile))
+    );
+
+    processReadme(rawContent);
+  }
+
+  if (configFile) {
+    const content = byteArrayToString(
+      await vscode.workspace.fs.readFile(fileNameToUri(gist.id, configFile))
+    );
+
+    htmlView.updateConfig(content || "");
+  }
 
   await htmlView.rebuildWebview();
 

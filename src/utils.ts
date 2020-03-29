@@ -14,6 +14,7 @@ import {
   DIRECTORY_SEPERATOR,
   ENCODED_DIRECTORY_SEPERATOR,
   FS_SCHEME,
+  INPUT_SCHEME,
   PLAYGROUND_FILE,
   TEMP_GIST_ID
 } from "./constants";
@@ -63,8 +64,9 @@ export async function showGistQuickPick(gists: Gist[], placeHolder: string) {
 export async function closeGistFiles(gist: Gist) {
   window.visibleTextEditors.forEach((editor) => {
     if (
-      editor.document.uri.scheme === FS_SCHEME &&
-      editor.document.uri.authority === gist.id
+      (editor.document.uri.scheme === FS_SCHEME &&
+        editor.document.uri.authority === gist.id) ||
+      editor.document.uri.scheme === INPUT_SCHEME
     ) {
       editor.hide();
     }

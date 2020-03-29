@@ -3,6 +3,7 @@ import { reaction } from "mobx";
 import * as vscode from "vscode";
 import { getCDNJSLibraries } from "../commands/cdnjs";
 import {
+  closeWebviewPanel,
   openPlayground,
   PlaygroundLibraryType,
   PlaygroundManifest
@@ -14,6 +15,8 @@ import { storage } from "../store/storage";
 import { fileNameToUri } from "../utils";
 import { getScriptContent } from "./languages/script";
 
+const EXIT_RESPONSE = "Exit Playground";
+
 export class PlaygroundWebview {
   private css: string = "";
   private html: string = "";
@@ -21,6 +24,8 @@ export class PlaygroundWebview {
   private isJavaScriptModule: boolean = false;
   private manifest: PlaygroundManifest | undefined;
   private readme: string = "";
+  private config: string = "";
+  private input: string = "";
   private baseUrl = "";
 
   private updateBaseUrl() {
@@ -106,10 +111,28 @@ export class PlaygroundWebview {
           break;
 
         case "navigateTutorial":
-          const increment = value;
           const currentStep = storage.currentTutorialStep(this.gist.id);
-          storage.setCurrentTutorialStep(this.gist.id, currentStep + increment);
-          openPlayground(this.gist);
+          const nextStep = currentStep + value;
+
+          if (nextStep <= this.totalTutorialSteps!) {
+            storage.setCurrentTutorialStep(this.gist.id, nextStep);
+            openPlayground(this.gist);
+          } else {
+            const completionMessage =
+              this.manifest!.input && this.manifest!.input!.completionMessage
+                ? this.manifest!.input!.completionMessage
+                : "Congratulations! You're completed this tutorial";
+
+            const response = await vscode.window.showInformationMessage(
+              completionMessage,
+              { modal: true },
+              EXIT_RESPONSE
+            );
+
+            if (response === EXIT_RESPONSE) {
+              return closeWebviewPanel(this.gist.id);
+            }
+          }
           break;
       }
     });
@@ -131,8 +154,24 @@ export class PlaygroundWebview {
     }
   }
 
+  public updateInput(input: string, rebuild = false) {
+    this.input = input;
+
+    if (rebuild) {
+      this.webview.postMessage({ command: "updateInput", value: input });
+    }
+  }
+
   public async updateReadme(readme: string, rebuild = false) {
     this.readme = readme;
+
+    if (rebuild) {
+      await this.rebuildWebview();
+    }
+  }
+
+  public async updateConfig(config: string, rebuild = false) {
+    this.config = config;
 
     if (rebuild) {
       await this.rebuildWebview();
@@ -351,13 +390,29 @@ export class PlaygroundWebview {
           xhr.respond(data.value.status, JSON.parse(data.value.headers), data.value.body, data.value.statusText);
           pendingHttpRequests.delete(data.value.id);
         } else if (data.command === "navigateTutorial") {
-          vscode.postMessage({
-            command: "navigateTutorial",
-            value: data.value
-          });
+          navigateTutorial(data.value);
+        } else if (data.command === "updateInput") {
+          triggerInput(data.value)
         }
       });
     
+      function navigateTutorial(step) {
+        vscode.postMessage({
+          command: "navigateTutorial",
+          value: step
+        });
+      }
+
+      function triggerInput(input) {
+        if (window.checkInput) {
+          const complete = window.checkInput(input);
+
+          if (complete) {
+            navigateTutorial(1);
+          }
+        }
+      }
+
       function serializeMessage(message) {
         if (typeof message === "string") {
           return message
@@ -427,6 +482,20 @@ export class PlaygroundWebview {
           });
         }
       });
+
+      const config = \`${this.config}\`;
+      if (config) {
+        try {
+        window.config = JSON.parse(config);
+        } catch {
+          alert("The playground's config file ins't valid JSON.");
+        }
+      }
+
+      const input = "${this.input}";
+      if (input) {
+        triggerInput(input);
+      }
     }
 
     </script>

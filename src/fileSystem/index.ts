@@ -39,6 +39,7 @@ import {
 } from "../utils";
 import { getFileContents, updateGistFiles } from "./api";
 import * as gitFS from "./git";
+import { registerInputFileSystemProvider } from "./input";
 import * as tempFS from "./temp";
 const isBinaryPath = require("is-binary-path");
 
@@ -436,4 +437,6 @@ export function registerFileSystemProvider(store: Store) {
     FS_SCHEME,
     new GistFileSystemProvider(store)
   );
+
+  registerInputFileSystemProvider();
 }

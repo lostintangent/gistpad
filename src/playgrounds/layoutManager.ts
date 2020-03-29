@@ -133,7 +133,7 @@ export async function createLayoutManager(
         return;
       }
 
-      window.showTextDocument(document, {
+      const editor = window.showTextDocument(document, {
         preview: false,
         viewColumn: currentViewColumn,
         preserveFocus
@@ -145,6 +145,8 @@ export async function createLayoutManager(
       ) {
         currentViewColumn++;
       }
+
+      return editor;
     }
   };
 }

@@ -1,3 +1,10 @@
+## v0.0.64 (04/28/2020)
+
+- Introduced support for "playground config", which allows you to define a `config.json` file within a playground/tutorial that will be automatically loaded and exposed via a global `window.config` variable.
+- Introduced support for "playground input", which allows you to accept user input and run a custom rubric against it, in order to allow user's to "complete" a playground/tutorial. 
+- Introduced support for a "playgroud canvas", which allows you to specify a custom playground experience, using an HTML file that isn't automatically displayed to the end-user.
+- When duplicating a directory, you're now asked to specify the name of the new directory before it's created. This prevents you from needing to duplicate and then rename the directory, and therefore, enables the same thing in a single gesture.
+
 ## v0.0.63 (03/15/2020)
 
 - Added integration with the [CodeTour](https://aka.ms/codetour) extension, so that you can record/playback tours for playgrounds.

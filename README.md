@@ -247,7 +247,7 @@ Whenever you create a playground, it includes a `playground.json` file, which de
 - `layout` - Specifies the [layout](#layout) to use when someone opens this playground. Note that this will take precedence over the user's configured default layout, and therefore, is useful when a playground is optimized for a specific layout, and therefore, can ensure the end-user has the best experience by default.
 
 - `scriptType` - Indicates the value of `<script>` element's `type` attribute, when injected into the playground preview page. Can either be `text/javascript` or `module`. Defaults to `text/javascript`.
--
+
 - `template` - Indicates that this playground is intended to be used as a template for new playgrounds, and therefore, will appear in the list when creating a new playground. Defaults to `false`.
 
 ### CodePen
@@ -418,7 +418,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 * `GistPad > Playgrounds: Template Galleries` - Specifies the list of template galleries to use, when displaying the available templates when creating a new playground. Defaults to `["web"]`.
 
 * `GistPad > Scratch Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new scratch notes. Defaults to `LL` (e.g. `March 6, 2020`).
-*
+
 * `GistPad > Scratch Notes: File Extension` - Specifies the file extension to use when generating new scratch notes. Defaults to `.md`.
 
 * `GistPad > Scratch Notes: File Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new scratch notes. Defaults to `LT` (e.g. `2:52 PM`).

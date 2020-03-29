@@ -113,7 +113,7 @@ In order to help differentiate scratch notes from your "permanent notes", scratc
 
 You can create as many scratch notes as you need, and when you're done with them, you can delete indiviual notes and/or clear all of your notes by right-clicking the `Scratch Notes` node in the tree and selecting `Clear Scratch Notes`.
 
-> Behind the scenes, scratch notes are simply files that are managed within a "special" secret gist on your behalf. This way, you can focus entirely on the epeheraml nature of the notes, and not worry about creating/deleting gists.
+> Behind the scenes, scratch notes are simply files that are managed within a "special" secret gist on your behalf. This way, you can focus entirely on the ephemeral nature of the notes, and not worry about creating/deleting gists.
 
 ## Interactive Playgrounds
 

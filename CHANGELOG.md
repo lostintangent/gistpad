@@ -1,4 +1,4 @@
-## v0.0.65 (04/28/2020)
+## v0.0.65 (03/30/2020)
 
 - When duplicating a file, you're now asked to specify the name of the new file before it's created. This prevents you from needing to duplicate and then rename the file, and therefore, enables the same thing in a single gesture.
 - Updated the "input tour" experience to use a custom-GistPad comment experience, as opposed to CodeTour (which isn't neccessary for a single comment affordance).

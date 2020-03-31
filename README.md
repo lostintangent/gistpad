@@ -244,6 +244,8 @@ When a user opens up a tutorial playground, they'll only see the contents of the
 
 GistPad includes integration with [CodeTour](https://aka.ms/codetour), which allows you to author interactive walkthroughs of a codebase. This can be helpful for annotating relevant "markers" within a playground, and encouraging users/yourself where to focus. In order to create a code tour for a playground, simply open the playground, and click the `...` menu in the editor window of any of the playground's document or the preview window. Select `Record CodeTour` and then start adding step annotations to your playground's code. Then, anytime you or someone else opens your playground, the tour will be automatically started.
 
+> For more information on CodeTour, and how to navigate/author tours, refer to the [CodeTour](https://aka.ms/codetour) documentation.
+
 ### Template Galleries
 
 When you create a new playground, you'll see a list of templates, which let you create playgrounds using a pre-defined set of files and external libraries (e.g. React.js, Vue). This makes it really easy to get started quickly, and reduce repetitive tasks/boilerplate. By default, GistPad includes a standard set of templates, which come from two built-in galleries: `web:languages` and `web:libraries`. If you don't intend to use one or both of these, you can disable them by clicking the gear icon when running the `New Playground` (or `New Secret Playground`) command, and de-selecting the galleries you don't want. Additionally, you can modify the `GistPad > Playgrounds: Template Galleries` setting.

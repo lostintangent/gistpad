@@ -46,7 +46,6 @@ import {
 import {
   endCurrentTour,
   isCodeTourInstalled,
-  startTour,
   startTourFromFile,
   TOUR_FILE
 } from "../playgrounds/tour";
@@ -58,6 +57,7 @@ import { GistNode, GistsNode } from "../tree/nodes";
 import {
   byteArrayToString,
   closeGistFiles,
+  decodeDirectoryName,
   decodeDirectoryUri,
   fileNameToUri,
   getGistDescription,
@@ -75,7 +75,7 @@ import { getCDNJSLibraries } from "./cdnjs";
 export type ScriptType = "text/javascript" | "module";
 export type ReadmeBehavior =
   | "none"
-  | "inputTour"
+  | "inputComment"
   | "previewHeader"
   | "previewFooter";
 
@@ -126,9 +126,16 @@ interface IPlayground {
   webViewPanel: vscode.WebviewPanel;
   console: vscode.OutputChannel;
   hasTour: boolean;
+  commentController?: vscode.CommentController;
 }
 
 export let activePlayground: IPlayground | null;
+
+export function setActivePlaygroundHasTour() {
+  if (activePlayground) {
+    activePlayground.hasTour = true;
+  }
+}
 
 export async function closeWebviewPanel(gistId: string) {
   if (activePlayground && activePlayground.gist.id === gistId) {
@@ -754,23 +761,35 @@ export async function openPlayground(gist: Gist) {
 
   function processReadme(rawContent: string, runOnEdit: boolean = false) {
     // @ts-ignore
-    if (manifest.readmeBehavior === "inputTour" && inputDocument) {
-      startTour(
-        {
-          title: gist.description,
-          steps: [
-            {
-              uri: inputDocument.uri.toString(),
-              description: rawContent
-            }
-          ]
-        },
-        vscode.Uri.parse(`${INPUT_SCHEME}://`),
-        false,
-        false
+    if (manifest.readmeBehavior === "inputComment" && inputDocument) {
+      if (activePlayground!.commentController) {
+        activePlayground!.commentController.dispose();
+      }
+
+      activePlayground!.commentController = vscode.comments.createCommentController(
+        EXTENSION_NAME,
+        EXTENSION_NAME
       );
 
-      activePlayground!.hasTour = true;
+      const thread = activePlayground!.commentController.createCommentThread(
+        inputDocument.uri,
+        new vscode.Range(0, 0, 0, 0),
+        [
+          {
+            author: {
+              name: "GistPad",
+              iconPath: vscode.Uri.parse(
+                "https://cdn.jsdelivr.net/gh/vsls-contrib/gistpad/images/icon.png"
+              )
+            },
+            body: rawContent,
+            mode: vscode.CommentMode.Preview,
+            label: gist.description
+          }
+        ]
+      );
+
+      thread.collapsibleState = vscode.CommentThreadCollapsibleState.Expanded;
     } else {
       const htmlContent = getReadmeContent(rawContent);
       htmlView.updateReadme(htmlContent || "", runOnEdit);
@@ -966,6 +985,10 @@ export async function openPlayground(gist: Gist) {
       );
     }
 
+    if (activePlayground?.commentController) {
+      activePlayground.commentController.dispose();
+    }
+
     activePlayground = null;
 
     closeGistFiles(gist);
@@ -992,14 +1015,18 @@ export async function openPlayground(gist: Gist) {
     if (tourFileName) {
       activePlayground!.hasTour = true;
 
-      const tourFilePath = decodeDirectoryUri(
-        fileNameToUri(gist.id, tourFileName)
-      ).toString();
+      const suffix = manifest.tutorial
+        ? `/${path.dirname(decodeDirectoryName(tourFileName))}`
+        : "";
+      const workspaceRoot = vscode.Uri.parse(
+        `${FS_SCHEME}://${gist.id}${suffix}`
+      );
 
-      const workspaceRoot = vscode.Uri.parse(path.dirname(tourFilePath));
       const tourFile = gist.files[tourFileName];
       startTourFromFile(tourFile, workspaceRoot, false, canEdit);
-    } else if (canEdit) {
+    }
+
+    if (canEdit) {
       await vscode.commands.executeCommand(
         "setContext",
         "gistpad:allowCodeTourRecording",

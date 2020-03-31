@@ -186,7 +186,7 @@ Additionally, if you create a playground that depends on the console, you can se
 
 If you'd like to give your playground an introduction, you can create a file in the playground called `README.md` (or `README.markdown`), and by default, it's contents will be rendered above the playground code in the preview window. When a playground is opened, the `README.md` file isn't opened, which allows the playground to be focused on the core code assets (e.g. `index.html`, `script.js`), and allow the preview window to include embedded documentation.
 
-Your playground can customize how the readme is rendered by setting the `readmeBehavior` property in your `playground.json` file to either `previewFooter` (which renders the content beneath the preview), `inputTour` (which renders the content beneath an [input file](#input)), or `none` (which doesn't render the contents at all).
+Your playground can customize how the readme is rendered by setting the `readmeBehavior` property in your `playground.json` file to either `previewFooter` (which renders the content beneath the preview content), `inputComment` (which renders the content beneath an [input file](#playground-input)), or `none` (which doesn't render the contents at all).
 
 ### Modules
 
@@ -204,11 +204,11 @@ Note that temporary gists don't appear in the main `Gists` explorer tree, and th
 
 If you'd like to add a link in your gist/readme, which references a file and/or line/column within a file in the gist, simply add a hyperlink, whose `href` value uses the `gist:` scheme (kind of like a `mailto:`), and specifies the file name you'd like to open (e.g. `gist:index.html`). Optionally, you can specify a line and column number as well (e.g. `gist:index.html@23:5`), which allows you to highlight a specific line/span of code when the end-user clicks on it.
 
-#### Config
+#### Playground Config
 
 If you need to customize the appearance/behavior of a playground and/or each step within your tutorial, you can create a `config.json` file with your playground to indicate the playground's configuration settings. This file will be automatically loaded/parsed, and exposed to your code via the `widow.config` global variable. This makes it really easy to customize your playground, without needing to write the code to load the step config manually.
 
-#### Input
+#### Playground Input
 
 If your playground needs to accept user input (e.g. to allow a user to take a challenge, play a game), then you can set the `input` property of your `playground.json` file to an object that includes two properties:
 
@@ -220,9 +220,9 @@ As the user types into the input file, the playground will look for a global fun
 
 Once completed, a modal dialog will appear, indicating to the user that they finished the challenge, and asking if they want to continue or exit the playground. If you'd like to customize the message that appears upon completion, simply set the `input.completionMessage` property to the desired string.
 
-> Note: If you want to provide additionally help information for your input, you can create a `README.md` file in your playground/tutorial and set the `readmeBehavior` property in your `playground.json` manifest to `inputTour`. This will render the contents of the readme as a inline code comment, directly beneath the input file.
+> Note: If you want to provide additionally help information for your input, you can create a `README.md` file in your playground/tutorial and set the `readmeBehavior` property in your `playground.json` manifest to `inputComment`. This will render the contents of the readme as a inline code comment, directly beneath the input file.
 
-#### Canvas
+#### Custom Playground Canvas
 
 If your playground requires a custom/interactive experience, but you don't want to place that HTML/JavaScript/CSS code in the `index.html` file (because it would open up for your end-users to see it), you can define a `canvas.html` file in your playground, which will be used as the main markup content for the playground.
 
@@ -278,7 +278,7 @@ Whenever you create a playground, it includes a `playground.json` file, which de
 -
 - `tutorial` - Indicates that this playground is intended to be used as a [multi-step tutorial](#tutorials). When set, this property indicates the title of the tutorial.
 
-- `input` - Indicates that this playground requires [user input](#input), and also specifies an optional input file name, prompt message and completion message.
+- `input` - Indicates that this playground requires [user input](#playground-input), and also specifies an optional input file name, prompt message and completion message.
 
 ### CodePen
 

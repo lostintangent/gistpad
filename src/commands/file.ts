@@ -54,64 +54,12 @@ export function registerFileCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_NAME}.uploadFileToGist`,
-      async (node: GistNode) => {
-        await ensureAuthenticated();
-
-        const files = await window.showOpenDialog({
-          canSelectMany: true,
-          openLabel: "Upload"
-        });
-
-        if (files) {
-          withProgress("Uploading file(s)...", () =>
-            Promise.all(
-              files.map((file) => {
-                const fileName = path.basename(file.path);
-                const content = fs.readFileSync(new URL(file.toString()));
-
-                return workspace.fs.writeFile(
-                  fileNameToUri(node.gist.id, fileName),
-                  content
-                );
-              })
-            )
-          );
-        }
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(
       `${EXTENSION_NAME}.copyFileContents`,
       async (node: GistFileNode) => {
         const contents = await workspace.fs.readFile(
           fileNameToUri(node.gistId, node.file.filename!)
         );
         await env.clipboard.writeText(byteArrayToString(contents));
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(
-      `${EXTENSION_NAME}.duplicateFile`,
-      async (node: GistFileNode) => {
-        withProgress("Duplicating file...", async () => {
-          const contents = await workspace.fs.readFile(
-            fileNameToUri(node.gistId, node.file.filename!)
-          );
-
-          const extension = path.extname(node.file.filename!);
-          const rootFileName = node.file.filename?.replace(extension, "");
-          const duplicateFileName = `${rootFileName} - Copy${extension}`;
-
-          return workspace.fs.writeFile(
-            fileNameToUri(node.gistId, duplicateFileName),
-            contents
-          );
-        });
       }
     )
   );
@@ -174,6 +122,37 @@ export function registerFileCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.duplicateFile`,
+      async (node: GistFileNode) => {
+        const extension = path.extname(node.file.filename!);
+        const rootFileName = node.file.filename?.replace(extension, "");
+        const duplicateFileName = `${rootFileName} - Copy${extension}`;
+
+        const file = await window.showInputBox({
+          placeHolder: "Specify the name of the new duplicated file",
+          value: decodeDirectoryName(duplicateFileName)
+        });
+
+        if (!file) {
+          return;
+        }
+
+        withProgress("Duplicating file...", async () => {
+          const contents = await workspace.fs.readFile(
+            fileNameToUri(node.gistId, node.file.filename!)
+          );
+
+          return workspace.fs.writeFile(
+            fileNameToUri(node.gistId, file),
+            contents
+          );
+        });
+      }
+    )
+  );
+
+  context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_NAME}.openGistFile`, (uri: Uri) =>
       openGistFile(uri, false)
     )
@@ -204,6 +183,36 @@ export function registerFileCommands(context: ExtensionContext) {
           await workspace.fs.rename(
             fileNameToUri(gistId, fileName),
             fileNameToUri(gistId, newFilename)
+          );
+        }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.uploadFileToGist`,
+      async (node: GistNode) => {
+        await ensureAuthenticated();
+
+        const files = await window.showOpenDialog({
+          canSelectMany: true,
+          openLabel: "Upload"
+        });
+
+        if (files) {
+          withProgress("Uploading file(s)...", () =>
+            Promise.all(
+              files.map((file) => {
+                const fileName = path.basename(file.path);
+                const content = fs.readFileSync(new URL(file.toString()));
+
+                return workspace.fs.writeFile(
+                  fileNameToUri(node.gist.id, fileName),
+                  content
+                );
+              })
+            )
           );
         }
       }

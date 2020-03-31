@@ -2,8 +2,8 @@
   "name": "gistfs",
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
-  "publisher": "vsl-contrib",
-  "version": "0.0.64",
+  "publisher": "vsls-contrib",
+  "version": "0.0.65",
   "extensionKind": [
     "ui",
     "workspace"

@@ -1,4 +1,4 @@
-## v0.0.66 (04/08/202)
+## v0.0.66 (04/10/202)
 
 - Contributed the `Export Tour to Gist...` command to the `CodeTour` tree, which is available when you have the `CodeTour` extension installed.
 - Added a new `tour` gist type, that represent gists created by exporting a `CodeTour` as a gist. When you open tour gists, it will start playing the embedded tour.

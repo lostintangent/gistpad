@@ -1,7 +1,7 @@
 import * as path from "path";
 import * as vscode from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { startTour, TOUR_FILE } from "../playgrounds/tour";
+import { exportTour, startTour, TOUR_FILE } from "../playgrounds/tour";
 import { store } from "../store";
 import { storage } from "../store/storage";
 import {
@@ -10,9 +10,20 @@ import {
   stringToByteArray,
   withProgress
 } from "../utils";
+import { promptForGistSelection } from "./editor";
 import { setActivePlaygroundHasTour } from "./playground";
 
 export async function registerTourCommands(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_NAME}.exportTour`,
+      async ({ tour }) => {
+        const content = await exportTour(tour);
+        promptForGistSelection([{ filename: TOUR_FILE, content }]);
+      }
+    )
+  );
+
   context.subscriptions.push(
     vscode.commands.registerCommand(
       `${EXTENSION_NAME}.recordCodeTour`,

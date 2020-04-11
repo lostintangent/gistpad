@@ -52,7 +52,7 @@ async function newGistWithFiles(isPublic: boolean, files: GistFile[]) {
   );
 }
 
-async function promptForGistSelection(files: GistFile[]) {
+export async function promptForGistSelection(files: GistFile[]) {
   const gistItems = store.gists.map((gist) => {
     return <GistQuickPickItem>{
       label: getGistLabel(gist),
@@ -61,7 +61,7 @@ async function promptForGistSelection(files: GistFile[]) {
     };
   });
 
-  gistItems.push(...CREATE_GIST_ITEMS);
+  gistItems.unshift(...CREATE_GIST_ITEMS);
 
   const list = window.createQuickPick();
   list.placeholder = "Specify the gist you'd like to add the file(s) to";

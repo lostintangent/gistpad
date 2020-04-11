@@ -167,7 +167,7 @@ export async function followUser(username: string) {
 
   store.followedUsers.push(user);
 
-  user.gists = await listUserGists(username);
+  user.gists = await updateGistTags(await listUserGists(username));
   user.isLoading = false;
 }
 

@@ -18,6 +18,11 @@ import {
   PLAYGROUND_FILE,
   TEMP_GIST_ID
 } from "./constants";
+import {
+  isCodeTourInstalled,
+  startTourFromFile,
+  TOUR_FILE
+} from "./playgrounds/tour";
 import { Gist, SortOrder, store, Store } from "./store";
 import { getGist } from "./store/actions";
 import { getViewerCommand } from "./viewerProvider";
@@ -152,6 +157,10 @@ export async function openGistFiles(id: string) {
 
     if (isPlaygroundGist(gist)) {
       await openPlayground(gist);
+    } else if (isTourGist(gist) && (await isCodeTourInstalled())) {
+      const canEdit = isOwnedGist(gist.id);
+      const tourFile = gist.files[TOUR_FILE];
+      startTourFromFile(tourFile, Uri.parse(""), false, canEdit);
     } else {
       Object.entries(gist.files)
         .reverse()
@@ -253,6 +262,8 @@ export function updateGistTags(gist: Gist | Gist[]) {
       gist.type = "notebook";
     } else if (isDocumentGist(gist)) {
       gist.type = "doc";
+    } else if (isTourGist(gist)) {
+      gist.type = "tour";
     } else {
       gist.type = "code-snippet";
     }
@@ -293,6 +304,11 @@ export function isDocumentGist(gist: Gist) {
       ALL_DOCUMENT_EXTENSIONS.includes(path.extname(file))
     )
   );
+}
+
+export function isTourGist(gist: Gist) {
+  const files = Object.keys(gist.files);
+  return files.length === 1 && files[0] === TOUR_FILE;
 }
 
 export function isNotebookGist(gist: Gist) {

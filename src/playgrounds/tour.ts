@@ -13,6 +13,7 @@ interface CodeTourApi {
     canEdit: boolean
   ): void;
   endCurrentTour(): void;
+  exportTour(tour: any): string;
 }
 
 let codeTourApi: CodeTourApi;
@@ -70,4 +71,10 @@ export async function endCurrentTour() {
   await ensureApi();
 
   codeTourApi.endCurrentTour();
+}
+
+export async function exportTour(tour: any) {
+  await ensureApi();
+
+  return codeTourApi.exportTour(tour);
 }

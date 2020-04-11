@@ -55,7 +55,8 @@ export type GistType =
   | "playground"
   | "playground-template"
   | "notebook"
-  | "tutorial";
+  | "tutorial"
+  | "tour";
 
 export type GistGroupType = GistType | "tag";
 

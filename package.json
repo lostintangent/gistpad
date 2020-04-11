@@ -33,6 +33,7 @@
     "onCommand:gistpad.addFileToGist",
     "onCommand:gistpad.addSelectionToGist",
     "onCommand:gistpad.deleteGist",
+    "onCommand:gistpad.exportTour",
     "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
     "onCommand:gistpad.newGistLog",
@@ -372,6 +373,10 @@
         "command": "gistpad.exportToRepo",
         "title": "Export to Repository",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.exportTour",
+        "title": "Export Tour to Gist..."
       },
       {
         "command": "gistpad.followUser",
@@ -802,6 +807,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.exportTour",
+          "when": "false"
+        },
+        {
           "command": "gistpad.groupGists",
           "when": "false"
         },
@@ -1169,6 +1178,11 @@
           "command": "gistpad.hideScratchNotes",
           "when": "viewItem == scratchGist",
           "group": "manage@2"
+        },
+        {
+          "command": "gistpad.exportTour",
+          "when": "viewItem =~ /^codetour.tour(.active)?$/",
+          "group": "export@2"
         }
       ],
       "explorer/context": [

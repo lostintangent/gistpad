@@ -6,6 +6,19 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
+## Table of Contents
+>> **[Getting Started](#getting-started)**
+
+>> **[Playgrounds](#playgrounds)**
+
+>> **[Third-party integrations](#codepen)** 
+
+>> **[Contributed Commands](#contributed-commands-file-explorer)**
+
+>> **[Additional features](#configuration-settings)**
+
+
+
 ## Getting Started
 
 1. Install this extension from the marketplace and then reload VS Code

@@ -2,19 +2,9 @@
 # Contributing to GistPad Project
 
 Thank you for your interest in contributing to GistPad! 
-The goal of this documentation is to provide a high-level overview of how discovered issues are reported and you can build the project for your technical contributions.  
 
-# Reporting an issue 
+The goal of this documentation is to provide a high-level overview of how you can build and debug the project. 
 
-For reporting an issue or submitting your contributions, please fill out the coresponding templates:
-
-* Bug report
-
-* Feature request
-
-* Pull request
-
-as throughly as possible. 
 
 # Building, Debugging and Sildeloading the extension in Visual Studio Code:
 
@@ -52,6 +42,3 @@ For more information on using GistPad extension, follow the instructions for [ge
 
 This documentation is adapted from the Microsoft / vscode-go, available at
 https://github.com/Microsoft/vscode-go/wiki/Building,-Debugging-and-Sideloading-the-extension-in-Visual-Studio-Code.
-
-
-

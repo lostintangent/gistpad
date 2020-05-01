@@ -46,6 +46,8 @@ After making changes to the extension, you might want to test it end to end inst
 5. `vsce package` to build the package. This will generate a file with extension `vsix`
 6. Run the command `Extensions: Install from VSIX...`, choose the vsix file generated in the previous step
 
+For more information on using GistPad extension, follow the instructions for [getting started](https://github.com/shfarazi/gistpad/tree/documentation#getting-started).
+
 ## Attribution
 
 This documentation is adapted from the Microsoft / vscode-go, available at

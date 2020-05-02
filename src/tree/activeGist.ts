@@ -17,7 +17,6 @@ import {
   FollowedUserGistNode,
   GistDirectoryNode,
   GistNode,
-  OpenGistNode,
   TreeNode
 } from "./nodes";
 
@@ -50,7 +49,7 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   getChildren(element?: TreeNode): ProviderResult<TreeNode[]> {
     if (!element) {
       if (!store.activeGist) {
-        return [new OpenGistNode()];
+        return undefined;
       }
 
       const owned =

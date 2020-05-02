@@ -53,7 +53,7 @@ When grouping is enabled, gists are grouped into the following built-in types:
 - **playground** - Gists that include either a `playground.json` file and/or an `index.html` file. Read more about playgrounds [here](#interactive-playgrounds).
 - **playground-template** - Playgrounds whose `playground.json` file sets the `template` property to `true`. Read more about playground templates [here](#user-templates).
 - **tutorial** - Playgrounds whose `playground.json` file specifies a `tutorial` property. Read more about tutorials [here](#tutorials).
-- **tour** - Gists that include a `tour.json` file, and were created by exporting a [CodeTour](#codetour).
+- **tour** - Gists that include a `main.tour` file, and were created by exporting a [CodeTour](#codetour).
 - **code-snippet** - Gists that don't match any of the above more-specific types.
 
 Additionally, if you want to group gists by your own custom types, then simply add a tag to the end of the gist's description, using the following format: `#tag` (or `#tag-name`). Then, when you enable grouping of gists, your gists will be grouped by both the aforementioned types, as well as your custom tag types. You can identify tag groups by the use of the `#` icon next to them.

@@ -1320,6 +1320,12 @@
         }
       ]
     },
+    "viewsWelcome": [
+      {
+        "view": "gistpad.gists",
+        "contents": "Welcome to GistPad! You can open any GitHub Gist by URL or ID, and/or create new interactive [runnable playgrounds](https://github.com/vsls-contrib/gistpad#playgrounds).\n\n[Open Gist](command:gistpad.openGist)\n\n[New Playground](command:gistpad.newPlayground)\n\nTo manage your gists, sign-in with a [token](https://github.com/settings/tokens/new) that includes the \"gist\" scope.\n\n[Sign-In](command:gistpad.signIn)"
+      }
+    ],
     "jsonValidation": [
       {
         "fileMatch": "playground.json",

@@ -2,7 +2,7 @@ import { extensions, Uri } from "vscode";
 import { getFileContents } from "../fileSystem/api";
 import { GistFile } from "../store";
 
-export const TOUR_FILE = "tour.json";
+export const TOUR_FILE = "main.tour";
 
 interface CodeTourApi {
   startTour(

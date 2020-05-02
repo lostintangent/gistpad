@@ -64,39 +64,6 @@ export abstract class TreeNode extends TreeItem {
   };
 }
 
-export class OpenGistNode extends TreeNode {
-  constructor() {
-    super("Open Gist...");
-
-    this.command = {
-      command: `${EXTENSION_NAME}.openGist`,
-      title: "Open Gist..."
-    };
-  }
-}
-
-export class SignInNode extends TreeNode {
-  constructor() {
-    super("Sign in to view your Gists...");
-
-    this.command = {
-      command: `${EXTENSION_NAME}.signIn`,
-      title: "Sign in to view your Gists..."
-    };
-  }
-}
-
-export class NewPlaygroundNode extends TreeNode {
-  constructor() {
-    super("New Playground...");
-
-    this.command = {
-      command: `${EXTENSION_NAME}.newPlayground`,
-      title: "New Playground..."
-    };
-  }
-}
-
 export class LoadingNode extends TreeNode {
   constructor() {
     super("Loading gists...");

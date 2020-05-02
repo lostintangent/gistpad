@@ -1,3 +1,7 @@
+## v0.0.67 (05/01/202)
+
+- Introduced a new "welcome view" to the `GistPad` tree, which should improve new user onboarding.
+
 ## v0.0.66 (04/10/202)
 
 - Contributed the `Export Tour to Gist...` command to the `CodeTour` tree, which is available when you have the `CodeTour` extension installed.

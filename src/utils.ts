@@ -18,6 +18,7 @@ import {
   PLAYGROUND_FILE,
   TEMP_GIST_ID
 } from "./constants";
+import { getCandidateMarkupFilenames } from "./playgrounds/languages/markup";
 import {
   isCodeTourInstalled,
   startTourFromFile,
@@ -129,6 +130,7 @@ export function isGistDocument(document: TextDocument) {
 export function isGistWorkspace() {
   return (
     workspace.workspaceFolders &&
+    workspace.workspaceFolders.length > 0 &&
     workspace.workspaceFolders[0].uri.scheme === FS_SCHEME
   );
 }
@@ -328,9 +330,7 @@ export function isPlaygroundGist(gist: Gist) {
 
   return (
     gistFiles.includes(PLAYGROUND_FILE) ||
-    gistFiles.includes("index.html") ||
-    gistFiles.includes("index.pug") ||
-    gistFiles.includes("index.md") ||
+    gistFiles.some((file) => getCandidateMarkupFilenames().includes(file)) ||
     gistFiles.includes("scripts") ||
     (gistFiles.includes("script.js") &&
       gistFiles.some((file) => path.extname(file) === ".markdown"))

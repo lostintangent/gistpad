@@ -1,5 +1,6 @@
 ## v0.0.67 (05/01/202)
 
+- Added support for extensions to contribute custom markup languages for playgrounds, which supports the new [`GistPad Contrib` extension](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.gistpad-contrib).
 - Introduced a new "welcome view" to the `GistPad` tree, which should improve new user onboarding.
 
 ## v0.0.66 (04/10/202)

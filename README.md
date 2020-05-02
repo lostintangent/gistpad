@@ -159,6 +159,8 @@ By default, new playgrounds create an HTML, CSS and JavaScript file. However, if
 
 If you'd like to always use one of these languages, then set one or more of the following settings, and all new playgrounds will include the right files by default: `GistPad > Playgrounds: Markup Language`, `GistPad > Playgrounds: Script Language`, `GistPad > Playgrounds: Stylesheet Language`. View the [settings documentation](#configuration-settings) below for more detials.
 
+Additionally, if you want to use other languages (e.g. Haml, AsciiDoc), check out the [GistPad Contrib](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.gistpad-contrib) extension, which provides support for even more playground languages.
+
 ### External Libraries
 
 If you need to add any external JavaScript libraries (e.g. `react`) or stylesheets (e.g. `font-awesome`) to your playground, simply click the `Add Playground Library` commmand in the playground "action bar" (or run `GistPad: Add Playground Library` from the command palette). This will allow you to search for a library from CDNJS or paste a custom library URL. When you select a library, it will be automatically added to your playground.
@@ -470,6 +472,19 @@ By default, GistPad ships with a new of template galleries, however, extensions 
 
 - `id` - A unique ID that will be used to persist the enabled/disabled state of the gallery. Note that the display name of the gallery comes from the gallery definition itself.
 - `url` - A URL that points at the actual template gallery. This URL must refer to a JSON file that conforms to the [GistPad template gallery schema](https://gist.githubusercontent.com/lostintangent/091c0eec1f6443b526566d1cd3a85294/raw/3c1413b49052a677b1f5d192c5c37d6b2c2b9fae/schema.json).
+
+### Playground Languages
+
+By default, GistPad ships with support for a handful of [languages](#additional-language-support) you can use in a [playground](#playgrounds). However, extensions can introduce support for new languages by adding a `gistpad.playgrounds.languages` contribution to their `package.json` file. This contribution point is simply an object of objects with the following properties:
+
+- `type` - The "type" of language that your extension is supporting. One of `markup`, `stylesheet` or `script`.
+- `extensions` - An array of file extensions that your extension supports, including the leading period (e.g `.haml`).
+
+When your extension contributes a custom language, GistPad expects that your extension returns an API, that includes the following members:
+
+- `gistPadCompile(extension: string, code: string): string` - Takes in the code and associated file extension (e.g. `.haml`) and returns the compiled version of the code. For example, if your extension contributes support for Haml, then when the end-user opens a playground using a `.haml` file, this method would be passed the raw Haml code, and the `.haml` extension, and you'd need to return the compiled HTML string.
+
+For an example of how to use this API, check out the [GistPad Contrib](https://github.com/vsls-contrib/gistpad-contrib) extension.
 
 ## Supported Filesystem Operations
 

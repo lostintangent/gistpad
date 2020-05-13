@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import * as config from "../../../config";
-import { DIRECTORY_SEPERATOR } from "../../../constants";
+import { DIRECTORY_SEPARATOR } from "../../../constants";
 import { store } from "../../../store";
 import {
   encodeDirectoryName,
@@ -14,7 +14,7 @@ import { pasteImageMarkup } from "./utils/pasteImageMarkup";
 function getImageFileName() {
   const uploadDirectory = config.get("images.directoryName");
   const prefix = uploadDirectory
-    ? `${uploadDirectory}${DIRECTORY_SEPERATOR}`
+    ? `${uploadDirectory}${DIRECTORY_SEPARATOR}`
     : "";
 
   const dateSting = new Date().toDateString().replace(/\s/g, "_");

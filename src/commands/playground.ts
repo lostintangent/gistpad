@@ -4,8 +4,8 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as config from "../config";
 import {
-  DIRECTORY_SEPERATOR,
-  ENCODED_DIRECTORY_SEPERATOR,
+  DIRECTORY_SEPARATOR,
+  ENCODED_DIRECTORY_SEPARATOR,
   EXTENSION_NAME,
   FS_SCHEME,
   INPUT_SCHEME,
@@ -274,7 +274,7 @@ export const getGistFileOfType = (
   }
 
   const prefix = currentTutorialStep
-    ? `#?${currentTutorialStep}[^\/]*${ENCODED_DIRECTORY_SEPERATOR}`
+    ? `#?${currentTutorialStep}[^\/]*${ENCODED_DIRECTORY_SEPARATOR}`
     : "";
 
   const fileCandidates = extensions.map(
@@ -327,8 +327,8 @@ function isPlaygroundDocument(
   }
 
   const prefix = currentTutorialStep
-    ? `${DIRECTORY_SEPERATOR}#?${currentTutorialStep}[^\/]*${DIRECTORY_SEPERATOR}`
-    : DIRECTORY_SEPERATOR;
+    ? `${DIRECTORY_SEPARATOR}#?${currentTutorialStep}[^\/]*${DIRECTORY_SEPARATOR}`
+    : DIRECTORY_SEPARATOR;
 
   const fileCandidates = extensions.map(
     (extension) => new RegExp(`${prefix}${fileBaseName}${extension}`)

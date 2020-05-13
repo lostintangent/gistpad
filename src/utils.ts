@@ -11,8 +11,8 @@ import {
 } from "vscode";
 import { closeWebviewPanel, openPlayground } from "./commands/playground";
 import {
-  DIRECTORY_SEPERATOR,
-  ENCODED_DIRECTORY_SEPERATOR,
+  DIRECTORY_SEPARATOR,
+  ENCODED_DIRECTORY_SEPARATOR,
   FS_SCHEME,
   INPUT_SCHEME,
   PLAYGROUND_FILE,
@@ -187,28 +187,28 @@ export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
 }
 
 export function encodeDirectoryName(filename: string) {
-  return filename.replace(DIRECTORY_SEPERATOR, ENCODED_DIRECTORY_SEPERATOR);
+  return filename.replace(DIRECTORY_SEPARATOR, ENCODED_DIRECTORY_SEPARATOR);
 }
 
 export function decodeDirectoryName(filename: string) {
-  return filename.replace(ENCODED_DIRECTORY_SEPERATOR, DIRECTORY_SEPERATOR);
+  return filename.replace(ENCODED_DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR);
 }
 
 export function encodeDirectoryUri(uri: Uri) {
-  if (uri.path.substr(1).includes(DIRECTORY_SEPERATOR)) {
+  if (uri.path.substr(1).includes(DIRECTORY_SEPARATOR)) {
     return uri.with({
-      path: `${DIRECTORY_SEPERATOR}${uri.path
+      path: `${DIRECTORY_SEPARATOR}${uri.path
         .substr(1)
-        .replace(DIRECTORY_SEPERATOR, ENCODED_DIRECTORY_SEPERATOR)}`
+        .replace(DIRECTORY_SEPARATOR, ENCODED_DIRECTORY_SEPARATOR)}`
     });
   }
   return uri;
 }
 
 export function decodeDirectoryUri(uri: Uri) {
-  if (uri.path.includes(ENCODED_DIRECTORY_SEPERATOR)) {
+  if (uri.path.includes(ENCODED_DIRECTORY_SEPARATOR)) {
     return uri.with({
-      path: uri.path.replace(ENCODED_DIRECTORY_SEPERATOR, DIRECTORY_SEPERATOR)
+      path: uri.path.replace(ENCODED_DIRECTORY_SEPARATOR, DIRECTORY_SEPARATOR)
     });
   }
   return uri;
@@ -220,8 +220,8 @@ export function fileNameToUri(gistId: string, filename: string = ""): Uri {
 
 export function getGistDetailsFromUri(uri: Uri) {
   const pathWithoutPrefix = uri.path.substr(1);
-  const directory = pathWithoutPrefix.includes(DIRECTORY_SEPERATOR)
-    ? pathWithoutPrefix.split(DIRECTORY_SEPERATOR)[0]
+  const directory = pathWithoutPrefix.includes(DIRECTORY_SEPARATOR)
+    ? pathWithoutPrefix.split(DIRECTORY_SEPARATOR)[0]
     : "";
 
   return {

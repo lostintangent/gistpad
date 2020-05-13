@@ -3,8 +3,8 @@ import * as path from "path";
 import { URL } from "url";
 import { commands, ExtensionContext, window, workspace } from "vscode";
 import {
-  DIRECTORY_SEPERATOR,
-  ENCODED_DIRECTORY_SEPERATOR,
+  DIRECTORY_SEPARATOR,
+  ENCODED_DIRECTORY_SEPARATOR,
   EXTENSION_NAME
 } from "../constants";
 import { ensureAuthenticated } from "../store/auth";
@@ -20,7 +20,7 @@ function getDirectoryFiles(nodes: GistDirectoryNode[]) {
   return nodes.flatMap((node) =>
     Object.keys(node.gist.files)
       .filter((file) =>
-        file.startsWith(`${node.directory}${ENCODED_DIRECTORY_SEPERATOR}`)
+        file.startsWith(`${node.directory}${ENCODED_DIRECTORY_SEPARATOR}`)
       )
       .map((file) => decodeDirectoryUri(fileNameToUri(node.gist.id, file)))
   );
@@ -47,7 +47,7 @@ export function registerDirectoryCommands(context: ExtensionContext) {
                 return workspace.fs.writeFile(
                   fileNameToUri(
                     node.gist.id,
-                    `${node.directory}${DIRECTORY_SEPERATOR}${fileName}`
+                    `${node.directory}${DIRECTORY_SEPARATOR}${fileName}`
                   ),
                   stringToByteArray("")
                 );
@@ -77,7 +77,7 @@ export function registerDirectoryCommands(context: ExtensionContext) {
                 const fileName = path.basename(file.path);
                 const content = fs.readFileSync(new URL(file.toString()));
 
-                const gistFileName = `${node.directory}${DIRECTORY_SEPERATOR}${fileName}`;
+                const gistFileName = `${node.directory}${DIRECTORY_SEPARATOR}${fileName}`;
                 return workspace.fs.writeFile(
                   fileNameToUri(node.gist.id, gistFileName),
                   content
@@ -147,7 +147,7 @@ export function registerDirectoryCommands(context: ExtensionContext) {
           Promise.all(
             uris.map(async (uri) => {
               const contents = await workspace.fs.readFile(uri);
-              const duplicateFileName = `${directory}${DIRECTORY_SEPERATOR}${path.basename(
+              const duplicateFileName = `${directory}${DIRECTORY_SEPARATOR}${path.basename(
                 uri.path
               )}`;
 
@@ -181,7 +181,7 @@ export function registerDirectoryCommands(context: ExtensionContext) {
           await withProgress(`Renaming directory...`, async () => {
             for (const uri of uris) {
               const fileName = path.basename(uri.path);
-              const newFileName = `${newDirectoryName}${DIRECTORY_SEPERATOR}${fileName}`;
+              const newFileName = `${newDirectoryName}${DIRECTORY_SEPARATOR}${fileName}`;
               const newUri = fileNameToUri(node.gist.id, newFileName);
 
               await workspace.fs.rename(uri, newUri);

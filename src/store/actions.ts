@@ -11,7 +11,7 @@ import {
 } from ".";
 import * as config from "../config";
 import {
-  DIRECTORY_SEPERATOR,
+  DIRECTORY_SEPARATOR,
   SCRATCH_GIST_NAME,
   ZERO_WIDTH_SPACE
 } from "../constants";
@@ -281,7 +281,7 @@ export async function newScratchNote() {
 
   const sharedMoment = moment();
   const directory = directoryFormat
-    ? `${sharedMoment.format(directoryFormat)}${DIRECTORY_SEPERATOR}`
+    ? `${sharedMoment.format(directoryFormat)}${DIRECTORY_SEPARATOR}`
     : "";
 
   const file = sharedMoment.format(fileFormat);

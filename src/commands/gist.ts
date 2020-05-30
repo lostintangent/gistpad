@@ -73,37 +73,37 @@ async function newGistInternal(isPublic: boolean = true) {
   const totalSteps = 2;
   let currentStep = 1;
 
-  const fileNameInputBox = window.createInputBox();
-  fileNameInputBox.title = title;
-  fileNameInputBox.prompt =
-    "Enter the files name(s) to seed the Gist with (can be a comma-separated list)";
-  fileNameInputBox.step = currentStep++;
-  fileNameInputBox.totalSteps = totalSteps;
-  fileNameInputBox.placeholder = "foo.md";
+  const descriptionInputBox = window.createInputBox();
+  descriptionInputBox.title = title;
+  descriptionInputBox.prompt =
+    "Enter an optional description for the new Gist";
+  descriptionInputBox.step = currentStep++;
+  descriptionInputBox.totalSteps = totalSteps;
 
-  fileNameInputBox.onDidAccept(() => {
-    const fileName = fileNameInputBox.value;
+  descriptionInputBox.onDidAccept(() => {
+    descriptionInputBox.hide();
+    const description = descriptionInputBox.value;
 
-    if (!fileName) {
-      fileNameInputBox.validationMessage =
-        "You must specify at least one filename in order to create a gist.";
+    const fileNameInputBox = window.createInputBox();
+    fileNameInputBox.title = title;
+    fileNameInputBox.prompt =
+      "Enter the files name(s) to seed the Gist with (can be a comma-separated list)";
+    fileNameInputBox.step = currentStep++;
+    fileNameInputBox.totalSteps = totalSteps;
+    fileNameInputBox.placeholder = "foo.md";
 
-      // TODO: Have a regex check for valid input
-      return;
-    }
+    fileNameInputBox.onDidAccept(() => {
+      fileNameInputBox.hide();
 
-    fileNameInputBox.hide();
+      const fileName = fileNameInputBox.value;
 
-    const descriptionInputBox = window.createInputBox();
-    descriptionInputBox.title = title;
-    descriptionInputBox.step = currentStep++;
-    descriptionInputBox.totalSteps = totalSteps;
-    descriptionInputBox.prompt =
-      "Enter an optional description for the new Gist";
+      if (!fileName) {
+        fileNameInputBox.validationMessage =
+          "You must specify at least one filename in order to create a gist.";
 
-    descriptionInputBox.onDidAccept(() => {
-      descriptionInputBox.hide();
-      const description = descriptionInputBox.value;
+        // TODO: Have a regex check for valid input
+        return;
+      }
 
       return window.withProgress(
         { location: ProgressLocation.Notification, title: "Creating Gist..." },
@@ -116,10 +116,10 @@ async function newGistInternal(isPublic: boolean = true) {
       );
     });
 
-    descriptionInputBox.show();
+    fileNameInputBox.show();
   });
 
-  fileNameInputBox.show();
+  descriptionInputBox.show();
 }
 
 const SIGN_IN_ITEM = "Sign in to view Gists...";

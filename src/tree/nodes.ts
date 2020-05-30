@@ -3,7 +3,7 @@ import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import * as config from "../config";
 import {
-  ENCODED_DIRECTORY_SEPERATOR,
+  ENCODED_DIRECTORY_SEPARATOR,
   EXTENSION_NAME,
   TEMP_GIST_ID
 } from "../constants";
@@ -153,8 +153,8 @@ ${suffix}`;
 }
 
 function getFileDisplayName(file: GistFile) {
-  if (file.filename?.includes(ENCODED_DIRECTORY_SEPERATOR)) {
-    return file.filename.split(ENCODED_DIRECTORY_SEPERATOR)[1];
+  if (file.filename?.includes(ENCODED_DIRECTORY_SEPARATOR)) {
+    return file.filename.split(ENCODED_DIRECTORY_SEPARATOR)[1];
   }
 
   return file.filename!;

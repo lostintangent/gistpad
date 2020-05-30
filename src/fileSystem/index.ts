@@ -18,8 +18,8 @@ import {
   workspace
 } from "vscode";
 import {
-  DIRECTORY_SEPERATOR,
-  ENCODED_DIRECTORY_SEPERATOR,
+  DIRECTORY_SEPARATOR,
+  ENCODED_DIRECTORY_SEPARATOR,
   EXTENSION_NAME,
   FS_SCHEME,
   ZERO_WIDTH_SPACE
@@ -106,7 +106,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
     const prefix = uri.path
       .substr(1)
-      .replace(DIRECTORY_SEPERATOR, ENCODED_DIRECTORY_SEPERATOR);
+      .replace(DIRECTORY_SEPARATOR, ENCODED_DIRECTORY_SEPARATOR);
     return !!Object.keys(gist.files).find((file) => file.startsWith(prefix));
   }
 
@@ -229,8 +229,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
       // @ts-ignore
       const files: [string, FileType][] = Object.keys(gist.files)
         .map((file) => {
-          if (file.includes(ENCODED_DIRECTORY_SEPERATOR)) {
-            const directory = file.split(ENCODED_DIRECTORY_SEPERATOR)[0];
+          if (file.includes(ENCODED_DIRECTORY_SEPARATOR)) {
+            const directory = file.split(ENCODED_DIRECTORY_SEPARATOR)[0];
             return [directory, FileType.Directory];
           } else {
             return [file, FileType.File];
@@ -263,14 +263,14 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
       const prefix = uri.path
         .substr(1)
-        .replace(DIRECTORY_SEPERATOR, ENCODED_DIRECTORY_SEPERATOR);
+        .replace(DIRECTORY_SEPARATOR, ENCODED_DIRECTORY_SEPARATOR);
 
       const files: [string, FileType][] = Object.keys(gist.files)
         .filter((file) => file.startsWith(prefix))
         .map((file) => {
           const updatedFile = file.split(prefix)[1];
-          if (updatedFile.includes(ENCODED_DIRECTORY_SEPERATOR)) {
-            const directory = file.split(ENCODED_DIRECTORY_SEPERATOR)[0];
+          if (updatedFile.includes(ENCODED_DIRECTORY_SEPARATOR)) {
+            const directory = file.split(ENCODED_DIRECTORY_SEPARATOR)[0];
             return [directory, FileType.Directory];
           } else {
             return [updatedFile, FileType.File];
@@ -329,14 +329,14 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 
   async stat(uri: Uri): Promise<FileStat> {
-    if (uri.path === DIRECTORY_SEPERATOR) {
+    if (uri.path === DIRECTORY_SEPARATOR) {
       return {
         type: FileType.Directory,
         size: 0,
         ctime: 0,
         mtime: 0
       };
-    } else if (uri.path.endsWith(DIRECTORY_SEPERATOR)) {
+    } else if (uri.path.endsWith(DIRECTORY_SEPARATOR)) {
       if (this.isDirectory(uri)) {
         return {
           type: FileType.Directory,

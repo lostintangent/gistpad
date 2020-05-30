@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.67",
+  "version": "0.0.68",
   "extensionKind": [
     "ui",
     "workspace"
@@ -30,29 +30,7 @@
     "Remote"
   ],
   "activationEvents": [
-    "onCommand:gistpad.addFileToGist",
-    "onCommand:gistpad.addSelectionToGist",
-    "onCommand:gistpad.deleteGist",
-    "onCommand:gistpad.exportTour",
-    "onCommand:gistpad.followUser",
-    "onCommand:gistpad.forkGist",
-    "onCommand:gistpad.newGistLog",
-    "onCommand:gistpad.newPublicGist",
-    "onCommand:gistpad.newSecretGist",
-    "onCommand:gistpad.newPlayground",
-    "onCommand:gistpad.newSecretPlayground",
-    "onCommand:gistpad.openGist",
-    "onCommand:gistpad.openGistWorkspace",
-    "onCommand:gistpad.pasteGistFile",
-    "onCommand:gistpad.pasteImage",
-    "onCommand:gistpad.signIn",
-    "onCommand:gistpad.signOut",
-    "onCommand:gistpad.starredGists",
-    "onCommand:gistpad.viewForks",
-    "onFileSystem:gist",
-    "onView:gistpad.gists",
-    "onView:gistpad.gists.explorer",
-    "onUri"
+    "*"
   ],
   "main": "./out/prod/extension.js",
   "contributes": {
@@ -508,7 +486,7 @@
       },
       {
         "command": "gistpad.pasteGistFile",
-        "title": "Paste Gist File Contents",
+        "title": "Paste Gist File",
         "category": "GistPad"
       },
       {
@@ -723,6 +701,10 @@
           "when": "gistpad:inPlayground"
         },
         {
+          "command": "gistpad.pasteGistFile",
+          "when": "editorTextFocus"
+        },
+        {
           "command": "gistpad.runPlayground",
           "when": "gistpad:inPlayground"
         },
@@ -856,10 +838,6 @@
         },
         {
           "command": "gistpad.pasteImage",
-          "when": "false"
-        },
-        {
-          "command": "gistpad.pasteGistFile",
           "when": "false"
         },
         {
@@ -1298,12 +1276,6 @@
       ]
     },
     "views": {
-      "explorer": [
-        {
-          "id": "gistpad.gists.explorer",
-          "name": "Gists"
-        }
-      ],
       "gistpad": [
         {
           "id": "gistpad.gists",

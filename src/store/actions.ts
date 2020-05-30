@@ -1,5 +1,5 @@
 import axios from "axios";
-import { observable, runInAction } from "mobx";
+import { observable, runInAction, set } from "mobx";
 import { window, workspace } from "vscode";
 import {
   FollowedUser,
@@ -324,36 +324,35 @@ export async function clearScratchNotes() {
 export async function refreshGists() {
   store.isLoading = true;
 
-  await runInAction(async () => {
-    const gists = updateGistTags(await listGists());
-    store.scratchNotes.gist =
-      gists.find((gist) => gist.description === SCRATCH_GIST_NAME) || null;
+  const gists = updateGistTags(await listGists());
+  store.scratchNotes.gist =
+    gists.find((gist) => gist.description === SCRATCH_GIST_NAME) || null;
 
-    store.gists = store.scratchNotes.gist
-      ? gists.filter((gist) => gist.description !== SCRATCH_GIST_NAME)
-      : gists;
+  store.gists = store.scratchNotes.gist
+    ? gists.filter((gist) => gist.description !== SCRATCH_GIST_NAME)
+    : gists;
 
-    store.starredGists = updateGistTags(await starredGists());
+  store.isLoading = false;
 
-    if (storage.followedUsers.length > 0) {
-      store.followedUsers = storage.followedUsers.map((username) => ({
-        username,
-        gists: [],
-        isLoading: true
-      }));
+  store.starredGists = updateGistTags(await starredGists());
+
+  if (storage.followedUsers.length > 0) {
+    store.followedUsers = storage.followedUsers.map((username) => ({
+      username,
+      gists: [],
+      isLoading: true
+    }));
+  }
+
+  if (storage.followedUsers.length > 0) {
+    for (const followedUser of store.followedUsers) {
+      followedUser.avatarUrl = await getUserAvatar(followedUser.username);
+      followedUser.gists = updateGistTags(
+        await listUserGists(followedUser.username)
+      );
+      followedUser.isLoading = false;
     }
-
-    store.isLoading = false;
-    if (storage.followedUsers.length > 0) {
-      for (const followedUser of store.followedUsers) {
-        followedUser.avatarUrl = await getUserAvatar(followedUser.username);
-        followedUser.gists = updateGistTags(
-          await listUserGists(followedUser.username)
-        );
-        followedUser.isLoading = false;
-      }
-    }
-  });
+  }
 }
 
 export async function refreshShowcase() {
@@ -398,10 +397,8 @@ export async function unfollowUser(username: string) {
 
 export async function refreshGist(id: string) {
   const gist = await getGist(id);
-  const newGists = store.gists.filter((gist) => gist.id !== id);
-  newGists.push(gist);
-
-  store.gists = newGists;
+  const oldGist = store.gists.find((gist) => gist.id === id);
+  set(oldGist!, gist);
 }
 
 export async function starGist(gist: Gist) {

@@ -159,7 +159,6 @@ function getFileDisplayName(file: GistFile) {
 
   return file.filename!;
 }
-
 export class GistFileNode extends TreeNode {
   constructor(public gistId: string, public file: GistFile) {
     super(getFileDisplayName(file));
@@ -205,7 +204,7 @@ export class GistDirectoryNode extends TreeNode {
 
 export class StarredGistsNode extends TreeNode {
   constructor(gistCount: number, extensionPath: string) {
-    super("Starred Gists", TreeItemCollapsibleState.Collapsed);
+    super("Starred Gists", TreeItemCollapsibleState.Expanded);
 
     this.iconPath = path.join(extensionPath, "images/star.svg");
     this.contextValue = "starredGists";

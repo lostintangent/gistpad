@@ -325,7 +325,7 @@ In addition to the `Explorer` file tree commands, GistPad also contributes the f
 
 - `Add Selection to Gist` - Allows you to add a snippet/selection of code to a Gist, instead of the entire document
 
-- `Paste Gist File` - Allows you to paste the contents of a Gist file into the active document
+- `Paste Gist File` - Allows you to paste the contents of a Gist file into the active editor
 
 - `Paste Image` - Allows you to paste an image from your clipboard into a markdown, HTML or Pug file. The command will automatically upload the image and then add a reference to it.
 
@@ -345,31 +345,33 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a Gist workspace open, it will delete that and then close the folder
 
-* `GistPad: Follow User` - Follow another GitHub user, which allows you to browser/access/fork their Gists from within the `Gists` view.
+- `GistPad: Follow User` - Follow another GitHub user, which allows you to browser/access/fork their Gists from within the `Gists` view.
 
 - `GistPad: Fork Gist` - Forks the currently opened Gist, and then opens it as a virtual workspace.
 
-* `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a gist by URL, `username/id`, or ID, which doesn't require being signed in.
+- `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a gist by URL, `username/id`, or ID, which doesn't require being signed in.
 
-* `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, instead of "loose files".
+- `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, instead of "loose files".
 
-* `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-separated list of names (e.g. `foo.txt,bar.js`).
+- `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-separated list of names (e.g. `foo.txt,bar.js`).
 
-* `GistPad: New Scratch Note` - Creates a new "scratch note", which is a file whose name is derived from the `GistPad > Scratch Notes: Extension` and `Gist > Scratch Notes: Format` settings.
+- `GistPad: New Scratch Note` - Creates a new "scratch note", which is a file whose name is derived from the `GistPad > Scratch Notes: Extension` and `Gist > Scratch Notes: Format` settings.
 
-* `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
+- `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
-* `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
+- `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
 
-* `GistPad: New GistLog` - Creates a [GistLog](#gistlog).
+- `GistPad: New GistLog` - Creates a [GistLog](#gistlog).
 
-* `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
+- `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
 
-* `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
+- `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
 
-* `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
+- `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
 
 - `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
+
+- `GistPad: Paste Gist File - Allows you to paste the contents of a Gist file into the active editor
 
 ## Configuration Settings
 

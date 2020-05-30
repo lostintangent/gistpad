@@ -11,7 +11,7 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { exportToRepo } from "../fileSystem/git";
+import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { log } from "../logger";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
@@ -20,6 +20,7 @@ import {
   forkGist,
   getForks,
   newGist,
+  refreshGist,
   refreshGists,
   refreshShowcase,
   starGist,
@@ -51,8 +52,11 @@ import {
   openGist,
   openGistFiles,
   sortGists,
+  updateGistTags,
   withProgress
 } from "../utils";
+const isBinaryPath = require("is-binary-path");
+
 const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -648,22 +652,43 @@ export async function registerGistCommands(context: ExtensionContext) {
             title: "Duplicating Gist..."
           },
           async () => {
-            const files: GistFile[] = [];
-            for (const filename of Object.keys(node.gist.files)) {
-              // TODO: Replace this with a Git operation, since the duplicated
-              // gist might contain images, that wouldn't support this
-              const content = byteArrayToString(
-                await workspace.fs.readFile(
-                  fileNameToUri(node.gist.id, filename)
-                )
-              );
-              files.push({
-                filename,
-                content
-              });
-            }
+            const includesBinaryFile = Object.keys(node.gist.files).some(
+              isBinaryPath
+            );
 
-            newGist(files, node.gist.public, description);
+            if (includesBinaryFile) {
+              // Create a new gist with a "placeholder" file,
+              // since gists aren't allowed to be empty.
+              const gist = await newGist(
+                [{ filename: "placeholder", content: "" }],
+                node.gist.public,
+                description,
+                false
+              );
+
+              await duplicateGist(node.gist.id, gist.id);
+
+              // Since the created gist doesn't include the files
+              // that were pushed via git, we need to refresh it
+              // in our local Mobx store and then update the tags
+              await refreshGist(gist.id);
+              await updateGistTags(gist);
+            } else {
+              const files: GistFile[] = [];
+              for (const filename of Object.keys(node.gist.files)) {
+                const content = byteArrayToString(
+                  await workspace.fs.readFile(
+                    fileNameToUri(node.gist.id, filename)
+                  )
+                );
+                files.push({
+                  filename,
+                  content
+                });
+              }
+
+              await newGist(files, node.gist.public, description);
+            }
           }
         );
       }

@@ -1,12 +1,20 @@
-## v0.0.67 (05/01/202)
+## v0.0.68 (05/11/2020)
+
+- Fixed the `Duplicate Gist` command to work for gists that include binary files (e.g. images)
+- Removed the `Gists` view from the `Explorer` tab, so that the entire GistPad experience is driven from the `GistPad` tab
+- The `Starred Gists` node is now expanded by default (thought it's only shown if you actually have any starred gists)
+- The `Paste Gist File` command is now available in the command palette.
+- Update the extension to always activate, as opposed to waiting until a command is run.
+
+## v0.0.67 (05/01/2020)
 
 - Added support for extensions to contribute custom markup languages for playgrounds, which supports the new [`GistPad Contrib` extension](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.gistpad-contrib).
 - Introduced a new "welcome view" to the `GistPad` tree, which should improve new user onboarding.
 
-## v0.0.66 (04/10/202)
+## v0.0.66 (04/10/2020)
 
 - Contributed the `Export Tour to Gist...` command to the `CodeTour` tree, which is available when you have the `CodeTour` extension installed.
-- Added a new `tour` gist type, that represent gists created by exporting a `CodeTour` as a gist. When you open tour gists, it will start playing the embedded tour.
+- Added a new `tour` gist type, that represent gists`created by exporting a`CodeTour` as a gist. When you open tour gists, it will start playing the embedded tour.
 - User gists are now properly grouped after you follow a new user
 
 ## v0.0.65 (04/06/2020)

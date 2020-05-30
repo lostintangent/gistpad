@@ -223,10 +223,4 @@ export function registerTreeProvider(store: Store, extensionPath: string) {
     treeDataProvider,
     canSelectMany: true
   });
-
-  window.createTreeView(`${EXTENSION_NAME}.gists.explorer`, {
-    showCollapseAll: true,
-    treeDataProvider,
-    canSelectMany: true
-  });
 }

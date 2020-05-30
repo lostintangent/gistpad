@@ -296,7 +296,7 @@ export async function registerGistCommands(context: ExtensionContext) {
         // in it, and the API doesn't support that URL format
         const url = `https://gist.github.com/${node.gist.owner!.login}/${
           node.gist.id
-          }`;
+        }`;
         env.clipboard.writeText(url);
       }
     )
@@ -466,8 +466,8 @@ export async function registerGistCommands(context: ExtensionContext) {
         // don't pass on the tree node object to the open gist method.
         const gistNode =
           node instanceof GistNode ||
-            node instanceof StarredGistNode ||
-            node instanceof FollowedUserGistNode
+          node instanceof StarredGistNode ||
+          node instanceof FollowedUserGistNode
             ? node
             : undefined;
         openGistInternal({ node: gistNode });

@@ -66,7 +66,7 @@ When grouping is enabled, gists are grouped into the following built-in types:
 - **playground** - Gists that include either a `playground.json` file and/or an `index.html` file. Read more about playgrounds [here](#playgrounds).
 - **playground-template** - Playgrounds whose `playground.json` file sets the `template` property to `true`. Read more about playground templates [here](#user-templates).
 - **tutorial** - Playgrounds whose `playground.json` file specifies a `tutorial` property. Read more about tutorials [here](#tutorials).
-- **tour** - Gists that include a `tour.json` file, and were created by exporting a [CodeTour](#codetour).
+- **tour** - Gists that include a `main.tour` file, and were created by exporting a [CodeTour](#codetour).
 - **code-snippet** - Gists that don't match any of the above more-specific types.
 
 Additionally, if you want to group gists by your own custom types, then simply add a tag to the end of the gist's description, using the following format: `#tag` (or `#tag-name`). Then, when you enable grouping of gists, your gists will be grouped by both the aforementioned types, as well as your custom tag types. You can identify tag groups by the use of the `#` icon next to them.
@@ -171,6 +171,8 @@ By default, new playgrounds create an HTML, CSS and JavaScript file. However, if
 - **JSX** - Rename the `script.js` file to `script.jsx` in order to enable JSX to be written in "vanilla" JavaScript files. Additionally, if you add the [`react` library](#external-libraries) to your gist's `playground.json` file, then `*.js` files can also include JSX.
 
 If you'd like to always use one of these languages, then set one or more of the following settings, and all new playgrounds will include the right files by default: `GistPad > Playgrounds: Markup Language`, `GistPad > Playgrounds: Script Language`, `GistPad > Playgrounds: Stylesheet Language`. View the [settings documentation](#configuration-settings) below for more detials.
+
+Additionally, if you want to use other languages (e.g. Haml, AsciiDoc), check out the [GistPad Contrib](https://marketplace.visualstudio.com/items?itemName=vsls-contrib.gistpad-contrib) extension, which provides support for even more playground languages.
 
 ### External Libraries
 
@@ -336,7 +338,7 @@ In addition to the `Explorer` file tree commands, GistPad also contributes the f
 
 - `Add Selection to Gist` - Allows you to add a snippet/selection of code to a Gist, instead of the entire document
 
-- `Paste Gist File` - Allows you to paste the contents of a Gist file into the active document
+- `Paste Gist File` - Allows you to paste the contents of a Gist file into the active editor
 
 - `Paste Image` - Allows you to paste an image from your clipboard into a markdown, HTML or Pug file. The command will automatically upload the image and then add a reference to it.
 
@@ -356,31 +358,33 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a Gist workspace open, it will delete that and then close the folder
 
-* `GistPad: Follow User` - Follow another GitHub user, which allows you to browser/access/fork their Gists from within the `Gists` view.
+- `GistPad: Follow User` - Follow another GitHub user, which allows you to browser/access/fork their Gists from within the `Gists` view.
 
 - `GistPad: Fork Gist` - Forks the currently opened Gist, and then opens it as a virtual workspace.
 
-* `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a gist by URL, `username/id`, or ID, which doesn't require being signed in.
+- `GistPad: Open Gist` - Displays your list of Gists (if you're signed in), and then opens the files for the selected one. You can also specify a gist by URL, `username/id`, or ID, which doesn't require being signed in.
 
-* `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, instead of "loose files".
+- `GistPad: Open Gist as Workspace` - Same behavior as the `GistPad: Open Gist` command, but will open the selected Gist as a workspace, instead of "loose files".
 
-* `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-separated list of names (e.g. `foo.txt,bar.js`).
+- `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-separated list of names (e.g. `foo.txt,bar.js`).
 
-* `GistPad: New Scratch Note` - Creates a new "scratch note", which is a file whose name is derived from the `GistPad > Scratch Notes: Extension` and `Gist > Scratch Notes: Format` settings.
+- `GistPad: New Scratch Note` - Creates a new "scratch note", which is a file whose name is derived from the `GistPad > Scratch Notes: Extension` and `Gist > Scratch Notes: Format` settings.
 
-* `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
+- `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
-* `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
+- `GistPad: New Web Playground` - Creates a new [playground](#playgrounds).
 
-* `GistPad: New GistLog` - Creates a [GistLog](#gistlog).
+- `GistPad: New GistLog` - Creates a [GistLog](#gistlog).
 
-* `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
+- `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
 
-* `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
+- `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
 
-* `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
+- `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
 
 - `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
+
+- `GistPad: Paste Gist File - Allows you to paste the contents of a Gist file into the active editor
 
 ## Configuration Settings
 
@@ -483,6 +487,19 @@ By default, GistPad ships with a new of template galleries, however, extensions 
 
 - `id` - A unique ID that will be used to persist the enabled/disabled state of the gallery. Note that the display name of the gallery comes from the gallery definition itself.
 - `url` - A URL that points at the actual template gallery. This URL must refer to a JSON file that conforms to the [GistPad template gallery schema](https://gist.githubusercontent.com/lostintangent/091c0eec1f6443b526566d1cd3a85294/raw/3c1413b49052a677b1f5d192c5c37d6b2c2b9fae/schema.json).
+
+### Playground Languages
+
+By default, GistPad ships with support for a handful of [languages](#additional-language-support) you can use in a [playground](#playgrounds). However, extensions can introduce support for new languages by adding a `gistpad.playgrounds.languages` contribution to their `package.json` file. This contribution point is simply an object of objects with the following properties:
+
+- `type` - The "type" of language that your extension is supporting. One of `markup`, `stylesheet` or `script`.
+- `extensions` - An array of file extensions that your extension supports, including the leading period (e.g `.haml`).
+
+When your extension contributes a custom language, GistPad expects that your extension returns an API, that includes the following members:
+
+- `gistPadCompile(extension: string, code: string): string` - Takes in the code and associated file extension (e.g. `.haml`) and returns the compiled version of the code. For example, if your extension contributes support for Haml, then when the end-user opens a playground using a `.haml` file, this method would be passed the raw Haml code, and the `.haml` extension, and you'd need to return the compiled HTML string.
+
+For an example of how to use this API, check out the [GistPad Contrib](https://github.com/vsls-contrib/gistpad-contrib) extension.
 
 ## Supported Filesystem Operations
 

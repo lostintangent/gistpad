@@ -4,8 +4,8 @@ import * as path from "path";
 import * as vscode from "vscode";
 import * as config from "../config";
 import {
-  DIRECTORY_SEPERATOR,
-  ENCODED_DIRECTORY_SEPERATOR,
+  DIRECTORY_SEPARATOR,
+  ENCODED_DIRECTORY_SEPARATOR,
   EXTENSION_NAME,
   FS_SCHEME,
   INPUT_SCHEME,
@@ -13,11 +13,12 @@ import {
 } from "../constants";
 import { getFileContents } from "../fileSystem/api";
 import { enableGalleries, loadGalleries } from "../playgrounds/galleryProvider";
+import { discoverLanguageProviders } from "../playgrounds/languages/languageProvider";
 import {
   getMarkupContent,
+  getMarkupExtensions,
   getNewMarkupFilename,
-  MARKUP_BASE_NAME,
-  MARKUP_EXTENSIONS
+  MARKUP_BASE_NAME
 } from "../playgrounds/languages/markup";
 import {
   getReadmeContent,
@@ -242,7 +243,7 @@ export const getGistFileOfType = (
   let fileBaseName: string;
   switch (fileType) {
     case PlaygroundFileType.markup:
-      extensions = MARKUP_EXTENSIONS;
+      extensions = getMarkupExtensions();
       fileBaseName = MARKUP_BASE_NAME;
       break;
     case PlaygroundFileType.script:
@@ -273,7 +274,7 @@ export const getGistFileOfType = (
   }
 
   const prefix = currentTutorialStep
-    ? `#?${currentTutorialStep}[^\/]*${ENCODED_DIRECTORY_SEPERATOR}`
+    ? `#?${currentTutorialStep}[^\/]*${ENCODED_DIRECTORY_SEPARATOR}`
     : "";
 
   const fileCandidates = extensions.map(
@@ -299,7 +300,7 @@ function isPlaygroundDocument(
   let fileBaseName: string;
   switch (fileType) {
     case PlaygroundFileType.markup:
-      extensions = MARKUP_EXTENSIONS;
+      extensions = getMarkupExtensions();
       fileBaseName = MARKUP_BASE_NAME;
       break;
     case PlaygroundFileType.script:
@@ -326,8 +327,8 @@ function isPlaygroundDocument(
   }
 
   const prefix = currentTutorialStep
-    ? `${DIRECTORY_SEPERATOR}#?${currentTutorialStep}[^\/]*${DIRECTORY_SEPERATOR}`
-    : DIRECTORY_SEPERATOR;
+    ? `${DIRECTORY_SEPARATOR}#?${currentTutorialStep}[^\/]*${DIRECTORY_SEPARATOR}`
+    : DIRECTORY_SEPARATOR;
 
   const fileCandidates = extensions.map(
     (extension) => new RegExp(`${prefix}${fileBaseName}${extension}`)
@@ -806,7 +807,7 @@ export async function openPlayground(gist: Gist) {
           currentTutorialStep
         )
       ) {
-        const content = getMarkupContent(document);
+        const content = await getMarkupContent(document);
 
         if (content !== null) {
           htmlView.updateHTML(content, runOnEdit);
@@ -908,7 +909,7 @@ export async function openPlayground(gist: Gist) {
 
   htmlView.updateHTML(
     !!markupFile
-      ? getMarkupContent(htmlDocument!) || ""
+      ? (await getMarkupContent(htmlDocument!)) || ""
       : await getCanvasContent(gist)
   );
   htmlView.updateCSS(
@@ -1182,6 +1183,7 @@ export async function registerPlaygroundCommands(
       if (isSignedIn && !isLoading) {
         getCDNJSLibraries();
         loadPlaygroundManifests();
+        discoverLanguageProviders();
       }
     }
   );

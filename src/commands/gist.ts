@@ -11,7 +11,7 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { exportToRepo } from "../fileSystem/git";
+import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { log } from "../logger";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
@@ -20,6 +20,7 @@ import {
   forkGist,
   getForks,
   newGist,
+  refreshGist,
   refreshGists,
   refreshShowcase,
   starGist,
@@ -51,8 +52,11 @@ import {
   openGist,
   openGistFiles,
   sortGists,
+  updateGistTags,
   withProgress
 } from "../utils";
+const isBinaryPath = require("is-binary-path");
+
 const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
 
 export interface GistQuickPickItem extends QuickPickItem {
@@ -69,37 +73,37 @@ async function newGistInternal(isPublic: boolean = true) {
   const totalSteps = 2;
   let currentStep = 1;
 
-  const fileNameInputBox = window.createInputBox();
-  fileNameInputBox.title = title;
-  fileNameInputBox.prompt =
-    "Enter the files name(s) to seed the Gist with (can be a comma-separated list)";
-  fileNameInputBox.step = currentStep++;
-  fileNameInputBox.totalSteps = totalSteps;
-  fileNameInputBox.placeholder = "foo.md";
+  const descriptionInputBox = window.createInputBox();
+  descriptionInputBox.title = title;
+  descriptionInputBox.prompt =
+    "Enter an optional description for the new Gist";
+  descriptionInputBox.step = currentStep++;
+  descriptionInputBox.totalSteps = totalSteps;
 
-  fileNameInputBox.onDidAccept(() => {
-    const fileName = fileNameInputBox.value;
+  descriptionInputBox.onDidAccept(() => {
+    descriptionInputBox.hide();
+    const description = descriptionInputBox.value;
 
-    if (!fileName) {
-      fileNameInputBox.validationMessage =
-        "You must specify at least one filename in order to create a gist.";
+    const fileNameInputBox = window.createInputBox();
+    fileNameInputBox.title = title;
+    fileNameInputBox.prompt =
+      "Enter the files name(s) to seed the Gist with (can be a comma-separated list)";
+    fileNameInputBox.step = currentStep++;
+    fileNameInputBox.totalSteps = totalSteps;
+    fileNameInputBox.placeholder = "foo.md";
 
-      // TODO: Have a regex check for valid input
-      return;
-    }
+    fileNameInputBox.onDidAccept(() => {
+      fileNameInputBox.hide();
 
-    fileNameInputBox.hide();
+      const fileName = fileNameInputBox.value;
 
-    const descriptionInputBox = window.createInputBox();
-    descriptionInputBox.title = title;
-    descriptionInputBox.step = currentStep++;
-    descriptionInputBox.totalSteps = totalSteps;
-    descriptionInputBox.prompt =
-      "Enter an optional description for the new Gist";
+      if (!fileName) {
+        fileNameInputBox.validationMessage =
+          "You must specify at least one filename in order to create a gist.";
 
-    descriptionInputBox.onDidAccept(() => {
-      descriptionInputBox.hide();
-      const description = descriptionInputBox.value;
+        // TODO: Have a regex check for valid input
+        return;
+      }
 
       return window.withProgress(
         { location: ProgressLocation.Notification, title: "Creating Gist..." },
@@ -112,10 +116,10 @@ async function newGistInternal(isPublic: boolean = true) {
       );
     });
 
-    descriptionInputBox.show();
+    fileNameInputBox.show();
   });
 
-  fileNameInputBox.show();
+  descriptionInputBox.show();
 }
 
 const SIGN_IN_ITEM = "Sign in to view Gists...";
@@ -648,22 +652,43 @@ export async function registerGistCommands(context: ExtensionContext) {
             title: "Duplicating Gist..."
           },
           async () => {
-            const files: GistFile[] = [];
-            for (const filename of Object.keys(node.gist.files)) {
-              // TODO: Replace this with a Git operation, since the duplicated
-              // gist might contain images, that wouldn't support this
-              const content = byteArrayToString(
-                await workspace.fs.readFile(
-                  fileNameToUri(node.gist.id, filename)
-                )
-              );
-              files.push({
-                filename,
-                content
-              });
-            }
+            const includesBinaryFile = Object.keys(node.gist.files).some(
+              isBinaryPath
+            );
 
-            newGist(files, node.gist.public, description);
+            if (includesBinaryFile) {
+              // Create a new gist with a "placeholder" file,
+              // since gists aren't allowed to be empty.
+              const gist = await newGist(
+                [{ filename: "placeholder", content: "" }],
+                node.gist.public,
+                description,
+                false
+              );
+
+              await duplicateGist(node.gist.id, gist.id);
+
+              // Since the created gist doesn't include the files
+              // that were pushed via git, we need to refresh it
+              // in our local Mobx store and then update the tags
+              await refreshGist(gist.id);
+              await updateGistTags(gist);
+            } else {
+              const files: GistFile[] = [];
+              for (const filename of Object.keys(node.gist.files)) {
+                const content = byteArrayToString(
+                  await workspace.fs.readFile(
+                    fileNameToUri(node.gist.id, filename)
+                  )
+                );
+                files.push({
+                  filename,
+                  content
+                });
+              }
+
+              await newGist(files, node.gist.public, description);
+            }
           }
         );
       }

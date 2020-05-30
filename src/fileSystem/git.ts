@@ -22,9 +22,7 @@ async function ensureRepo(gistId: string): Promise<[string, git.SimpleGit]> {
   } else {
     const token = await getToken();
     const remote = `https://${store.login}:${token}@gist.github.com/${gistId}.git`;
-    await git(os.tmpdir())
-      .silent(true)
-      .clone(remote);
+    await git(os.tmpdir()).silent(true).clone(remote);
 
     // Reset the git instance to point
     // at the newly cloned folder.
@@ -71,11 +69,39 @@ export async function renameFile(
 
 export async function exportToRepo(gistId: string, repoName: string) {
   const [, repo] = await ensureRepo(gistId);
-
   const token = await getToken();
 
-  const remote = `https://${store.login}:${token}@github.com/${store.login}/${repoName}.git`;
+  pushRemote(
+    repo,
+    "export",
+    `https://${store.login}:${token}@github.com/${store.login}/${repoName}.git`
+  );
+}
 
-  await repo.addRemote("export", remote);
-  await repo.push("export", "master");
+export async function duplicateGist(
+  targetGistId: string,
+  sourceGistId: string
+) {
+  const [, repo] = await ensureRepo(targetGistId);
+  const token = await getToken();
+
+  pushRemote(
+    repo,
+    "duplicate",
+    `https://${store.login}:${token}@gist.github.com/${sourceGistId}.git`
+  );
+}
+
+async function pushRemote(
+  repo: git.SimpleGit,
+  remoteName: string,
+  remoteUrl: string
+) {
+  const remotes = await repo.getRemotes(false);
+  if (!remotes.find((ref) => ref.name === remoteName)) {
+    await repo.addRemote(remoteName, remoteUrl);
+  }
+
+  await repo.push(remoteName, "master", { "--force": null });
+  await repo.removeRemote(remoteName);
 }

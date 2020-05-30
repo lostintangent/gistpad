@@ -23,13 +23,10 @@ import {
   GistNode,
   GistsNode,
   LoadingNode,
-  NewPlaygroundNode,
   NewScratchNoteNode,
   NoStarredGistsNode,
   NoUserGistsNode,
-  OpenGistNode,
   ScratchGistNode,
-  SignInNode,
   StarredGistNode,
   StarredGistsNode,
   TreeNode
@@ -122,7 +119,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   async getChildren(element?: TreeNode): Promise<TreeNode[] | undefined> {
     if (!element) {
       if (!this.store.isSignedIn) {
-        return [new OpenGistNode(), new NewPlaygroundNode(), new SignInNode()];
+        // Display the welcome view
+        return undefined;
       } else {
         if (this.store.isLoading) {
           return [new LoadingNode()];
@@ -221,12 +219,6 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 export function registerTreeProvider(store: Store, extensionPath: string) {
   const treeDataProvider = new GistTreeProvider(store, extensionPath);
   window.createTreeView(`${EXTENSION_NAME}.gists`, {
-    showCollapseAll: true,
-    treeDataProvider,
-    canSelectMany: true
-  });
-
-  window.createTreeView(`${EXTENSION_NAME}.gists.explorer`, {
     showCollapseAll: true,
     treeDataProvider,
     canSelectMany: true

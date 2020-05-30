@@ -3,7 +3,7 @@ import * as path from "path";
 import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import * as config from "../config";
 import {
-  ENCODED_DIRECTORY_SEPERATOR,
+  ENCODED_DIRECTORY_SEPARATOR,
   EXTENSION_NAME,
   TEMP_GIST_ID
 } from "../constants";
@@ -62,39 +62,6 @@ export abstract class TreeNode extends TreeItem {
 
     return this.getIconPath(gistType, isPublic, extensionPath);
   };
-}
-
-export class OpenGistNode extends TreeNode {
-  constructor() {
-    super("Open Gist...");
-
-    this.command = {
-      command: `${EXTENSION_NAME}.openGist`,
-      title: "Open Gist..."
-    };
-  }
-}
-
-export class SignInNode extends TreeNode {
-  constructor() {
-    super("Sign in to view your Gists...");
-
-    this.command = {
-      command: `${EXTENSION_NAME}.signIn`,
-      title: "Sign in to view your Gists..."
-    };
-  }
-}
-
-export class NewPlaygroundNode extends TreeNode {
-  constructor() {
-    super("New Playground...");
-
-    this.command = {
-      command: `${EXTENSION_NAME}.newPlayground`,
-      title: "New Playground..."
-    };
-  }
 }
 
 export class LoadingNode extends TreeNode {
@@ -186,13 +153,12 @@ ${suffix}`;
 }
 
 function getFileDisplayName(file: GistFile) {
-  if (file.filename?.includes(ENCODED_DIRECTORY_SEPERATOR)) {
-    return file.filename.split(ENCODED_DIRECTORY_SEPERATOR)[1];
+  if (file.filename?.includes(ENCODED_DIRECTORY_SEPARATOR)) {
+    return file.filename.split(ENCODED_DIRECTORY_SEPARATOR)[1];
   }
 
   return file.filename!;
 }
-
 export class GistFileNode extends TreeNode {
   constructor(public gistId: string, public file: GistFile) {
     super(getFileDisplayName(file));
@@ -238,7 +204,7 @@ export class GistDirectoryNode extends TreeNode {
 
 export class StarredGistsNode extends TreeNode {
   constructor(gistCount: number, extensionPath: string) {
-    super("Starred Gists", TreeItemCollapsibleState.Collapsed);
+    super("Starred Gists", TreeItemCollapsibleState.Expanded);
 
     this.iconPath = path.join(extensionPath, "images/star.svg");
     this.contextValue = "starredGists";

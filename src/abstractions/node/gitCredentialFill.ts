@@ -1,4 +1,4 @@
-import { execSync } from "child_process";
+import { execFileSync } from "child_process";
 
 export function execGitCredentialFill() {
   // See here for more details: https://git-scm.com/docs/git-credential
@@ -8,7 +8,7 @@ host=github.com
 `;
 
   try {
-    const response = execSync("git credential fill", {
+    const response = execFileSync("git", ["credential", "fill"], {
       input,
       encoding: "utf8"
     });

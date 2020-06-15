@@ -1,3 +1,7 @@
+## v0.1.0 (06/07/2020)
+
+- **Experimental** Added the ability to manage repositories in addition to gists
+
 ## v0.0.68 (05/11/2020)
 
 - Fixed the `Duplicate Gist` command to work for gists that include binary files (e.g. images)

@@ -342,9 +342,7 @@ export async function refreshGists() {
       gists: [],
       isLoading: true
     }));
-  }
 
-  if (storage.followedUsers.length > 0) {
     for (const followedUser of store.followedUsers) {
       followedUser.avatarUrl = await getUserAvatar(followedUser.username);
       followedUser.gists = updateGistTags(

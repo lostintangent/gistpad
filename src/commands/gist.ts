@@ -13,6 +13,7 @@ import {
 import { EXTENSION_NAME } from "../constants";
 import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { log } from "../logger";
+import { manageRepo } from "../repos/store/actions";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
   changeDescription,
@@ -75,8 +76,7 @@ async function newGistInternal(isPublic: boolean = true) {
 
   const descriptionInputBox = window.createInputBox();
   descriptionInputBox.title = title;
-  descriptionInputBox.prompt =
-    "Enter an optional description for the new Gist";
+  descriptionInputBox.prompt = "Enter an optional description for the new Gist";
   descriptionInputBox.step = currentStep++;
   descriptionInputBox.totalSteps = totalSteps;
 
@@ -577,25 +577,38 @@ export async function registerGistCommands(context: ExtensionContext) {
           return;
         }
 
-        withProgress("Exporting to repository...", async () => {
+        await withProgress("Exporting to repository...", async () => {
           const api = await getApi();
 
           const name = repoName.replace(/\s/g, "-").replace(/[^\w\d-_]/g, "");
+
           const response = await api.post("/user/repos", {
             name,
             description: node.gist.description,
             private: !node.gist.public
           });
 
-          await api.put(`/repos/${store.login}/${name}/topics`, {
+          let fullName = `${store.login}/${name}`;
+
+          await exportToRepo(node.gist.id, name);
+
+          await manageRepo(fullName);
+
+          await api.put(`/repos/${fullName}/topics`, {
             names: ["gistpad"],
             headers: {
               accept: "application/vnd.github.mercy-preview+json"
             }
           });
 
-          await exportToRepo(node.gist.id, name);
-          return env.openExternal(response.body.html_url);
+          if (
+            await window.showInformationMessage(
+              `Gist successfully exported to "${fullName}".`,
+              "Open in browser"
+            )
+          ) {
+            return env.openExternal(response.body.html_url);
+          }
         });
       }
     )

@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.0.68",
+  "version": "0.1.0",
   "extensionKind": [
     "ui",
     "workspace"
@@ -253,6 +253,16 @@
         }
       },
       {
+        "command": "gistpad.addRepositoryComment",
+        "title": "Add Comment",
+        "enablement": "!commentIsEmpty"
+      },
+      {
+        "command": "gistpad.addRepositoryFile",
+        "title": "Add New File",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.addSelectionToGist",
         "title": "Add Selection to Gist",
         "category": "GistPad",
@@ -278,6 +288,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.cloneManagedRepository",
+        "title": "Clone Repository",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.cloneRepository",
         "title": "Clone Repository",
         "category": "GistPad"
@@ -294,13 +309,19 @@
       },
       {
         "command": "gistpad.copyGistPadUrl",
-        "title": "Copy GistPad URL",
-        "category": "GistPad"
+        "title": "Copy GistPad URL"
       },
       {
         "command": "gistpad.copyGistUrl",
-        "title": "Copy GitHub URL",
-        "category": "GistPad"
+        "title": "Copy GitHub URL"
+      },
+      {
+        "command": "gistpad.copyRepositoryFileUrl",
+        "title": "Copy GitHub URL"
+      },
+      {
+        "command": "gistpad.copyRepositoryUrl",
+        "title": "Copy Repository URL"
       },
       {
         "command": "gistpad.deleteDirectory",
@@ -323,6 +344,20 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.deleteRepositoryComment",
+        "title": "Delete Comment"
+      },
+      {
+        "command": "gistpad.deleteRepositoryFile",
+        "title": "Delete File",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.duplicateRepositoryFile",
+        "title": "Duplicate File",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.duplicateDirectory",
         "title": "Duplicate Directory",
         "category": "GistPad"
@@ -341,6 +376,19 @@
         "command": "gistpad.editGistComment",
         "title": "Edit Comment",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.editRepositoryComment",
+        "title": "Edit Comment"
+      },
+      {
+        "command": "gistpad.manageRepository",
+        "title": "Manage Repository",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add.svg",
+          "light": "images/light/add.svg"
+        }
       },
       {
         "command": "gistpad.exportGistToCodePen",
@@ -485,6 +533,16 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.openRepositoryFileInBrowser",
+        "title": "View File in GitHub",
+        "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openRepositoryInBrowser",
+        "title": "View Repository in GitHub",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.pasteGistFile",
         "title": "Paste Gist File",
         "category": "GistPad"
@@ -501,6 +559,15 @@
       {
         "command": "gistpad.refreshGists",
         "title": "Refresh Gists",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/refresh.svg",
+          "light": "images/light/refresh.svg"
+        }
+      },
+      {
+        "command": "gistpad.refreshRepositories",
+        "title": "Refresh Repositories",
         "category": "GistPad",
         "icon": {
           "dark": "images/dark/refresh.svg",
@@ -527,6 +594,10 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.renameRepositoryFile",
+        "title": "Rename File"
+      },
+      {
         "command": "gistpad.replyGistComment",
         "title": "Reply",
         "enablement": "!commentIsEmpty"
@@ -542,6 +613,10 @@
       },
       {
         "command": "gistpad.saveGistComment",
+        "title": "Save"
+      },
+      {
+        "command": "gistpad.saveRepositoryComment",
         "title": "Save"
       },
       {
@@ -601,6 +676,11 @@
         "icon": "$(megaphone)"
       },
       {
+        "command": "gistpad.unmanageRepository",
+        "title": "Stop Managing Repository",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.unfollowUser",
         "title": "Unfollow User",
         "category": "GistPad"
@@ -630,6 +710,10 @@
       "commandPalette": [
         {
           "command": "gistpad.deleteGist",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.manageRepository",
           "when": "gistpad:state == SignedIn"
         },
         {
@@ -725,6 +809,14 @@
           "when": "false"
         },
         {
+          "command": "gistpad.addRepositoryComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.addRepositoryFile",
+          "when": "false"
+        },
+        {
           "command": "gistpad.addSelectionToGist",
           "when": "false"
         },
@@ -737,6 +829,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.cloneManagedRepository",
+          "when": "false"
+        },
+        {
           "command": "gistpad.cloneRepository",
           "when": "false"
         },
@@ -746,6 +842,14 @@
         },
         {
           "command": "gistpad.copyGistUrl",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.copyRepositoryFileUrl",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.copyRepositoryUrl",
           "when": "false"
         },
         {
@@ -769,6 +873,18 @@
           "when": "false"
         },
         {
+          "command": "gistpad.deleteRepositoryComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.deleteRepositoryFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.duplicateRepositoryFile",
+          "when": "false"
+        },
+        {
           "command": "gistpad.duplicateFile",
           "when": "false"
         },
@@ -782,6 +898,10 @@
         },
         {
           "command": "gistpad.editGistComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.editRepositoryComment",
           "when": "false"
         },
         {
@@ -837,6 +957,14 @@
           "when": "false"
         },
         {
+          "command": "gistpad.openRepositoryFileInBrowser",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openRepositoryInBrowser",
+          "when": "false"
+        },
+        {
           "command": "gistpad.pasteImage",
           "when": "false"
         },
@@ -849,7 +977,15 @@
           "when": "false"
         },
         {
+          "command": "gistpad.renameRepositoryFile",
+          "when": "false"
+        },
+        {
           "command": "gistpad.saveGistComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.saveRepositoryComment",
           "when": "false"
         },
         {
@@ -878,6 +1014,10 @@
         },
         {
           "command": "gistpad.ungroupGists",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.unmanageRepository",
           "when": "false"
         },
         {
@@ -924,6 +1064,16 @@
           "command": "gistpad.refreshGists",
           "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn",
           "group": "navigation@5"
+        },
+        {
+          "command": "gistpad.manageRepository",
+          "when": "view == gistpad.repos",
+          "group": "navigation@1"
+        },
+        {
+          "command": "gistpad.refreshRepositories",
+          "when": "view == gistpad.repos",
+          "group": "navigation@2"
         },
         {
           "command": "gistpad.submitShowcaseEntry",
@@ -1158,6 +1308,56 @@
           "group": "manage@2"
         },
         {
+          "command": "gistpad.copyRepositoryUrl",
+          "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "group": "browse@1"
+        },
+        {
+          "command": "gistpad.openRepositoryInBrowser",
+          "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "group": "browse@2"
+        },
+        {
+          "command": "gistpad.addRepositoryFile",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(Directory)?$/",
+          "group": "manage@1"
+        },
+        {
+          "command": "gistpad.cloneManagedRepository",
+          "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "group": "manage@2"
+        },
+        {
+          "command": "gistpad.unmanageRepository",
+          "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "group": "unmanage@2"
+        },
+        {
+          "command": "gistpad.copyRepositoryFileUrl",
+          "when": "view == gistpad.repos && viewItem == gistpad.repoFile",
+          "group": "browse@1"
+        },
+        {
+          "command": "gistpad.openRepositoryFileInBrowser",
+          "when": "view == gistpad.repos && viewItem == gistpad.repoFile",
+          "group": "browse@2"
+        },
+        {
+          "command": "gistpad.renameRepositoryFile",
+          "when": "view == gistpad.repos && viewItem == gistpad.repoFile",
+          "group": "manage@1"
+        },
+        {
+          "command": "gistpad.duplicateRepositoryFile",
+          "when": "view == gistpad.repos && viewItem == gistpad.repoFile",
+          "group": "manage@2"
+        },
+        {
+          "command": "gistpad.deleteRepositoryFile",
+          "when": "view == gistpad.repos && viewItem == gistpad.repoFile",
+          "group": "manage@3"
+        },
+        {
           "command": "gistpad.exportTour",
           "when": "viewItem =~ /^codetour.tour(.active)?$/",
           "group": "export@2"
@@ -1227,6 +1427,10 @@
           "command": "gistpad.recordCodeTour",
           "when": "gistpad:inPlayground && gistpad:allowCodeTourRecording",
           "group": "codetour@1"
+        },
+        {
+          "command": "gistpad.renameRepositoryFile",
+          "when": "resourceScheme == repo"
         }
       ],
       "editor/title/context": [
@@ -1244,6 +1448,16 @@
           "command": "gistpad.deleteGistComment",
           "group": "group@2",
           "when": "commentController == gistpad && comment == canEdit"
+        },
+        {
+          "command": "gistpad.editRepositoryComment",
+          "group": "group@1",
+          "when": "commentController == gistpad:repo && comment == canEdit"
+        },
+        {
+          "command": "gistpad.deleteRepositoryComment",
+          "group": "group@2",
+          "when": "commentController == gistpad:repo && comment == canEdit"
         }
       ],
       "comments/comment/context": [
@@ -1251,6 +1465,11 @@
           "command": "gistpad.saveGistComment",
           "group": "inline@2",
           "when": "commentController == gistpad"
+        },
+        {
+          "command": "gistpad.saveRepositoryComment",
+          "group": "inline@2",
+          "when": "commentController == gistpad:repo"
         }
       ],
       "comments/commentThread/context": [
@@ -1263,6 +1482,11 @@
           "command": "gistpad.replyGistComment",
           "group": "inline",
           "when": "commentController == gistpad && !commentThreadIsEmpty && gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.addRepositoryComment",
+          "group": "inline",
+          "when": "commentController == gistpad:repo && commentThreadIsEmpty && gistpad:state == SignedIn"
         }
       ]
     },
@@ -1282,6 +1506,11 @@
           "name": "Gists"
         },
         {
+          "id": "gistpad.repos",
+          "name": "Repositories",
+          "when": "gistpad:state == SignedIn && gistpad:hasRepos"
+        },
+        {
           "id": "gistpad.activeGist",
           "name": "Active Gist",
           "when": "gistpad:inPlayground"
@@ -1295,7 +1524,7 @@
     "viewsWelcome": [
       {
         "view": "gistpad.gists",
-        "contents": "Welcome to GistPad! You can open any GitHub Gist by URL or ID, and/or create new interactive [runnable playgrounds](https://github.com/vsls-contrib/gistpad#playgrounds).\n\n[Open Gist](command:gistpad.openGist)\n\n[New Playground](command:gistpad.newPlayground)\n\nTo manage your gists, sign-in with a [token](https://github.com/settings/tokens/new) that includes the \"gist\" scope.\n\n[Sign-In](command:gistpad.signIn)"
+        "contents": "Open any GitHub Gist (by URL or ID), and/or create new [interactive playgrounds](https://github.com/vsls-contrib/gistpad#playgrounds).\n\n[Open Gist](command:gistpad.openGist)\n\n[New Playground](command:gistpad.newPlayground)\n\nManage your gists, by signing in with a [token](https://github.com/settings/tokens/new) that includes the \"gist\" scope.\n\n[Sign-In](command:gistpad.signIn)"
       }
     ],
     "jsonValidation": [
@@ -1365,6 +1594,7 @@
     "axios": "^0.19.0",
     "case": "^1.6.2",
     "debounce": "^1.2.0",
+    "diff-match-patch": "^1.0.5",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "is-binary-path": "^2.1.0",

@@ -71,7 +71,7 @@ export async function exportToRepo(gistId: string, repoName: string) {
   const [, repo] = await ensureRepo(gistId);
   const token = await getToken();
 
-  pushRemote(
+  return pushRemote(
     repo,
     "export",
     `https://${store.login}:${token}@github.com/${store.login}/${repoName}.git`

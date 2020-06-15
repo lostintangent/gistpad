@@ -577,6 +577,7 @@ export async function registerGistCommands(context: ExtensionContext) {
           return;
         }
 
+        let repoUri, fullName;
         await withProgress("Exporting to repository...", async () => {
           const api = await getApi();
 
@@ -588,28 +589,22 @@ export async function registerGistCommands(context: ExtensionContext) {
             private: !node.gist.public
           });
 
-          let fullName = `${store.login}/${name}`;
+          repoUri = Uri.parse(response.body.html_url);
+          fullName = `${store.login}/${name}`;
 
           await exportToRepo(node.gist.id, name);
-
           await manageRepo(fullName);
-
-          await api.put(`/repos/${fullName}/topics`, {
-            names: ["gistpad"],
-            headers: {
-              accept: "application/vnd.github.mercy-preview+json"
-            }
-          });
-
-          if (
-            await window.showInformationMessage(
-              `Gist successfully exported to "${fullName}".`,
-              "Open in browser"
-            )
-          ) {
-            return env.openExternal(response.body.html_url);
-          }
         });
+
+        if (
+          await window.showInformationMessage(
+            `Gist successfully exported to "${fullName}".`,
+            "Open in browser"
+          )
+        ) {
+          // @ts-ignore
+          return env.openExternal(repoUri);
+        }
       }
     )
   );

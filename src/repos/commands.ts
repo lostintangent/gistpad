@@ -37,7 +37,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
       }
 
       quickPick.busy = true;
-      quickPick.placeholder = "Loading repository list...";
+      quickPick.placeholder = "";
 
       repoPromise.then((repos) => {
         const items = repos.map((repo: any) => ({

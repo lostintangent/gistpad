@@ -56,6 +56,8 @@ export async function registerRepoCommands(context: ExtensionContext) {
         });
 
         quickPick.busy = false;
+        quickPick.placeholder =
+          "Select or specify the repo to manage (e.g. vsls-contrib/guestbook)";
       });
 
       quickPick.onDidAccept(async () => {

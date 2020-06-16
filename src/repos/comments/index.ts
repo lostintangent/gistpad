@@ -44,8 +44,8 @@ export class RepoCommitComment implements Comment {
   }
 }
 
-function commentRange({ position }: any) {
-  return new Range(position - 1, 0, position - 1, 0);
+function commentRange({ line }: any) {
+  return new Range(line - 1, 0, line - 1, 0);
 }
 
 let controller: CommentController | undefined;

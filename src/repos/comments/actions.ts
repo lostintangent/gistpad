@@ -4,7 +4,7 @@ export async function createRepoComment(
   repo: string,
   path: string,
   body: string,
-  position: number
+  line: number
 ) {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
@@ -12,7 +12,7 @@ export async function createRepoComment(
   const response = await api.post(`/repos/${repo}/commits/HEAD/comments`, {
     body,
     path,
-    position
+    line
   });
   return response.body;
 }

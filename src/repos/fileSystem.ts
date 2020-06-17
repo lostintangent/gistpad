@@ -1,26 +1,12 @@
 import * as vscode from "vscode";
 import { stringToByteArray } from "../utils";
-import { store } from "./store";
+import { Repository, store, TreeItem } from "./store";
 import { getRepoFile, updateRepoFile } from "./store/actions";
 
 export class RepoFileSystemProvider implements vscode.FileSystemProvider {
   private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
   readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this
     ._emitter.event;
-
-  stat(uri: vscode.Uri): vscode.FileStat {
-    const match = RepoFileSystemProvider.getFileInfo(uri);
-
-    const repository = store.repos.find((repo) => repo.name === match![0]);
-    const file = repository!.tree!.tree.find((file) => file.path === match![1]);
-
-    return {
-      type: vscode.FileType.File,
-      ctime: Date.now(),
-      mtime: Date.now(),
-      size: file!.size
-    };
-  }
 
   static URL_PATTERN = /\/([^\/]+\/[^\/]+)\/(.+)/i;
 
@@ -29,13 +15,30 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
     return [match[1], match[2]];
   }
 
-  async readFile(uri: vscode.Uri): Promise<Uint8Array> {
+  static getRepoInfo(uri: vscode.Uri): [Repository, TreeItem] {
     const match = RepoFileSystemProvider.getFileInfo(uri);
 
-    const repository = store.repos.find((repo) => repo.name === match![0]);
-    const file = repository!.tree!.tree.find((file) => file.path === match![1]);
+    const repository = store.repos.find((repo) => repo.name === match![0])!;
+    const file = repository!.tree!.tree.find(
+      (file) => file.path === match![1]
+    )!;
 
-    const contents = await getRepoFile(repository!.name, file!.sha);
+    return [repository, file];
+  }
+
+  stat(uri: vscode.Uri): vscode.FileStat {
+    return {
+      type: vscode.FileType.File,
+      ctime: Date.now(),
+      mtime: Date.now(),
+      size: 100
+    };
+  }
+
+  async readFile(uri: vscode.Uri): Promise<Uint8Array> {
+    const [repository, file] = RepoFileSystemProvider.getRepoInfo(uri);
+
+    const contents = await getRepoFile(repository.name, file.sha);
     return stringToByteArray(contents);
   }
 
@@ -44,12 +47,9 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
     content: Uint8Array,
     options: { create: boolean; overwrite: boolean }
   ): Promise<void> {
-    const match = RepoFileSystemProvider.getFileInfo(uri);
+    const [repository, file] = RepoFileSystemProvider.getRepoInfo(uri);
 
-    const repository = store.repos.find((repo) => repo.name === match![0]);
-    const file = repository!.tree!.tree.find((file) => file.path === match![1]);
-
-    await updateRepoFile(repository!.name, file!.path, content, file!.sha);
+    await updateRepoFile(repository.name, file.path, content, file.sha);
   }
 
   delete(uri: vscode.Uri): void {

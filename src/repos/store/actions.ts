@@ -1,6 +1,6 @@
-import { comparer, set } from "mobx";
+import { set } from "mobx";
 import * as vscode from "vscode";
-import { Repository, RepositoryFile, store } from ".";
+import { Repository, RepositoryFile, store, Tree } from ".";
 import { getApi } from "../../store/actions";
 import { storage } from "../store/storage";
 
@@ -20,7 +20,7 @@ export async function addRepoFile(
   const repository = store.repos.find((repo) => repo.name === repoName);
   repository?.tree?.tree.push(response.body.content);
 
-  refreshRepository(repoName);
+  updateRepository(repoName);
 }
 
 export async function createCommit(
@@ -70,7 +70,7 @@ export async function deleteRepoFile(file: RepositoryFile) {
     (treeItem) => treeItem.sha !== file.treeItem.sha
   );
 
-  refreshRepository(file.repo.name);
+  updateRepository(file.repo.name);
 }
 
 export async function getLatestCommit(repo: string) {
@@ -89,12 +89,24 @@ export async function getRepoFile(repo: string, sha: string) {
   return Buffer.from(response.body.content, "base64").toString();
 }
 
-export async function getRepo(repo: string) {
+export async function getRepo(
+  repo: string,
+  etag?: string
+): Promise<[Tree, string] | undefined> {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
-  const response = await api.get(`/repos/${repo}/git/trees/HEAD?recursive=1`);
-  return response.body;
+  const options = etag ? { headers: { "If-None-Match": etag } } : {};
+  try {
+    const response = await api.get(
+      `/repos/${repo}/git/trees/HEAD?recursive=1`,
+      options
+    );
+
+    if (response.statusCode === 200) {
+      return [response.body, response.headers.etag];
+    }
+  } catch (e) {}
 }
 
 export async function listRepos() {
@@ -159,32 +171,71 @@ export async function manageRepo(repoName: string) {
   const repository = new Repository(repoName);
   store.repos.push(repository);
 
-  const tree = await getRepo(repoName);
-  repository.setFiles(tree);
+  const [tree, etag] = (await getRepo(repoName))!;
+  repository.tree = tree;
+  repository.etag = etag;
+  repository.isLoading = false;
 }
 
+const REFRESH_INTERVAL = 1000 * 60 * 5;
+let refreshTimer: NodeJS.Timer;
 export async function refreshRepositories() {
   if (storage.repos.length === 0) {
     return;
   }
 
-  store.repos = storage.repos.map((repo) => new Repository(repo));
+  if (refreshTimer) {
+    clearInterval(refreshTimer);
+  }
 
+  store.repos = storage.repos.map((repo) => new Repository(repo));
+  await updateRepositories(true);
+
+  setInterval(updateRepositories, REFRESH_INTERVAL);
+}
+
+export async function updateRepositories(isRefreshing: boolean = false) {
   for (const repo of store.repos) {
-    const tree = await getRepo(repo.name);
-    repo.setFiles(tree);
-    repo.latestCommit = await getLatestCommit(repo.name);
+    await updateRepository(repo.name, isRefreshing);
+  }
+
+  if (
+    vscode.window.activeTextEditor &&
+    vscode.window.activeTextEditor.document.uri.scheme === "repo" &&
+    !vscode.window.activeTextEditor.document.isDirty
+  ) {
+    setTimeout(
+      () => vscode.commands.executeCommand("workbench.action.files.revert"),
+      50
+    );
   }
 }
 
-export async function refreshRepository(repoName: string) {
+export async function updateRepository(
+  repoName: string,
+  isRefreshing: boolean = false
+) {
   const repo = store.repos.find((repo) => repo.name === repoName)!;
-
-  const tree = await getRepo(repo.name);
-
-  if (!comparer.structural(repo.tree, tree)) {
-    set(repo.tree!, tree);
+  if (isRefreshing) {
+    repo.isLoading = true;
   }
+
+  const response = await getRepo(repo.name, repo.etag);
+  if (!response) {
+    repo.isLoading = false;
+    return;
+  }
+
+  const [tree, etag] = response;
+
+  if (repo.tree) {
+    set(repo.tree, tree);
+  } else {
+    repo.tree = tree;
+  }
+
+  repo.etag = etag;
+  repo.isLoading = false;
 
   repo.latestCommit = await getLatestCommit(repoName);
 }
@@ -206,12 +257,13 @@ async function updateRepoFileInternal(
     content: contents,
     sha
   });
+
   const repository = store.repos.find((r) => r.name === repo);
   const file = repository!.tree!.tree.find((file) => file.path === path);
   file!.sha = response.body.content.sha;
   file!.size = response.body.size;
 
-  refreshRepository(repo);
+  updateRepository(repo);
 }
 
 export async function updateRepoFile(
@@ -224,8 +276,14 @@ export async function updateRepoFile(
   const api = await getApi(GitHub);
 
   try {
-    // @ts-ignore
-    updateRepoFileInternal(api, repo, path, contents.toString("base64"), sha);
+    await updateRepoFileInternal(
+      api,
+      repo,
+      path,
+      // @ts-ignore
+      contents.toString("base64"),
+      sha
+    );
   } catch (e) {
     const diffMatchPatch = require("diff-match-patch");
     const dmp = new diffMatchPatch();
@@ -237,10 +295,11 @@ export async function updateRepoFile(
 
     const [merge, success] = dmp.patch_apply(
       diff,
-      Buffer.from(currentFile.content, "base64").toString("ascii")
+      Buffer.from(currentFile.content, "base64").toString()
     );
+
     if (success) {
-      updateRepoFileInternal(
+      await updateRepoFileInternal(
         api,
         repo,
         path,
@@ -248,11 +307,10 @@ export async function updateRepoFile(
         currentFile.sha
       );
 
-      // Force the active editor to refresh itself by
-      // re-reading its contents from the file system.
-      setTimeout(() => {
-        vscode.commands.executeCommand("workbench.action.files.revert");
-      }, 50);
+      setTimeout(
+        () => vscode.commands.executeCommand("workbench.action.files.revert"),
+        50
+      );
     } else {
       vscode.window.showInformationMessage(
         "Can't save this file to do an unresoveable conflict with the remote repository."

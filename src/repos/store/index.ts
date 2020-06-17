@@ -82,6 +82,7 @@ export class Repository {
   latestCommit: string = "";
   comments: RepositoryComment[] = [];
   threads: CommentThread[] = [];
+  etag: string | undefined;
 
   constructor(public name: string) {}
 
@@ -92,12 +93,6 @@ export class Repository {
         return b.type.localeCompare(a.type);
       })
       .map((item) => new RepositoryFile(this, item, this.tree!));
-  }
-
-  setFiles(tree: Tree) {
-    this.tree = tree;
-
-    this.isLoading = false;
   }
 }
 

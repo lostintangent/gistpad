@@ -20,8 +20,8 @@ import {
 } from "./store/actions";
 import { RepositoryFileNode, RepositoryNode } from "./tree/nodes";
 
-function getGitHubUrl(repo: string, path?: string) {
-  const suffix = path ? `/blob/master/${path}` : "";
+function getGitHubUrl(repo: string, filePath?: string) {
+  const suffix = filePath ? `/blob/master/${filePath}` : "";
   return `https://github.com/${repo}${suffix}`;
 }
 

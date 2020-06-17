@@ -1,3 +1,7 @@
+## v0.1.2 (06/17/2020)
+
+- Added support for automatically syncing and merging changes with repo files
+
 ## v0.1.1 (06/15/2020)
 
 - Fixed a bug with exporting some gists to repos

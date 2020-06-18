@@ -67,7 +67,7 @@ export async function deleteRepoFile(file: RepositoryFile) {
   });
 
   file.repo.tree!.tree = file.repo.tree!.tree.filter(
-    (treeItem) => treeItem.sha !== file.treeItem.sha
+    (treeItem) => treeItem.path !== file.treeItem.path
   );
 
   updateRepository(file.repo.name);

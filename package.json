@@ -1578,7 +1578,6 @@
     "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
     "build:node": "webpack --config ./webpack/webpack.node.config.js",
     "compile": "tsc -p ./",
-    "postinstall": "node ./node_modules/vscode/bin/install",
     "vscode:prepublish": "npm run build:node",
     "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
   },
@@ -1610,11 +1609,11 @@
   "devDependencies": {
     "@types/keytar": "^4.4.2",
     "@types/node": "^8.10.25",
+    "@types/vscode": "^1.45.0",
     "copy-webpack-plugin": "^5.0.5",
     "ts-loader": "^6.2.1",
     "tslint": "^5.8.0",
     "typescript": "^3.7.3",
-    "vscode": "^1.1.25",
     "vscode-nls-dev": "^3.3.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",

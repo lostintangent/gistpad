@@ -2,6 +2,7 @@ import { reaction } from "mobx";
 import {
   Event,
   EventEmitter,
+  ExtensionContext,
   ProviderResult,
   TreeDataProvider,
   TreeItem,
@@ -12,11 +13,11 @@ import { Repository, RepositoryFile, store } from "../store";
 import { RepositoryFileNode, RepositoryNode } from "./nodes";
 
 class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
-  private _onDidChangeTreeData = new EventEmitter<TreeItem>();
-  public readonly onDidChangeTreeData: Event<TreeItem> = this
+  private _onDidChangeTreeData = new EventEmitter<TreeItem | void>();
+  public readonly onDidChangeTreeData: Event<TreeItem | void> = this
     ._onDidChangeTreeData.event;
 
-  constructor(private extensionPath: string) {
+  constructor(private context: ExtensionContext) {
     reaction(
       () => [
         store.repos.map((repo) => [
@@ -40,7 +41,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
     if (!element) {
       return store.repos
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map((repo) => new RepositoryNode(repo, this.extensionPath));
+        .map((repo) => new RepositoryNode(repo, this.context));
     } else if (element instanceof RepositoryNode) {
       if (element.repo.isLoading) {
         return [new TreeItem("Loading repository...")];
@@ -53,10 +54,10 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
   }
 }
 
-export function registerTreeProvider(extensionPath: string) {
+export function registerTreeProvider(context: ExtensionContext) {
   window.createTreeView(`${EXTENSION_NAME}.repos`, {
     showCollapseAll: true,
-    treeDataProvider: new RepositoryTreeProvider(extensionPath),
+    treeDataProvider: new RepositoryTreeProvider(context),
     canSelectMany: true
   });
 }

@@ -1,12 +1,12 @@
-import * as path from "path";
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { ExtensionContext, ThemeIcon, TreeItem, TreeItemCollapsibleState } from "vscode";
+import { joinPath } from "../../utils";
 import { Repository, RepositoryFile } from "../store";
 
 export class RepositoryNode extends TreeItem {
-  constructor(public repo: Repository, extensionPath: string) {
+  constructor(public repo: Repository, context: ExtensionContext) {
     super(repo.name, TreeItemCollapsibleState.Collapsed);
 
-    this.iconPath = path.join(extensionPath, "images/git.svg");
+    this.iconPath = joinPath(context, "images/git.svg");
     this.contextValue = "gistpad.repo";
   }
 }

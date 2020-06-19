@@ -3,6 +3,7 @@ import {
   Disposable,
   Event,
   EventEmitter,
+  ExtensionContext,
   FileType,
   TreeDataProvider,
   TreeItem,
@@ -44,20 +45,20 @@ export async function getGistFiles(gist: Gist, subDirectory?: string) {
       return fileType === FileType.Directory
         ? new GistDirectoryNode(gist, file)
         : new GistFileNode(
-            gist.id,
-            gist.files[`${encodeDirectoryName(directory)}${file}`]
-          );
+          gist.id,
+          gist.files[`${encodeDirectoryName(directory)}${file}`]
+        );
     });
 }
 
 class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
 
-  private _onDidChangeTreeData = new EventEmitter<TreeNode>();
-  public readonly onDidChangeTreeData: Event<TreeNode> = this
+  private _onDidChangeTreeData = new EventEmitter<TreeNode | void>();
+  public readonly onDidChangeTreeData: Event<TreeNode | void> = this
     ._onDidChangeTreeData.event;
 
-  constructor(private store: Store, private extensionPath: string) {
+  constructor(private store: Store, private extensionContext: ExtensionContext) {
     reaction(
       () => [
         store.scratchNotes.gist ? store.scratchNotes.gist.updated_at : null,
@@ -84,7 +85,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     gists: Gist[],
     nodeConstructor: new (
       gist: Gist,
-      extensionPath: string,
+      extensionContext: ExtensionContext,
       showIcon?: boolean
     ) => GistNode,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
@@ -105,14 +106,14 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
               )
             ),
             nodeConstructor,
-            this.extensionPath,
+            this.extensionContext,
             collapsibleState
           )
       );
     } else {
       return sortGists(gists)
         .filter((gist) => gist.id !== TEMP_GIST_ID)
-        .map((gist) => new nodeConstructor(gist, this.extensionPath));
+        .map((gist) => new nodeConstructor(gist, this.extensionContext));
     }
   }
 
@@ -129,14 +130,14 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
             new GistsNode(
               this.store.gists.length,
               this.store.login,
-              this.extensionPath
+              this.extensionContext
             )
           ];
 
           if (this.store.scratchNotes.show) {
             nodes.unshift(
               new ScratchGistNode(
-                this.extensionPath,
+                this.extensionContext,
                 this.store.scratchNotes.gist
               )
             );
@@ -146,14 +147,14 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
             nodes.push(
               new StarredGistsNode(
                 this.store.starredGists.length,
-                this.extensionPath
+                this.extensionContext
               )
             );
           }
 
           if (this.store.followedUsers.length > 0) {
             this.store.followedUsers.forEach((user) => {
-              nodes.push(new FollowedUserGistsNode(user, this.extensionPath));
+              nodes.push(new FollowedUserGistsNode(user, this.extensionContext));
             });
           }
 
@@ -180,7 +181,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       const showIcons = this.store.groupType == GroupType.none;
       return element.gists.map(
         (gist) =>
-          new element.nodeConstructor(gist, this.extensionPath, showIcons)
+          new element.nodeConstructor(gist, this.extensionContext, showIcons)
       );
     } else if (element instanceof GistNode) {
       return getGistFiles(element.gist);
@@ -216,8 +217,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export function registerTreeProvider(store: Store, extensionPath: string) {
-  const treeDataProvider = new GistTreeProvider(store, extensionPath);
+export function registerTreeProvider(store: Store, extensionContext: ExtensionContext) {
+  const treeDataProvider = new GistTreeProvider(store, extensionContext);
   window.createTreeView(`${EXTENSION_NAME}.gists`, {
     showCollapseAll: true,
     treeDataProvider,

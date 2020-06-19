@@ -12,6 +12,7 @@ module.exports = merge(devConfig, {
   node: {
     util: true,
     fs: "empty",
-    readline: "empty"
+    readline: "empty",
+    child_process: "empty"
   }
 });

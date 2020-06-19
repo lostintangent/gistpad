@@ -3,7 +3,7 @@ import {
   Disposable,
   Event,
   EventEmitter,
-  ProviderResult,
+  ExtensionContext, ProviderResult,
   TreeDataProvider,
   TreeItem,
   window
@@ -25,11 +25,11 @@ import {
 class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
 
-  private _onDidChangeTreeData = new EventEmitter<TreeNode>();
-  public readonly onDidChangeTreeData: Event<TreeNode> = this
+  private _onDidChangeTreeData = new EventEmitter<TreeNode | void>();
+  public readonly onDidChangeTreeData: Event<TreeNode | void> = this
     ._onDidChangeTreeData.event;
 
-  constructor(private extensionPath: string) {
+  constructor(private extensionContext: ExtensionContext) {
     reaction(
       () => [
         store.showcase.isLoading,
@@ -63,8 +63,8 @@ class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         const owned = isOwnedGist(gist.id);
 
         return owned
-          ? new GistNode(gist, this.extensionPath)
-          : new FollowedUserGistNode(gist, this.extensionPath);
+          ? new GistNode(gist, this.extensionContext)
+          : new FollowedUserGistNode(gist, this.extensionContext);
       });
     } else if (element instanceof GistNode) {
       return getGistFiles(element.gist);
@@ -78,10 +78,10 @@ class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export function registerTreeProvider(store: Store, extensionPath: string) {
+export function registerTreeProvider(store: Store, extensionContext: ExtensionContext) {
   window.createTreeView(`${EXTENSION_NAME}.showcase`, {
     showCollapseAll: true,
-    treeDataProvider: new ShowcaseTreeProvider(extensionPath),
+    treeDataProvider: new ShowcaseTreeProvider(extensionContext),
     canSelectMany: true
   });
 }

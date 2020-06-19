@@ -1,6 +1,5 @@
 import * as moment from "moment";
-import * as path from "path";
-import { ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import { ExtensionContext, ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
 import * as config from "../config";
 import {
   ENCODED_DIRECTORY_SEPARATOR,
@@ -23,7 +22,8 @@ import {
   getGistLabel,
   isNotebookGist,
   isOwnedGist,
-  isPlaygroundGist
+  isPlaygroundGist,
+  joinPath
 } from "../utils";
 
 export abstract class TreeNode extends TreeItem {
@@ -37,7 +37,7 @@ export abstract class TreeNode extends TreeItem {
   private getIconPath = (
     gistType: GistGroupType,
     isPublic: boolean,
-    extensionPath: string
+    context: ExtensionContext
   ) => {
     let iconName = gistType;
 
@@ -46,21 +46,21 @@ export abstract class TreeNode extends TreeItem {
     }
 
     return {
-      dark: path.join(extensionPath, `images/dark/${iconName}.svg`),
-      light: path.join(extensionPath, `images/light/${iconName}.svg`)
+      dark: joinPath(context, `images/dark/${iconName}.svg`),
+      light: joinPath(context, `images/light/${iconName}.svg`)
     };
   };
 
   public getGistTypeIcon = (
     gistType: GistGroupType,
     isPublic: boolean,
-    extensionPath: string
+    context: ExtensionContext
   ) => {
     if (!config.get("treeIcons")) {
       return;
     }
 
-    return this.getIconPath(gistType, isPublic, extensionPath);
+    return this.getIconPath(gistType, isPublic, context);
   };
 }
 
@@ -71,10 +71,10 @@ export class LoadingNode extends TreeNode {
 }
 
 export class GistsNode extends TreeNode {
-  constructor(gistCount: number, public login: string, extensionPath: string) {
+  constructor(gistCount: number, public login: string, extensionContext: ExtensionContext) {
     super("Your Gists", TreeItemCollapsibleState.Expanded);
 
-    this.iconPath = path.join(extensionPath, "images/icon-small.png");
+    this.iconPath = joinPath(extensionContext, "images/icon-small.png");
     this.contextValue = "gists";
     this.description = gistCount.toString();
   }
@@ -94,7 +94,7 @@ export class CreateNewGistNode extends TreeNode {
 export class GistNode extends TreeNode {
   constructor(
     public gist: Gist,
-    extensionPath: string,
+    extensionContext: ExtensionContext,
     showIcon: boolean = true,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
@@ -106,7 +106,7 @@ export class GistNode extends TreeNode {
       this.iconPath = this.getGistTypeIcon(
         gist.type!,
         gist.public,
-        extensionPath
+        extensionContext
       );
     }
 
@@ -203,10 +203,10 @@ export class GistDirectoryNode extends TreeNode {
 }
 
 export class StarredGistsNode extends TreeNode {
-  constructor(gistCount: number, extensionPath: string) {
+  constructor(gistCount: number, extensionContext: ExtensionContext) {
     super("Starred Gists", TreeItemCollapsibleState.Expanded);
 
-    this.iconPath = path.join(extensionPath, "images/star.svg");
+    this.iconPath = joinPath(extensionContext, "images/star.svg");
     this.contextValue = "starredGists";
     this.description = gistCount.toString();
   }
@@ -221,10 +221,10 @@ export class NoStarredGistsNode extends TreeNode {
 export class StarredGistNode extends GistNode {
   constructor(
     public gist: Gist,
-    extensionPath: string,
+    extensionContext: ExtensionContext,
     showIcon: boolean = true
   ) {
-    super(gist, extensionPath, showIcon);
+    super(gist, extensionContext, showIcon);
 
     const owner = gist.owner ? gist.owner.login : "Anonymous";
     this.tooltip = this.getTooltip(`Owner: ${owner}`);
@@ -234,15 +234,15 @@ export class StarredGistNode extends GistNode {
 }
 
 export class FollowedUserGistsNode extends TreeNode {
-  constructor(public user: FollowedUser, extensionPath: string) {
+  constructor(public user: FollowedUser, extensionContext: ExtensionContext) {
     super(`${user.username}'s Gists`, TreeItemCollapsibleState.Collapsed);
 
     if (user.avatarUrl) {
       this.iconPath = Uri.parse(user.avatarUrl);
     } else {
       this.iconPath = {
-        dark: path.join(extensionPath, "images/dark/user.svg"),
-        light: path.join(extensionPath, "images/light/user.svg")
+        dark: joinPath(extensionContext, "images/dark/user.svg"),
+        light: joinPath(extensionContext, "images/light/user.svg")
       };
     }
 
@@ -259,11 +259,11 @@ export class NoUserGistsNode extends TreeNode {
 export class FollowedUserGistNode extends GistNode {
   constructor(
     public gist: Gist,
-    extensionPath: string,
+    extensionContext: ExtensionContext,
     showIcon: boolean = true,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
-    super(gist, extensionPath, showIcon, collapsibleState);
+    super(gist, extensionContext, showIcon, collapsibleState);
 
     this.tooltip = this.getTooltip();
     this.contextValue = this.getContextValue("followedUser.gist");
@@ -282,10 +282,10 @@ export class GistGroupNode extends TreeNode {
     public gists: Gist[],
     public nodeConstructor: new (
       gist: Gist,
-      extensionPath: string,
+      extensionContext: ExtensionContext,
       showIcon?: boolean
     ) => GistNode,
-    extensionPath: string,
+    extensionContext: ExtensionContext,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.Collapsed
   ) {
     super(label, collapsibleState);
@@ -297,7 +297,7 @@ export class GistGroupNode extends TreeNode {
       ? (label as GistType)
       : "tag";
 
-    this.iconPath = this.getGistTypeIcon(iconType, true, extensionPath);
+    this.iconPath = this.getGistTypeIcon(iconType, true, extensionContext);
   }
 }
 
@@ -309,13 +309,13 @@ export class GistShowcaseCategoryNode extends TreeNode {
 }
 
 export class ScratchGistNode extends TreeNode {
-  constructor(extensionPath: string, public gist: Gist | null = null) {
+  constructor(extensionContext: ExtensionContext, public gist: Gist | null = null) {
     super("Scratch Notes", TreeItemCollapsibleState.Expanded);
 
     this.contextValue = "scratchGist";
     this.description = gist ? Object.keys(gist.files).length.toString() : "";
 
-    this.iconPath = path.join(extensionPath, "images/scratch.svg");
+    this.iconPath = joinPath(extensionContext, "images/scratch.svg");
   }
 }
 

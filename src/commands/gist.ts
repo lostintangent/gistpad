@@ -13,6 +13,7 @@ import {
 import { EXTENSION_NAME } from "../constants";
 import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { log } from "../logger";
+import { manageRepo } from "../repos/store/actions";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
   changeDescription,
@@ -75,8 +76,7 @@ async function newGistInternal(isPublic: boolean = true) {
 
   const descriptionInputBox = window.createInputBox();
   descriptionInputBox.title = title;
-  descriptionInputBox.prompt =
-    "Enter an optional description for the new Gist";
+  descriptionInputBox.prompt = "Enter an optional description for the new Gist";
   descriptionInputBox.step = currentStep++;
   descriptionInputBox.totalSteps = totalSteps;
 
@@ -577,26 +577,34 @@ export async function registerGistCommands(context: ExtensionContext) {
           return;
         }
 
-        withProgress("Exporting to repository...", async () => {
+        let repoUri, fullName;
+        await withProgress("Exporting to repository...", async () => {
           const api = await getApi();
 
           const name = repoName.replace(/\s/g, "-").replace(/[^\w\d-_]/g, "");
+
           const response = await api.post("/user/repos", {
             name,
             description: node.gist.description,
             private: !node.gist.public
           });
 
-          await api.put(`/repos/${store.login}/${name}/topics`, {
-            names: ["gistpad"],
-            headers: {
-              accept: "application/vnd.github.mercy-preview+json"
-            }
-          });
+          repoUri = Uri.parse(response.body.html_url);
+          fullName = `${store.login}/${name}`;
 
           await exportToRepo(node.gist.id, name);
-          return env.openExternal(response.body.html_url);
+          await manageRepo(fullName);
         });
+
+        if (
+          await window.showInformationMessage(
+            `Gist successfully exported to "${fullName}".`,
+            "Open in browser"
+          )
+        ) {
+          // @ts-ignore
+          return env.openExternal(repoUri);
+        }
       }
     )
   );

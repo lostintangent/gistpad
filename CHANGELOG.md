@@ -1,3 +1,15 @@
+## v0.1.2 (06/17/2020)
+
+- Added support for automatically syncing and merging changes with repo files
+
+## v0.1.1 (06/15/2020)
+
+- Fixed a bug with exporting some gists to repos
+
+## v0.1.0 (06/15/2020)
+
+- **Experimental** Added the ability to manage repositories in addition to gists
+
 ## v0.0.68 (05/11/2020)
 
 - Fixed the `Duplicate Gist` command to work for gists that include binary files (e.g. images)

@@ -12,6 +12,7 @@
     "baseUrl": ".",
     "paths": {
       "@abstractions/*": ["src/abstractions/node/*"]
-    }
+    },
+    "experimentalDecorators": true
   }
 }

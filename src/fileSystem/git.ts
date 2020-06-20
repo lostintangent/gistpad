@@ -71,7 +71,7 @@ export async function exportToRepo(gistId: string, repoName: string) {
   const [, repo] = await ensureRepo(gistId);
   const token = await getToken();
 
-  pushRemote(
+  return pushRemote(
     repo,
     "export",
     `https://${store.login}:${token}@github.com/${store.login}/${repoName}.git`
@@ -98,7 +98,12 @@ async function pushRemote(
   remoteUrl: string
 ) {
   const remotes = await repo.getRemotes(false);
-  if (!remotes.find((ref) => ref.name === remoteName)) {
+  if (
+    (Array.isArray(remotes) &&
+      !remotes.find((ref) => ref.name === remoteName)) ||
+    // @ts-ignore
+    !remotes[remoteName]
+  ) {
     await repo.addRemote(remoteName, remoteUrl);
   }
 

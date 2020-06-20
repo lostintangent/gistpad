@@ -4,6 +4,7 @@ import { registerCommentController } from "./comments";
 import { registerFileSystemProvider } from "./fileSystem";
 import { log } from "./logger";
 import { registerPlaygroundContentProvider } from "./playgrounds/contentProvider";
+import { registerRepoModule } from "./repos";
 import { store } from "./store";
 import { refreshShowcase } from "./store/actions";
 import { initializeAuth } from "./store/auth";
@@ -22,8 +23,8 @@ export async function activate(context: vscode.ExtensionContext) {
   registerFileSystemProvider(store);
   registerPlaygroundContentProvider();
   registerProtocolHander();
-  registerTreeProvider(store, context.extensionPath);
-  registerActiveGistTreeProvider(store, context.extensionPath);
+  registerTreeProvider(store, context);
+  registerActiveGistTreeProvider(store, context);
 
   if (isGistWorkspace()) {
     const gistId = getGistWorkspaceId();
@@ -33,6 +34,8 @@ export async function activate(context: vscode.ExtensionContext) {
   initializeStorage(context);
   initializeAuth();
 
-  registerShowcaseTreeProvider(store, context.extensionPath);
+  registerRepoModule(context);
+
+  registerShowcaseTreeProvider(store, context);
   refreshShowcase();
 }

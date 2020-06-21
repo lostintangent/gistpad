@@ -36,6 +36,7 @@ const STATE_SIGNED_OUT = "SignedOut";
 const SCOPE_HEADER = "x-oauth-scopes";
 const GIST_SCOPE = "gist";
 const REPO_SCOPE = "repo";
+const DELETE_REPO_SCOPE = "delete_repo";
 
 export async function getApi(newToken?: string) {
   const token = newToken || (await getToken());
@@ -66,6 +67,7 @@ async function testToken(token: string) {
 
     store.login = response.body.login;
     store.canCreateRepos = tokenScopes.includes(REPO_SCOPE);
+    store.canDeleteRepos = tokenScopes.includes(DELETE_REPO_SCOPE);
 
     return true;
   } catch (e) {

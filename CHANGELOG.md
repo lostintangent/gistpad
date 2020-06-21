@@ -1,3 +1,12 @@
+## v0.1.3 (06/20/2020)
+
+- Added support for managing repo branches
+- Added support for deleting repositories _(Note: This requires you to sign-in with a token that includes the `delete_repo` scope)_
+- Renaming and deleting repo files now correctly updates any opened editors
+- The new file is automatically opened when duplicating a file
+- Editor windows are automatically closed when unmanaging the repo they're associated with
+- Updated the `gistpad.gitSSO` setting to be `false` by default, due to some issues that some users were running into
+
 ## v0.1.2 (06/17/2020)
 
 - Added support for automatically syncing and merging changes with repo files
@@ -8,7 +17,7 @@
 
 ## v0.1.0 (06/15/2020)
 
-- **Experimental** Added the ability to manage repositories in addition to gists
+- Added the ability to manage repositories in addition to gists
 
 ## v0.0.68 (05/11/2020)
 

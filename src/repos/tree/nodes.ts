@@ -8,6 +8,14 @@ export class RepositoryNode extends TreeItem {
 
     this.iconPath = path.join(extensionPath, "images/git.svg");
     this.contextValue = "gistpad.repo";
+
+    if (repo.branch !== Repository.DEFAULT_BRANCH) {
+      this.contextValue += ".branch";
+      this.description = repo.branch;
+    }
+
+    this.tooltip = `Repo: ${repo.name}
+Branch: ${repo.branch}`;
   }
 }
 

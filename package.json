@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "extensionKind": [
     "ui",
     "workspace"
@@ -44,7 +44,7 @@
           "description": "Specifies the GitHub server's API URL. By default, this points to GitHub.com, but it can be used to point at a GitHub Enterprise instance."
         },
         "gistpad.gitSSO": {
-          "default": true,
+          "default": false,
           "type": "boolean",
           "description": "Specifies whether to enable single sign-in (SSO) with the Git CLI, when you've already authenticated with github.com."
         },
@@ -324,6 +324,10 @@
         "title": "Copy Repository URL"
       },
       {
+        "command": "gistpad.createRepositoryBranch",
+        "title": "Create Branch"
+      },
+      {
         "command": "gistpad.deleteDirectory",
         "title": "Delete Directory",
         "category": "GistPad"
@@ -344,6 +348,10 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.deleteRepositoryBranch",
+        "title": "Delete Branch"
+      },
+      {
         "command": "gistpad.deleteRepositoryComment",
         "title": "Delete Comment"
       },
@@ -351,6 +359,10 @@
         "command": "gistpad.deleteRepositoryFile",
         "title": "Delete File",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.deleteRepository",
+        "title": "Delete Repository"
       },
       {
         "command": "gistpad.duplicateRepositoryFile",
@@ -422,6 +434,10 @@
         "command": "gistpad.hideScratchNotes",
         "title": "Hide Scratch Notes",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.mergeRepositoryBranch",
+        "title": "Merge Branch"
       },
       {
         "command": "gistpad.newGistLog",
@@ -861,6 +877,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.createRepositoryBranch",
+          "when": "false"
+        },
+        {
           "command": "gistpad.deleteDirectory",
           "when": "false"
         },
@@ -870,6 +890,14 @@
         },
         {
           "command": "gistpad.deleteGistComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.deleteRepository",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.deleteRepositoryBranch",
           "when": "false"
         },
         {
@@ -918,6 +946,10 @@
         },
         {
           "command": "gistpad.hideScratchNotes",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.mergeRepositoryBranch",
           "when": "false"
         },
         {
@@ -1309,28 +1341,48 @@
         },
         {
           "command": "gistpad.copyRepositoryUrl",
-          "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
           "group": "browse@1"
         },
         {
           "command": "gistpad.openRepositoryInBrowser",
-          "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
           "group": "browse@2"
         },
         {
           "command": "gistpad.addRepositoryFile",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(Directory)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch|Directory)?$/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.cloneManagedRepository",
-          "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
           "group": "manage@2"
         },
         {
-          "command": "gistpad.unmanageRepository",
+          "command": "gistpad.createRepositoryBranch",
           "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "group": "unmanage@1"
+        },
+        {
+          "command": "gistpad.deleteRepositoryBranch",
+          "when": "view == gistpad.repos && viewItem == gistpad.repo.branch",
+          "group": "unmanage@1"
+        },
+        {
+          "command": "gistpad.mergeRepositoryBranch",
+          "when": "view == gistpad.repos && viewItem == gistpad.repo.branch",
           "group": "unmanage@2"
+        },
+        {
+          "command": "gistpad.unmanageRepository",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
+          "group": "unmanage@3"
+        },
+        {
+          "command": "gistpad.deleteRepository",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
+          "group": "verybad@1"
         },
         {
           "command": "gistpad.copyRepositoryFileUrl",

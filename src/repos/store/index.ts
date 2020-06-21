@@ -2,6 +2,7 @@ import { computed, observable } from "mobx";
 import * as path from "path";
 import { CommentThread, Uri } from "vscode";
 import { GistComment } from "../../store";
+import { RepoFileSystemProvider } from "../fileSystem";
 
 type TreeItemType = "blob" | "tree";
 
@@ -47,7 +48,7 @@ export class RepositoryFile {
     this.sha = treeItem.sha;
     this.mode = treeItem.mode;
 
-    this.uri = Uri.parse(`repo:/${repo.name}/${this.path}`);
+    this.uri = RepoFileSystemProvider.getFileUri(repo.name, this.path);
   }
 
   @computed
@@ -77,6 +78,8 @@ export class RepositoryFile {
 type RepositoryComment = GistComment & { path: string };
 
 export class Repository {
+  static DEFAULT_BRANCH = "master";
+
   @observable isLoading: boolean = true;
   @observable tree: Tree | undefined;
   latestCommit: string = "";
@@ -84,7 +87,19 @@ export class Repository {
   threads: CommentThread[] = [];
   etag: string | undefined;
 
-  constructor(public name: string) {}
+  name: string;
+  branch: string;
+
+  constructor(public fullName: string) {
+    if (this.fullName.includes("#")) {
+      const parts = this.fullName.split("#");
+      this.name = parts[0];
+      this.branch = parts[1];
+    } else {
+      this.name = fullName;
+      this.branch = Repository.DEFAULT_BRANCH;
+    }
+  }
 
   @computed
   get files(): RepositoryFile[] {

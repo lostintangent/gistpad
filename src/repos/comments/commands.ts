@@ -31,7 +31,7 @@ export function registerCommentCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.addRepositoryComment`,
       async ({ text, thread }: CommentReply) => {
-        const [repo, path] = RepoFileSystemProvider.getFileInfo(thread.uri);
+        const [repo, path] = RepoFileSystemProvider.getFileInfo(thread.uri)!;
         const repository = store.repos.find((r) => r.name === repo);
 
         const comment = await createRepoComment(

@@ -2,22 +2,28 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, and [interactive samples](#playgrounds). Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code. When needed, you can export gists to GitHub repositories, CodePen, and other services, so that you can start with simple code samples and then seamlessly grow them over time. 🚀
+GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, and [interactive samples](#playgrounds).
+
+Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code. When needed, you can export gists to GitHub repositories, CodePen, and other services, so that you can start with simple code samples and then seamlessly grow them over time. 🚀
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
 ## Table of Contents
-* **[Getting Started](#getting-started)**
 
-* **[Playgrounds](#playgrounds)**
-
-* **[Third-party integrations](#codepen)** 
-
-* **[Contributed Commands](#contributed-commands-file-explorer)**
-
-* **[Additional features](#configuration-settings)**
-
-
+- **[Getting Started](#getting-started)**
+  - [Sorting and grouping](#sorting-and-grouping)
+  - [Files and Directories](#files-and-directories)
+  - [Commenting](#gist-commenting)
+  - [Pasting Images](#pasting-images)
+  - [Following Users](#following-users)
+  - [Exporting to Repositories](#exporting-to-repositories)
+  - [Scratch Notes](#scratch-notes)
+  - [Showcase](#showcase)
+  - [GistLog](#gistlog)
+- **[Playgrounds](#playgrounds)**
+- **[Contributed Commands](#contributed-commands-file-explorer)**
+- **[Configuration Settings](#configuration-settings)**
+- **[Extensibility API](#extensibility)**
 
 ## Getting Started
 
@@ -27,11 +33,11 @@ GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gist
 
    > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
 
-1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, explore the [`Showcase`](#showcase), or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone your own gists. To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox.
+1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, explore the [`Showcase`](#showcase), or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone your own gists. To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox. If you want to create and manage repos, then make sure the token has the `repo` scope as well.
 
    <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
 
-   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, GistPad will attempt to provide "single-sign on", assuming you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_.
+   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, you can tell GistPad to enable "single-sign on" by setting the `GistPad: Git SSO` setting to `true`. Note that this assumes you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_.
 
 1. Create a new gist by clicking the `+` icon in the `Gists` toolbar and specifying the files to seed it with (including support for [directories](#files-and-directories)!). Additionally, you can create gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
 
@@ -111,7 +117,7 @@ At some point, your code/notes might outgrow the feature set offered by Gists (e
 
 In order to use this command, the token you authenticate with needs to also have the `repo` scope, in addition to the `gist` scope. If it doesn't, simply generate a new token with the appropriate scopes, run the `GistPad: Sign Out` command, and then sign in again with the updated token.
 
-### Scratch Notes
+## Scratch Notes
 
 To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document, whose name is formatted based on the time it was created. By default, scratch notes create Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting.
 
@@ -128,6 +134,16 @@ You can create as many scratch notes as you need, and when you're done with them
 In order to illustrate what you can do with gists and [playgrounds](#playgrounds), as well as keep up-to-date with the cool stuff that folks in the community are building, you can check out the `Showcase` view in the `GistPad` tab. This shows a list of categories, which are meant to highlight different use cases for gists, along with some examples. Simply click the `Open` button for any gist in order to explore it, or expand the gist to see its file contents. If you have a gist that you think is worth showcasing, please open an issue and let us know about it. Otherwise, we'll keep the showcase updated periodically, to highlight new and interesting things. So stay tuned!
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/74891549-2c9f4500-533c-11ea-9bbb-c5907d41a589.png" />
+
+## GistLog
+
+In addition to being able to use Gists to share code snippets/files, you can also use it as a mini-blog, thanks to integration with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new Gist that includes two files: `blog.md` and `gistlog.yml`.
+
+![GistLog](https://user-images.githubusercontent.com/116461/70856110-fdc3a900-1e8a-11ea-8e26-2c3917e11db0.gif)
+
+The `blog.md` file will be automatically opened for editing, and as soon as you're ready to publish your post, open `gistlog.yml` and set the `published` property to `true`. Then, right-click your Gist and select the `Open Gist in GistLog` menu. This will open your browser to the URL that you can share with others, in order to read your new post.
+
+In addition to being able to view individual posts on GistLog, you can also open your entire feed by right-clicking the `Your Gists` tree node and selecting the `Open Feed in GistLog` menu item. This will launch your GistLog landing page that displays are published GistLog posts.
 
 ## Playgrounds
 
@@ -316,16 +332,6 @@ Additionally, you can create new blocks with GistPad by adding the optional `Blo
 
 ![blocks](https://user-images.githubusercontent.com/116461/73127896-28217f80-3f7c-11ea-99a6-e7ab0be0aabf.gif)
 
-## GistLog
-
-In addition to being able to use Gists to share code snippets/files, you can also use it as a mini-blog, thanks to integration with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new Gist that includes two files: `blog.md` and `gistlog.yml`.
-
-![GistLog](https://user-images.githubusercontent.com/116461/70856110-fdc3a900-1e8a-11ea-8e26-2c3917e11db0.gif)
-
-The `blog.md` file will be automatically opened for editing, and as soon as you're ready to publish your post, open `gistlog.yml` and set the `published` property to `true`. Then, right-click your Gist and select the `Open Gist in GistLog` menu. This will open your browser to the URL that you can share with others, in order to read your new post.
-
-In addition to being able to view individual posts on GistLog, you can also open your entire feed by right-clicking the `Your Gists` tree node and selecting the `Open Feed in GistLog` menu item. This will launch your GistLog landing page that displays are published GistLog posts.
-
 ## Contributed Commands (File Explorer)
 
 In addition to the `Gists` view, GistPad also contributes an `Copy File to Gist` command to the context menu of the `Explorer` file tree, which allows you to easily add local files to a new or existing Gist.
@@ -500,18 +506,6 @@ When your extension contributes a custom language, GistPad expects that your ext
 - `gistPadCompile(extension: string, code: string): string` - Takes in the code and associated file extension (e.g. `.haml`) and returns the compiled version of the code. For example, if your extension contributes support for Haml, then when the end-user opens a playground using a `.haml` file, this method would be passed the raw Haml code, and the `.haml` extension, and you'd need to return the compiled HTML string.
 
 For an example of how to use this API, check out the [GistPad Contrib](https://github.com/vsls-contrib/gistpad-contrib) extension.
-
-## Supported Filesystem Operations
-
-Once you've opened a Gist, you can perform the following filesystem operations:
-
-- Editing existing files
-- Adding new files
-- Renaming files
-- Deleting files
-- Copying/pasting files
-
-> GitHub Gist doesn't support directories, and therefore, this extension doesn't allow you to create them.
 
 ## Recommended Extensions
 

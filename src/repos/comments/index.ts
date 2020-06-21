@@ -50,7 +50,7 @@ function commentRange({ line }: any) {
 
 let controller: CommentController | undefined;
 async function checkForComments(uri: Uri) {
-  const [repo, path] = RepoFileSystemProvider.getFileInfo(uri);
+  const [repo, path] = RepoFileSystemProvider.getFileInfo(uri)!;
   const repoComments = await getRepoComments(repo);
   const fileComments = repoComments.filter(
     (comment: any) => comment.path === path

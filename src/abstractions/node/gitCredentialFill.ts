@@ -2,7 +2,7 @@ import { execSync } from "child_process";
 import * as path from "path";
 import * as vscode from "vscode";
 
-function getAskPassEnv(useAskPassEmpty = true) {
+function getAskPassEnv() {
   const gitExt = vscode.extensions.getExtension("vscode.git");
   const gitExtPath = gitExt?.extensionPath;
 
@@ -10,16 +10,8 @@ function getAskPassEnv(useAskPassEmpty = true) {
     return {};
   }
 
-  if (useAskPassEmpty) {
-    return {
-      GIT_ASKPASS: path.join(gitExtPath, "dist", "askpass-empty.sh")
-    };
-  }
-
   return {
-    GIT_ASKPASS: path.join(gitExtPath, "dist", "askpass.sh"),
-    VSCODE_GIT_ASKPASS_NODE: process.execPath,
-    VSCODE_GIT_ASKPASS_MAIN: path.join(gitExtPath, "dist", "askpass.sh")
+    GIT_ASKPASS: path.join(gitExtPath, "dist", "askpass-empty.sh")
   };
 }
 

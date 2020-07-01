@@ -3,6 +3,7 @@ import {
   Disposable,
   Event,
   EventEmitter,
+  ExtensionContext,
   ProviderResult,
   TreeDataProvider,
   TreeItem,
@@ -23,11 +24,11 @@ import {
 class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
 
-  private _onDidChangeTreeData = new EventEmitter<TreeNode>();
-  public readonly onDidChangeTreeData: Event<TreeNode> = this
+  private _onDidChangeTreeData = new EventEmitter<TreeNode | void>();
+  public readonly onDidChangeTreeData: Event<TreeNode | void> = this
     ._onDidChangeTreeData.event;
 
-  constructor(private extensionPath: string) {
+  constructor(private extensionContext: ExtensionContext) {
     reaction(
       () => {
         if (store.activeGist) {
@@ -57,17 +58,17 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 
       const gistNode = owned
         ? new GistNode(
-            store.activeGist,
-            this.extensionPath,
-            true,
-            TreeItemCollapsibleState.Expanded
-          )
+          store.activeGist,
+          this.extensionContext,
+          true,
+          TreeItemCollapsibleState.Expanded
+        )
         : new FollowedUserGistNode(
-            store.activeGist,
-            this.extensionPath,
-            true,
-            TreeItemCollapsibleState.Expanded
-          );
+          store.activeGist,
+          this.extensionContext,
+          true,
+          TreeItemCollapsibleState.Expanded
+        );
 
       return [gistNode];
     } else if (element instanceof GistNode) {
@@ -82,10 +83,10 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export function registerTreeProvider(store: Store, extensionPath: string) {
+export function registerTreeProvider(store: Store, extensionContext: ExtensionContext) {
   window.createTreeView(`${EXTENSION_NAME}.activeGist`, {
     showCollapseAll: true,
-    treeDataProvider: new ActiveGistTreeProvider(extensionPath),
+    treeDataProvider: new ActiveGistTreeProvider(extensionContext),
     canSelectMany: true
   });
 }

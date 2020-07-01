@@ -2,6 +2,7 @@ import * as moment from "moment";
 import * as path from "path";
 import {
   commands,
+  ExtensionContext,
   ProgressLocation,
   TextDocument,
   Uri,
@@ -363,4 +364,15 @@ export function isTutorialGist(gist: Gist) {
   } catch {
     return false;
   }
+}
+
+export function joinPath(context: ExtensionContext, fragment: string) {
+  let uri: string | Uri = context.extensionUri;
+  if (uri !== undefined) {
+    uri = Uri.joinPath(uri, fragment);
+  } else {
+    uri = path.join(context.extensionPath, fragment);
+  }
+
+  return uri;
 }

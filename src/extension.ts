@@ -23,8 +23,8 @@ export async function activate(context: vscode.ExtensionContext) {
   registerFileSystemProvider(store);
   registerPlaygroundContentProvider();
   registerProtocolHander();
-  registerTreeProvider(store, context.extensionPath);
-  registerActiveGistTreeProvider(store, context.extensionPath);
+  registerTreeProvider(store, context);
+  registerActiveGistTreeProvider(store, context);
 
   if (isGistWorkspace()) {
     const gistId = getGistWorkspaceId();
@@ -36,6 +36,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
   registerRepoModule(context);
 
-  registerShowcaseTreeProvider(store, context.extensionPath);
+  registerShowcaseTreeProvider(store, context);
   refreshShowcase();
 }

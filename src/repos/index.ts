@@ -11,7 +11,7 @@ export function registerRepoModule(context: vscode.ExtensionContext) {
   registerRepoCommands(context);
 
   registerRepoFileSystemProvider();
-  registerTreeProvider(context.extensionPath);
+  registerTreeProvider(context);
 
   initializeStorage(context);
 

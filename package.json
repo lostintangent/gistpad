@@ -573,6 +573,10 @@
         "title": "Record CodeTour"
       },
       {
+        "command": "gistpad.recordRepoCodeTour",
+        "title": "Record CodeTour"
+      },
+      {
         "command": "gistpad.refreshGists",
         "title": "Refresh Gists",
         "category": "GistPad",
@@ -684,6 +688,10 @@
         "command": "gistpad.starredGists",
         "title": "Starred Gists",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.startRepoCodeTour",
+        "title": "Start CodeTour"
       },
       {
         "command": "gistpad.submitShowcaseEntry",
@@ -957,7 +965,15 @@
           "when": "false"
         },
         {
+          "command": "gistpad.recordRepoCodeTour",
+          "when": "false"
+        },
+        {
           "command": "gistpad.starGist",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.startRepoCodeTour",
           "when": "false"
         },
         {
@@ -1341,47 +1357,57 @@
         },
         {
           "command": "gistpad.copyRepositoryUrl",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
           "group": "browse@1"
         },
         {
           "command": "gistpad.openRepositoryInBrowser",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
           "group": "browse@2"
         },
         {
           "command": "gistpad.addRepositoryFile",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch|Directory)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch|Directory)?(.hasTours)?$/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.cloneManagedRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
           "group": "manage@2"
         },
         {
+          "command": "gistpad.startRepoCodeTour",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?.hasTours$/",
+          "group": "manageTours@1"
+        },
+        {
+          "command": "gistpad.recordRepoCodeTour",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
+          "group": "manageTours@2"
+        },
+        {
           "command": "gistpad.createRepositoryBranch",
-          "when": "view == gistpad.repos && viewItem == gistpad.repo",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.hasTours)?$/",
           "group": "unmanage@1"
         },
         {
           "command": "gistpad.deleteRepositoryBranch",
-          "when": "view == gistpad.repos && viewItem == gistpad.repo.branch",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo.branch(.hasTours)?$/",
           "group": "unmanage@1"
         },
         {
           "command": "gistpad.mergeRepositoryBranch",
-          "when": "view == gistpad.repos && viewItem == gistpad.repo.branch",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo.branch(.hasTours)?$/",
           "group": "unmanage@2"
         },
         {
           "command": "gistpad.unmanageRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
           "group": "unmanage@3"
         },
         {
           "command": "gistpad.deleteRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
           "group": "verybad@1"
         },
         {
@@ -1635,6 +1661,7 @@
     "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
   },
   "extensionPack": [
+    "bierner.emojisense",
     "vsls-contrib.codetour"
   ],
   "dependencies": {

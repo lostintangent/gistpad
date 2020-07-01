@@ -18,12 +18,14 @@ import {
   createBranch,
   deleteBranch,
   deleteRepository,
+  displayReadme,
   listRepos,
   manageRepo,
   rebaseBranch,
   refreshRepositories,
   unmanageRepo
 } from "./store/actions";
+import { promptForTour } from "./tours/actions";
 import { RepositoryFileNode, RepositoryNode } from "./tree/nodes";
 import moment = require("moment");
 
@@ -78,7 +80,11 @@ export async function registerRepoCommands(context: ExtensionContext) {
 
       quickPick.onDidAccept(async () => {
         quickPick.hide();
-        await manageRepo(quickPick.selectedItems[0].label);
+        const repository = await manageRepo(quickPick.selectedItems[0].label);
+        if (repository) {
+          displayReadme(repository);
+          promptForTour(repository);
+        }
       });
 
       quickPick.show();

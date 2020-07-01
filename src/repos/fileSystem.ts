@@ -2,11 +2,14 @@ import * as vscode from "vscode";
 import { stringToByteArray } from "../utils";
 import { Repository, store, TreeItem } from "./store";
 import {
+  addRepoFile,
   deleteRepoFile,
   getRepoFile,
   renameFile,
   updateRepoFile
 } from "./store/actions";
+
+const REPO_QUERY = "repo=";
 
 export class RepoFileSystemProvider implements vscode.FileSystemProvider {
   private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
@@ -14,11 +17,16 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
     ._emitter.event;
 
   static SCHEME = "repo";
-  static URL_PATTERN = /\/([^\/]+\/[^\/]+)(?:\/(.+))?/i;
 
   static getFileInfo(uri: vscode.Uri): [string, string] | undefined {
-    const match = RepoFileSystemProvider.URL_PATTERN.exec(uri.path)!;
-    return match ? [match[1], match[2]] : undefined;
+    if (!uri.query.startsWith(REPO_QUERY)) {
+      return;
+    }
+
+    const repo = decodeURIComponent(uri.query.replace(REPO_QUERY, ""));
+    const path = uri.path.startsWith("/") ? uri.path.substr(1) : uri.path;
+
+    return [repo, path];
   }
 
   static getRepoInfo(
@@ -38,9 +46,18 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
     return [repository, file];
   }
 
-  static getFileUri(repo: string, filePath: string) {
+  static getFileUri(repo: string, filePath: string = "") {
     return vscode.Uri.parse(
-      `${RepoFileSystemProvider.SCHEME}:/${repo}/${filePath}`
+      `${
+        RepoFileSystemProvider.SCHEME
+      }:/${filePath}?${REPO_QUERY}${encodeURIComponent(repo)}`
+    );
+  }
+
+  static isRepoDocument(document: vscode.TextDocument, repo?: string) {
+    return (
+      document.uri.scheme === RepoFileSystemProvider.SCHEME &&
+      (!repo || document.uri.query === `${REPO_QUERY}${repo}`)
     );
   }
 
@@ -78,13 +95,24 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
   ): Promise<void> {
     const [repository, file] = RepoFileSystemProvider.getRepoInfo(uri)!;
 
-    await updateRepoFile(
-      repository.name,
-      repository.branch,
-      file!.path,
-      content,
-      file!.sha
-    );
+    if (!file) {
+      const [, filePath] = RepoFileSystemProvider.getFileInfo(uri)!;
+      await addRepoFile(
+        repository.name,
+        repository.branch,
+        filePath,
+        // @ts-ignore
+        content.toString("base64")
+      );
+    } else {
+      await updateRepoFile(
+        repository.name,
+        repository.branch,
+        file!.path,
+        content,
+        file!.sha
+      );
+    }
   }
 
   async delete(uri: vscode.Uri): Promise<void> {

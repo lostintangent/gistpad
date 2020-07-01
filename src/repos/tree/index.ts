@@ -21,6 +21,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
       () => [
         store.repos.map((repo) => [
           repo.isLoading,
+          repo.hasTours,
           repo.tree?.tree.map((item) => item.path)
         ])
       ],

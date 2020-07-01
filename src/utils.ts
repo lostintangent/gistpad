@@ -19,13 +19,9 @@ import {
   TEMP_GIST_ID
 } from "./constants";
 import { getCandidateMarkupFilenames } from "./playgrounds/languages/markup";
-import {
-  isCodeTourInstalled,
-  startTourFromFile,
-  TOUR_FILE
-} from "./playgrounds/tour";
 import { Gist, SortOrder, store, Store } from "./store";
 import { getGist } from "./store/actions";
+import { isCodeTourInstalled, startTourFromFile, TOUR_FILE } from "./tour";
 import { getViewerCommand } from "./viewerProvider";
 
 export function byteArrayToString(value: Uint8Array) {

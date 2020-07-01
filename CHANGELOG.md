@@ -1,7 +1,9 @@
-## v0.1.3 (06/20/2020)
+## v0.1.3 (06/30/2020)
 
 - Added support for managing repo branches
 - Added support for deleting repositories _(Note: This requires you to sign-in with a token that includes the `delete_repo` scope)_
+- Added support for playing/recording [CodeTours](https://aka.ms/codetour) for a managed repo
+- When you manage a repo, it's `README` is automatically opened to make onboarding easier
 - Renaming and deleting repo files now correctly updates any opened editors
 - The new file is automatically opened when duplicating a file
 - Editor windows are automatically closed when unmanaging the repo they're associated with

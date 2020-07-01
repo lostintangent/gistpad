@@ -14,6 +14,10 @@ export class RepositoryNode extends TreeItem {
       this.description = repo.branch;
     }
 
+    if (repo.hasTours) {
+      this.contextValue += ".hasTours";
+    }
+
     this.tooltip = `Repo: ${repo.name}
 Branch: ${repo.branch}`;
   }

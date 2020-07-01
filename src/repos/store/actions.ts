@@ -252,6 +252,8 @@ export async function manageRepo(repoName: string) {
     repository.name,
     repository.branch
   );
+
+  return repository;
 }
 
 export async function mergeBranch(
@@ -295,8 +297,10 @@ export async function updateRepositories(isRefreshing: boolean = false) {
 
   if (
     vscode.window.activeTextEditor &&
-    vscode.window.activeTextEditor.document.uri.scheme === "repo" &&
-    !vscode.window.activeTextEditor.document.isDirty
+    !vscode.window.activeTextEditor.document.isDirty &&
+    RepoFileSystemProvider.isRepoDocument(
+      vscode.window.activeTextEditor.document
+    )
   ) {
     setTimeout(
       () => vscode.commands.executeCommand("workbench.action.files.revert"),
@@ -342,10 +346,7 @@ export async function unmanageRepo(repoName: string, branch: string) {
   store.repos = store.repos.filter((repo) => repo.name !== repoName);
 
   vscode.window.visibleTextEditors.forEach((editor) => {
-    if (
-      editor.document.uri.scheme === RepoFileSystemProvider.SCHEME &&
-      editor.document.uri.path.startsWith(`/${repoName}`)
-    ) {
+    if (RepoFileSystemProvider.isRepoDocument(editor.document, repoName)) {
       editor.hide();
     }
   });
@@ -427,5 +428,12 @@ export async function updateRepoFile(
         "Can't save this file to do an unresoveable conflict with the remote repository."
       );
     }
+  }
+}
+
+export async function displayReadme(repository: Repository) {
+  if (repository.hasReadme) {
+    const uri = RepoFileSystemProvider.getFileUri(repository.name, "README.md");
+    vscode.commands.executeCommand("markdown.showPreview", uri);
   }
 }

@@ -17,6 +17,7 @@ import { EXTENSION_NAME } from "../../constants";
 import { GistComment } from "../../store";
 import { getCurrentUser } from "../../store/auth";
 import { RepoFileSystemProvider } from "../fileSystem";
+import { store } from "../store";
 import { getRepoComments } from "./actions";
 import { registerCommentCommands } from "./commands";
 
@@ -77,7 +78,7 @@ async function checkForComments(uri: Uri) {
 
 export async function registerCommentController(context: ExtensionContext) {
   workspace.onDidOpenTextDocument(async (document) => {
-    if (document.uri.scheme === "repo") {
+    if (RepoFileSystemProvider.isRepoDocument(document)) {
       if (!controller) {
         controller = comments.createCommentController(
           `${EXTENSION_NAME}:repo`,
@@ -86,7 +87,11 @@ export async function registerCommentController(context: ExtensionContext) {
 
         controller.commentingRangeProvider = {
           provideCommentingRanges: (document) => {
-            if (document.uri.scheme === "repo") {
+            if (
+              // We don't want to register two comments providers at the same time
+              !store.isInCodeTour &&
+              RepoFileSystemProvider.isRepoDocument(document)
+            ) {
               return [new Range(0, 0, document.lineCount, 0)];
             }
           }
@@ -99,9 +104,9 @@ export async function registerCommentController(context: ExtensionContext) {
 
   workspace.onDidCloseTextDocument((e) => {
     if (
-      e.uri.scheme === "repo" &&
-      !window.visibleTextEditors.find(
-        (editor) => editor.document.uri.scheme === "repo"
+      RepoFileSystemProvider.isRepoDocument(e) &&
+      !window.visibleTextEditors.find((editor) =>
+        RepoFileSystemProvider.isRepoDocument(editor.document)
       )
     ) {
       controller!.dispose();

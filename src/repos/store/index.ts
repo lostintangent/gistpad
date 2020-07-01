@@ -109,8 +109,28 @@ export class Repository {
       })
       .map((item) => new RepositoryFile(this, item, this.tree!));
   }
+
+  @computed
+  get hasReadme(): boolean {
+    return !!this.tree?.tree.find((item) => item.path === "README.md");
+  }
+
+  @computed
+  get hasTours(): boolean {
+    return this.tours.length > 0;
+  }
+
+  @computed
+  get tours(): string[] {
+    return (
+      this.tree?.tree
+        .filter((item) => item.path.startsWith(".tours/"))
+        .map((item) => item.path) || []
+    );
+  }
 }
 
 export const store = observable({
-  repos: [] as Repository[]
+  repos: [] as Repository[],
+  isInCodeTour: false
 });

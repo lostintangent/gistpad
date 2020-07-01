@@ -1,9 +1,9 @@
 import * as path from "path";
 import * as vscode from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { exportTour, startTour, TOUR_FILE } from "../playgrounds/tour";
 import { store } from "../store";
 import { storage } from "../store/storage";
+import { exportTour, startTour, TOUR_FILE } from "../tour";
 import {
   decodeDirectoryUri,
   fileNameToUri,

@@ -44,16 +44,16 @@ import {
   createLayoutManager,
   PlaygroundLayout
 } from "../playgrounds/layoutManager";
+import { PlaygroundWebview } from "../playgrounds/webview";
+import { Gist, GistFile, store } from "../store";
+import { duplicateGist, newGist } from "../store/actions";
+import { storage } from "../store/storage";
 import {
   endCurrentTour,
   isCodeTourInstalled,
   startTourFromFile,
   TOUR_FILE
-} from "../playgrounds/tour";
-import { PlaygroundWebview } from "../playgrounds/webview";
-import { Gist, GistFile, store } from "../store";
-import { duplicateGist, newGist } from "../store/actions";
-import { storage } from "../store/storage";
+} from "../tour";
 import { GistNode, GistsNode } from "../tree/nodes";
 import {
   byteArrayToString,

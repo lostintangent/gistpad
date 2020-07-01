@@ -3,7 +3,8 @@ import {
   Disposable,
   Event,
   EventEmitter,
-  ExtensionContext, ProviderResult,
+  ExtensionContext,
+  ProviderResult,
   TreeDataProvider,
   TreeItem,
   window
@@ -25,8 +26,8 @@ import {
 class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
 
-  private _onDidChangeTreeData = new EventEmitter<TreeNode | void>();
-  public readonly onDidChangeTreeData: Event<TreeNode | void> = this
+  private _onDidChangeTreeData = new EventEmitter<TreeNode>();
+  public readonly onDidChangeTreeData: Event<TreeNode> = this
     ._onDidChangeTreeData.event;
 
   constructor(private extensionContext: ExtensionContext) {
@@ -78,7 +79,10 @@ class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export function registerTreeProvider(store: Store, extensionContext: ExtensionContext) {
+export function registerTreeProvider(
+  store: Store,
+  extensionContext: ExtensionContext
+) {
   window.createTreeView(`${EXTENSION_NAME}.showcase`, {
     showCollapseAll: true,
     treeDataProvider: new ShowcaseTreeProvider(extensionContext),

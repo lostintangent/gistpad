@@ -13,8 +13,8 @@ import { Repository, RepositoryFile, store } from "../store";
 import { RepositoryFileNode, RepositoryNode } from "./nodes";
 
 class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
-  private _onDidChangeTreeData = new EventEmitter<TreeItem | void>();
-  public readonly onDidChangeTreeData: Event<TreeItem | void> = this
+  private _onDidChangeTreeData = new EventEmitter<TreeItem>();
+  public readonly onDidChangeTreeData: Event<TreeItem> = this
     ._onDidChangeTreeData.event;
 
   constructor(private context: ExtensionContext) {

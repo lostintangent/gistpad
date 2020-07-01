@@ -367,9 +367,12 @@ export function isTutorialGist(gist: Gist) {
 }
 
 export function joinPath(context: ExtensionContext, fragment: string) {
-  let uri: string | Uri = context.extensionUri;
-  if (uri !== undefined) {
-    uri = Uri.joinPath(uri, fragment);
+  let uri: string | Uri;
+
+  // @ts-ignore
+  if (context.extensionUri) {
+    // @ts-ignore
+    uri = Uri.joinPath(context.extensionUri, fragment);
   } else {
     uri = path.join(context.extensionPath, fragment);
   }

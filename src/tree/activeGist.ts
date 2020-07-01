@@ -24,8 +24,8 @@ import {
 class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
 
-  private _onDidChangeTreeData = new EventEmitter<TreeNode | void>();
-  public readonly onDidChangeTreeData: Event<TreeNode | void> = this
+  private _onDidChangeTreeData = new EventEmitter<TreeNode>();
+  public readonly onDidChangeTreeData: Event<TreeNode> = this
     ._onDidChangeTreeData.event;
 
   constructor(private extensionContext: ExtensionContext) {
@@ -58,17 +58,17 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 
       const gistNode = owned
         ? new GistNode(
-          store.activeGist,
-          this.extensionContext,
-          true,
-          TreeItemCollapsibleState.Expanded
-        )
+            store.activeGist,
+            this.extensionContext,
+            true,
+            TreeItemCollapsibleState.Expanded
+          )
         : new FollowedUserGistNode(
-          store.activeGist,
-          this.extensionContext,
-          true,
-          TreeItemCollapsibleState.Expanded
-        );
+            store.activeGist,
+            this.extensionContext,
+            true,
+            TreeItemCollapsibleState.Expanded
+          );
 
       return [gistNode];
     } else if (element instanceof GistNode) {
@@ -83,7 +83,10 @@ class ActiveGistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export function registerTreeProvider(store: Store, extensionContext: ExtensionContext) {
+export function registerTreeProvider(
+  store: Store,
+  extensionContext: ExtensionContext
+) {
   window.createTreeView(`${EXTENSION_NAME}.activeGist`, {
     showCollapseAll: true,
     treeDataProvider: new ActiveGistTreeProvider(extensionContext),

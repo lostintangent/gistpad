@@ -45,20 +45,23 @@ export async function getGistFiles(gist: Gist, subDirectory?: string) {
       return fileType === FileType.Directory
         ? new GistDirectoryNode(gist, file)
         : new GistFileNode(
-          gist.id,
-          gist.files[`${encodeDirectoryName(directory)}${file}`]
-        );
+            gist.id,
+            gist.files[`${encodeDirectoryName(directory)}${file}`]
+          );
     });
 }
 
 class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
 
-  private _onDidChangeTreeData = new EventEmitter<TreeNode | void>();
-  public readonly onDidChangeTreeData: Event<TreeNode | void> = this
+  private _onDidChangeTreeData = new EventEmitter<TreeNode>();
+  public readonly onDidChangeTreeData: Event<TreeNode> = this
     ._onDidChangeTreeData.event;
 
-  constructor(private store: Store, private extensionContext: ExtensionContext) {
+  constructor(
+    private store: Store,
+    private extensionContext: ExtensionContext
+  ) {
     reaction(
       () => [
         store.scratchNotes.gist ? store.scratchNotes.gist.updated_at : null,
@@ -154,7 +157,9 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
 
           if (this.store.followedUsers.length > 0) {
             this.store.followedUsers.forEach((user) => {
-              nodes.push(new FollowedUserGistsNode(user, this.extensionContext));
+              nodes.push(
+                new FollowedUserGistsNode(user, this.extensionContext)
+              );
             });
           }
 
@@ -217,7 +222,10 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export function registerTreeProvider(store: Store, extensionContext: ExtensionContext) {
+export function registerTreeProvider(
+  store: Store,
+  extensionContext: ExtensionContext
+) {
   const treeDataProvider = new GistTreeProvider(store, extensionContext);
   window.createTreeView(`${EXTENSION_NAME}.gists`, {
     showCollapseAll: true,

@@ -102,8 +102,9 @@ export class Repository {
   }
 
   @computed
-  get files(): RepositoryFile[] {
-    return this.tree!.tree.filter((item) => !item.path.includes("/"))
+  get files(): RepositoryFile[] | undefined {
+    return this.tree?.tree
+      .filter((item) => !item.path.includes("/"))
       .sort((a, b) => {
         return b.type.localeCompare(a.type);
       })

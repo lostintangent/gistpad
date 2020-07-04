@@ -164,7 +164,7 @@ export function registerFileCommands(context: ExtensionContext) {
       async (nodeOrUri: GistFileNode | Uri) => {
         await ensureAuthenticated();
 
-        let gistId, fileName;
+        let gistId: string, fileName: string;
         if (nodeOrUri instanceof GistFileNode) {
           gistId = nodeOrUri.gistId;
           fileName = decodeDirectoryName(nodeOrUri.file.filename!);
@@ -180,9 +180,11 @@ export function registerFileCommands(context: ExtensionContext) {
         });
 
         if (newFilename) {
-          await workspace.fs.rename(
-            fileNameToUri(gistId, fileName),
-            fileNameToUri(gistId, newFilename)
+          withProgress("Renaming file...", async () =>
+            workspace.fs.rename(
+              fileNameToUri(gistId, fileName),
+              fileNameToUri(gistId, newFilename)
+            )
           );
         }
       }

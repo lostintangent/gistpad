@@ -16,9 +16,11 @@ import { Repository } from "./store";
 import {
   addRepoFile,
   createBranch,
+  createRepository,
   deleteBranch,
   deleteRepository,
   displayReadme,
+  getBranches,
   listRepos,
   manageRepo,
   rebaseBranch,
@@ -44,6 +46,13 @@ function openRepoDocument(repo: string, file: string) {
   window.showTextDocument(uri);
 }
 
+const CREATE_REPO_RESPONSE = "$(add) Create new repo...";
+const CREATE_PRIVATE_REPO_RESPONSE = "$(lock) Create new private repo...";
+const CREATE_REPO_ITEMS = [
+  { label: CREATE_REPO_RESPONSE, alwaysShow: true },
+  { label: CREATE_PRIVATE_REPO_RESPONSE, alwaysShow: true }
+];
+
 let repoPromise: Promise<any>;
 export async function registerRepoCommands(context: ExtensionContext) {
   context.subscriptions.push(
@@ -57,12 +66,16 @@ export async function registerRepoCommands(context: ExtensionContext) {
 
       quickPick.busy = true;
       quickPick.placeholder = "Loading your repositories...";
+      quickPick.items = CREATE_REPO_ITEMS;
 
       repoPromise.then((repos) => {
-        const items = repos.map((repo: any) => ({
-          label: repo.full_name,
-          description: repo.private ? "Private" : ""
-        }));
+        const items = [
+          ...CREATE_REPO_ITEMS,
+          ...repos.map((repo: any) => ({
+            label: repo.full_name,
+            description: repo.private ? "Private" : ""
+          }))
+        ];
 
         quickPick.items = items;
 
@@ -80,10 +93,40 @@ export async function registerRepoCommands(context: ExtensionContext) {
 
       quickPick.onDidAccept(async () => {
         quickPick.hide();
-        const repository = await manageRepo(quickPick.selectedItems[0].label);
-        if (repository) {
-          displayReadme(repository);
-          promptForTour(repository);
+
+        const response = quickPick.selectedItems[0].label;
+
+        if (
+          response === CREATE_REPO_RESPONSE ||
+          response === CREATE_PRIVATE_REPO_RESPONSE
+        ) {
+          if (!globalStore.canCreateRepos) {
+            return window.showErrorMessage(
+              'The token you used to login doesn\'t include the "repo" scope.'
+            );
+          }
+
+          const repoName = await window.showInputBox({
+            prompt: "Specify the name of the repository to create"
+          });
+
+          if (!repoName) {
+            return;
+          }
+
+          await withProgress("Creating repository...", async () => {
+            const repository = await createRepository(
+              repoName,
+              response === CREATE_PRIVATE_REPO_RESPONSE
+            );
+            await manageRepo(repository.full_name);
+          });
+        } else {
+          const repository = await manageRepo(response);
+          if (repository) {
+            displayReadme(repository);
+            promptForTour(repository);
+          }
         }
       });
 
@@ -198,9 +241,11 @@ export async function registerRepoCommands(context: ExtensionContext) {
         }
 
         await withProgress("Duplicating file...", async () => {
-          const contents = await workspace.fs.readFile(
-            Uri.parse(`repo:/${node.repo.name}/${node.file.path}`)
+          const uri = RepoFileSystemProvider.getFileUri(
+            node.repo.name,
+            node.file.path
           );
+          const contents = await workspace.fs.readFile(uri);
 
           return addRepoFile(
             node.repo.name,
@@ -286,29 +331,6 @@ export async function registerRepoCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_NAME}.createRepositoryBranch`,
-      async (node: RepositoryNode) => {
-        const user = await getCurrentUser();
-        const date = moment().format("L");
-        const branch = await window.showInputBox({
-          prompt: "Specify the name of the branch",
-          value: `${user}/${date}`
-        });
-
-        if (branch) {
-          await withProgress("Creating branch...", async () => {
-            await createBranch(node.repo.name, branch, node.repo.latestCommit);
-
-            await unmanageRepo(node.repo.name, node.repo.branch);
-            await manageRepo(`${node.repo.name}#${branch}`);
-          });
-        }
-      }
-    )
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(
       `${EXTENSION_NAME}.deleteRepositoryBranch`,
       async (node: RepositoryNode) => {
         if (
@@ -321,7 +343,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
             await deleteBranch(node.repo.name, node.repo.branch);
 
             await unmanageRepo(node.repo.name, node.repo.branch);
-            await manageRepo(`${node.repo.name}`);
+            await manageRepo(node.repo.name);
           });
         }
       }
@@ -342,6 +364,70 @@ export async function registerRepoCommands(context: ExtensionContext) {
 
           await unmanageRepo(node.repo.name, node.repo.branch);
           await manageRepo(node.repo.name);
+        });
+      }
+    )
+  );
+
+  const CREATE_BRANCH_RESPONSE = "$(add) Create new branch";
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.switchRepositoryBranch`,
+      async (node: RepositoryNode) => {
+        const quickPick = window.createQuickPick();
+        quickPick.title = "Select the branch you'd like to manage";
+        quickPick.placeholder = "Loading branches...";
+        quickPick.busy = true;
+        quickPick.show();
+
+        const branches = (await getBranches(node.repo.name))
+          .sort()
+          .filter((branch: any) => branch.name !== node.repo.branch);
+
+        quickPick.items = [
+          {
+            label: CREATE_BRANCH_RESPONSE,
+            alwaysShow: true
+          },
+          ...branches.map((branch: any) => ({
+            label: branch.name
+          }))
+        ];
+
+        quickPick.busy = false;
+        quickPick.placeholder =
+          branches.length > 0
+            ? ""
+            : "This repository doesn't have other branches";
+
+        quickPick.onDidAccept(async () => {
+          quickPick.hide();
+
+          const branch = quickPick.selectedItems[0].label;
+          if (branch === CREATE_BRANCH_RESPONSE) {
+            const user = await getCurrentUser();
+            const date = moment().format("L");
+            const newBranch = await window.showInputBox({
+              prompt: "Specify the name of the branch",
+              value: `${user}/${date}`
+            });
+
+            if (newBranch) {
+              await withProgress("Creating branch...", async () => {
+                await createBranch(
+                  node.repo.name,
+                  newBranch,
+                  node.repo.latestCommit
+                );
+
+                await unmanageRepo(node.repo.name, node.repo.branch);
+                await manageRepo(`${node.repo.name}#${newBranch}`);
+              });
+            }
+          } else {
+            await unmanageRepo(node.repo.name, node.repo.branch);
+            await manageRepo(`${node.repo.name}#${branch}`);
+          }
         });
       }
     )

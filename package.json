@@ -324,10 +324,6 @@
         "title": "Copy Repository URL"
       },
       {
-        "command": "gistpad.createRepositoryBranch",
-        "title": "Create Branch"
-      },
-      {
         "command": "gistpad.deleteDirectory",
         "title": "Delete Directory",
         "category": "GistPad"
@@ -700,6 +696,10 @@
         "icon": "$(megaphone)"
       },
       {
+        "command": "gistpad.switchRepositoryBranch",
+        "title": "Switch Branch"
+      },
+      {
         "command": "gistpad.unmanageRepository",
         "title": "Stop Managing Repository",
         "category": "GistPad"
@@ -885,10 +885,6 @@
           "when": "false"
         },
         {
-          "command": "gistpad.createRepositoryBranch",
-          "when": "false"
-        },
-        {
           "command": "gistpad.deleteDirectory",
           "when": "false"
         },
@@ -1046,6 +1042,10 @@
         },
         {
           "command": "gistpad.submitShowcaseEntry",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.switchRepositoryBranch",
           "when": "false"
         },
         {
@@ -1376,39 +1376,39 @@
           "group": "manage@2"
         },
         {
-          "command": "gistpad.startRepoCodeTour",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?.hasTours$/",
-          "group": "manageTours@1"
-        },
-        {
-          "command": "gistpad.recordRepoCodeTour",
+          "command": "gistpad.switchRepositoryBranch",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
-          "group": "manageTours@2"
-        },
-        {
-          "command": "gistpad.createRepositoryBranch",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.hasTours)?$/",
-          "group": "unmanage@1"
-        },
-        {
-          "command": "gistpad.deleteRepositoryBranch",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo.branch(.hasTours)?$/",
-          "group": "unmanage@1"
+          "group": "manageBranch@1"
         },
         {
           "command": "gistpad.mergeRepositoryBranch",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo.branch(.hasTours)?$/",
-          "group": "unmanage@2"
+          "group": "manageBranch@2"
+        },
+        {
+          "command": "gistpad.deleteRepositoryBranch",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo.branch(.hasTours)?$/",
+          "group": "manageBranch@3"
+        },
+        {
+          "command": "gistpad.startRepoCodeTour",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?.hasTours$/",
+          "group": "tour@1"
+        },
+        {
+          "command": "gistpad.recordRepoCodeTour",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
+          "group": "tour@2"
         },
         {
           "command": "gistpad.unmanageRepository",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
-          "group": "unmanage@3"
+          "group": "unmanage@1"
         },
         {
           "command": "gistpad.deleteRepository",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
-          "group": "verybad@1"
+          "group": "unmanage@2"
         },
         {
           "command": "gistpad.copyRepositoryFileUrl",

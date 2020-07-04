@@ -1,3 +1,9 @@
+## v0.1.4 (07/04/2020)
+
+- Added the ability to switch repo branches
+- Added the ability to create new repos
+- A progress indicator is now displayed when renaming a gist file
+
 ## v0.1.3 (06/30/2020)
 
 - Added support for managing repo branches

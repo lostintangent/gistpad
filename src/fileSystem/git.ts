@@ -85,7 +85,7 @@ export async function duplicateGist(
   const [, repo] = await ensureRepo(targetGistId);
   const token = await getToken();
 
-  pushRemote(
+  return pushRemote(
     repo,
     "duplicate",
     `https://${store.login}:${token}@gist.github.com/${sourceGistId}.git`

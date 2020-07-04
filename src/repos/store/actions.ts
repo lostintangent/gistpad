@@ -1,4 +1,4 @@
-import { set } from "mobx";
+import { comparer, set } from "mobx";
 import * as vscode from "vscode";
 import { Repository, store, Tree, TreeItem } from ".";
 import { getApi } from "../../store/actions";
@@ -23,7 +23,7 @@ export async function addRepoFile(
   const repository = store.repos.find((repo) => repo.name === repoName);
   repository?.tree?.tree.push(response.body.content);
 
-  updateRepository(repoName, branch);
+  await updateRepository(repoName, branch);
 }
 
 export async function createBranch(repo: string, branch: string, sha: string) {
@@ -54,6 +54,23 @@ export async function createCommit(
   return response.body;
 }
 
+export async function createRepository(
+  repoName: string,
+  isPrivate: boolean = false
+) {
+  const GitHub = require("github-base");
+  const api = await getApi(GitHub);
+
+  const name = repoName.replace(/\s/g, "-").replace(/[^\w\d-_]/g, "");
+
+  const response = await api.post("/user/repos", {
+    name,
+    private: isPrivate
+  });
+
+  return response.body;
+}
+
 export async function createTree(
   repo: string,
   baseTree: string,
@@ -62,7 +79,7 @@ export async function createTree(
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
-  const response = await api.post(`/repos/${repo}/git/trees?recursive=1`, {
+  const response = await api.post(`/repos/${repo}/git/trees`, {
     base_tree: baseTree,
     tree: changes
   });
@@ -98,7 +115,15 @@ export async function deleteRepoFile(repo: Repository, file: TreeItem) {
     (treeItem) => treeItem.path !== file.path
   );
 
-  updateRepository(repo.name, repo.branch);
+  await updateRepository(repo.name, repo.branch);
+}
+
+export async function getBranches(repo: string) {
+  const GitHub = require("github-base");
+  const api = await getApi(GitHub);
+
+  const response = await api.get(`/repos/${repo}/branches`);
+  return response.body;
 }
 
 export async function getLatestCommit(repo: string, branch: string) {
@@ -124,7 +149,7 @@ export async function getRepo(
   repo: string,
   branch: string,
   etag?: string
-): Promise<[Tree, string] | undefined> {
+): Promise<[] | [Tree, string] | undefined> {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
@@ -137,15 +162,26 @@ export async function getRepo(
 
     if (response.statusCode === 200) {
       return [response.body, response.headers.etag];
+    } else {
+      return [];
     }
-  } catch (e) {}
+  } catch (e) {
+    // If the repo is empty (i.e. it has no files yet), then
+    // the call to get the tree will return a 409.
+    // TODO: Indicate when the repository has been
+    // deleted on the server, or the user has lost
+    // access permissions, so we can unmanage it.
+  }
 }
 
 export async function listRepos() {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
-  const response = await api.get("/user/repos");
+  const response = await api.get("/user/repos", {
+    affiliation: "owner,collaborator"
+  });
+
   return response.body;
 }
 
@@ -213,10 +249,9 @@ export async function renameFile(
     commitSha
   );
 
-  set(repo.tree!, newTree);
-  repo.latestCommit = commit.sha;
+  await updateBranch(repo.name, repo.branch, commit.sha);
 
-  return updateBranch(repo.name, repo.branch, commit.sha);
+  return updateRepository(repo.name, repo.branch);
 }
 
 export async function updateBranch(repo: string, branch: string, sha: string) {
@@ -243,15 +278,21 @@ export async function manageRepo(repoName: string) {
 
   store.repos.push(repository);
 
-  const [tree, etag] = (await getRepo(repository.name, repository.branch))!;
-  repository.tree = tree;
-  repository.etag = etag;
+  const repo = await getRepo(repository.name, repository.branch);
   repository.isLoading = false;
 
-  repository.latestCommit = await getLatestCommit(
-    repository.name,
-    repository.branch
-  );
+  // The repo is undefined when it's empty, and therefore,
+  // there's no tree or latest commit to set on it yet.
+  if (repo) {
+    const [tree, etag] = repo;
+    repository.tree = tree;
+    repository.etag = etag;
+
+    repository.latestCommit = await getLatestCommit(
+      repository.name,
+      repository.branch
+    );
+  }
 
   return repository;
 }
@@ -302,10 +343,15 @@ export async function updateRepositories(isRefreshing: boolean = false) {
       vscode.window.activeTextEditor.document
     )
   ) {
-    setTimeout(
-      () => vscode.commands.executeCommand("workbench.action.files.revert"),
-      50
-    );
+    setTimeout(() => {
+      try {
+        vscode.commands.executeCommand("workbench.action.files.revert");
+      } catch {
+        // If the file revert fails, it means that the open file was
+        // deleted from the server. So let's simply close it.
+        vscode.commands.executeCommand("workbench.action.closeActiveEditor");
+      }
+    }, 50);
   }
 }
 
@@ -320,15 +366,25 @@ export async function updateRepository(
   }
 
   const response = await getRepo(repo.name, repo.branch, repo.etag);
-  if (!response) {
+  if (!response || response.length === 0) {
+    // If the repo became empty on the server,
+    // then we need to delete the local tree.
+    if (!response && repo.tree) {
+      repo.tree = undefined;
+    }
+
     repo.isLoading = false;
+
     return;
   }
 
   const [tree, etag] = response;
-
   if (repo.tree) {
-    set(repo.tree, tree);
+    // Don't bother updating the tree if
+    // it hasn't actually changed.
+    if (!comparer.structural(repo.tree, tree)) {
+      set(repo.tree, tree);
+    }
   } else {
     repo.tree = tree;
   }
@@ -340,9 +396,9 @@ export async function updateRepository(
 }
 
 export async function unmanageRepo(repoName: string, branch: string) {
-  const fullName =
-    branch !== Repository.DEFAULT_BRANCH ? `${repoName}#${branch}` : repoName;
-  storage.repos = storage.repos.filter((repo) => repo !== fullName);
+  storage.repos = storage.repos.filter(
+    (repo) => repo !== repoName && repo !== `${repoName}#${branch}`
+  );
   store.repos = store.repos.filter((repo) => repo.name !== repoName);
 
   vscode.window.visibleTextEditors.forEach((editor) => {

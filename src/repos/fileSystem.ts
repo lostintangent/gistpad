@@ -39,9 +39,7 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
     }
 
     const repository = store.repos.find((repo) => repo.name === match[0])!;
-    const file = match[1]
-      ? repository!.tree!.tree.find((file) => file.path === match[1])
-      : undefined;
+    const file = repository!.tree?.tree.find((file) => file.path === match[1]);
 
     return [repository, file];
   }
@@ -65,8 +63,13 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
     const fileInfo = RepoFileSystemProvider.getRepoInfo(uri);
 
     if (fileInfo && fileInfo[1]) {
+      const type =
+        fileInfo[1].type === "blob"
+          ? vscode.FileType.File
+          : vscode.FileType.Directory;
+
       return {
-        type: vscode.FileType.File,
+        type,
         ctime: Date.now(),
         mtime: Date.now(),
         size: 100

@@ -23,7 +23,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
         store.repos.map((repo) => [
           repo.isLoading,
           repo.hasTours,
-          repo.tree?.tree.map((item) => item.path)
+          repo.tree ? repo.tree.tree.map((item) => item.path) : null
         ])
       ],
       () => {
@@ -33,7 +33,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
   }
 
   getFileNodes(parent: Repository | RepositoryFile, repo: Repository) {
-    return parent.files!.map((file) => new RepositoryFileNode(repo, file));
+    return parent.files?.map((file) => new RepositoryFileNode(repo, file));
   }
 
   getTreeItem = (node: TreeItem) => node;
@@ -48,7 +48,19 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
         return [new TreeItem("Loading repository...")];
       }
 
-      return this.getFileNodes(element.repo, element.repo);
+      const fileNodes = this.getFileNodes(element.repo, element.repo);
+      if (fileNodes) {
+        return fileNodes;
+      } else {
+        const addFileItem = new TreeItem("Add new file");
+        addFileItem.command = {
+          command: `${EXTENSION_NAME}.addRepositoryFile`,
+          title: "Add new file",
+          arguments: [element]
+        };
+
+        return [addFileItem];
+      }
     } else if (element instanceof RepositoryFileNode) {
       return this.getFileNodes(element.file, element.repo);
     }

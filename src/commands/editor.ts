@@ -32,7 +32,7 @@ async function askForFileName() {
   });
 }
 
-const CREATE_PUBLIC_GIST_ITEM = "$(gist-new) Create new Gist...";
+const CREATE_PUBLIC_GIST_ITEM = "$(gist-new) Create new public Gist...";
 const CREATE_SECRET_GIST_ITEM = "$(gist-private) Create new secret Gist...";
 const CREATE_GIST_ITEMS = [
   { label: CREATE_PUBLIC_GIST_ITEM, alwaysShow: true },

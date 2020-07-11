@@ -1,3 +1,7 @@
+## v0.1.6 (07/11/2020)
+
+- Fixed a performance issue when trying to edit large markdown files
+
 ## v0.1.5 (07/11/2020)
 
 - Added support for wiki repositories w/support for completion, hovers, links and backlinks

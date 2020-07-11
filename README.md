@@ -150,7 +150,7 @@ In addition to managing gists, GistPad also allows you to create and edit GitHub
 
 After running this command, you'll see a new `Repositories` tree in the `GistPad` tab, which displays the selected repo(s). From here, you can add/edit/delete/rename files, and behind the scenes, your edits will be translated into commits on the respective repo. GistPad will automatically keep your data in sync with GitHub, so you never have to think about pushing or pulling. You can just focus on editing 🚀
 
-![Repos](https://user-images.githubusercontent.com/116461/87234682-46dbcd00-c388-11ea-9c57-6ce0e8c3105a.png)
+<img width="250px" src="https://user-images.githubusercontent.com/116461/87234682-46dbcd00-c388-11ea-9c57-6ce0e8c3105a.png" />
 
 > Note: Once you're managing at least one repository, you can create/manage new repositories by clicking the `+` icon in the toolbar of the `Repositories` tree.
 
@@ -164,7 +164,7 @@ If at any time, you want to switch branches, simply right-click the repo node in
 
 By default, when you create/manage a repository, GistPad will let you edit the repo like a remotely accessible "file system". However, if you'd like to use the repo as a Roam-like wiki, that's composed of linked markdown pages, then you can indicate that the repo is a repo by either including `wiki` in the repo name (e.g. `lostintangent/gistpad-wiki`) or adding a `wiki.json` file to the root of the repo.
 
-![Wikis](https://user-images.githubusercontent.com/116461/87234704-83a7c400-c388-11ea-90a8-2a660bef4dc5.png)
+<img width="250px" src="https://user-images.githubusercontent.com/116461/87234704-83a7c400-c388-11ea-90a8-2a660bef4dc5.png" />
 
 #### Pages
 
@@ -185,7 +185,6 @@ In order to create connections between pages, you can add `[[links]]` to a page.
 When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. This workflow makes it easy to author and navigate the set of pages within your wiki.
 
 <img width="800px" src="https://user-images.githubusercontent.com/116461/87234714-96ba9400-c388-11ea-92c3-544d9a3bb633.png" />
-">
 
 #### Backlinks
 

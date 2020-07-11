@@ -108,6 +108,10 @@ function updateDecorations(textEditor?: TextEditor) {
 }
 
 function isWikiDocument(document: TextDocument) {
+  if (!document.uri.path.endsWith(".md")) {
+    return false;
+  }
+
   if (!RepoFileSystemProvider.isRepoDocument(document)) {
     return false;
   }

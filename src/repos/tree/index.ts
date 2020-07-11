@@ -70,7 +70,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
       if (fileNodes) {
         return fileNodes;
       } else {
-        const addItemSuffix = element.repo.isWiki ? "page" : "wiki";
+        const addItemSuffix = element.repo.isWiki ? "page" : "file";
         const addFileItem = new TreeItem(`Add new ${addItemSuffix}`);
 
         const addItemCommand = element.repo.isWiki

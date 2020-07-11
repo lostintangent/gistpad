@@ -1,3 +1,9 @@
+## v0.1.5 (07/11/2020)
+
+- Added support for wiki repositories w/support for completion, hovers, links and backlinks
+- Added a new "diagram" gist group type, that includes gists with Drawio diagrams in it
+- Added the Markdown Checkbox and Emojisense extensions as optional dependencies
+
 ## v0.1.4 (07/04/2020)
 
 - Added the ability to switch repo branches

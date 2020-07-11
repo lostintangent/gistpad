@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "extensionKind": [
     "ui",
     "workspace"
@@ -30,7 +30,9 @@
     "Remote"
   ],
   "activationEvents": [
-    "*"
+    "*",
+    "onFileSystem:repo",
+    "onFileSystem:gist"
   ],
   "main": "./out/prod/extension.js",
   "contributes": {
@@ -219,6 +221,11 @@
           "default": "https://aka.ms/gistpad-showcase",
           "type": "string",
           "description": "Specifies the URL of the showcase to display gists from."
+        },
+        "gistpad.wikis.dailyDirectory": {
+          "default": "Daily",
+          "type": "string",
+          "description": "Specifies the name of the directory that daily pages are organized within."
         }
       }
     },
@@ -260,13 +267,26 @@
       {
         "command": "gistpad.addRepositoryFile",
         "title": "Add New File",
-        "category": "GistPad"
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add.svg",
+          "light": "images/light/add.svg"
+        }
       },
       {
         "command": "gistpad.addSelectionToGist",
         "title": "Add Selection to Gist",
         "category": "GistPad",
         "enablement": "editorHasSelection"
+      },
+      {
+        "command": "gistpad.addWikiPage",
+        "title": "Add New Page",
+        "category": "GistPad",
+        "icon": {
+          "dark": "images/dark/add.svg",
+          "light": "images/light/add.svg"
+        }
       },
       {
         "command": "gistpad.changeGistDescription",
@@ -553,6 +573,12 @@
         "command": "gistpad.openRepositoryInBrowser",
         "title": "View Repository in GitHub",
         "category": "GistPad"
+      },
+      {
+        "command": "gistpad.openTodayPage",
+        "title": "Open Today Page",
+        "category": "GistPad",
+        "icon": "$(calendar)"
       },
       {
         "command": "gistpad.pasteGistFile",
@@ -845,6 +871,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.addWikiPage",
+          "when": "false"
+        },
+        {
           "command": "gistpad.changeGistDescription",
           "when": "false"
         },
@@ -1006,6 +1036,10 @@
         },
         {
           "command": "gistpad.openRepositoryInBrowser",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openTodayPage",
           "when": "false"
         },
         {
@@ -1357,22 +1391,47 @@
         },
         {
           "command": "gistpad.copyRepositoryUrl",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
           "group": "browse@1"
         },
         {
           "command": "gistpad.openRepositoryInBrowser",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
           "group": "browse@2"
         },
         {
           "command": "gistpad.addRepositoryFile",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch|Directory)?(.hasTours)?$/",
-          "group": "manage@1"
+          "group": "inline@1"
+        },
+        {
+          "command": "gistpad.openTodayPage",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.wiki$/",
+          "group": "inline@1"
+        },
+        {
+          "command": "gistpad.addWikiPage",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.wiki(Directory)?$/",
+          "group": "inline@2"
+        },
+        {
+          "command": "gistpad.openTodayPage",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.wiki$/",
+          "group": "basic@1"
+        },
+        {
+          "command": "gistpad.addWikiPage",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.wiki(Directory)?$/",
+          "group": "basic@2"
+        },
+        {
+          "command": "gistpad.addRepositoryFile",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch|Directory)?(.hasTours)?$/",
+          "group": "manage@2"
         },
         {
           "command": "gistpad.cloneManagedRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
           "group": "manage@2"
         },
         {
@@ -1402,12 +1461,12 @@
         },
         {
           "command": "gistpad.unmanageRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
           "group": "unmanage@1"
         },
         {
           "command": "gistpad.deleteRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
           "group": "unmanage@2"
         },
         {
@@ -1650,7 +1709,8 @@
         "id": "web:blocks",
         "url": "https://gist.githubusercontent.com/lostintangent/0c40492c59d607862ec9acfd17a980a1/raw/gallery.json"
       }
-    ]
+    ],
+    "markdown.markdownItPlugins": true
   },
   "scripts": {
     "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
@@ -1661,6 +1721,7 @@
   },
   "extensionPack": [
     "bierner.emojisense",
+    "bierner.markdown-checkbox",
     "vsls-contrib.codetour"
   ],
   "dependencies": {
@@ -1678,17 +1739,19 @@
     "is-binary-path": "^2.1.0",
     "less": "^3.10.3",
     "markdown-it": "^10.0.0",
+    "markdown-it-regex": "^0.2.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
     "pug": "^2.0.4",
     "rxjs": "^6.5.4",
     "sass": "^1.24.0",
-    "simple-git": "^1.126.0"
+    "simple-git": "^1.126.0",
+    "title-case": "^3.0.2"
   },
   "devDependencies": {
     "@types/keytar": "^4.4.2",
     "@types/node": "^8.10.25",
-    "@types/vscode": "^1.45.0",
+    "@types/vscode": "^1.40.0",
     "copy-webpack-plugin": "^5.0.5",
     "ts-loader": "^6.2.1",
     "tslint": "^5.8.0",

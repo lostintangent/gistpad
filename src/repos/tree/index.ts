@@ -10,7 +10,11 @@ import {
 } from "vscode";
 import { EXTENSION_NAME } from "../../constants";
 import { Repository, RepositoryFile, store } from "../store";
-import { RepositoryFileNode, RepositoryNode } from "./nodes";
+import {
+  RepositoryFileBackLinkNode,
+  RepositoryFileNode,
+  RepositoryNode
+} from "./nodes";
 
 class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
   private _onDidChangeTreeData = new EventEmitter<TreeItem>();
@@ -23,12 +27,26 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
         store.repos.map((repo) => [
           repo.isLoading,
           repo.hasTours,
-          repo.tree ? repo.tree.tree.map((item) => item.path) : null
+          repo.tree
+            ? repo.tree.tree.map((item) => [
+                item.path,
+                item.displayName,
+                item.backLinks
+                  ? item.backLinks.map((link) => link.linePreview)
+                  : null
+              ])
+            : null
         ])
       ],
       () => {
         this._onDidChangeTreeData.fire();
       }
+    );
+  }
+
+  getBackLinkNodes(file: RepositoryFile, repo: Repository) {
+    return file.backLinks?.map(
+      (backLink) => new RepositoryFileBackLinkNode(repo.name, backLink)
     );
   }
 
@@ -62,7 +80,11 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
         return [addFileItem];
       }
     } else if (element instanceof RepositoryFileNode) {
-      return this.getFileNodes(element.file, element.repo);
+      if (element.file.isDirectory) {
+        return this.getFileNodes(element.file, element.repo);
+      } else if (element.file.backLinks) {
+        return this.getBackLinkNodes(element.file, element.repo);
+      }
     }
   }
 }

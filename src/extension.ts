@@ -5,6 +5,7 @@ import { registerFileSystemProvider } from "./fileSystem";
 import { log } from "./logger";
 import { registerPlaygroundContentProvider } from "./playgrounds/contentProvider";
 import { registerRepoModule } from "./repos";
+import { extendMarkdownIt } from "./repos/wiki/markdownPreview";
 import { store } from "./store";
 import { refreshShowcase } from "./store/actions";
 import { initializeAuth } from "./store/auth";
@@ -38,4 +39,8 @@ export async function activate(context: vscode.ExtensionContext) {
 
   registerShowcaseTreeProvider(store, context);
   refreshShowcase();
+
+  return {
+    extendMarkdownIt
+  };
 }

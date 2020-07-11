@@ -46,7 +46,9 @@ export const GistTypes: GistType[] = [
   "playground",
   "playground-template",
   "notebook",
-  "tutorial"
+  "tutorial",
+  "tour",
+  "diagram"
 ];
 
 export type GistType =
@@ -56,7 +58,8 @@ export type GistType =
   | "playground-template"
   | "notebook"
   | "tutorial"
-  | "tour";
+  | "tour"
+  | "diagram";
 
 export type GistGroupType = GistType | "tag";
 

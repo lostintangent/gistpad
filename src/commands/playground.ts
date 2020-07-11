@@ -710,7 +710,7 @@ export async function openPlayground(gist: Gist) {
       editor?.setDecorations(decoration, [new vscode.Range(0, 0, 0, 1000)]);
     }
 
-    // Continusouly save this file so that it doesn't ask
+    // Continuously save this file so that it doesn't ask
     // the user to save it upon closing
     const interval = setInterval(() => {
       if (inputDocument) {

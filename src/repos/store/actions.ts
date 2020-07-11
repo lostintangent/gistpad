@@ -1,9 +1,10 @@
-import { comparer, set } from "mobx";
 import * as vscode from "vscode";
 import { Repository, store, Tree, TreeItem } from ".";
 import { getApi } from "../../store/actions";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { storage } from "../store/storage";
+import { sanitizeName } from "../utils";
+import { updateTree } from "../wiki/actions";
 
 export async function addRepoFile(
   repoName: string,
@@ -61,8 +62,7 @@ export async function createRepository(
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
-  const name = repoName.replace(/\s/g, "-").replace(/[^\w\d-_]/g, "");
-
+  const name = sanitizeName(repoName);
   const response = await api.post("/user/repos", {
     name,
     private: isPrivate
@@ -285,9 +285,9 @@ export async function manageRepo(repoName: string) {
   // there's no tree or latest commit to set on it yet.
   if (repo) {
     const [tree, etag] = repo;
-    repository.tree = tree;
-    repository.etag = etag;
+    await updateTree(repository, tree!);
 
+    repository.etag = etag;
     repository.latestCommit = await getLatestCommit(
       repository.name,
       repository.branch
@@ -374,20 +374,11 @@ export async function updateRepository(
     }
 
     repo.isLoading = false;
-
     return;
   }
 
   const [tree, etag] = response;
-  if (repo.tree) {
-    // Don't bother updating the tree if
-    // it hasn't actually changed.
-    if (!comparer.structural(repo.tree, tree)) {
-      set(repo.tree, tree);
-    }
-  } else {
-    repo.tree = tree;
-  }
+  await updateTree(repo, tree);
 
   repo.etag = etag;
   repo.isLoading = false;
@@ -428,7 +419,7 @@ async function updateRepoFileInternal(
   file!.sha = response.body.content.sha;
   file!.size = response.body.size;
 
-  updateRepository(repo, branch);
+  return updateRepository(repo, branch);
 }
 
 export async function updateRepoFile(

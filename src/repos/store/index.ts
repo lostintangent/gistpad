@@ -1,6 +1,6 @@
 import { computed, observable } from "mobx";
 import * as path from "path";
-import { CommentThread, Uri } from "vscode";
+import { CommentThread, Location, Uri } from "vscode";
 import { GistComment } from "../../store";
 import { RepoFileSystemProvider } from "../fileSystem";
 
@@ -13,6 +13,9 @@ export interface TreeItem {
   sha: string;
   size: number;
   url: string;
+  displayName?: string;
+  backLinks?: TreeItemBackLink[];
+  contents?: string;
 }
 
 export interface Tree {
@@ -21,8 +24,12 @@ export interface Tree {
   tree: TreeItem[];
 }
 
+export interface TreeItemBackLink {
+  linePreview: string;
+  location: Location;
+}
+
 export class RepositoryFile {
-  name: string;
   path: string;
   size: number;
   sha: string;
@@ -43,12 +50,17 @@ export class RepositoryFile {
 
     this.isDirectory = treeItem.type === "tree";
     this.path = treeItem.path;
-    this.name = path.basename(this.path);
+
     this.size = treeItem.size;
     this.sha = treeItem.sha;
     this.mode = treeItem.mode;
 
     this.uri = RepoFileSystemProvider.getFileUri(repo.name, this.path);
+  }
+
+  @computed
+  get name(): string {
+    return this.treeItem.displayName || path.basename(this.path);
   }
 
   @computed
@@ -72,6 +84,11 @@ export class RepositoryFile {
   @computed
   get comments(): RepositoryComment[] {
     return this.repo.comments.filter((comment) => comment.path === this.path);
+  }
+
+  @computed
+  get backLinks(): TreeItemBackLink[] | undefined {
+    return this.treeItem.backLinks;
   }
 }
 
@@ -119,6 +136,19 @@ export class Repository {
   @computed
   get hasTours(): boolean {
     return this.tours.length > 0;
+  }
+
+  @computed
+  get isWiki(): boolean {
+    return (
+      !!this.tree?.tree.find((item) => item.path === "wiki.json") ||
+      this.name.toLocaleLowerCase().includes("wiki")
+    );
+  }
+
+  @computed
+  get documents(): TreeItem[] {
+    return this.tree?.tree.filter((item) => item.path.endsWith(".md")) || [];
   }
 
   @computed

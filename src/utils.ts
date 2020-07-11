@@ -263,6 +263,8 @@ export function updateGistTags(gist: Gist | Gist[]) {
       gist.type = "doc";
     } else if (isTourGist(gist)) {
       gist.type = "tour";
+    } else if (isDiagramGist(gist)) {
+      gist.type = "diagram";
     } else {
       gist.type = "code-snippet";
     }
@@ -314,6 +316,10 @@ export function isNotebookGist(gist: Gist) {
   return Object.keys(gist.files).some(
     (file) => path.extname(file) === ".ipynb"
   );
+}
+
+export function isDiagramGist(gist: Gist) {
+  return Object.keys(gist.files).some((file) => file.includes(".drawio"));
 }
 
 export function isPlaygroundGist(gist: Gist) {

@@ -29,6 +29,7 @@ import {
 } from "./store/actions";
 import { promptForTour } from "./tours/actions";
 import { RepositoryFileNode, RepositoryNode } from "./tree/nodes";
+import { openRepoDocument } from "./utils";
 import moment = require("moment");
 
 function getGitHubUrl(repo: string, branch: string, filePath?: string) {
@@ -39,11 +40,6 @@ function getGitHubUrl(repo: string, branch: string, filePath?: string) {
     : "";
 
   return `https://github.com/${repo}${suffix}`;
-}
-
-function openRepoDocument(repo: string, file: string) {
-  const uri = RepoFileSystemProvider.getFileUri(repo, file);
-  window.showTextDocument(uri);
 }
 
 const CREATE_REPO_RESPONSE = "$(add) Create new repo...";

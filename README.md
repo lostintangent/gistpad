@@ -2,15 +2,14 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to manage [GitHub Gists](https://gist.github.com/) entirely within the editor. You can open, create, delete, fork, star and clone gists, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, and [interactive samples](#playgrounds).
-
-Additionally, you can collaborate with your friends and colleagues by "following" them, so that you can access/browse/fork and comment on their gists, without ever leaving Visual Studio Code. When needed, you can export gists to GitHub repositories, CodePen, and other services, so that you can start with simple code samples and then seamlessly grow them over time. 🚀
+GistPad is a Visual Studio Code extension that allows you to manage GitHub [Gists](https://gist.github.com/) and repositories entirely within the editor. You can open, create, delete, fork, star and clone gists and repositories, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, [wikis](#wikis) and [interactive samples](#playgrounds).
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
 ## Table of Contents
 
 - **[Getting Started](#getting-started)**
+- **[Gist Management](#gist-management)**
   - [Sorting and grouping](#sorting-and-grouping)
   - [Files and Directories](#files-and-directories)
   - [Commenting](#gist-commenting)
@@ -20,6 +19,9 @@ Additionally, you can collaborate with your friends and colleagues by "following
   - [Scratch Notes](#scratch-notes)
   - [Showcase](#showcase)
   - [GistLog](#gistlog)
+- **[Repository Management](#repositories)**
+  - [Branches](#branches)
+  - [Wikis](#wikis)
 - **[Playgrounds](#playgrounds)**
 - **[Contributed Commands](#contributed-commands-file-explorer)**
 - **[Configuration Settings](#configuration-settings)**
@@ -33,27 +35,23 @@ Additionally, you can collaborate with your friends and colleagues by "following
 
    > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
 
-1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, explore the [`Showcase`](#showcase), or sign-in in with a GitHub token, in order to view/edit/create/delete/fork/clone your own gists. To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox. If you want to create and manage repos, then make sure the token has the `repo` scope as well.
+1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, explore the [`Showcase`](#showcase), or sign-in in with a GitHub token in order to manage your gists and repositories.
 
-   <img width="300px" src="https://user-images.githubusercontent.com/116461/69827991-d56f5580-11ce-11ea-9081-17f27b470fd1.png" />
+To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox. If you want to create and manage repos, then make sure the token has the `repo` scope as well.
 
-   > **Git+HTTPS Users**: If you've already signed-in to `github.com` with the `git` CLI, you can tell GistPad to enable "single-sign on" by setting the `GistPad: Git SSO` setting to `true`. Note that this assumes you're using HTTPS-based auth, and your login session includes the `gist` scope _(SSH-based auth isn't supported)_.
+From here, you can create and edit [gists](#gist-management), [repositories](#repositories), [wikis](#wikis) and [runnable code samples](#playgrounds). Have fun and let us know how we can make your knowledge management experience even more awesome 🙌
 
-1. Create a new gist by clicking the `+` icon in the `Gists` toolbar and specifying the files to seed it with (including support for [directories](#files-and-directories)!). Additionally, you can create gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
+## Gist Management
 
-   <img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
+In order to create a new gist, simply open up the `Gists` tree in the `GistPad` tab, and click the `+` icon in the toolbar and specify the description and files to seed it with (including support for [directories](#files-and-directories)!). Additionally, you can create gists from local files or snippets, by right-clicking them in the `Explorer` tree, or right-clicking an editor window/tab, and selecting `Copy File to Gist`, `Add Selection to Gist` or `Paste Gist File Contents` ([details](#contributed-commands-editor))
 
-1. View and reply to comments in a Gist by scrolling to the bottom of a Gist file and interacting with the thread (including embedded code snippets!)
+<img width="250px" src="https://user-images.githubusercontent.com/116461/69903980-98819b00-1355-11ea-913b-c51981891bcd.png" />
 
-   <img width="450px" src="https://user-images.githubusercontent.com/116461/70117955-a9633280-161b-11ea-88a5-ac8a15a3b7a0.png" />
+> Alternative, you can run the `GistPad: New Gist` and `GistPad: New Secret Gist` commands to create gists.
 
-1. Stay up-to-date with your friend's and colleague's Gists by following them via the `GistPad: Follow User` command
+From here, you can edit gist files by expanding the gist and clicking the desired file. Furthermore, you can open, rename, delete, etc. gists by right-clicking them in the tree and using one of the provided commands.
 
-   <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
-
-1. If you're working on a web app, and want to create [runnable code samples](#playgrounds), right-click the `Your Gists` node and select `New Playground` (or `New Secret Playground`. This will provide you with a live dev environment, to experiment with HTML, CSS and JavaScript, that is saved as a shareable gist
-
-## Sorting and Grouping
+### Sorting and Grouping
 
 By default, the `Gists` tree sorts gist by their update-time, which allows you to focus on the most recently used gists. However, if you'd like to sort your gists alphabetically, you can click the sort toggle button on the `Gists` tree's toolbar.
 
@@ -63,7 +61,7 @@ Additionally, by default, your gists are displayed as a flat list. However, if y
 
  <img width="200px" src="https://user-images.githubusercontent.com/116461/75098775-3fe62680-556f-11ea-8253-3198b00837e1.png" />
 
-### Gist Types
+#### Gist Types
 
 When grouping is enabled, gists are grouped into the following built-in types:
 
@@ -80,7 +78,7 @@ Additionally, if you want to group gists by your own custom types, then simply a
 
 <img width="200px" src="https://user-images.githubusercontent.com/116461/75264671-9c7e5700-57a4-11ea-9bee-eb61cfb9d2f0.png" />
 
-## Files and Directories
+### Files and Directories
 
 When you create a gist via the `New Gist` (or `New Secret Gist`) command, you can specify a comma-separated list of file names to seed the gist with. Furthermore, you could add `/` to your filenames, in order to add them to a sub-directory within the gist. For example, if you create a new gist, and specify `todos/personal.txt,todos/work.txt,reminders.txt`, the gist will include a `reminders.txt` file at the root of the gist, and `personal.txt` and `reminders.txt` files within a new directory called `todos`.
 
@@ -88,7 +86,7 @@ When you create a gist via the `New Gist` (or `New Secret Gist`) command, you ca
 
 At any time, you can add new files to a gist or directory by right-clicking them and selecting `Add New File(s)` or `Upload File(s)`. You can also rename/delete directories as well, by right-clicking them in the tree and selecting the appropriate command. If you'd like to move a file from one directory to another, simply right-click the file, select `Rename File` and edit the directory name that it's in. It's that simple!
 
-## Gist Commenting
+### Gist Commenting
 
 Gist comments are exposed within the editor at the bottom of any opened Gist files. If a Gist includes multiple files, then the comment thread will be displayed at the bottom of them all (duplicated and synchronized).
 
@@ -96,7 +94,7 @@ Gist comments are exposed within the editor at the bottom of any opened Gist fil
 
 If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments. In order to control the behavior of how Gist comment threads are displayed, refer to the `GistPad > Comments: Show Thread` config setting.
 
-## Pasting Images
+### Pasting Images
 
 In order to make it easy to author markdown and HTML/Pug files that include image assets, you can copy images into your clipboard (e.g. taking a screenshot, clicking `Copy Image` in your browser, etc.) and then paste them directly into a gist file by right-clicking the editor and selecting `Paste Image`, or using one of the following keyboard shortcuts: `ctrl + shift + v` _(Windows/Linux)_,`cmd + shift + v` _(macOS)_.
 
@@ -106,19 +104,19 @@ By default, when you paste an image into a Gist file, it's uploaded as a `.png` 
 
 By default, when you paste an image, it is uploaded to a directory called `images` within the gist. However, if you'd like to change this (e.g. to `assets` instead), you can set the `GistPad > Images: Directory Name` setting.
 
-## Following Users
+### Following Users
 
 GitHub Gists already allows you to star other user's gists, and when you do that, those will appear in the `Gists` tree, underneath a `Starred Gists` node. However, if you want to follow a GitHub user, and easily browse all of their current and future gists (without having to star each one!), you can run the `GistPad: Follow User` command and specify their GitHub user name. Once you've done that, you'll see a new node in the `Gists` tree which displays all of their public gists, and allows you to open/fork/clone/star them just like any other gist.
 
 <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
-## Exporting to Repositories
+### Exporting to Repositories
 
 At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). In that event, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
 
 In order to use this command, the token you authenticate with needs to also have the `repo` scope, in addition to the `gist` scope. If it doesn't, simply generate a new token with the appropriate scopes, run the `GistPad: Sign Out` command, and then sign in again with the updated token.
 
-## Scratch Notes
+### Scratch Notes
 
 To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document, whose name is formatted based on the time it was created. By default, scratch notes create Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting.
 
@@ -130,13 +128,13 @@ You can create as many scratch notes as you need, and when you're done with them
 
 > Behind the scenes, scratch notes are simply files that are managed within a "special" secret gist on your behalf. This way, you can focus entirely on the ephemeral nature of the notes, and not worry about creating/deleting gists.
 
-## Showcase
+### Showcase
 
 In order to illustrate what you can do with gists and [playgrounds](#playgrounds), as well as keep up-to-date with the cool stuff that folks in the community are building, you can check out the `Showcase` view in the `GistPad` tab. This shows a list of categories, which are meant to highlight different use cases for gists, along with some examples. Simply click the `Open` button for any gist in order to explore it, or expand the gist to see its file contents. If you have a gist that you think is worth showcasing, please open an issue and let us know about it. Otherwise, we'll keep the showcase updated periodically, to highlight new and interesting things. So stay tuned!
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/74891549-2c9f4500-533c-11ea-9bbb-c5907d41a589.png" />
 
-## GistLog
+### GistLog
 
 In addition to being able to use Gists to share code snippets/files, you can also use it as a mini-blog, thanks to integration with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new Gist that includes two files: `blog.md` and `gistlog.yml`.
 
@@ -145,6 +143,55 @@ In addition to being able to use Gists to share code snippets/files, you can als
 The `blog.md` file will be automatically opened for editing, and as soon as you're ready to publish your post, open `gistlog.yml` and set the `published` property to `true`. Then, right-click your Gist and select the `Open Gist in GistLog` menu. This will open your browser to the URL that you can share with others, in order to read your new post.
 
 In addition to being able to view individual posts on GistLog, you can also open your entire feed by right-clicking the `Your Gists` tree node and selecting the `Open Feed in GistLog` menu item. This will launch your GistLog landing page that displays are published GistLog posts.
+
+## Repositories
+
+In addition to managing gists, GistPad also allows you to create and edit GitHub repos without needing to clone anything locally. To get started, run the `GistPad: Manage Repository` command, and specify/select the name of the repo you'd like to start managing. If you want to create a new repo, then select the `Create new repo` or `Create new private repo` options, then specify the name of the repo.
+
+After running this command, you'll see a new `Repositories` tree in the `GistPad` tab, which displays the selected repo(s). From here, you can add/edit/delete/rename files, and behind the scenes, your edits will be translated into commits on the respective repo. GistPad will automatically keep your data in sync with GitHub, so you never have to think about pushing or pulling. You can just focus on editing 🚀
+
+![Repos](https://user-images.githubusercontent.com/116461/87234682-46dbcd00-c388-11ea-9c57-6ce0e8c3105a.png)
+
+> Note: Once you're managing at least one repository, you can create/manage new repositories by clicking the `+` icon in the toolbar of the `Repositories` tree.
+
+### Branches
+
+By default, when you create/manage a repository, GistPad will assume you're interested in editing the `master` branch. However, when managing a repo, you can specify a different branch by appending `#<branch>` to the specified repo name (e.g. `vsls-contrib/gistpad#featureA`). When you're managing a non-master branch, the repo node in the `Repositories` tree will display the branch name.
+
+If at any time, you want to switch branches, simply right-click the repo node in the `Repositories` tree and select `Switch Branch`. This will let you pick one of the repo's remote branches, as well as create a new branch. When you're done with a branch, simply right-click the repo and select either `Delete Branch` or `Merge Branch`. The later will perform a "squash merge" against `master`. Using branches allows you to "batch" change sets together, and then apply them in a single/semantic commit.
+
+### Wikis
+
+By default, when you create/manage a repository, GistPad will let you edit the repo like a remotely accessible "file system". However, if you'd like to use the repo as a Roam-like wiki, that's composed of linked markdown pages, then you can indicate that the repo is a repo by either including `wiki` in the repo name (e.g. `lostintangent/gistpad-wiki`) or adding a `wiki.json` file to the root of the repo.
+
+![Wikis](https://user-images.githubusercontent.com/116461/87234704-83a7c400-c388-11ea-90a8-2a660bef4dc5.png)
+
+#### Pages
+
+Wikis are composed of "pages", which are markdown files that are identified using their `# Heading`, not their underlying file name. As a result, when you add a new page to a wiki, you simply give it a title/heading (e.g. `Todo List`), as opposed to a file path. Behind the scenes, GistPad will create a new markdown file and pre-populate file name and `# Heading` using the specified title.
+
+#### Today Page
+
+In addition to being able to create arbitrary pages, GistPad allows you to open your "today page" at any time, which makes it easy to keep track of your daily progress and/or journal. To open your today page, simply click on the calendar icon to the right of the repo node in the `Repositories` tree. This will open a new page, that is titled based on the current date (e.g. `2020-07-11`), and placed in a directory named `Daily`. If this page doesn't exist, GistPad will create it, otherwise, it will open the existing one.
+
+<img width="800px" src="https://user-images.githubusercontent.com/116461/87234721-b356cc00-c388-11ea-946a-e7f9c92258a6.png" />
+
+> If you'd like to change the name of the directory that daily pages are stored in, you can set the `GistPad > Wikis: Daily Directory` setting.
+
+#### Links
+
+In order to create connections between pages, you can add `[[links]]` to a page. When you type `[[`, GistPad will display a completion list of the name of all existing pages. Furthermore, you can type a new topic/page title, and GistPad will automatically create that page for you.
+
+When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. This workflow makes it easy to author and navigate the set of pages within your wiki.
+
+<img width="800px" src="https://user-images.githubusercontent.com/116461/87234714-96ba9400-c388-11ea-92c3-544d9a3bb633.png" />
+">
+
+#### Backlinks
+
+When you add `[[links]]` to a page, the referenced page automatically detects the "back link", and displays it as a child node of the page in the `Repositories` tree. This allows you to navigate `[[links]]` bi-directionallly, and allows your wiki to form a "network" of information. Each back link displays a line preview of the reference, and when clicked will automatically navigate you to the page location that references the selected page.
+
+Furthermore, when you open a page that contains backlinks, the set of backlinks will be displayed at the bottom of the page, including a line preview of the backlink. This makes it possible to have pages that don't actually include content themselves, but rather, are simply "topic aggregators" to view the connections between pages in the same wiki.
 
 ## Playgrounds
 

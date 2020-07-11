@@ -8,6 +8,7 @@ import {
   window,
   workspace
 } from "vscode";
+import { RepoFileSystemProvider } from "../fileSystem";
 
 const decorationTypes: { [type: string]: TextEditorDecorationType } = {
   gray: window.createTextEditorDecorationType({
@@ -106,17 +107,34 @@ function updateDecorations(textEditor?: TextEditor) {
   });
 }
 
+function isWikiDocument(document: TextDocument) {
+  if (!RepoFileSystemProvider.isRepoDocument(document)) {
+    return false;
+  }
+
+  const [repo] = RepoFileSystemProvider.getRepoInfo(document.uri)!;
+  return repo.isWiki;
+}
+
 export function registerLinkDecorator() {
-  window.onDidChangeActiveTextEditor(updateDecorations);
+  window.onDidChangeActiveTextEditor((editor) => {
+    if (editor && isWikiDocument(editor.document)) {
+      updateDecorations(editor);
+    }
+  });
 
   workspace.onDidChangeTextDocument((event) => {
     const editor = window.activeTextEditor;
+    if (!isWikiDocument(editor!.document)) {
+      return;
+    }
+
     let timeout: NodeJS.Timer | null = null;
     const triggerUpdateDecorations = (editor: TextEditor) => {
       if (timeout) {
         clearTimeout(timeout);
       }
-      timeout = setTimeout(() => updateDecorations(editor), 200);
+      timeout = setTimeout(() => updateDecorations(editor), 1000);
     };
 
     if (editor !== undefined && event.document === editor.document) {
@@ -124,8 +142,10 @@ export function registerLinkDecorator() {
     }
   });
 
-  const editor = window.activeTextEditor;
-  if (editor) {
-    updateDecorations(editor);
+  if (
+    window.activeTextEditor &&
+    isWikiDocument(window.activeTextEditor.document)
+  ) {
+    updateDecorations(window.activeTextEditor);
   }
 }

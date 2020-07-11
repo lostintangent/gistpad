@@ -7,9 +7,20 @@ export function extendMarkdownIt(md: any) {
     name: "gistpad-links",
     regex: /(?:\[\[)([^\]]+?)(?:\]\])/,
     replace: (link: string) => {
+      if (
+        !RepoFileSystemProvider.isRepoDocument(
+          vscode.window.activeTextEditor!.document
+        )
+      ) {
+        return;
+      }
+
       const [repo] = RepoFileSystemProvider.getRepoInfo(
         vscode.window.activeTextEditor!.document.uri
       )!;
+      if (!repo.isWiki) {
+        return;
+      }
 
       const linkUri = getUriFromLink(repo, link);
       const args = encodeURIComponent(JSON.stringify([linkUri]));

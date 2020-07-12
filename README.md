@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists](https://gist.github.com/) and repositories remotely, and entirely within the editor. You can open, create, delete, fork, star and clone gists and repositories, and then seamlessly begin editing files **as if they were local**. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, [knowledge bases](#wikis) and [interactive samples](#playgrounds).
+GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists](https://gist.github.com/) and repositories remotely, and entirely within the editor. You can open, create, delete, fork and star gists and repositories, and then seamlessly begin editing files **as if they were local**, without ever cloning, pushing or pulling anything. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, [knowledge bases](#wikis) and [interactive samples](#playgrounds).
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -35,9 +35,9 @@ GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists]
 
    > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
 
-1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, explore the [`Showcase`](#showcase), or sign-in in with a GitHub token in order to manage your gists and repositories.
+1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, explore the [`Showcase`](#showcase), or sign-in in with a GitHub token in order to manage your [gists](#gist-management) and [repositories](#repositories).
 
-To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox. If you want to create and manage repos, then make sure the token has the `repo` scope as well.
+   To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox. If you want to create and manage repos, then make sure the token has the `repo` scope as well.
 
 From here, you can create and edit [gists](#gist-management), [repositories](#repositories), [wikis](#wikis) and [runnable code samples](#playgrounds). Have fun and let us know how we can make your knowledge management experience even more awesome 🙌
 
@@ -162,7 +162,7 @@ If at any time, you want to switch branches, simply right-click the repo node in
 
 ### Wikis
 
-By default, when you create/manage a repository, GistPad will let you edit the repo like a remotely-accessible "file system". However, if you'd like to use the repo as a Roam-like wiki, that's composed of bi-directionally linked markdown pages, then you can indicate that the repo is a wiki in the following ways:
+By default, when you create/manage a GitHub repository, GistPad will let you edit it like a remotely-accessible "file system". However, if you'd like to use the repo as a Roam-like wiki, that's composed of bi-directionally linked markdown pages, then you can indicate that the repo is a wiki in one of the following ways:
 
 1. Including `wiki` in the repo's name (e.g. `lostintangent/gistpad-wiki`)
 1. Adding a `gistpad.json` or `.vscode/gistpad.json` file to the repo itself
@@ -175,9 +175,11 @@ By default, when you create/manage a repository, GistPad will let you edit the r
 
 Wikis are composed of "pages", which are markdown files that are identified using their `# Heading`, not their underlying file name. As a result, when you add a new page to a wiki, you simply give it a title/heading (e.g. `Todo List`), as opposed to a file path. Behind the scenes, GistPad will create a new markdown file and pre-populate file name and `# Heading` using the specified title.
 
+> Note: While wikis add a "pages" abstraction layer on top of repos, they are still repos behind the scenes. As a result, if you like to add an arbitrary [file or directory](#files-and-directories) to your wiki, you can right-click it's node in the tree and select `Add New File`.
+
 #### Today Page
 
-In addition to being able to create arbitrary pages, GistPad allows you to open your "today page" at any time, which makes it easy to keep track of your daily progress and/or journal. To open your today page, simply click on the calendar icon to the right of the repo node in the `Repositories` tree. This will open a new page, that is titled based on the current date (e.g. `2020-07-11`), and placed in a directory named `Daily`. If this page doesn't exist, GistPad will create it, otherwise, it will open the existing one.
+In addition to being able to create pages, GistPad allows you to open your "today page" at any time, which makes it easy to keep track of your daily progress and/or journal. To open your today page, simply click on the calendar icon to the right of the repo node in the `Repositories` tree. This will open a new page, that is titled based on the current date (e.g. `2020-07-11`), and placed in a directory named `Daily`. If this page doesn't exist, GistPad will create it, otherwise, it will open the existing one.
 
 <img width="800px" src="https://user-images.githubusercontent.com/116461/87234721-b356cc00-c388-11ea-946a-e7f9c92258a6.png" />
 

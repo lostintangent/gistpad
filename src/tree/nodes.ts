@@ -1,5 +1,11 @@
 import * as moment from "moment";
-import { ExtensionContext, ThemeIcon, TreeItem, TreeItemCollapsibleState, Uri } from "vscode";
+import {
+  ExtensionContext,
+  ThemeIcon,
+  TreeItem,
+  TreeItemCollapsibleState,
+  Uri
+} from "vscode";
 import * as config from "../config";
 import {
   ENCODED_DIRECTORY_SEPARATOR,
@@ -20,6 +26,7 @@ import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
+  getIconsPath,
   isNotebookGist,
   isOwnedGist,
   isPlaygroundGist,
@@ -45,10 +52,7 @@ export abstract class TreeNode extends TreeItem {
       iconName += "-secret";
     }
 
-    return {
-      dark: joinPath(context, `images/dark/${iconName}.svg`),
-      light: joinPath(context, `images/light/${iconName}.svg`)
-    };
+    return getIconsPath(context, `${iconName}.svg`);
   };
 
   public getGistTypeIcon = (
@@ -71,7 +75,11 @@ export class LoadingNode extends TreeNode {
 }
 
 export class GistsNode extends TreeNode {
-  constructor(gistCount: number, public login: string, extensionContext: ExtensionContext) {
+  constructor(
+    gistCount: number,
+    public login: string,
+    extensionContext: ExtensionContext
+  ) {
     super("Your Gists", TreeItemCollapsibleState.Expanded);
 
     this.iconPath = joinPath(extensionContext, "images/icon-small.png");
@@ -309,7 +317,10 @@ export class GistShowcaseCategoryNode extends TreeNode {
 }
 
 export class ScratchGistNode extends TreeNode {
-  constructor(extensionContext: ExtensionContext, public gist: Gist | null = null) {
+  constructor(
+    extensionContext: ExtensionContext,
+    public gist: Gist | null = null
+  ) {
     super("Scratch Notes", TreeItemCollapsibleState.Expanded);
 
     this.contextValue = "scratchGist";

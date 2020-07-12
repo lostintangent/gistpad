@@ -26,7 +26,7 @@ import {
   fileNameToUri,
   getGistDescription,
   getGistLabel,
-  getIconsPath,
+  getIconPath,
   isNotebookGist,
   isOwnedGist,
   isPlaygroundGist,
@@ -52,7 +52,7 @@ export abstract class TreeNode extends TreeItem {
       iconName += "-secret";
     }
 
-    return getIconsPath(context, `${iconName}.svg`);
+    return getIconPath(context, `${iconName}.svg`);
   };
 
   public getGistTypeIcon = (

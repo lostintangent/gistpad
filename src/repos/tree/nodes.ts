@@ -5,16 +5,16 @@ import {
   TreeItemCollapsibleState,
   Uri
 } from "vscode";
-import { getIconsPath } from "../../utils";
+import { getIconPath } from "../../utils";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { Repository, RepositoryFile, TreeItemBackLink } from "../store";
 
 export class RepositoryNode extends TreeItem {
   constructor(public repo: Repository, context: ExtensionContext) {
-    super(repo.name, TreeItemCollapsibleState.Collapsed);
+    super(repo.name, TreeItemCollapsibleState.Expanded);
 
     const iconName = repo.isWiki ? "book" : "repo";
-    this.iconPath = getIconsPath(context, `${iconName}.svg`);
+    this.iconPath = getIconPath(context, `${iconName}.svg`);
 
     this.contextValue = "gistpad." + (repo.isWiki ? "wiki" : "repo");
 

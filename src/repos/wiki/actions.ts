@@ -3,7 +3,7 @@ import { Location, Range, Uri, workspace } from "vscode";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { Repository, Tree, TreeItem } from "../store";
 import { getRepoFile } from "../store/actions";
-import { findLinks, getTreeItemFromLink, LINK_PREFIX } from "./utils";
+import { findLinks, getTreeItemFromLink, isWiki, LINK_PREFIX } from "./utils";
 
 async function getBackLinks(uri: Uri, contents: string) {
   const documentLinks = [...findLinks(contents)];
@@ -26,7 +26,7 @@ async function getBackLinks(uri: Uri, contents: string) {
 }
 
 export async function updateTree(repo: Repository, tree: Tree) {
-  if (!repo.isWiki) {
+  if (!isWiki(repo, tree)) {
     repo.tree = tree;
     return;
   }

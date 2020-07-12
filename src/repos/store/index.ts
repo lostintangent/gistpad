@@ -3,6 +3,7 @@ import * as path from "path";
 import { CommentThread, Location, Uri } from "vscode";
 import { GistComment } from "../../store";
 import { RepoFileSystemProvider } from "../fileSystem";
+import { isWiki } from "../wiki/utils";
 
 type TreeItemType = "blob" | "tree";
 
@@ -139,16 +140,13 @@ export class Repository {
   }
 
   @computed
-  get isWiki(): boolean {
-    return (
-      !!this.tree?.tree.find((item) => item.path === "wiki.json") ||
-      this.name.toLocaleLowerCase().includes("wiki")
-    );
+  get documents(): TreeItem[] {
+    return this.tree?.tree.filter((item) => item.path.endsWith(".md")) || [];
   }
 
   @computed
-  get documents(): TreeItem[] {
-    return this.tree?.tree.filter((item) => item.path.endsWith(".md")) || [];
+  get isWiki(): boolean {
+    return isWiki(this);
   }
 
   @computed

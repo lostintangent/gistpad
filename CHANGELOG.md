@@ -1,3 +1,9 @@
+## v0.1.7 (07/12/2020)
+
+- Updated the tree icons for repositories and wikis
+- Repository nodes are now auto-expanded by default
+- Added support for Foam workspaces
+
 ## v0.1.6 (07/11/2020)
 
 - Fixed a performance issue when trying to edit large markdown files

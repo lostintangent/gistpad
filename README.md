@@ -2,7 +2,7 @@
 
 [![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
 
-GistPad is a Visual Studio Code extension that allows you to manage GitHub [Gists](https://gist.github.com/) and repositories entirely within the editor. You can open, create, delete, fork, star and clone gists and repositories, and then seamlessly begin editing files as if they were local. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, [wikis](#wikis) and [interactive samples](#playgrounds).
+GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists](https://gist.github.com/) and repositories remotely, and entirely within the editor. You can open, create, delete, fork, star and clone gists and repositories, and then seamlessly begin editing files **as if they were local**. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes/documentation, [knowledge bases](#wikis) and [interactive samples](#playgrounds).
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -162,9 +162,14 @@ If at any time, you want to switch branches, simply right-click the repo node in
 
 ### Wikis
 
-By default, when you create/manage a repository, GistPad will let you edit the repo like a remotely accessible "file system". However, if you'd like to use the repo as a Roam-like wiki, that's composed of linked markdown pages, then you can indicate that the repo is a repo by either including `wiki` in the repo name (e.g. `lostintangent/gistpad-wiki`) or adding a `wiki.json` file to the root of the repo.
+By default, when you create/manage a repository, GistPad will let you edit the repo like a remotely-accessible "file system". However, if you'd like to use the repo as a Roam-like wiki, that's composed of bi-directionally linked markdown pages, then you can indicate that the repo is a wiki in the following ways:
+
+1. Including `wiki` in the repo's name (e.g. `lostintangent/gistpad-wiki`)
+1. Adding a `gistpad.json` or `.vscode/gistpad.json` file to the repo itself
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/87234704-83a7c400-c388-11ea-90a8-2a660bef4dc5.png" />
+
+> Note: For interoperability with Foam, GistPad will also identify a repo as a wiki if it includes a `.vscode/foam.json` file.
 
 #### Pages
 

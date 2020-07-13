@@ -497,9 +497,13 @@ export async function updateRepoFile(
   }
 }
 
-export async function displayReadme(repository: Repository) {
+export async function displayReadme(
+  repository: Repository,
+  showPreview: boolean = true
+) {
   if (repository.hasReadme) {
     const uri = RepoFileSystemProvider.getFileUri(repository.name, "README.md");
-    vscode.commands.executeCommand("markdown.showPreview", uri);
+    const command = showPreview ? "markdown.showPreview" : "vscode.open";
+    vscode.commands.executeCommand(command, uri);
   }
 }

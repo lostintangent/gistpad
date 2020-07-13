@@ -188,6 +188,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
                 );
 
                 await manageRepo(repository.full_name);
+                displayReadme(repository, false);
               });
             }
           });

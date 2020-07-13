@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import { ExtensionContext } from "vscode";
 import { registerRepoCommands } from "./commands";
 import { registerCommentController } from "./comments";
 import { registerRepoFileSystemProvider } from "./fileSystem";
@@ -8,7 +8,7 @@ import { registerTourController } from "./tours";
 import { registerTreeProvider } from "./tree";
 import { registerWikiController } from "./wiki";
 
-export function registerRepoModule(context: vscode.ExtensionContext) {
+export function registerRepoModule(context: ExtensionContext) {
   registerRepoCommands(context);
 
   registerRepoFileSystemProvider();

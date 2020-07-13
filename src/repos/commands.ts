@@ -3,6 +3,7 @@ import {
   commands,
   env,
   ExtensionContext,
+  QuickInputButtons,
   Uri,
   window,
   workspace
@@ -17,6 +18,7 @@ import {
   addRepoFile,
   createBranch,
   createRepository,
+  createRepositoryFromTemplate,
   deleteBranch,
   deleteRepository,
   displayReadme,
@@ -42,11 +44,24 @@ function getGitHubUrl(repo: string, branch: string, filePath?: string) {
   return `https://github.com/${repo}${suffix}`;
 }
 
-const CREATE_REPO_RESPONSE = "$(add) Create new repo...";
-const CREATE_PRIVATE_REPO_RESPONSE = "$(lock) Create new private repo...";
+const WELL_KNOWN_TEMPLATES = [
+  {
+    name: "Foam-style wiki",
+    template: "foambubble/foam-template"
+  }
+];
+
+const CREATE_REPO_RESPONSE = "$(add) Create repo...";
+const CREATE_TEMPLATE_REPO_RESPONSE = "$(add) Create repo from template...";
+const CREATE_PRIVATE_REPO_RESPONSE = "$(lock) Create private repo...";
+const CREATE_PRIVATE_TEMPLATE_REPO_RESPONSE =
+  "$(lock) Create private repo from template...";
+
 const CREATE_REPO_ITEMS = [
   { label: CREATE_REPO_RESPONSE, alwaysShow: true },
-  { label: CREATE_PRIVATE_REPO_RESPONSE, alwaysShow: true }
+  { label: CREATE_TEMPLATE_REPO_RESPONSE, alwaysShow: true },
+  { label: CREATE_PRIVATE_REPO_RESPONSE, alwaysShow: true },
+  { label: CREATE_PRIVATE_TEMPLATE_REPO_RESPONSE, alwaysShow: true }
 ];
 
 let repoPromise: Promise<any>;
@@ -101,7 +116,6 @@ export async function registerRepoCommands(context: ExtensionContext) {
               'The token you used to login doesn\'t include the "repo" scope.'
             );
           }
-
           const repoName = await window.showInputBox({
             prompt: "Specify the name of the repository to create"
           });
@@ -117,6 +131,68 @@ export async function registerRepoCommands(context: ExtensionContext) {
             );
             await manageRepo(repository.full_name);
           });
+        } else if (
+          response === CREATE_TEMPLATE_REPO_RESPONSE ||
+          response === CREATE_PRIVATE_TEMPLATE_REPO_RESPONSE
+        ) {
+          const templateQuickPick = window.createQuickPick();
+          templateQuickPick.title =
+            "Select or specify the repo template to use";
+
+          const templateItems = WELL_KNOWN_TEMPLATES.map((template) => {
+            return {
+              label: template.name,
+              description: template.template
+            };
+          });
+
+          templateQuickPick.buttons = [QuickInputButtons.Back];
+          templateQuickPick.items = templateItems;
+
+          templateQuickPick.onDidTriggerButton((e) =>
+            commands.executeCommand(`${EXTENSION_NAME}.manageRepository`)
+          );
+
+          templateQuickPick.onDidChangeValue(() => {
+            if (templateQuickPick.value) {
+              templateQuickPick.items = [
+                { label: templateQuickPick.value },
+                ...templateItems
+              ];
+            } else {
+              templateQuickPick.items = templateItems;
+            }
+          });
+
+          templateQuickPick.onDidAccept(async () => {
+            templateQuickPick.hide();
+
+            const template =
+              templateQuickPick.selectedItems[0].description ||
+              templateQuickPick.selectedItems[0].label;
+
+            if (template) {
+              const repoName = await window.showInputBox({
+                prompt: "Specify the name of the repository to create"
+              });
+
+              if (!repoName) {
+                return;
+              }
+
+              await withProgress(`Creating repository...`, async () => {
+                const repository = await createRepositoryFromTemplate(
+                  template,
+                  repoName,
+                  response === CREATE_PRIVATE_TEMPLATE_REPO_RESPONSE
+                );
+
+                await manageRepo(repository.full_name);
+              });
+            }
+          });
+
+          templateQuickPick.show();
         } else {
           const repository = await manageRepo(response);
           if (repository) {

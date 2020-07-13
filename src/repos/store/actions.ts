@@ -71,6 +71,25 @@ export async function createRepository(
   return response.body;
 }
 
+export async function createRepositoryFromTemplate(
+  template: string,
+  repoName: string,
+  isPrivate: boolean = false
+) {
+  const GitHub = require("github-base");
+  const api = await getApi(GitHub);
+
+  const name = sanitizeName(repoName);
+  const response = await api.post(`/repos/${template}/generate`, {
+    name,
+    private: isPrivate,
+    headers: {
+      Accept: "application/vnd.github.baptiste-preview+json"
+    }
+  });
+  return response.body;
+}
+
 export async function createTree(
   repo: string,
   baseTree: string,

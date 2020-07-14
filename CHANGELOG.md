@@ -1,3 +1,7 @@
+## v0.1.8 (07/13/2020)
+
+- Added support for creating repos from repo templates
+
 ## v0.1.7 (07/12/2020)
 
 - Updated the tree icons for repositories and wikis

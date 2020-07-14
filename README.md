@@ -154,6 +154,10 @@ After running this command, you'll see a new `Repositories` tree in the `GistPad
 
 > Note: Once you're managing at least one repository, you can create/manage new repositories by clicking the `+` icon in the toolbar of the `Repositories` tree.
 
+### Repo Templates
+
+In addition to creating a new repo "from scratch", you can also create a repository from a [repo template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template). To do this, simply run the `GistPad: Manage Repository` command and select the `Create new repo from template` or `Create new private repo from template` options. You'll be presented with some "well-known" repo templates to select from, but you can also specify the name of an arbitrary repo template as well.
+
 ### Branches
 
 By default, when you create/manage a repository, GistPad will assume you're interested in editing the `master` branch. However, when managing a repo, you can specify a different branch by appending `#<branch>` to the specified repo name (e.g. `vsls-contrib/gistpad#featureA`). When you're managing a non-master branch, the repo node in the `Repositories` tree will display the branch name.

@@ -181,14 +181,14 @@ export async function registerRepoCommands(context: ExtensionContext) {
               }
 
               await withProgress(`Creating repository...`, async () => {
-                const repository = await createRepositoryFromTemplate(
+                const { full_name } = await createRepositoryFromTemplate(
                   template,
                   repoName,
                   response === CREATE_PRIVATE_TEMPLATE_REPO_RESPONSE
                 );
 
-                await manageRepo(repository.full_name);
-                displayReadme(repository, false);
+                const repository = await manageRepo(full_name);
+                await displayReadme(repository!, false);
               });
             }
           });

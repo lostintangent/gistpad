@@ -130,8 +130,10 @@ export class Repository {
   }
 
   @computed
-  get hasReadme(): boolean {
-    return !!this.tree?.tree.find((item) => item.path === "README.md");
+  get readme(): string | undefined {
+    return this.tree?.tree.find(
+      (item) => item.path.toLocaleLowerCase() === "readme.md"
+    )?.path;
   }
 
   @computed

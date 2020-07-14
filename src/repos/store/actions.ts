@@ -501,8 +501,9 @@ export async function displayReadme(
   repository: Repository,
   showPreview: boolean = true
 ) {
-  if (repository.hasReadme) {
-    const uri = RepoFileSystemProvider.getFileUri(repository.name, "README.md");
+  const readme = repository.readme;
+  if (readme) {
+    const uri = RepoFileSystemProvider.getFileUri(repository.name, readme);
     const command = showPreview ? "markdown.showPreview" : "vscode.open";
     vscode.commands.executeCommand(command, uri);
   }

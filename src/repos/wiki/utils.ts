@@ -1,10 +1,15 @@
-import { RepoFileSystemProvider } from "../fileSystem";
+import { DocumentSelector } from "vscode";
+import { RepoFileSystemProvider, REPO_SCHEME } from "../fileSystem";
 import { Repository, Tree } from "../store";
+import { sanitizeName } from "../utils";
+import { config } from "./config";
 
-export const LINK_SELECTOR = {
-  scheme: RepoFileSystemProvider.SCHEME,
-  language: "markdown"
-};
+export const LINK_SELECTOR: DocumentSelector = [
+  {
+    scheme: REPO_SCHEME,
+    language: "markdown"
+  }
+];
 
 export const LINK_PREFIX = "[[";
 export const LINK_SUFFIX = "]]";
@@ -15,6 +20,23 @@ const WIKI_WORKSPACE_FILES = [
   ".vscode/gistpad.json",
   ".vscode/foam.json"
 ];
+
+const DAILY_PATTERN = /\d{4}-\d{2}-\d{2}/;
+export function getPageFilePath(name: string) {
+  let fileName = sanitizeName(name).toLocaleLowerCase();
+  if (!fileName.endsWith(".md")) {
+    fileName += ".md";
+  }
+
+  if (DAILY_PATTERN.test(fileName)) {
+    const pathPrefix = config.dailyDirectName
+      ? `${config.dailyDirectName}/`
+      : "";
+    return `${pathPrefix}${fileName}`;
+  } else {
+    return fileName;
+  }
+}
 
 export function* findLinks(contents: string): Generator<[string, number]> {
   let match;

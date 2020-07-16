@@ -198,6 +198,7 @@ export class GistDirectoryNode extends TreeNode {
     super(directory, TreeItemCollapsibleState.Collapsed);
 
     this.iconPath = ThemeIcon.Folder;
+    this.resourceUri = fileNameToUri(gist.id, directory);
 
     let contextValue =
       gist.id === TEMP_GIST_ID ? "tempGistDirectory" : "gistDirectory";

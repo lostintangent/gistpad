@@ -1,6 +1,12 @@
 ## v0.1.8 (07/13/2020)
 
 - Added support for creating repos from repo templates
+- Wiki pages are now automatically created when clicking on a document link
+- Added support for the `Paste Image` command for public repos
+- Added support for uploading local files to repos
+- Updated the default file name for gist scratch notes
+- Fixed the `Gists` tree, to display themed icons for directory nodes (e.g. the `images` folder)
+- Added the new `GistPad > Wikis > Daily > Title Format` setting, to control how new daily pages are titled
 
 ## v0.1.7 (07/12/2020)
 

@@ -3,13 +3,10 @@ import * as config from "../config";
 import { EXTENSION_NAME } from "../constants";
 import { store } from "../store";
 import { clearScratchNotes, newScratchNote } from "../store/actions";
-import { withProgress } from "../utils";
 
 export async function registerScratchCommands(context: ExtensionContext) {
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.newScratchNote`, () =>
-      withProgress("Creating scratch note...", newScratchNote)
-    )
+    commands.registerCommand(`${EXTENSION_NAME}.newScratchNote`, newScratchNote)
   );
 
   context.subscriptions.push(

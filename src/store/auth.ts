@@ -166,6 +166,10 @@ export async function signIn() {
 
   if (token) {
     if (await testToken(token)) {
+      window.showInformationMessage(
+        "You're successfully signed in and can now manage your GitHub gists and repositories!"
+      );
+
       await keytar.setPassword(SERVICE, ACCOUNT, token);
       await markUserAsSignedIn();
     } else {

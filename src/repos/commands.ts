@@ -1,4 +1,6 @@
+import * as fs from "fs";
 import * as path from "path";
+import { URL } from "url";
 import {
   commands,
   env,
@@ -330,6 +332,39 @@ export async function registerRepoCommands(context: ExtensionContext) {
         });
 
         openRepoDocument(node.repo.name, filePath);
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.uploadRepositoryFile`,
+      async (node: RepositoryNode | RepositoryFileNode) => {
+        const files = await window.showOpenDialog({
+          canSelectMany: true,
+          openLabel: "Upload"
+        });
+
+        if (files) {
+          withProgress("Uploading file(s)...", () =>
+            Promise.all(
+              files.map((file) => {
+                const fileName = path.basename(file.path);
+                const content = fs.readFileSync(new URL(file.toString()));
+
+                const filePath =
+                  node instanceof RepositoryFileNode
+                    ? `${node.file.path}/${fileName}`
+                    : fileName;
+
+                return workspace.fs.writeFile(
+                  RepoFileSystemProvider.getFileUri(node.repo.name, filePath),
+                  content
+                );
+              })
+            )
+          );
+        }
       }
     )
   );

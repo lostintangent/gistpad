@@ -198,12 +198,12 @@
           "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
         },
         "gistpad.scratchNotes.directoryFormat": {
-          "default": "LL",
+          "default": "",
           "type": "string",
           "description": "Specifies the moment.js format string to use when generating new scratch notes."
         },
         "gistpad.scratchNotes.fileFormat": {
-          "default": "LT",
+          "default": "LL",
           "type": "string",
           "description": "Specifies the moment.js format string to use when generating new scratch notes."
         },
@@ -222,10 +222,15 @@
           "type": "string",
           "description": "Specifies the URL of the showcase to display gists from."
         },
-        "gistpad.wikis.dailyDirectory": {
+        "gistpad.wikis.daily.directoryName": {
           "default": "Daily",
           "type": "string",
           "description": "Specifies the name of the directory that daily pages are organized within."
+        },
+        "gistpad.wikis.daily.titleFormat": {
+          "default": "LL",
+          "type": "string",
+          "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."
         }
       }
     },
@@ -674,19 +679,16 @@
       {
         "command": "gistpad.groupGists",
         "title": "Group Gists",
-        "category": "GistPad",
         "icon": "$(group-by-ref-type)"
       },
       {
         "command": "gistpad.ungroupGists",
         "title": "Ungroup Gists",
-        "category": "GistPad",
         "icon": "$(ungroup-by-ref-type)"
       },
       {
         "command": "gistpad.sortGistsAlphabetically",
         "title": "Sort Gists Alphabetically",
-        "category": "GistPad",
         "icon": {
           "dark": "images/dark/sort-alphabetical.svg",
           "light": "images/light/sort-alphabetical.svg"
@@ -695,7 +697,6 @@
       {
         "command": "gistpad.sortGistsByUpdatedTime",
         "title": "Sort Gists by Updated Time",
-        "category": "GistPad",
         "icon": {
           "dark": "images/dark/sort-time.svg",
           "light": "images/light/sort-time.svg"
@@ -703,8 +704,7 @@
       },
       {
         "command": "gistpad.starGist",
-        "title": "Star Gist",
-        "category": "GistPad"
+        "title": "Star Gist"
       },
       {
         "command": "gistpad.starredGists",
@@ -718,7 +718,6 @@
       {
         "command": "gistpad.submitShowcaseEntry",
         "title": "Submit Entry",
-        "category": "GistPad",
         "icon": "$(megaphone)"
       },
       {
@@ -727,33 +726,31 @@
       },
       {
         "command": "gistpad.unmanageRepository",
-        "title": "Stop Managing Repository",
-        "category": "GistPad"
+        "title": "Stop Managing Repository"
       },
       {
         "command": "gistpad.unfollowUser",
-        "title": "Unfollow User",
-        "category": "GistPad"
+        "title": "Unfollow User"
       },
       {
         "command": "gistpad.unstarGist",
-        "title": "Unstar Gist",
-        "category": "GistPad"
+        "title": "Unstar Gist"
       },
       {
         "command": "gistpad.uploadFileToDirectory",
-        "title": "Upload File(s)",
-        "category": "GistPad"
+        "title": "Upload File(s)"
       },
       {
         "command": "gistpad.uploadFileToGist",
-        "title": "Upload File(s)",
-        "category": "GistPad"
+        "title": "Upload File(s)"
+      },
+      {
+        "command": "gistpad.uploadRepositoryFile",
+        "title": "Upload File(s)"
       },
       {
         "command": "gistpad.viewForks",
-        "title": "View Forks",
-        "category": "GistPad"
+        "title": "View Forks"
       }
     ],
     "menus": {
@@ -1083,14 +1080,6 @@
           "when": "false"
         },
         {
-          "command": "gistpad.uploadFileToDirectory",
-          "when": "false"
-        },
-        {
-          "command": "gistpad.uploadFileToGist",
-          "when": "false"
-        },
-        {
           "command": "gistpad.unfollowUser",
           "when": "false"
         },
@@ -1104,6 +1093,18 @@
         },
         {
           "command": "gistpad.unstarGist",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.uploadFileToDirectory",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.uploadFileToGist",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.uploadRepositoryFile",
           "when": "false"
         },
         {
@@ -1427,12 +1428,17 @@
         {
           "command": "gistpad.addRepositoryFile",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch|Directory)?(.hasTours)?$/",
+          "group": "manage@1"
+        },
+        {
+          "command": "gistpad.uploadRepositoryFile",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch|Directory)?(.hasTours)?$/",
           "group": "manage@2"
         },
         {
           "command": "gistpad.cloneManagedRepository",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
-          "group": "manage@2"
+          "group": "manage@3"
         },
         {
           "command": "gistpad.switchRepositoryBranch",
@@ -1512,6 +1518,10 @@
         },
         {
           "command": "gistpad.pasteGistFile"
+        },
+        {
+          "command": "gistpad.pasteImage",
+          "when": "resourceScheme == repo && resourceLangId == markdown"
         },
         {
           "command": "gistpad.pasteImage",

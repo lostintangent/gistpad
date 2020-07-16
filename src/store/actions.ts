@@ -26,7 +26,8 @@ import {
   openGistFiles,
   sortGists,
   stringToByteArray,
-  updateGistTags
+  updateGistTags,
+  withProgress
 } from "../utils";
 import { getToken } from "./auth";
 import { storage } from "./storage";
@@ -302,11 +303,13 @@ export async function newScratchNote() {
     });
 
     store.scratchNotes.gist = response.body;
-  } else {
-    await workspace.fs.writeFile(
-      fileNameToUri(store.scratchNotes.gist.id, filename),
-      stringToByteArray("")
-    );
+  } else if (!store.scratchNotes.gist.files.hasOwnProperty(filename)) {
+    await withProgress("Creating scratch note...", async () => {
+      await workspace.fs.writeFile(
+        fileNameToUri(store.scratchNotes.gist!.id, filename),
+        stringToByteArray("")
+      );
+    });
   }
 
   const uri = fileNameToUri(store.scratchNotes.gist!.id, filename);

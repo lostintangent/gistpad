@@ -1,6 +1,8 @@
 import * as vscode from "vscode";
+import { TextEditor } from "vscode";
 import * as config from "../../../config";
-import { DIRECTORY_SEPARATOR } from "../../../constants";
+import { DIRECTORY_SEPARATOR, FS_SCHEME } from "../../../constants";
+import { RepoFileSystemProvider } from "../../../repos/fileSystem";
 import { store } from "../../../store";
 import {
   encodeDirectoryName,
@@ -10,6 +12,30 @@ import {
 import { clipboardToImageBuffer } from "./clipboardToImageBuffer";
 import { createImageMarkup } from "./utils/createImageMarkup";
 import { pasteImageMarkup } from "./utils/pasteImageMarkup";
+
+function getImageFileInfo(
+  editor: TextEditor,
+  fileName: string
+): [vscode.Uri, string] {
+  switch (editor.document.uri.scheme) {
+    case FS_SCHEME: {
+      const { gistId } = getGistDetailsFromUri(editor.document.uri);
+
+      const src = `https://gist.github.com/${
+        store.login
+      }/${gistId}/raw/${encodeDirectoryName(fileName)}`;
+
+      return [fileNameToUri(gistId, fileName), src];
+    }
+    default: {
+      // TODO: Figure out a solution that will work for private repos
+      const [repo] = RepoFileSystemProvider.getRepoInfo(editor.document.uri)!;
+      const fileUri = RepoFileSystemProvider.getFileUri(repo.name, fileName);
+      const src = `https://github.com/${repo.name}/raw/${repo.branch}/${fileName}`;
+      return [fileUri, src];
+    }
+  }
+}
 
 function getImageFileName() {
   const uploadDirectory = config.get("images.directoryName");
@@ -25,24 +51,13 @@ export async function pasteImageAsFile(
   editor: vscode.TextEditor,
   imageMarkupId: string | number
 ) {
-  const { gistId } = getGistDetailsFromUri(editor.document.uri);
   const fileName = getImageFileName();
-
   const imageBits = await clipboardToImageBuffer.getImageBits();
 
-  await vscode.workspace.fs.writeFile(
-    fileNameToUri(gistId, fileName),
-    imageBits
-  );
+  const [uri, src] = getImageFileInfo(editor, fileName);
+  await vscode.workspace.fs.writeFile(uri, imageBits);
 
-  const imageSrc = `https://gist.github.com/${
-    store.login
-  }/${gistId}/raw/${encodeDirectoryName(fileName)}`;
-
-  const imageMarkup = await createImageMarkup(
-    imageSrc,
-    editor.document.languageId
-  );
+  const imageMarkup = await createImageMarkup(src, editor.document.languageId);
 
   await pasteImageMarkup(editor, imageMarkup, imageMarkupId);
 }

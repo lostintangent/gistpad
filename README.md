@@ -118,13 +118,15 @@ In order to use this command, the token you authenticate with needs to also have
 
 ### Scratch Notes
 
-To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document, whose name is formatted based on the time it was created. By default, scratch notes create Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting.
+To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document, whose name is formatted based on the day/time it was created.
+
+By default, scratch notes create Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting. Furthermore, scratch notes are created per day, but you can customize this by setting the `GistPad > Scratch Notes: Directory Format` and `GistPad > Scratch Notes: File Format` settings.
 
 In order to help differentiate scratch notes from your "permanent notes", scratch notes appear as children of a top-level `Scratch Notes` node in the `Gists` tree. This makes it easy to view your outstanding scratch notes, so you can periodically audit them, in order to migrate any meaningful content to a more appropriate location (e.g. a new or existing gist).
 
 <img width="200px" src="https://user-images.githubusercontent.com/116461/75699016-908f0b00-5c64-11ea-95d9-e8c8faf93738.png" />
 
-You can create as many scratch notes as you need, and when you're done with them, you can delete indiviual notes and/or clear all of your notes by right-clicking the `Scratch Notes` node in the tree and selecting `Clear Scratch Notes`.
+You can create as many scratch notes as you need, and when you're done with them, you can delete individual notes and/or clear all of your notes by right-clicking the `Scratch Notes` node in the tree and selecting `Clear Scratch Notes`.
 
 > Behind the scenes, scratch notes are simply files that are managed within a "special" secret gist on your behalf. This way, you can focus entirely on the ephemeral nature of the notes, and not worry about creating/deleting gists.
 
@@ -148,11 +150,15 @@ In addition to being able to view individual posts on GistLog, you can also open
 
 In addition to managing gists, GistPad also allows you to create and edit GitHub repos without needing to clone anything locally. To get started, run the `GistPad: Manage Repository` command, and specify/select the name of the repo you'd like to start managing. If you want to create a new repo, then select the `Create new repo` or `Create new private repo` options, then specify the name of the repo.
 
-After running this command, you'll see a new `Repositories` tree in the `GistPad` tab, which displays the selected repo(s). From here, you can add/edit/delete/rename files, and behind the scenes, your edits will be translated into commits on the respective repo. GistPad will automatically keep your data in sync with GitHub, so you never have to think about pushing or pulling. You can just focus on editing 🚀
+After running this command, you'll see a new `Repositories` tree in the `GistPad` tab, which displays the selected repo(s). From here, you can add/upload/edit/delete/rename files, and behind the scenes, your edits will be translated into commits on the respective repo. GistPad will automatically keep your data in sync with GitHub, so you never have to think about pushing or pulling. You can just focus on editing 🚀
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/87234682-46dbcd00-c388-11ea-9c57-6ce0e8c3105a.png" />
 
 > Note: Once you're managing at least one repository, you can create/manage new repositories by clicking the `+` icon in the toolbar of the `Repositories` tree.
+
+### Directories
+
+In order to create new directories, simply add a new file and include the directory names in the specified file's path (e.g. `foo/bar/baz.md`). GistPad will then create any necessary directories as part of the file creation process. Furthermore, if you want to move a file from one directory to another, simply right-click the file in the `Repositories` tree, select `Rename File`, and then specify the new directory name in the file's path.
 
 ### Repo Templates
 
@@ -163,6 +169,12 @@ In addition to creating a new repo "from scratch", you can also create a reposit
 By default, when you create/manage a repository, GistPad will assume you're interested in editing the `master` branch. However, when managing a repo, you can specify a different branch by appending `#<branch>` to the specified repo name (e.g. `vsls-contrib/gistpad#featureA`). When you're managing a non-master branch, the repo node in the `Repositories` tree will display the branch name.
 
 If at any time, you want to switch branches, simply right-click the repo node in the `Repositories` tree and select `Switch Branch`. This will let you pick one of the repo's remote branches, as well as create a new branch. When you're done with a branch, simply right-click the repo and select either `Delete Branch` or `Merge Branch`. The later will perform a "squash merge" against `master`. Using branches allows you to "batch" change sets together, and then apply them in a single/semantic commit.
+
+### Pasting Images
+
+Just like gists, you can copy images into your clipboard (e.g. taking a screenshot, clicking `Copy Image` in your browser, etc.) and then paste them directly into a markdown file by right-clicking the editor and selecting `Paste Image`, or using one of the following keyboard shortcuts: `ctrl+shift+v` _(Windows/Linux)_,`cmd+shift+v` _(macOS)_.
+
+By default, when you paste an image into a repo file, it's uploaded as a `.png` to the repo, and the appropriate reference is added to it from the document (e.g. an `[title](url)` link). However, this behavior can be changed by using the `GistPad > Images: Paste Format` and/or `GistPad > Images: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details. Furthermore, when you paste an image, it is uploaded to a directory called `images` within the gist. However, if you'd like to change this (e.g. to `assets` instead), you can set the `GistPad > Images: Directory Name` setting.
 
 ### Wikis
 
@@ -181,19 +193,19 @@ Wikis are composed of "pages", which are markdown files that are identified usin
 
 > Note: While wikis add a "pages" abstraction layer on top of repos, they are still repos behind the scenes. As a result, if you like to add an arbitrary [file or directory](#files-and-directories) to your wiki, you can right-click it's node in the tree and select `Add New File`.
 
-#### Today Page
+#### Daily Pages
 
-In addition to being able to create pages, GistPad allows you to open your "today page" at any time, which makes it easy to keep track of your daily progress and/or journal. To open your today page, simply click on the calendar icon to the right of the repo node in the `Repositories` tree. This will open a new page, that is titled based on the current date (e.g. `2020-07-11`), and placed in a directory named `Daily`. If this page doesn't exist, GistPad will create it, otherwise, it will open the existing one.
+In addition to being able to create topic-oriented pages, GistPad allows you to open your "daily page" at any time, which makes it easy to keep track of your daily progress and/or journal. To open your current daily page (that represents today), simply click on the calendar icon to the right of the repo node in the `Repositories` tree. This will open a new page, that is titled based on the current date (e.g. `June 24, 2020`), and placed in a directory named `Daily`. If this page doesn't exist, GistPad will create it, otherwise, it will open the existing one.
 
 <img width="800px" src="https://user-images.githubusercontent.com/116461/87234721-b356cc00-c388-11ea-946a-e7f9c92258a6.png" />
 
-> If you'd like to change the name of the directory that daily pages are stored in, you can set the `GistPad > Wikis: Daily Directory` setting.
+> If you'd like to change the name of the directory that daily pages are stored in, you can set the `GistPad > Wikis > Daily: Directory Name` setting. Furthermore, if you want to change the format that is used to title daily pages, you can set the `GistPad > Wikis > Daily: Title Format` setting.
 
 #### Links
 
 In order to create connections between pages, you can add `[[links]]` to a page. When you type `[[`, GistPad will display a completion list of the name of all existing pages. Furthermore, you can type a new topic/page title, and GistPad will automatically create that page for you.
 
-When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. This workflow makes it easy to author and navigate the set of pages within your wiki.
+When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. If the page doesn't already exit, then `cmd+clicking` it will automatically create the page before opening it. This workflow makes it easy to author and navigate the set of pages within your wiki.
 
 <img width="800px" src="https://user-images.githubusercontent.com/116461/87234714-96ba9400-c388-11ea-92c3-544d9a3bb633.png" />
 

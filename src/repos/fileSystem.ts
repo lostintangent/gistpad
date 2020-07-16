@@ -9,14 +9,13 @@ import {
   updateRepoFile
 } from "./store/actions";
 
-const REPO_QUERY = "repo=";
+export const REPO_SCHEME = "repo";
+const REPO_QUERY = `${REPO_SCHEME}=`;
 
 export class RepoFileSystemProvider implements vscode.FileSystemProvider {
   private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
   readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this
     ._emitter.event;
-
-  static SCHEME = "repo";
 
   static getFileInfo(uri: vscode.Uri): [string, string] | undefined {
     if (!uri.query.startsWith(REPO_QUERY)) {
@@ -46,15 +45,13 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
 
   static getFileUri(repo: string, filePath: string = "") {
     return vscode.Uri.parse(
-      `${
-        RepoFileSystemProvider.SCHEME
-      }:/${filePath}?${REPO_QUERY}${encodeURIComponent(repo)}`
+      `${REPO_SCHEME}:/${filePath}?${REPO_QUERY}${encodeURIComponent(repo)}`
     );
   }
 
   static isRepoDocument(document: vscode.TextDocument, repo?: string) {
     return (
-      document.uri.scheme === RepoFileSystemProvider.SCHEME &&
+      document.uri.scheme === REPO_SCHEME &&
       (!repo || document.uri.query === `${REPO_QUERY}${repo}`)
     );
   }
@@ -154,7 +151,7 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
 
 export function registerRepoFileSystemProvider() {
   vscode.workspace.registerFileSystemProvider(
-    RepoFileSystemProvider.SCHEME,
+    REPO_SCHEME,
     new RepoFileSystemProvider()
   );
 }

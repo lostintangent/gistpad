@@ -22,7 +22,10 @@
     "vscode": "^1.40.0"
   },
   "categories": [
-    "Other"
+    "Data Science",
+    "Other",
+    "Snippets",
+    "Visualization"
   ],
   "keywords": [
     "Collaboration",

@@ -65,7 +65,7 @@ Additionally, by default, your gists are displayed as a flat list. However, if y
 
 When grouping is enabled, gists are grouped into the following built-in types:
 
-- **dos** - Gists that are composed of nothing but `.txt`, `.md`/`.markdown` or `.adoc` files
+- **doc** - Gists that are composed of nothing but `.txt`, `.md`/`.markdown` or `.adoc` files
 - **notebook** - Gists that are compose of nothing by Jupyter Notebook files (`.ipynb`)
 - **playground** - Gists that include either a `playground.json` file and/or an `index.html` file. Read more about playgrounds [here](#playgrounds).
 - **playground-template** - Playgrounds whose `playground.json` file sets the `template` property to `true`. Read more about playground templates [here](#user-templates).

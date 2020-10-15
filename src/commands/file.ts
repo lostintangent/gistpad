@@ -10,11 +10,13 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
+import { store } from "../store";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
 import {
   byteArrayToString,
   decodeDirectoryName,
+  encodeDirectoryUri,
   fileNameToUri,
   getGistDetailsFromUri,
   openGistFile,
@@ -67,8 +69,17 @@ export function registerFileCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.copyFileUrl`,
-      async (node: GistFileNode) => {
-        await env.clipboard.writeText(node.file.raw_url!);
+      async (nodeOrUri: GistFileNode | Uri) => {
+        let url: string;
+        if (nodeOrUri instanceof GistFileNode) {
+          url = nodeOrUri.file.raw_url!;
+        } else {
+          const { gistId, file } = getGistDetailsFromUri(encodeDirectoryUri(nodeOrUri));
+          const gist = store.gists.find(gist => gist.id === gistId)!;
+          url = gist.files[file].raw_url!
+        }
+
+        await env.clipboard.writeText(url);
       }
     )
   );

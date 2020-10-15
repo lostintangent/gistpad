@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "extensionKind": [
     "ui",
     "workspace"
@@ -1586,6 +1586,14 @@
       "editor/title/context": [
         {
           "command": "gistpad.addFileToGist"
+        },
+        {
+          "command": "gistpad.copyFileUrl",
+          "when": "resourceScheme == gist"
+        },
+        {
+          "command": "gistpad.copyRepositoryFileUrl",
+          "when": "resourceScheme == repo"
         }
       ],
       "comments/comment/title": [
@@ -1667,7 +1675,8 @@
         },
         {
           "id": "gistpad.showcase",
-          "name": "Showcase"
+          "name": "Showcase",
+          "visibility": "collapsed"
         }
       ]
     },
@@ -1729,6 +1738,7 @@
     "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
     "build:node": "webpack --config ./webpack/webpack.node.config.js",
     "compile": "tsc -p ./",
+    "package": "vsce package",
     "vscode:prepublish": "npm run build:node",
     "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
   },
@@ -1769,6 +1779,7 @@
     "ts-loader": "^6.2.1",
     "tslint": "^5.8.0",
     "typescript": "^3.7.3",
+    "vsce": "^1.81.1",
     "vscode-nls-dev": "^3.3.1",
     "webpack": "^4.41.2",
     "webpack-cli": "^3.3.10",

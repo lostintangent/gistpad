@@ -1,3 +1,8 @@
+## v0.1.9 (10/15/20)
+
+- The `Showcase` view is now collapsed by default
+- The `Copy GitHub URL` command is now available on the editor tab for gist files
+
 ## v0.1.8 (07/13/2020)
 
 - Added support for creating repos from repo templates

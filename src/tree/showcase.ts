@@ -26,9 +26,9 @@ import {
 class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
 
-  private _onDidChangeTreeData = new EventEmitter<TreeNode>();
-  public readonly onDidChangeTreeData: Event<TreeNode> = this
-    ._onDidChangeTreeData.event;
+  private _onDidChangeTreeData = new EventEmitter<void>();
+  public readonly onDidChangeTreeData: Event<void> = this._onDidChangeTreeData
+    .event;
 
   constructor(private extensionContext: ExtensionContext) {
     reaction(

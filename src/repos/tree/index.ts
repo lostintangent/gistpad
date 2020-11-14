@@ -17,9 +17,9 @@ import {
 } from "./nodes";
 
 class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
-  private _onDidChangeTreeData = new EventEmitter<TreeItem>();
-  public readonly onDidChangeTreeData: Event<TreeItem> = this
-    ._onDidChangeTreeData.event;
+  private _onDidChangeTreeData = new EventEmitter<void>();
+  public readonly onDidChangeTreeData: Event<void> = this._onDidChangeTreeData
+    .event;
 
   constructor(private context: ExtensionContext) {
     reaction(

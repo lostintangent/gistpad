@@ -265,6 +265,8 @@ export function updateGistTags(gist: Gist | Gist[]) {
       gist.type = "tour";
     } else if (isDiagramGist(gist)) {
       gist.type = "diagram";
+    } else if (isFlashCodeGist(gist)) {
+      gist.type = "flash-card";
     } else {
       gist.type = "code-snippet";
     }
@@ -320,6 +322,10 @@ export function isNotebookGist(gist: Gist) {
 
 export function isDiagramGist(gist: Gist) {
   return Object.keys(gist.files).some((file) => file.includes(".drawio"));
+}
+
+export function isFlashCodeGist(gist: Gist) {
+  return Object.keys(gist.files).some((file) => file.includes(".deck"));
 }
 
 export function isPlaygroundGist(gist: Gist) {

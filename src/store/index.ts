@@ -48,7 +48,8 @@ export const GistTypes: GistType[] = [
   "notebook",
   "tutorial",
   "tour",
-  "diagram"
+  "diagram",
+  "flash-card"
 ];
 
 export type GistType =
@@ -59,7 +60,8 @@ export type GistType =
   | "notebook"
   | "tutorial"
   | "tour"
-  | "diagram";
+  | "diagram"
+  | "flash-card";
 
 export type GistGroupType = GistType | "tag";
 

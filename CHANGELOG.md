@@ -3,6 +3,7 @@
 - The `Showcase` view is now collapsed by default
 - The `Copy GitHub URL` command is now available on the editor tab for gist files
 - Added a new group type called `flash-card` that groups FlashCode decks
+- Removed the dependency on `CodeTour`
 
 ## v0.1.8 (07/13/2020)
 

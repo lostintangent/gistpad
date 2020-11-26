@@ -31,13 +31,9 @@ GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists]
 
 1. Install this extension from the marketplace and then reload VS Code
 
-   > **Linux Users**: Ensure you have the `gnome-keyring` and `libsecret` packages installed as well. These will enable GistPad to read/write your GitHub auth token securely.
+1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, explore the [`Showcase`](#showcase), or sign in with a GitHub account in order to manage your [gists](#gist-management) and [repositories](#repositories).
 
-   > **GitHub Enterprise users**: Set the `gistpad.apiUrl` setting to point at the API URL of your GitHub server instance (e.g. `https://[YOUR_HOST]/api/v3`).
-
-1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a Gist by ID/URL, explore the [`Showcase`](#showcase), or sign-in in with a GitHub token in order to manage your [gists](#gist-management) and [repositories](#repositories).
-
-   To sign-in, you can generate an auth token by visiting [this page](https://github.com/settings/tokens/new), giving the token a name (e.g. `gistpad`), and ensuring to check the `gist` checkbox. If you want to create and manage repos, then make sure the token has the `repo` scope as well.
+   To sign-in, simply click the `Sign In` button and follow the provided flow in order to authenticate with your GitHub account.
 
 From here, you can create and edit [gists](#gist-management), [repositories](#repositories), [wikis](#wikis) and [runnable code samples](#playgrounds). Have fun and let us know how we can make your knowledge management experience even more awesome 🙌
 
@@ -115,8 +111,6 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). In that event, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
 
-In order to use this command, the token you authenticate with needs to also have the `repo` scope, in addition to the `gist` scope. If it doesn't, simply generate a new token with the appropriate scopes, run the `GistPad: Sign Out` command, and then sign in again with the updated token.
-
 ### Scratch Notes
 
 To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document, whose name is formatted based on the day/time it was created.
@@ -149,7 +143,7 @@ In addition to being able to view individual posts on GistLog, you can also open
 
 ## Repositories
 
-In addition to managing gists, GistPad also allows you to create and edit GitHub repos without needing to clone anything locally. To get started, run the `GistPad: Manage Repository` command, and specify/select the name of the repo you'd like to start managing. If you want to create a new repo, then select the `Create new repo` or `Create new private repo` options, then specify the name of the repo.
+In addition to managing gists, GistPad also allows you to create and edit GitHub repos without needing to clone anything locally. To get started, run the `GistPad: Open Repository` command, and specify/select the name of the repo you'd like to start managing. If you want to create a new repo, then select the `Create new repo` or `Create new private repo` options, then specify the name of the repo.
 
 After running this command, you'll see a new `Repositories` tree in the `GistPad` tab, which displays the selected repo(s). From here, you can add/upload/edit/delete/rename files, and behind the scenes, your edits will be translated into commits on the respective repo. GistPad will automatically keep your data in sync with GitHub, so you never have to think about pushing or pulling. You can just focus on editing 🚀
 
@@ -163,7 +157,7 @@ In order to create new directories, simply add a new file and include the direct
 
 ### Repo Templates
 
-In addition to creating a new repo "from scratch", you can also create a repository from a [repo template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template). To do this, simply run the `GistPad: Manage Repository` command and select the `Create new repo from template` or `Create new private repo from template` options. You'll be presented with some "well-known" repo templates to select from, but you can also specify the name of an arbitrary repo template as well.
+In addition to creating a new repo "from scratch", you can also create a repository from a [repo template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template). To do this, simply run the `GistPad: Open Repository` command and select the `Create new repo from template` or `Create new private repo from template` options. You'll be presented with some "well-known" repo templates to select from, but you can also specify the name of an arbitrary repo template as well.
 
 ### Branches
 
@@ -179,7 +173,7 @@ By default, when you paste an image into a repo file, it's uploaded as a `.png` 
 
 ### Wikis
 
-By default, when you create/manage a GitHub repository, GistPad will let you edit it like a remotely-accessible "file system". However, if you'd like to use the repo as a Roam-like wiki, that's composed of bi-directionally linked markdown pages, then you can indicate that the repo is a wiki in one of the following ways:
+By default, when you create/manage a GitHub repository, GistPad will let you edit it like a remotely-accessible "file system". However, if you'd like to use the repo as a Roam/Obsidian-like wiki, that's composed of bi-directionally linked markdown pages, then you can indicate that the repo is a wiki in one of the following ways:
 
 1. Including `wiki` in the repo's name (e.g. `lostintangent/gistpad-wiki`)
 1. Adding a `gistpad.json` or `.vscode/gistpad.json` file to the repo itself
@@ -455,9 +449,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
 
-- `GistPad: Sign In` - Sign-in with a GitHub token, in order to view/edit/delete your Gists.
-
-- `GistPad: Sign Out` - Sign out of the currently authenticated GitHub session.
+- `GistPad: Sign In` - Sign-in with a GitHub account, in order to view/edit/delete your Gists.
 
 - `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
 

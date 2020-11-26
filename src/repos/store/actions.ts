@@ -153,14 +153,11 @@ export async function getLatestCommit(repo: string, branch: string) {
   return response.body.object.sha;
 }
 
-export async function getRepoFile(repo: string, branch: string, sha: string) {
+export async function getRepoFile(repo: string, sha: string) {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
-  const response = await api.get(`/repos/${repo}/git/blobs/${sha}`, {
-    ref: branch
-  });
-
+  const response = await api.get(`/repos/${repo}/git/blobs/${sha}`);
   return Buffer.from(response.body.content, "base64").toString();
 }
 
@@ -282,7 +279,7 @@ export async function updateBranch(repo: string, branch: string, sha: string) {
   });
 }
 
-export async function manageRepo(repoName: string) {
+export async function openRepo(repoName: string) {
   // TODO: Add repo validation
   const repository = new Repository(repoName);
 
@@ -405,7 +402,7 @@ export async function updateRepository(
   repo.latestCommit = await getLatestCommit(repoName, branch);
 }
 
-export async function unmanageRepo(repoName: string, branch: string) {
+export async function closeRepo(repoName: string, branch: string) {
   storage.repos = storage.repos.filter(
     (repo) => repo !== repoName && repo !== `${repoName}#${branch}`
   );
@@ -465,7 +462,7 @@ export async function updateRepoFile(
     const diffMatchPatch = require("diff-match-patch");
     const dmp = new diffMatchPatch();
 
-    const originalFile = await getRepoFile(repo, branch, sha);
+    const originalFile = await getRepoFile(repo, sha);
     const diff = dmp.patch_make(originalFile, contents.toString());
 
     const currentFile = (await api.get(`/repos/${repo}/contents/${path}`)).body;

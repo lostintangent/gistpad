@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
   "publisher": "vsls-contrib",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "extensionKind": [
     "ui",
     "workspace"
@@ -418,8 +418,8 @@
         "title": "Edit Comment"
       },
       {
-        "command": "gistpad.manageRepository",
-        "title": "Manage Repository",
+        "command": "gistpad.openRepository",
+        "title": "Open Repository",
         "category": "GistPad",
         "icon": {
           "dark": "images/dark/add.svg",
@@ -675,11 +675,6 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.signOut",
-        "title": "Sign Out",
-        "category": "GistPad"
-      },
-      {
         "command": "gistpad.groupGists",
         "title": "Group Gists",
         "icon": "$(group-by-ref-type)"
@@ -728,8 +723,8 @@
         "title": "Switch Branch"
       },
       {
-        "command": "gistpad.unmanageRepository",
-        "title": "Stop Managing Repository"
+        "command": "gistpad.closeRepository",
+        "title": "Close Repository"
       },
       {
         "command": "gistpad.unfollowUser",
@@ -763,7 +758,7 @@
           "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.manageRepository",
+          "command": "gistpad.openRepository",
           "when": "gistpad:state == SignedIn"
         },
         {
@@ -777,10 +772,6 @@
         {
           "command": "gistpad.signIn",
           "when": "gistpad:state != SignedIn"
-        },
-        {
-          "command": "gistpad.signOut",
-          "when": "gistpad:state != SignedOut"
         },
         {
           "command": "gistpad.newGistLog",
@@ -1091,7 +1082,7 @@
           "when": "false"
         },
         {
-          "command": "gistpad.unmanageRepository",
+          "command": "gistpad.closeRepository",
           "when": "false"
         },
         {
@@ -1152,7 +1143,7 @@
           "group": "navigation@5"
         },
         {
-          "command": "gistpad.manageRepository",
+          "command": "gistpad.openRepository",
           "when": "view == gistpad.repos",
           "group": "navigation@1"
         },
@@ -1469,7 +1460,7 @@
           "group": "tour@2"
         },
         {
-          "command": "gistpad.unmanageRepository",
+          "command": "gistpad.closeRepository",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
           "group": "unmanage@1"
         },
@@ -1666,7 +1657,7 @@
         {
           "id": "gistpad.repos",
           "name": "Repositories",
-          "when": "gistpad:state == SignedIn && gistpad:hasRepos"
+          "when": "gistpad:state == SignedIn"
         },
         {
           "id": "gistpad.activeGist",
@@ -1683,7 +1674,11 @@
     "viewsWelcome": [
       {
         "view": "gistpad.gists",
-        "contents": "Open any GitHub Gist (by URL or ID), and/or create new [interactive playgrounds](https://github.com/vsls-contrib/gistpad#playgrounds).\n\n[Open Gist](command:gistpad.openGist)\n\n[New Playground](command:gistpad.newPlayground)\n\nManage your gists, by signing in with a [token](https://github.com/settings/tokens/new) that includes the \"gist\" scope.\n\n[Sign-In](command:gistpad.signIn)"
+        "contents": "Open any GitHub Gist (by URL or ID), and/or create new [interactive playgrounds](https://github.com/vsls-contrib/gistpad#playgrounds).\n\n[Open Gist](command:gistpad.openGist)\n\n[New Playground](command:gistpad.newPlayground)\n\nManage your gists, by signing in with a GitHub account.\n\n[Sign In](command:gistpad.signIn)"
+      },
+      {
+        "view": "gistpad.repos",
+        "contents": "Browse and edit your repos, without needing to manually clone or commit.\n\n[Open Repository](command:gistpad.openRepository)"
       }
     ],
     "jsonValidation": [

@@ -1,7 +1,7 @@
 import { URLSearchParams } from "url";
 import * as vscode from "vscode";
 import { EXTENSION_ID } from "./constants";
-import { manageRepo } from "./repos/store/actions";
+import { openRepo } from "./repos/store/actions";
 import { followUser } from "./store/actions";
 import { initializeAuth } from "./store/auth";
 import { openGist } from "./utils";
@@ -26,7 +26,7 @@ async function handleOpenRequest(query: URLSearchParams) {
   if (gistId) {
     openGist(gistId, !!openAsWorkspace);
   } else if (repoName) {
-    manageRepo(repoName);
+    openRepo(repoName);
   }
 }
 

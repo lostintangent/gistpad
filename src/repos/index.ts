@@ -1,4 +1,6 @@
+import { when } from "mobx";
 import { ExtensionContext } from "vscode";
+import { store } from "../store";
 import { registerRepoCommands } from "./commands";
 import { registerCommentController } from "./comments";
 import { registerRepoFileSystemProvider } from "./fileSystem";
@@ -8,7 +10,7 @@ import { registerTourController } from "./tours";
 import { registerTreeProvider } from "./tree";
 import { registerWikiController } from "./wiki";
 
-export function registerRepoModule(context: ExtensionContext) {
+export async function registerRepoModule(context: ExtensionContext) {
   registerRepoCommands(context);
 
   registerRepoFileSystemProvider();
@@ -21,5 +23,6 @@ export function registerRepoModule(context: ExtensionContext) {
 
   registerWikiController(context);
 
+  await when(() => store.isSignedIn);
   refreshRepositories();
 }

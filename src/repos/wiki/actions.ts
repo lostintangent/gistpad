@@ -38,11 +38,7 @@ export async function updateTree(repo: Repository, tree: Tree) {
   const documents = await Promise.all(
     markdownFiles.map(
       async (treeItem): Promise<TreeItem> => {
-        const contents = await getRepoFile(
-          repo.name,
-          repo.branch,
-          treeItem.sha
-        );
+        const contents = await getRepoFile(repo.name, treeItem.sha);
         treeItem.contents = contents;
 
         const match = contents!.match(/^(?:#\s*)(.+)$/m);

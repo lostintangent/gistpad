@@ -79,11 +79,7 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
   async readFile(uri: vscode.Uri): Promise<Uint8Array> {
     const [repository, file] = RepoFileSystemProvider.getRepoInfo(uri)!;
 
-    const contents = await getRepoFile(
-      repository.name,
-      repository.branch,
-      file!.sha
-    );
+    const contents = await getRepoFile(repository.name, file!.sha);
 
     return stringToByteArray(contents);
   }

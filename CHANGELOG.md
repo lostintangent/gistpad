@@ -1,4 +1,12 @@
-## v0.1.9 (11/14/20)
+## v0.1.10 (11/25/2020)
+
+- Replaced the token-based auth with support for VS Code's native GitHub authentication
+- The `Repositories` view is now always visible whenever you're signed in.
+- Removed the `GistPad: Sign Out` command in favor of just signing out of your GitHub account with VS Code
+- Renamed the `Manage Repository` command to `Open Repository`, and the `Stop Managing Repository` command to `Close Repository`
+- Removed the `Reply...` textbox from the comment UI for wiki backlinks and playground tutorial readme's
+
+## v0.1.9 (11/14/2020)
 
 - The `Showcase` view is now collapsed by default
 - The `Copy GitHub URL` command is now available on the editor tab for gist files

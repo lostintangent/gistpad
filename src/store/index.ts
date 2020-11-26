@@ -122,6 +122,7 @@ export interface Store {
   isLoading: boolean;
   isSignedIn: boolean;
   login: string;
+  token?: string;
   sortOrder: SortOrder;
   groupType: GroupType;
   starredGists: Gist[];

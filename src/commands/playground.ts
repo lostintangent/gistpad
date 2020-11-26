@@ -790,6 +790,8 @@ export async function openPlayground(gist: Gist) {
         ]
       );
 
+      // @ts-ignore
+      thread.canReply = false;
       thread.collapsibleState = vscode.CommentThreadCollapsibleState.Expanded;
     } else {
       const htmlContent = getReadmeContent(rawContent);

@@ -13,7 +13,7 @@ import {
 import { EXTENSION_NAME } from "../constants";
 import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { log } from "../logger";
-import { manageRepo } from "../repos/store/actions";
+import { openRepo } from "../repos/store/actions";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
   changeDescription,
@@ -593,7 +593,7 @@ export async function registerGistCommands(context: ExtensionContext) {
           fullName = `${store.login}/${name}`;
 
           await exportToRepo(node.gist.id, name);
-          await manageRepo(fullName);
+          await openRepo(fullName);
         });
 
         if (

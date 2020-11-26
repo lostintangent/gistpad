@@ -42,7 +42,7 @@ export class WikiBacklinksComments implements Comment {
         const command = `command:vscode.open?${encodeURIComponent(
           JSON.stringify(args)
         )}`;
-        return `### [${title}](${command})
+        return `### [${title}](${command} 'Open the "${title}" page')
         
    \`\`\`markdown
    ${link.linePreview}
@@ -88,6 +88,8 @@ export function registerCommentController() {
       new Range(e.document.lineCount, 0, e.document.lineCount, 0),
       [comment]
     );
+    // @ts-ignore
+    thread.canReply = false;
     thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
 
     workspace.onDidChangeTextDocument((change) => {

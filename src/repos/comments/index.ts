@@ -67,6 +67,9 @@ async function checkForComments(uri: Uri) {
         []
       );
 
+      // @ts-ignore
+      thread.canReply = false;
+
       thread.comments = [
         new RepoCommitComment(comment, repo, thread, currentUser)
       ];

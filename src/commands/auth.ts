@@ -1,14 +1,11 @@
 import { commands, env, ExtensionContext, Uri } from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { signIn, signout } from "../store/auth";
+import { signIn } from "../store/auth";
 import { FollowedUserGistsNode, GistsNode } from "../tree/nodes";
 
 export async function registerAuthCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_NAME}.signIn`, signIn)
-  );
-  context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.signOut`, signout)
   );
 
   context.subscriptions.push(

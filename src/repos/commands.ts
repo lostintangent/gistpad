@@ -18,6 +18,7 @@ import { RepoFileSystemProvider } from "./fileSystem";
 import { Repository } from "./store";
 import {
   addRepoFile,
+  closeRepo,
   createBranch,
   createRepository,
   createRepositoryFromTemplate,
@@ -26,10 +27,9 @@ import {
   displayReadme,
   getBranches,
   listRepos,
-  manageRepo,
+  openRepo,
   rebaseBranch,
-  refreshRepositories,
-  unmanageRepo
+  refreshRepositories
 } from "./store/actions";
 import { promptForTour } from "./tours/actions";
 import { RepositoryFileNode, RepositoryNode } from "./tree/nodes";
@@ -69,9 +69,9 @@ const CREATE_REPO_ITEMS = [
 let repoPromise: Promise<any>;
 export async function registerRepoCommands(context: ExtensionContext) {
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.manageRepository`, async () => {
+    commands.registerCommand(`${EXTENSION_NAME}.openRepository`, async () => {
       const quickPick = window.createQuickPick();
-      quickPick.title = "Select or specify the repository you'd like to manage";
+      quickPick.title = "Select or specify the repository you'd like to open";
 
       if (!repoPromise) {
         repoPromise = listRepos();
@@ -131,7 +131,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
               repoName,
               response === CREATE_PRIVATE_REPO_RESPONSE
             );
-            await manageRepo(repository.full_name);
+            await openRepo(repository.full_name);
           });
         } else if (
           response === CREATE_TEMPLATE_REPO_RESPONSE ||
@@ -152,7 +152,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
           templateQuickPick.items = templateItems;
 
           templateQuickPick.onDidTriggerButton((e) =>
-            commands.executeCommand(`${EXTENSION_NAME}.manageRepository`)
+            commands.executeCommand(`${EXTENSION_NAME}.openRepository`)
           );
 
           templateQuickPick.onDidChangeValue(() => {
@@ -189,7 +189,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
                   response === CREATE_PRIVATE_TEMPLATE_REPO_RESPONSE
                 );
 
-                const repository = await manageRepo(full_name);
+                const repository = await openRepo(full_name);
                 await displayReadme(repository!, false);
               });
             }
@@ -197,7 +197,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
 
           templateQuickPick.show();
         } else {
-          const repository = await manageRepo(response);
+          const repository = await openRepo(response);
           if (repository) {
             displayReadme(repository);
             promptForTour(repository);
@@ -211,7 +211,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_NAME}.unmanageRepository`,
+      `${EXTENSION_NAME}.closeRepository`,
       async (
         targetNode: RepositoryNode,
         multiSelectNodes?: RepositoryNode[]
@@ -219,7 +219,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
         const nodes = multiSelectNodes || [targetNode];
 
         for (const node of nodes) {
-          await unmanageRepo(node.repo.name, node.repo.branch);
+          await closeRepo(node.repo.name, node.repo.branch);
         }
       }
     )
@@ -450,8 +450,8 @@ export async function registerRepoCommands(context: ExtensionContext) {
           await withProgress("Deleting branch...", async () => {
             await deleteBranch(node.repo.name, node.repo.branch);
 
-            await unmanageRepo(node.repo.name, node.repo.branch);
-            await manageRepo(node.repo.name);
+            await closeRepo(node.repo.name, node.repo.branch);
+            await openRepo(node.repo.name);
           });
         }
       }
@@ -470,8 +470,8 @@ export async function registerRepoCommands(context: ExtensionContext) {
         await withProgress("Merging branch...", async () => {
           await rebaseBranch(node.repo.name, node.repo.branch, response);
 
-          await unmanageRepo(node.repo.name, node.repo.branch);
-          await manageRepo(node.repo.name);
+          await closeRepo(node.repo.name, node.repo.branch);
+          await openRepo(node.repo.name);
         });
       }
     )
@@ -528,13 +528,13 @@ export async function registerRepoCommands(context: ExtensionContext) {
                   node.repo.latestCommit
                 );
 
-                await unmanageRepo(node.repo.name, node.repo.branch);
-                await manageRepo(`${node.repo.name}#${newBranch}`);
+                await closeRepo(node.repo.name, node.repo.branch);
+                await openRepo(`${node.repo.name}#${newBranch}`);
               });
             }
           } else {
-            await unmanageRepo(node.repo.name, node.repo.branch);
-            await manageRepo(`${node.repo.name}#${branch}`);
+            await closeRepo(node.repo.name, node.repo.branch);
+            await openRepo(`${node.repo.name}#${branch}`);
           }
         });
       }
@@ -560,7 +560,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
           try {
             await withProgress("Deleting repository...", async () => {
               await deleteRepository(node.repo.name);
-              await unmanageRepo(node.repo.name, node.repo.branch);
+              await closeRepo(node.repo.name, node.repo.branch);
             });
           } catch (e) {
             if (
@@ -569,7 +569,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
                 "Stop managing"
               )
             ) {
-              await unmanageRepo(node.repo.name, node.repo.branch);
+              await closeRepo(node.repo.name, node.repo.branch);
             }
           }
         }

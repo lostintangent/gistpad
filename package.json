@@ -1,7 +1,7 @@
 {
   "name": "gistfs",
   "displayName": "GistPad",
-  "description": "VS Code extension for managing and sharing code snippets, notes and interactive samples using GitHub Gists",
+  "description": "Manage your code snippets, notes, wikis and interactive samples using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
   "version": "0.1.10",
   "extensionKind": [
@@ -22,15 +22,16 @@
     "vscode": "^1.48.0"
   },
   "categories": [
-    "Data Science",
     "Other",
     "Snippets",
     "Visualization"
   ],
   "keywords": [
-    "Collaboration",
-    "Sharing",
-    "Remote"
+    "github",
+    "gist",
+    "snippets",
+    "wiki",
+    "notes"
   ],
   "activationEvents": [
     "*",
@@ -1149,7 +1150,7 @@
         },
         {
           "command": "gistpad.refreshRepositories",
-          "when": "view == gistpad.repos",
+          "when": "view == gistpad.repos && gistpad:state == SignedIn",
           "group": "navigation@2"
         },
         {
@@ -1656,12 +1657,11 @@
         },
         {
           "id": "gistpad.repos",
-          "name": "Repositories",
-          "when": "gistpad:state == SignedIn"
+          "name": "Repositories"
         },
         {
           "id": "gistpad.activeGist",
-          "name": "Active Gist",
+          "name": "Playground",
           "when": "gistpad:inPlayground"
         },
         {
@@ -1674,11 +1674,17 @@
     "viewsWelcome": [
       {
         "view": "gistpad.gists",
-        "contents": "Open any GitHub Gist (by URL or ID), and/or create new [interactive playgrounds](https://github.com/vsls-contrib/gistpad#playgrounds).\n\n[Open Gist](command:gistpad.openGist)\n\n[New Playground](command:gistpad.newPlayground)\n\nManage your gists, by signing in with a GitHub account.\n\n[Sign In](command:gistpad.signIn)"
+        "contents": "Open any GitHub Gist (by URL or ID), and/or create new [interactive playgrounds](https://github.com/vsls-contrib/gistpad#playgrounds).\n\n[$(folder-opened) Open Gist](command:gistpad.openGist)\n\n[$(new-file) New Playground](command:gistpad.newPlayground)\n\nManage your gists, by signing in with a GitHub account.\n\n[$(github-inverted) Sign In](command:gistpad.signIn)"
       },
       {
         "view": "gistpad.repos",
-        "contents": "Browse and edit your repos, without needing to manually clone or commit.\n\n[Open Repository](command:gistpad.openRepository)"
+        "contents": "Browse GitHub repos, without needing to locally clone files ([Learn More](https://github.com/vsls-contrib/gistpad#repositories)).\n\n[$(folder-opened) Open Repository](command:gistpad.openRepository)\n\nYou can also edit your repos and wikis, by signing in with a GitHub account ([Learn More](https://github.com/vsls-contrib/gistpad#wikis)).\n\n[$(github-inverted) Sign In](command:gistpad.signIn)",
+        "when": "gistpad:state != SignedIn"
+      },
+      {
+        "view": "gistpad.repos",
+        "contents": "Open one of your GitHub repos in order to start remotely browsing and editing files ([Learn More](https://github.com/vsls-contrib/gistpad#repositories)).\n\n[$(folder-opened) Open Repository](command:gistpad.openRepository)",
+        "when": "gistpad:state == SignedIn"
       }
     ],
     "jsonValidation": [

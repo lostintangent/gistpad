@@ -77,8 +77,7 @@ export async function initializeAuth() {
 }
 
 export async function isAuthenticated() {
-  const token = await getToken();
-  return token !== null;
+  return store.isSignedIn;
 }
 
 async function markUserAsSignedIn(session: AuthenticationSession) {

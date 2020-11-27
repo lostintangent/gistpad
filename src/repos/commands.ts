@@ -12,7 +12,7 @@ import {
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { store as globalStore } from "../store";
-import { getCurrentUser } from "../store/auth";
+import { getCurrentUser, isAuthenticated } from "../store/auth";
 import { withProgress } from "../utils";
 import { RepoFileSystemProvider } from "./fileSystem";
 import { Repository } from "./store";
@@ -73,35 +73,38 @@ export async function registerRepoCommands(context: ExtensionContext) {
       const quickPick = window.createQuickPick();
       quickPick.title = "Select or specify the repository you'd like to open";
 
-      if (!repoPromise) {
-        repoPromise = listRepos();
+      let items: any[] = [];
+      if (await isAuthenticated()) {
+        if (!repoPromise) {
+          repoPromise = listRepos();
+        }
+
+        quickPick.busy = true;
+        quickPick.placeholder = "Loading your repositories...";
+        quickPick.items = CREATE_REPO_ITEMS;
+
+        repoPromise.then((repos) => {
+          items = [
+            ...CREATE_REPO_ITEMS,
+            ...repos.map((repo: any) => ({
+              label: repo.full_name,
+              description: repo.private ? "Private" : ""
+            }))
+          ];
+
+          quickPick.items = items;
+
+          quickPick.busy = false;
+          quickPick.placeholder = "";
+        });
       }
 
-      quickPick.busy = true;
-      quickPick.placeholder = "Loading your repositories...";
-      quickPick.items = CREATE_REPO_ITEMS;
-
-      repoPromise.then((repos) => {
-        const items = [
-          ...CREATE_REPO_ITEMS,
-          ...repos.map((repo: any) => ({
-            label: repo.full_name,
-            description: repo.private ? "Private" : ""
-          }))
-        ];
-
-        quickPick.items = items;
-
-        quickPick.onDidChangeValue(() => {
-          if (quickPick.value) {
-            quickPick.items = [{ label: quickPick.value }, ...items];
-          } else {
-            quickPick.items = items;
-          }
-        });
-
-        quickPick.busy = false;
-        quickPick.placeholder = "";
+      quickPick.onDidChangeValue(() => {
+        if (quickPick.value) {
+          quickPick.items = [{ label: quickPick.value }, ...items];
+        } else {
+          quickPick.items = items;
+        }
       });
 
       quickPick.onDidAccept(async () => {

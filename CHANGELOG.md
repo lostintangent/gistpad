@@ -1,3 +1,8 @@
+## v0.1.11 (11/26/2020)
+
+- Updated the `Repositories` tree to always show
+- Renamed the `Active Gist` tree to `Playground`
+
 ## v0.1.10 (11/25/2020)
 
 - Replaced the token-based auth with support for VS Code's native GitHub authentication

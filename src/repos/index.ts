@@ -1,4 +1,5 @@
 import { when } from "mobx";
+import { isCodeTourInstalled } from "src/tour";
 import { ExtensionContext } from "vscode";
 import { store } from "../store";
 import { registerRepoCommands } from "./commands";
@@ -19,9 +20,11 @@ export async function registerRepoModule(context: ExtensionContext) {
   initializeStorage(context);
 
   registerCommentController(context);
-  registerTourController(context);
-
   registerWikiController(context);
+
+  if (await isCodeTourInstalled()) {
+    registerTourController(context);
+  }
 
   await when(() => store.isSignedIn);
   refreshRepositories();

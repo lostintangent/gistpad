@@ -1,7 +1,7 @@
 import { when } from "mobx";
-import { isCodeTourInstalled } from "src/tour";
 import { ExtensionContext } from "vscode";
 import { store } from "../store";
+import { isCodeTourInstalled } from "../tour";
 import { registerRepoCommands } from "./commands";
 import { registerCommentController } from "./comments";
 import { registerRepoFileSystemProvider } from "./fileSystem";

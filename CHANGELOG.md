@@ -1,3 +1,7 @@
+## v0.1.13 (11/?/2020)
+
+- Repo files can now be copied to gists, by right-clicking their editor tab and selecting `Copy File to Gist`
+
 ## v0.1.12 (11/26/2020)
 
 - The `GistPad: Open Today Page` and `GistPad: Add Wiki Page` commands are now exposed in the command palette, as long as you have a wiki repo open.

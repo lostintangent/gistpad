@@ -582,7 +582,6 @@ export async function registerGistCommands(context: ExtensionContext) {
           const api = await getApi();
 
           const name = repoName.replace(/\s/g, "-").replace(/[^\w\d-_]/g, "");
-
           const response = await api.post("/user/repos", {
             name,
             description: node.gist.description,
@@ -592,6 +591,8 @@ export async function registerGistCommands(context: ExtensionContext) {
           repoUri = Uri.parse(response.body.html_url);
           fullName = `${store.login}/${name}`;
 
+          // TODO: Accomodate scenarios where the end-user
+          // doesn't have Git installed
           await exportToRepo(node.gist.id, name);
           await openRepo(fullName);
         });

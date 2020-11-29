@@ -128,7 +128,7 @@ export function registerEditorCommands(context: ExtensionContext) {
             // right-clicking a file node in the explorer
             // and/or right-clicking the editor tab
             files.push({
-              filename: path.basename(node.toString()),
+              filename: path.basename(node.path),
               content: byteArrayToString(await workspace.fs.readFile(node))
             });
           }

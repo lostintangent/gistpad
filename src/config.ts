@@ -4,7 +4,6 @@ const CONFIG_SECTION = "gistpad";
 
 export function get(key: "treeIcons"): boolean;
 export function get(key: "apiUrl"): string;
-export function get(key: "gitSSO"): boolean;
 export function get(key: "images.markdownPasteFormat"): "markdown" | "html";
 export function get(key: "images.pasteType"): "file" | "base64";
 export function get(key: "images.directoryName"): string;

@@ -385,7 +385,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
         "Fork this Gist"
       );
 
-      // TODO: Replace the edit after forking the gist
+      // TODO: Replay the edit after forking the gist
       if (response === "Fork this Gist") {
         await window.withProgress(
           {

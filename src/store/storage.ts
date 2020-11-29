@@ -6,6 +6,8 @@ import { EXTENSION_NAME } from "../constants";
 
 const TUTORIAL_KEY = "gistpad.tutorials";
 const FOLLOW_KEY = "gistpad.followedUsers";
+
+// TODO: Replace these with user settings
 const SORT_ORDER_KEY = "gistpad:sortOrder";
 const GROUP_TYPE_KEY = "gistpad:groupType";
 

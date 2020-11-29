@@ -9,6 +9,7 @@ import {
   window
 } from "vscode";
 import { EXTENSION_NAME } from "../../constants";
+import { store as authStore } from "../../store";
 import { Repository, RepositoryFile, store } from "../store";
 import {
   RepositoryFileBackLinkNode,
@@ -24,6 +25,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
   constructor(private context: ExtensionContext) {
     reaction(
       () => [
+        authStore.isSignedIn,
         store.repos.map((repo) => [
           repo.isLoading,
           repo.hasTours,
@@ -57,7 +59,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
   getTreeItem = (node: TreeItem) => node;
 
   getChildren(element?: TreeItem): ProviderResult<TreeItem[]> {
-    if (!element && store.repos.length > 0) {
+    if (!element && authStore.isSignedIn && store.repos.length > 0) {
       return store.repos
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((repo) => new RepositoryNode(repo, this.context));

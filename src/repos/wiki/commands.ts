@@ -2,6 +2,7 @@ import { commands, ExtensionContext, window, workspace } from "vscode";
 import { EXTENSION_NAME } from "../../constants";
 import { stringToByteArray, withProgress } from "../../utils";
 import { RepoFileSystemProvider } from "../fileSystem";
+import { store } from "../store";
 import { RepositoryFileNode, RepositoryNode } from "../tree/nodes";
 import { openRepoDocument } from "../utils";
 import { getPageFilePath } from "./utils";
@@ -39,24 +40,30 @@ export function registerCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.addWikiPage`,
-      async (node: RepositoryNode | RepositoryFileNode) => {
-        const page = await window.showInputBox({
-          prompt: "Enter the name of the new page you'd like to create"
-        });
+      async (node?: RepositoryNode | RepositoryFileNode) => {
+        const repoName = node?.repo.name || store.wiki!.name;
 
-        if (page) {
-          const path = getPageFilePath(page);
-          const filePath =
-            node instanceof RepositoryFileNode
-              ? `${node.file.path}/${path}`
-              : path;
+        const input = await window.createInputBox();
+        input.title = `Add wiki page (${repoName})`;
+        input.prompt =  "Enter the name of the new page you'd like to create";
 
-          await withProgress("Adding new page...", async () => {
-            return createWikiPage(page, node.repo.name, filePath);
-          });
-
-          openRepoDocument(node.repo.name, filePath);
-        }
+        input.onDidAccept(async () => {
+          input.hide();
+          
+          if (input.value) {
+            const path = getPageFilePath(input.value);
+            const filePath =
+              node instanceof RepositoryFileNode
+                ? `${node.file.path}/${path}`
+                : path;
+  
+            
+            await withProgress("Adding new page...", async () => createWikiPage(input.value, repoName, filePath));
+            openRepoDocument(repoName, filePath);
+          }
+        })
+        
+        input.show();
       }
     )
   );
@@ -64,7 +71,7 @@ export function registerCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.openTodayPage`,
-      async (node: RepositoryNode) => {
+      async (node?: RepositoryNode) => {
         const sharedMoment = moment();
         const fileName = sharedMoment.format("YYYY-MM-DD");
         const filePath = getPageFilePath(fileName);
@@ -73,18 +80,19 @@ export function registerCommands(context: ExtensionContext) {
           .getConfiguration(EXTENSION_NAME)
           .get("wikis.daily.titleFormat", "LL");
 
+        const repoName = node?.repo.name || store.wiki!.name;
         const pageTitle = sharedMoment.format(titleFormat);
 
-        const uri = RepoFileSystemProvider.getFileUri(node.repo.name, filePath);
+        const uri = RepoFileSystemProvider.getFileUri(repoName, filePath);
         const [, file] = RepoFileSystemProvider.getRepoInfo(uri)!;
 
         if (!file) {
           await withProgress("Adding new page...", async () => {
-            return createWikiPage(pageTitle, node.repo.name, filePath);
+            return createWikiPage(pageTitle, repoName, filePath);
           });
         }
 
-        openRepoDocument(node.repo.name, filePath);
+        openRepoDocument(repoName, filePath);
       }
     )
   );

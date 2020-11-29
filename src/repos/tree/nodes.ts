@@ -5,18 +5,21 @@ import {
   TreeItemCollapsibleState,
   Uri
 } from "vscode";
-import { getIconPath } from "../../utils";
 import { RepoFileSystemProvider } from "../fileSystem";
-import { Repository, RepositoryFile, TreeItemBackLink } from "../store";
+import { Repository, RepositoryFile, store, TreeItemBackLink } from "../store";
 
 export class RepositoryNode extends TreeItem {
   constructor(public repo: Repository, context: ExtensionContext) {
     super(repo.name, TreeItemCollapsibleState.Expanded);
 
     const iconName = repo.isWiki ? "book" : "repo";
-    this.iconPath = getIconPath(context, `${iconName}.svg`);
+    this.iconPath = new ThemeIcon(iconName);
 
     this.contextValue = "gistpad." + (repo.isWiki ? "wiki" : "repo");
+
+    if (repo.isWiki && store.wiki?.name === repo.name) {
+      this.description = "Primary";
+    }
 
     if (repo.branch !== Repository.DEFAULT_BRANCH) {
       this.contextValue += ".branch";
@@ -50,6 +53,12 @@ export class RepositoryFileNode extends TreeItem {
         title: "Open file",
         arguments: [file.uri]
       };
+    }
+
+    if (repo.isWiki && file.backLinks) {
+      this.description = file.backLinks.length.toString();
+    } else if (file.isDirectory) {
+      this.description = file.files!.length.toString();
     }
 
     const repoType = repo.isWiki ? "wiki" : "repo";

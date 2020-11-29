@@ -31,7 +31,7 @@ import {
 import {
   ensureAuthenticated,
   getApi,
-  isAuthenticated,
+
   signIn
 } from "../store/auth";
 import {
@@ -167,7 +167,7 @@ async function openGistInternal(
   }
 
   let gistItems: GistQuickPickItem[] = [];
-  if (await isAuthenticated()) {
+  if (store.isSignedIn) {
     const gists = store.gists;
 
     if (gists.length > 0) {

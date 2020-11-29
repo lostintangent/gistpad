@@ -5,6 +5,7 @@ import { registerLinkCompletionProvider } from "./completionProvider";
 import { registerLinkDecorator } from "./decorator";
 import { registerHoverProvider } from "./hoverProvider";
 import { registerDocumentLinkProvider } from "./linkProvider";
+import { registerStatusBar } from "./statusBar";
 
 export function registerWikiController(context: ExtensionContext) {
   registerCommands(context);
@@ -15,4 +16,5 @@ export function registerWikiController(context: ExtensionContext) {
   registerDocumentLinkProvider();
 
   registerCommentController();
+  registerStatusBar();
 }

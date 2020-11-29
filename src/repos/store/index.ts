@@ -1,7 +1,7 @@
 import { computed, observable } from "mobx";
 import * as path from "path";
 import { CommentThread, Location, Uri } from "vscode";
-import { GistComment } from "../../store";
+import { GistComment, store as mainStore } from "../../store";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { isWiki } from "../wiki/utils";
 
@@ -163,5 +163,8 @@ export class Repository {
 
 export const store = observable({
   repos: [] as Repository[],
+  get wiki(): Repository | undefined {
+    return this.repos.find((repo: Repository) => repo.isWiki && repo.name.startsWith(mainStore.login));
+  },
   isInCodeTour: false
 });

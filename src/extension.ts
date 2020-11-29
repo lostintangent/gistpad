@@ -40,6 +40,11 @@ export async function activate(context: vscode.ExtensionContext) {
   registerShowcaseTreeProvider(store, context);
   refreshShowcase();
 
+  // TODO: Build this list dynamically, by allowing individual "modules" to contribute to it.
+  const keysForSync = ["followedUsers", "repos", "tutorials"].map(key => `gistpad.${key}`);
+  // @ts-ignore
+  context.globalState.setKeysForSync(keysForSync);
+  
   return {
     extendMarkdownIt
   };

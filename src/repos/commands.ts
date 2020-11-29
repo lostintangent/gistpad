@@ -12,7 +12,7 @@ import {
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { store as globalStore } from "../store";
-import { getCurrentUser, isAuthenticated } from "../store/auth";
+import { elevateSignin, getCurrentUser } from "../store/auth";
 import { withProgress } from "../utils";
 import { RepoFileSystemProvider } from "./fileSystem";
 import { Repository } from "./store";
@@ -74,7 +74,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
       quickPick.title = "Select or specify the repository you'd like to open";
 
       let items: any[] = [];
-      if (await isAuthenticated()) {
+      if (globalStore.isSignedIn) {
         if (!repoPromise) {
           repoPromise = listRepos();
         }
@@ -549,9 +549,19 @@ export async function registerRepoCommands(context: ExtensionContext) {
       `${EXTENSION_NAME}.deleteRepository`,
       async (node: RepositoryNode) => {
         if (!globalStore.canDeleteRepos) {
-          return window.showErrorMessage(
-            'The token you used to login doesn\'t include the "delete_repo" scope.'
+          const response = await window.showInformationMessage(
+            "In order for GistPad to delete repos on your behalf, you need to authorize it.",
+            "Authorize"
           );
+
+          if (!response) {
+            return;
+          }
+
+          const authorized = await elevateSignin();
+          if (!authorized) {
+            return;
+          }
         }
 
         if (

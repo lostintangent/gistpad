@@ -1,3 +1,13 @@
+## v0.1.12 (11/26/2020)
+
+- The `GistPad: Open Today Page` and `GistPad: Add Wiki Page` commands are now exposed in the command palette, as long as you have a wiki repo open.
+- Added status bar items for opening the "today page" and adding a new wiki page.
+- Your list of opened repos, followed users and playground tutorials are now synchronized between machines, if you're using VS Code's settings sync.
+- The `Repos` tree now displays the file count (for directories) and backlink count (for wiki files) as inline node descriptions.
+- The `delete_repo` authentication scope is no longer requested by default.
+- The `gistpad.playgrounds.autoSave` setting is now defaulted to `false`.
+- Removed the `gistpad.gitSSO` setting, since it's no longer used.
+
 ## v0.1.11 (11/26/2020)
 
 - Updated the `Repositories` tree to always show

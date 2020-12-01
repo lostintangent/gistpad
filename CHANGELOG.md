@@ -1,5 +1,6 @@
-## v0.1.13 (11/?/2020)
+## v0.1.13 (12/02/2020)
 
+- Introduced support for embedding wiki pages, using the `![[link]]` syntax
 - Repo files can now be copied to gists, by right-clicking their editor tab and selecting `Copy File to Gist`
 
 ## v0.1.12 (11/26/2020)

@@ -15,6 +15,13 @@ export const LINK_PREFIX = "[[";
 export const LINK_SUFFIX = "]]";
 export const LINK_PATTERN = /(?:\[\[)([^\]]+)(?:\]\])/gi;
 
+const WIKI_REPO_PATTERNS = [
+  "wiki",
+  "notes",
+  "obsidian",
+  "journal"
+];
+
 const WIKI_WORKSPACE_FILES = [
   "gistpad.json",
   ".vscode/gistpad.json",
@@ -62,7 +69,7 @@ export function getUriFromLink(repo: Repository, link: string) {
 export function isWiki(repo: Repository, tree?: Tree) {
   const repoTree = tree || repo.tree;
   return (
-    repo.name.toLocaleLowerCase().includes("wiki") ||
+    WIKI_REPO_PATTERNS.some(pattern => repo.name.toLocaleLowerCase().includes(pattern)) ||
     !!repoTree?.tree.some((item) => WIKI_WORKSPACE_FILES.includes(item.path))
   );
 }

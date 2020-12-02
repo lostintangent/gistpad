@@ -1,6 +1,8 @@
 ## v0.1.13 (12/02/2020)
 
 - Introduced support for embedding wiki pages, using the `![[link]]` syntax
+- Wiki repos are now auto-detected when the repo name includes `notes`, `journal` or `obsidian` (in addition to the exiting `wiki` support)
+- Wiki page titles can now be defined using any markdown heading level
 - Repo files can now be copied to gists, by right-clicking their editor tab and selecting `Copy File to Gist`
 
 ## v0.1.12 (11/26/2020)

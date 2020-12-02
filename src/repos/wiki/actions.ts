@@ -41,7 +41,7 @@ export async function updateTree(repo: Repository, tree: Tree) {
         const contents = await getRepoFile(repo.name, treeItem.sha);
         treeItem.contents = contents;
 
-        const match = contents!.match(/^(?:#\s*)(.+)$/m);
+        const match = contents!.match(/^(?:#+\s*)(.+)$/m);
         const displayName = match ? match[1].trim() : undefined;
         treeItem.displayName = displayName;
 

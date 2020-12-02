@@ -52,6 +52,17 @@ export function extendMarkdownIt(md: any) {
         const treeItem = getTreeItemFromLink(repo, link);
         if (treeItem) {
           const markdown = require("markdown-it")();
+          markdown.renderer.rules.heading_open = (
+            tokens: any,
+            index: number,
+            options: any,
+            env: any,
+            self: any
+          ) => {
+            tokens[index].attrSet("style", "text-align: center; border: 0; margin: 10px 0 5px 0");
+            return self.renderToken(tokens, index, options, env, self);
+          };
+
           const htmlContent = markdown.render(treeItem.contents);
           return `<div>
 <hr />

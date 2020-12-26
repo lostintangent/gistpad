@@ -3,6 +3,7 @@ import * as path from "path";
 import {
   commands,
   ExtensionContext,
+  extensions,
   ProgressLocation,
   TextDocument,
   Uri,
@@ -10,20 +11,16 @@ import {
   window,
   workspace
 } from "vscode";
-import { closeWebviewPanel, openPlayground } from "./commands/playground";
 import {
   DIRECTORY_SEPARATOR,
   ENCODED_DIRECTORY_SEPARATOR,
   FS_SCHEME,
   INPUT_SCHEME,
-  PLAYGROUND_FILE,
-  TEMP_GIST_ID
+  SWING_FILE
 } from "./constants";
-import { getCandidateMarkupFilenames } from "./playgrounds/languages/markup";
-import { Gist, SortOrder, store, Store } from "./store";
+import { Gist, SortOrder, store } from "./store";
 import { getGist } from "./store/actions";
 import { isCodeTourInstalled, startTourFromFile, TOUR_FILE } from "./tour";
-import { getViewerCommand } from "./viewerProvider";
 
 export function byteArrayToString(value: Uint8Array) {
   return new TextDecoder().decode(value);
@@ -35,19 +32,6 @@ export function isOwnedGist(gistId: string): boolean {
     (!!store.gists.find((gist) => gist.id === gistId) ||
       (store.scratchNotes.gist ? store.scratchNotes.gist.id === gistId : false))
   );
-}
-
-export function isTempGistId(gistId: string): boolean {
-  return gistId === TEMP_GIST_ID;
-}
-
-export function isTempGistUri(uri: Uri): boolean {
-  const { gistId } = getGistDetailsFromUri(uri);
-  return isTempGistId(gistId);
-}
-
-export function hasTempGist(store: Store): boolean {
-  return !!store.gists.find((gist) => isTempGistId(gist.id));
 }
 
 export async function showGistQuickPick(gists: Gist[], placeHolder: string) {
@@ -75,8 +59,8 @@ export async function closeGistFiles(gist: Gist) {
     }
   });
 
-  if (isPlaygroundGist(gist)) {
-    closeWebviewPanel(gist.id);
+  if (isSwingGist(gist)) {
+    //TODO closeWebviewPanel(gist.id);
   }
 }
 
@@ -154,8 +138,19 @@ export async function openGistFiles(id: string) {
       store.starredGists.find((gist) => gist.id === id) ||
       (await getGist(id));
 
-    if (isPlaygroundGist(gist)) {
-      await openPlayground(gist);
+    if (
+      isSwingGist(gist) &&
+      extensions.getExtension("codespaces-contrib.codeswing")
+    ) {
+      // TODO: Cleanup this code
+      const extension = extensions.getExtension("codespaces-contrib.codeswing");
+
+      if (extension!.isActive) {
+        await extension?.activate();
+      }
+
+      const uri = Uri.parse(`${FS_SCHEME}://${id}/`);
+      extension?.exports.openSwing(uri);
     } else if (isTourGist(gist) && (await isCodeTourInstalled())) {
       const canEdit = isOwnedGist(gist.id);
       const tourFile = gist.files[TOUR_FILE];
@@ -176,8 +171,7 @@ export async function openGistFiles(id: string) {
 }
 
 export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
-  const commandName = getViewerCommand(uri) || "vscode.open";
-  commands.executeCommand(commandName, uri, {
+  commands.executeCommand("vscode.open", uri, {
     preview: true,
     viewColumn: ViewColumn.Active
   });
@@ -251,22 +245,22 @@ const TAG_PATTERN = /\s+#[\w\d-]+\b(?!\s+[^#])/gi;
 export function updateGistTags(gist: Gist | Gist[]) {
   const gists = Array.isArray(gist) ? gist : [gist];
   return gists.map((gist) => {
-    if (isPlaygroundTemplateGist(gist)) {
-      gist.type = "playground-template";
+    if (isSwingTemplateGist(gist)) {
+      gist.type = "code-swing-template";
     } else if (isTutorialGist(gist)) {
-      gist.type = "tutorial";
-    } else if (isPlaygroundGist(gist)) {
-      gist.type = "playground";
+      gist.type = "code-swing-tutorial";
+    } else if (isSwingGist(gist)) {
+      gist.type = "code-swing";
     } else if (isNotebookGist(gist)) {
       gist.type = "notebook";
-    } else if (isDocumentGist(gist)) {
-      gist.type = "doc";
+    } else if (isNoteGist(gist)) {
+      gist.type = "note";
     } else if (isTourGist(gist)) {
-      gist.type = "tour";
+      gist.type = "code-tour";
     } else if (isDiagramGist(gist)) {
       gist.type = "diagram";
     } else if (isFlashCodeGist(gist)) {
-      gist.type = "flash-card";
+      gist.type = "flash-code";
     } else {
       gist.type = "code-snippet";
     }
@@ -295,7 +289,7 @@ const ALL_DOCUMENT_EXTENSIONS = [
   ...DOCUMENT_EXTENSIONS
 ];
 
-export function isDocumentGist(gist: Gist) {
+export function isNoteGist(gist: Gist) {
   const gistFiles = Object.keys(gist.files);
 
   const includesDocument = gistFiles.some((file) =>
@@ -328,33 +322,29 @@ export function isFlashCodeGist(gist: Gist) {
   return Object.keys(gist.files).some((file) => file.includes(".deck"));
 }
 
-export function isPlaygroundGist(gist: Gist) {
+export function isSwingGist(gist: Gist) {
   const gistFiles = Object.keys(gist.files);
 
-  // 1) GistPad-native playgrounds
-  // 2) CodePen/Bl.ocks.org/etc. playgrounds, which could have just an HTML file or just a script file.
-  //    In the case where they only have a script file, it's very likely they'd also have a "scripts"
-  //    file, which is hold they'd inject 3rd-party libraries. To make this more reliable, I also
-  //    always check for a markdown file, which would alwats exist
+  // TODO: Replace this with a CodeSwing API
 
   return (
-    gistFiles.includes(PLAYGROUND_FILE) ||
-    gistFiles.some((file) => getCandidateMarkupFilenames().includes(file)) ||
+    gistFiles.includes(SWING_FILE) ||
+    gistFiles.some((file) => ["index.html", "index.pug"].includes(file)) ||
     gistFiles.includes("scripts") ||
     (gistFiles.includes("script.js") &&
       gistFiles.some((file) => path.extname(file) === ".markdown"))
   );
 }
 
-export function isPlaygroundTemplateGist(gist: Gist) {
-  const playgroundJson = gist.files[PLAYGROUND_FILE];
+export function isSwingTemplateGist(gist: Gist) {
+  const swingManifest = gist.files[SWING_FILE];
 
-  if (!playgroundJson) {
+  if (!swingManifest) {
     return false;
   }
 
   try {
-    const content = JSON.parse(playgroundJson.content || "{}");
+    const content = JSON.parse(swingManifest.content || "{}");
     if (content.template) {
       return true;
     }
@@ -364,14 +354,14 @@ export function isPlaygroundTemplateGist(gist: Gist) {
 }
 
 export function isTutorialGist(gist: Gist) {
-  const playgroundJson = gist.files[PLAYGROUND_FILE];
+  const swingManifest = gist.files[SWING_FILE];
 
-  if (!playgroundJson) {
+  if (!swingManifest) {
     return false;
   }
 
   try {
-    const content = JSON.parse(playgroundJson.content || "{}");
+    const content = JSON.parse(swingManifest.content || "{}");
     return content.tutorial;
   } catch {
     return false;

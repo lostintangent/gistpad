@@ -1,28 +1,17 @@
-import axios from "axios";
 import { observable, runInAction, set } from "mobx";
 import { window, workspace } from "vscode";
-import {
-  FollowedUser,
-  Gist,
-  GistComment,
-  GistFile,
-  GistShowcaseCategory,
-  store
-} from ".";
+import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
 import * as config from "../config";
 import {
   DIRECTORY_SEPARATOR,
   SCRATCH_GIST_NAME,
   ZERO_WIDTH_SPACE
 } from "../constants";
-import { newTempGist } from "../fileSystem/temp";
-import { log } from "../logger";
 import {
   byteArrayToString,
   closeGistFiles,
   encodeDirectoryName,
   fileNameToUri,
-  isTempGistId,
   openGistFiles,
   sortGists,
   stringToByteArray,
@@ -37,12 +26,10 @@ const Gists = require("gists");
 
 export async function getApi(constructor = Gists) {
   const token = await getToken();
-
   const apiurl = config.get("apiUrl");
 
   if (!apiurl) {
     const message = "No API URL is set.";
-    log.error(message);
     throw new Error(message);
   }
 
@@ -67,13 +54,7 @@ export async function duplicateGist(
     });
   }
 
-  return newGist(
-    files,
-    isPublic,
-    description || gist.description,
-    true,
-    saveGist
-  );
+  return newGist(files, isPublic, description || gist.description, true);
 }
 
 export async function getUser(username: string) {
@@ -203,10 +184,6 @@ export async function getGists(ids: string[]): Promise<Gist[]> {
 }
 
 export async function getGistComments(id: string): Promise<GistComment[]> {
-  if (isTempGistId(id)) {
-    return [];
-  }
-
   const api = await getApi();
   const response = await api.listComments(id);
   return response.body;
@@ -236,33 +213,25 @@ export async function newGist(
   gistFiles: GistFile[],
   isPublic: boolean,
   description?: string,
-  openAfterCreation: boolean = true,
-  saveGist: boolean = true
+  openAfterCreation: boolean = true
 ): Promise<Gist> {
-  const { isSignedIn } = store;
-  let gist;
+  const api = await getApi();
 
-  if (!isSignedIn || !saveGist) {
-    gist = await newTempGist(gistFiles, isPublic, description);
-  } else {
-    const api = await getApi();
+  const files = gistFiles.reduce((accumulator, gistFile) => {
+    return {
+      ...accumulator,
+      [gistFile.filename!.trim()]: {
+        content: gistFile.content || ZERO_WIDTH_SPACE
+      }
+    };
+  }, {});
 
-    const files = gistFiles.reduce((accumulator, gistFile) => {
-      return {
-        ...accumulator,
-        [gistFile.filename!.trim()]: {
-          content: gistFile.content || ZERO_WIDTH_SPACE
-        }
-      };
-    }, {});
-
-    const rawGist = await api.create({
-      description,
-      public: isPublic,
-      files
-    });
-    gist = rawGist.body;
-  }
+  const rawGist = await api.create({
+    description,
+    public: isPublic,
+    files
+  });
+  const gist = rawGist.body;
 
   updateGistTags(gist);
 
@@ -354,30 +323,6 @@ export async function refreshGists() {
       followedUser.isLoading = false;
     }
   }
-}
-
-export async function refreshShowcase() {
-  store.showcase.isLoading = true;
-
-  await runInAction(async () => {
-    const showcaseUrl = await config.get("showcaseUrl");
-    const showcase = await axios.get(showcaseUrl);
-    store.showcase.categories = showcase.data.categories.map(
-      (category: GistShowcaseCategory) => ({
-        title: category.title,
-        gists: [],
-        _gists: category.gists,
-        isLoading: true
-      })
-    );
-
-    store.showcase.isLoading = false;
-    for (const category of store.showcase.categories) {
-      // @ts-ignore
-      category.gists = updateGistTags(await getGists(category._gists));
-      category.isLoading = false;
-    }
-  });
 }
 
 export async function starredGists(): Promise<Gist[]> {

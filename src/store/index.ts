@@ -22,17 +22,6 @@ export interface GistRevisionStatus {
   deletions: number;
 }
 
-export interface GistShowcaseCategory {
-  title: string;
-  gists: Gist[];
-  isLoading: boolean;
-}
-
-export interface GistShowcase {
-  categories: GistShowcaseCategory[];
-  isLoading: boolean;
-}
-
 export interface GistRevision {
   user: User;
   version: string;
@@ -42,26 +31,26 @@ export interface GistRevision {
 
 export const GistTypes: GistType[] = [
   "code-snippet",
-  "doc",
-  "playground",
-  "playground-template",
+  "note",
+  "code-swing",
+  "code-swing-template",
   "notebook",
-  "tutorial",
-  "tour",
+  "code-swing-tutorial",
+  "code-tour",
   "diagram",
-  "flash-card"
+  "flash-code"
 ];
 
 export type GistType =
   | "code-snippet"
-  | "doc"
-  | "playground"
-  | "playground-template"
+  | "note"
+  | "code-swing"
+  | "code-swing-template"
   | "notebook"
-  | "tutorial"
-  | "tour"
+  | "code-swing-tutorial"
+  | "code-tour"
   | "diagram"
-  | "flash-card";
+  | "flash-code";
 
 export type GistGroupType = GistType | "tag";
 
@@ -116,7 +105,6 @@ export interface ScratchNotes {
 
 export interface Store {
   scratchNotes: ScratchNotes;
-  activeGist: Gist | null;
   followedUsers: FollowedUser[];
   gists: Gist[];
   isLoading: boolean;
@@ -126,7 +114,6 @@ export interface Store {
   sortOrder: SortOrder;
   groupType: GroupType;
   starredGists: Gist[];
-  showcase: GistShowcase;
   canCreateRepos: boolean;
   canDeleteRepos: boolean;
 }
@@ -136,7 +123,6 @@ export const store: Store = observable({
     gist: null,
     show: false
   },
-  activeGist: null,
   followedUsers: [],
   gists: [],
   isLoading: false,
@@ -145,10 +131,6 @@ export const store: Store = observable({
   sortOrder: SortOrder.updatedTime,
   groupType: GroupType.none,
   starredGists: [],
-  showcase: {
-    categories: [],
-    isLoading: false
-  },
   canCreateRepos: false,
   canDeleteRepos: false
 });

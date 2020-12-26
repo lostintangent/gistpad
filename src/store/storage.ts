@@ -4,7 +4,6 @@ import { GroupType, SortOrder, store } from ".";
 import * as config from "../config";
 import { EXTENSION_NAME } from "../constants";
 
-const TUTORIAL_KEY = "gistpad.tutorials";
 const FOLLOW_KEY = "gistpad.followedUsers";
 
 // TODO: Replace these with user settings
@@ -15,8 +14,6 @@ const SHOW_SCRATCH_NOTES_KEY = "scratchNotes.show";
 
 export interface IStorage {
   followedUsers: string[];
-  currentTutorialStep(gistId: string): number;
-  setCurrentTutorialStep(gistId: string, tutorialStep: number): void;
 }
 
 function updateSortOrder(context: ExtensionContext, sortOrder: SortOrder) {
@@ -29,8 +26,6 @@ function updateGroupType(context: ExtensionContext, groupType: GroupType) {
   commands.executeCommand("setContext", GROUP_TYPE_KEY, groupType);
 }
 
-type TutorialStatus = [string, number];
-
 export let storage: IStorage;
 export async function initializeStorage(context: ExtensionContext) {
   storage = {
@@ -39,31 +34,6 @@ export async function initializeStorage(context: ExtensionContext) {
     },
     set followedUsers(followedUsers: string[]) {
       context.globalState.update(FOLLOW_KEY, followedUsers);
-    },
-    currentTutorialStep(gistId: string): number {
-      const tutorials = context.globalState.get<TutorialStatus[]>(
-        TUTORIAL_KEY,
-        []
-      );
-
-      const tutorial = tutorials.find(([id, _]) => id === gistId);
-      return tutorial ? tutorial[1] : 1;
-    },
-    setCurrentTutorialStep(gistId: string, tutorialStep: number) {
-      const tutorials = context.globalState.get<TutorialStatus[]>(
-        TUTORIAL_KEY,
-        []
-      );
-
-      const tutorial = tutorials.find(([id, _]) => id === gistId);
-
-      if (tutorial) {
-        tutorial[1] = tutorialStep;
-      } else {
-        tutorials.push([gistId, tutorialStep]);
-      }
-
-      context.globalState.update(TUTORIAL_KEY, tutorials);
     }
   };
 

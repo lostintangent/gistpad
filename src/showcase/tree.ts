@@ -7,21 +7,27 @@ import {
   ProviderResult,
   TreeDataProvider,
   TreeItem,
+  TreeItemCollapsibleState,
   window
 } from "vscode";
-import { getGistFiles } from ".";
 import { EXTENSION_NAME } from "../constants";
-import { Store, store } from "../store";
-import { isOwnedGist } from "../utils";
+import { getGistFiles } from "../tree";
 import {
   FollowedUserGistNode,
   GistDirectoryNode,
   GistNode,
-  GistShowcaseCategoryNode,
   LoadingNode,
-  LoadingShowcaseNode,
   TreeNode
-} from "./nodes";
+} from "../tree/nodes";
+import { isOwnedGist } from "../utils";
+import { GistShowcaseCategory, store } from "./store";
+
+export class GistShowcaseCategoryNode extends TreeNode {
+  constructor(public category: GistShowcaseCategory) {
+    super(category.title, TreeItemCollapsibleState.Expanded);
+    this.contextValue = "showcase.category";
+  }
+}
 
 class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
@@ -49,7 +55,7 @@ class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   getChildren(element?: TreeNode): ProviderResult<TreeNode[]> {
     if (!element) {
       if (store.showcase.isLoading) {
-        return [new LoadingShowcaseNode()];
+        return [new TreeNode("Loading showcase...")];
       }
 
       return store.showcase?.categories.map(
@@ -79,10 +85,7 @@ class ShowcaseTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   }
 }
 
-export function registerTreeProvider(
-  store: Store,
-  extensionContext: ExtensionContext
-) {
+export function registerTreeProvider(extensionContext: ExtensionContext) {
   window.createTreeView(`${EXTENSION_NAME}.showcase`, {
     showCollapseAll: true,
     treeDataProvider: new ShowcaseTreeProvider(extensionContext),

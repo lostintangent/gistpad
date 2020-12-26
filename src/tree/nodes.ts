@@ -7,17 +7,12 @@ import {
   Uri
 } from "vscode";
 import * as config from "../config";
-import {
-  ENCODED_DIRECTORY_SEPARATOR,
-  EXTENSION_NAME,
-  TEMP_GIST_ID
-} from "../constants";
+import { ENCODED_DIRECTORY_SEPARATOR, EXTENSION_NAME } from "../constants";
 import {
   FollowedUser,
   Gist,
   GistFile,
   GistGroupType,
-  GistShowcaseCategory,
   GistType,
   GistTypes
 } from "../store";
@@ -29,11 +24,11 @@ import {
   getIconPath,
   isNotebookGist,
   isOwnedGist,
-  isPlaygroundGist,
+  isSwingGist,
   joinPath
 } from "../utils";
 
-export abstract class TreeNode extends TreeItem {
+export class TreeNode extends TreeItem {
   constructor(
     label: string,
     collapsibleState: TreeItemCollapsibleState = TreeItemCollapsibleState.None
@@ -122,8 +117,7 @@ export class GistNode extends TreeNode {
       `Type: ${gist.public ? "Public" : "Secret"}`
     );
 
-    const context = gist.id === TEMP_GIST_ID ? "tempGist" : "gists.gist";
-    this.contextValue = this.getContextValue(context);
+    this.contextValue = this.getContextValue("gists.gist");
   }
 
   getContextValue(baseContext: string) {
@@ -131,8 +125,8 @@ export class GistNode extends TreeNode {
 
     if (isNotebookGist(this.gist)) {
       contextValue += ".notebook";
-    } else if (isPlaygroundGist(this.gist)) {
-      contextValue += ".playground";
+    } else if (isSwingGist(this.gist)) {
+      contextValue += ".swing";
 
       if (Object.keys(this.gist.files).includes(".block")) {
         contextValue += ".block";
@@ -183,8 +177,7 @@ export class GistFileNode extends TreeNode {
       arguments: [this.resourceUri]
     };
 
-    let contextValue = gistId === TEMP_GIST_ID ? "tempGistFile" : "gistFile";
-
+    let contextValue = "gistFile";
     if (isOwnedGist(gistId)) {
       contextValue += ".editable";
     }
@@ -200,9 +193,7 @@ export class GistDirectoryNode extends TreeNode {
     this.iconPath = ThemeIcon.Folder;
     this.resourceUri = fileNameToUri(gist.id, directory);
 
-    let contextValue =
-      gist.id === TEMP_GIST_ID ? "tempGistDirectory" : "gistDirectory";
-
+    let contextValue = "gistDirectory";
     if (isOwnedGist(gist.id)) {
       contextValue += ".editable";
     }
@@ -265,6 +256,7 @@ export class NoUserGistsNode extends TreeNode {
     super("This user doesn't have any gists");
   }
 }
+
 export class FollowedUserGistNode extends GistNode {
   constructor(
     public gist: Gist,
@@ -276,12 +268,6 @@ export class FollowedUserGistNode extends GistNode {
 
     this.tooltip = this.getTooltip();
     this.contextValue = this.getContextValue("followedUser.gist");
-  }
-}
-
-export class LoadingShowcaseNode extends TreeNode {
-  constructor() {
-    super("Loading showcase...");
   }
 }
 
@@ -307,13 +293,6 @@ export class GistGroupNode extends TreeNode {
       : "tag";
 
     this.iconPath = this.getGistTypeIcon(iconType, true, extensionContext);
-  }
-}
-
-export class GistShowcaseCategoryNode extends TreeNode {
-  constructor(public category: GistShowcaseCategory) {
-    super(category.title, TreeItemCollapsibleState.Expanded);
-    this.contextValue = "showcase.category";
   }
 }
 

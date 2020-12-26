@@ -12,7 +12,6 @@ import {
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { duplicateGist, exportToRepo } from "../fileSystem/git";
-import { log } from "../logger";
 import { openRepo } from "../repos/store/actions";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
@@ -23,17 +22,11 @@ import {
   newGist,
   refreshGist,
   refreshGists,
-  refreshShowcase,
   starGist,
   starredGists,
   unstarGist
 } from "../store/actions";
-import {
-  ensureAuthenticated,
-  getApi,
-
-  signIn
-} from "../store/auth";
+import { ensureAuthenticated, getApi, signIn } from "../store/auth";
 import {
   FollowedUserGistNode,
   GistNode,
@@ -145,11 +138,6 @@ const getGistIdFromUrl = (gistUrl: string) => {
 
   const pathnameComponents = pathname.split("/");
   const id = pathnameComponents[pathnameComponents.length - 1];
-
-  if (!id) {
-    log.error(`No gist id found in "${gistUrl}".`);
-  }
-
   return id;
 };
 
@@ -300,7 +288,7 @@ export async function registerGistCommands(context: ExtensionContext) {
         // in it, and the API doesn't support that URL format
         const url = `https://gist.github.com/${node.gist.owner!.login}/${
           node.gist.id
-          }`;
+        }`;
         env.clipboard.writeText(url);
       }
     )
@@ -470,8 +458,8 @@ export async function registerGistCommands(context: ExtensionContext) {
         // don't pass on the tree node object to the open gist method.
         const gistNode =
           node instanceof GistNode ||
-            node instanceof StarredGistNode ||
-            node instanceof FollowedUserGistNode
+          node instanceof StarredGistNode ||
+          node instanceof FollowedUserGistNode
             ? node
             : undefined;
         openGistInternal({ node: gistNode });
@@ -509,19 +497,6 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_NAME}.refreshGists`, refreshGists)
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(
-      `${EXTENSION_NAME}.refreshShowcase`,
-      refreshShowcase
-    )
-  );
-
-  context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.submitShowcaseEntry`, () => {
-      env.openExternal(Uri.parse("https://aka.ms/gistpad-showcase-submission"));
-    })
   );
 
   context.subscriptions.push(

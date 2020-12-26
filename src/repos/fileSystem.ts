@@ -13,9 +13,11 @@ export const REPO_SCHEME = "repo";
 const REPO_QUERY = `${REPO_SCHEME}=`;
 
 export class RepoFileSystemProvider implements vscode.FileSystemProvider {
-  private _emitter = new vscode.EventEmitter<vscode.FileChangeEvent[]>();
+  private _onDidChangeFile = new vscode.EventEmitter<
+    vscode.FileChangeEvent[]
+  >();
   readonly onDidChangeFile: vscode.Event<vscode.FileChangeEvent[]> = this
-    ._emitter.event;
+    ._onDidChangeFile.event;
 
   static getFileInfo(uri: vscode.Uri): [string, string] | undefined {
     if (!uri.query.startsWith(REPO_QUERY)) {
@@ -57,6 +59,15 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
   }
 
   stat(uri: vscode.Uri): vscode.FileStat {
+    if (uri.path === "/") {
+      return {
+        type: vscode.FileType.Directory,
+        ctime: Date.now(),
+        mtime: Date.now(),
+        size: 100
+      };
+    }
+
     const fileInfo = RepoFileSystemProvider.getRepoInfo(uri);
 
     if (fileInfo && fileInfo[1]) {
@@ -100,6 +111,10 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
         // @ts-ignore
         content.toString("base64")
       );
+
+      this._onDidChangeFile.fire([
+        { type: vscode.FileChangeType.Created, uri }
+      ]);
     } else {
       await updateRepoFile(
         repository.name,
@@ -108,13 +123,19 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
         content,
         file!.sha
       );
+
+      this._onDidChangeFile.fire([
+        { type: vscode.FileChangeType.Changed, uri }
+      ]);
     }
   }
 
   async delete(uri: vscode.Uri): Promise<void> {
     const [repository, file] = RepoFileSystemProvider.getRepoInfo(uri)!;
 
-    return deleteRepoFile(repository, file!);
+    await deleteRepoFile(repository, file!);
+
+    this._onDidChangeFile.fire([{ type: vscode.FileChangeType.Deleted, uri }]);
   }
 
   async rename(
@@ -125,10 +146,23 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
     const [repository, file] = RepoFileSystemProvider.getRepoInfo(oldUri)!;
     const [, newPath] = RepoFileSystemProvider.getFileInfo(newUri)!;
 
-    return renameFile(repository, file!, newPath);
+    renameFile(repository, file!, newPath);
+
+    this._onDidChangeFile.fire([
+      { type: vscode.FileChangeType.Deleted, uri: oldUri },
+      { type: vscode.FileChangeType.Created, uri: newUri }
+    ]);
   }
 
   readDirectory(uri: vscode.Uri): [string, vscode.FileType][] {
+    if (uri.path === "/") {
+      const [repository] = RepoFileSystemProvider.getRepoInfo(uri)!;
+      return repository.files!.map((file) => [
+        file.name,
+        file.isDirectory ? vscode.FileType.Directory : vscode.FileType.File
+      ]);
+    }
+
     return [];
   }
 

@@ -1,9 +1,9 @@
 {
   "name": "gistfs",
   "displayName": "GistPad",
-  "description": "Manage your code snippets, notes, wikis and interactive samples using GitHub Gists and repositories.",
+  "description": "Manage your code snippets, developer notes and interactive samples using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.1.13",
+  "version": "0.2.0",
   "extensionKind": [
     "ui",
     "workspace"
@@ -22,9 +22,7 @@
     "vscode": "^1.48.0"
   },
   "categories": [
-    "Other",
-    "Snippets",
-    "Visualization"
+    "Other"
   ],
   "keywords": [
     "github",
@@ -85,117 +83,6 @@
           ],
           "description": "Specifies the upload method to use when pasting an image into a gist file."
         },
-        "gistpad.playgrounds.autoRun": {
-          "default": "onEdit",
-          "enum": [
-            "onEdit",
-            "onSave",
-            "never"
-          ],
-          "description": "Specifies when to automatically run the code for a playground."
-        },
-        "gistpad.playgrounds.autoSave": {
-          "default": false,
-          "type": "boolean",
-          "description": "Specifies whether to automatically save your playground files (every 30s)."
-        },
-        "gistpad.playgrounds.includeMarkup": {
-          "default": true,
-          "type": "boolean",
-          "description": "Specifies whether to include a markup file (index.html) when creating new web playgrounds."
-        },
-        "gistpad.playgrounds.includeScript": {
-          "default": true,
-          "type": "boolean",
-          "description": "Specifies whether to include a script file (script.css) when creating new web playgrounds."
-        },
-        "gistpad.playgrounds.includeStylesheet": {
-          "default": true,
-          "type": "boolean",
-          "description": "Specifies whether to include a stylesheet file (style.css) when creating new web playgrounds."
-        },
-        "gistpad.playgrounds.layout": {
-          "default": "splitLeft",
-          "enum": [
-            "grid",
-            "preview",
-            "splitBottom",
-            "splitLeft",
-            "splitLeftTabbed",
-            "splitRight",
-            "splitRightTabbed",
-            "splitTop"
-          ],
-          "description": "Specifies how to layout the editor windows when opening a playground."
-        },
-        "gistpad.playgrounds.readmeBehavior": {
-          "default": "previewHeader",
-          "enum": [
-            "none",
-            "previewFooter",
-            "previewHeader"
-          ],
-          "description": "Specifies how the playground's readme content should be displayed."
-        },
-        "gistpad.playgrounds.markupLanguage": {
-          "default": "html",
-          "enum": [
-            "html",
-            "markdown",
-            "pug"
-          ],
-          "description": "Specifies the default markup language to use when creating new web playgrounds."
-        },
-        "gistpad.playgrounds.scriptLanguage": {
-          "default": "javascript",
-          "enum": [
-            "javascript",
-            "javascriptreact",
-            "typescript",
-            "typescriptreact"
-          ],
-          "description": "Specifies the default scripting language to use when creating new web playgrounds."
-        },
-        "gistpad.playgrounds.stylesheetLanguage": {
-          "default": "css",
-          "enum": [
-            "css",
-            "less",
-            "sass",
-            "scss"
-          ],
-          "description": "Specifies the default stylesheet language to use when creating new web playgrounds."
-        },
-        "gistpad.playgrounds.showConsole": {
-          "default": false,
-          "type": "boolean",
-          "description": "Specifies whether to automatically show the console when opening a playground."
-        },
-        "gistpad.playgrounds.templateGalleries": {
-          "default": [
-            "web:basic",
-            "web:languages",
-            "web:libraries"
-          ],
-          "type": "array",
-          "items": {
-            "anyOf": [
-              {
-                "type": "string",
-                "enum": [
-                  "web:basic",
-                  "web:languages",
-                  "web:libraries"
-                ]
-              },
-              {
-                "type": "string",
-                "format": "uri"
-              }
-            ]
-          },
-          "description": "Specifies one or more URLs that point of template galleries for creating playgrounds."
-        },
         "gistpad.scratchNotes.directoryFormat": {
           "default": "",
           "type": "string",
@@ -236,32 +123,20 @@
     "commands": [
       {
         "command": "gistpad.addDirectoryFile",
-        "title": "Add New File(s)",
-        "category": "GistPad"
+        "title": "Add New File(s)"
       },
       {
         "command": "gistpad.addFile",
-        "title": "Add New File(s)",
-        "category": "GistPad"
+        "title": "Add New File(s)"
       },
       {
         "command": "gistpad.addFileToGist",
-        "title": "Copy File to Gist",
-        "category": "GistPad"
+        "title": "Copy File to Gist"
       },
       {
         "command": "gistpad.addGistComment",
         "title": "Add Comment",
         "enablement": "!commentIsEmpty"
-      },
-      {
-        "command": "gistpad.addPlaygroundLibrary",
-        "title": "Add Playground Library",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/add-library.svg",
-          "light": "images/light/add-library.svg"
-        }
       },
       {
         "command": "gistpad.addRepositoryComment",
@@ -271,7 +146,6 @@
       {
         "command": "gistpad.addRepositoryFile",
         "title": "Add New File",
-        "category": "GistPad",
         "icon": {
           "dark": "images/dark/add.svg",
           "light": "images/light/add.svg"
@@ -280,7 +154,6 @@
       {
         "command": "gistpad.addSelectionToGist",
         "title": "Add Selection to Gist",
-        "category": "GistPad",
         "enablement": "editorHasSelection"
       },
       {
@@ -294,42 +167,27 @@
       },
       {
         "command": "gistpad.changeGistDescription",
-        "title": "Change Description",
-        "category": "GistPad"
-      },
-      {
-        "command": "gistpad.changePlaygroundLayout",
-        "title": "Change Playground Layout",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/layout.svg",
-          "light": "images/light/layout.svg"
-        }
+        "title": "Change Description"
       },
       {
         "command": "gistpad.clearScratchNotes",
-        "title": "Clear Scratch Notes",
-        "category": "GistPad"
+        "title": "Clear Scratch Notes"
       },
       {
         "command": "gistpad.cloneManagedRepository",
-        "title": "Clone Repository",
-        "category": "GistPad"
+        "title": "Clone Repository"
       },
       {
         "command": "gistpad.cloneRepository",
-        "title": "Clone Repository",
-        "category": "GistPad"
+        "title": "Clone Repository"
       },
       {
         "command": "gistpad.copyFileContents",
-        "title": "Copy File Contents",
-        "category": "GistPad"
+        "title": "Copy File Contents"
       },
       {
         "command": "gistpad.copyFileUrl",
-        "title": "Copy GitHub URL",
-        "category": "GistPad"
+        "title": "Copy GitHub URL"
       },
       {
         "command": "gistpad.copyGistPadUrl",
@@ -354,8 +212,7 @@
       },
       {
         "command": "gistpad.deleteFile",
-        "title": "Delete File",
-        "category": "GistPad"
+        "title": "Delete File"
       },
       {
         "command": "gistpad.deleteGist",
@@ -364,8 +221,7 @@
       },
       {
         "command": "gistpad.deleteGistComment",
-        "title": "Delete Comment",
-        "category": "GistPad"
+        "title": "Delete Comment"
       },
       {
         "command": "gistpad.deleteRepositoryBranch",
@@ -377,8 +233,7 @@
       },
       {
         "command": "gistpad.deleteRepositoryFile",
-        "title": "Delete File",
-        "category": "GistPad"
+        "title": "Delete File"
       },
       {
         "command": "gistpad.deleteRepository",
@@ -386,28 +241,23 @@
       },
       {
         "command": "gistpad.duplicateRepositoryFile",
-        "title": "Duplicate File",
-        "category": "GistPad"
+        "title": "Duplicate File"
       },
       {
         "command": "gistpad.duplicateDirectory",
-        "title": "Duplicate Directory",
-        "category": "GistPad"
+        "title": "Duplicate Directory"
       },
       {
         "command": "gistpad.duplicateFile",
-        "title": "Duplicate File",
-        "category": "GistPad"
+        "title": "Duplicate File"
       },
       {
         "command": "gistpad.duplicateGist",
-        "title": "Duplicate Gist",
-        "category": "GistPad"
+        "title": "Duplicate Gist"
       },
       {
         "command": "gistpad.editGistComment",
-        "title": "Edit Comment",
-        "category": "GistPad"
+        "title": "Edit Comment"
       },
       {
         "command": "gistpad.editRepositoryComment",
@@ -424,13 +274,11 @@
       },
       {
         "command": "gistpad.exportGistToCodePen",
-        "title": "Export to CodePen",
-        "category": "GistPad"
+        "title": "Export to CodePen"
       },
       {
         "command": "gistpad.exportToRepo",
-        "title": "Export to Repository",
-        "category": "GistPad"
+        "title": "Export to Repository"
       },
       {
         "command": "gistpad.exportTour",
@@ -439,11 +287,7 @@
       {
         "command": "gistpad.followUser",
         "title": "Follow User",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/follow.svg",
-          "light": "images/light/follow.svg"
-        }
+        "category": "GistPad"
       },
       {
         "command": "gistpad.forkGist",
@@ -465,8 +309,8 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.newPlayground",
-        "title": "New Playground",
+        "command": "gistpad.newSwing",
+        "title": "New CodeSwing",
         "category": "GistPad"
       },
       {
@@ -479,8 +323,8 @@
         }
       },
       {
-        "command": "gistpad.newSecretPlayground",
-        "title": "New Secret Playground",
+        "command": "gistpad.newSecretSwing",
+        "title": "New Secret CodeSwing",
         "category": "GistPad"
       },
       {
@@ -512,33 +356,27 @@
       },
       {
         "command": "gistpad.openGistFile",
-        "title": "Open Gist File",
-        "category": "GistPad"
+        "title": "Open Gist File"
       },
       {
         "command": "gistpad.openGistLogFeed",
-        "title": "View Feed in GistLog",
-        "category": "GistPad"
+        "title": "View Feed in GistLog"
       },
       {
         "command": "gistpad.openGistInBrowser",
-        "title": "View Gist in GitHub",
-        "category": "GistPad"
+        "title": "View Gist in GitHub"
       },
       {
         "command": "gistpad.openGistInBlocks",
-        "title": "View Gist in Bl.ocks",
-        "category": "GistPad"
+        "title": "View Gist in Bl.ocks"
       },
       {
         "command": "gistpad.openGistInGistLog",
-        "title": "View Gist in GistLog",
-        "category": "GistPad"
+        "title": "View Gist in GistLog"
       },
       {
         "command": "gistpad.openGistInNbViewer",
-        "title": "View Gist in NbViewer",
-        "category": "GistPad"
+        "title": "View Gist in NbViewer"
       },
       {
         "command": "gistpad.openGistWorkspace",
@@ -546,37 +384,21 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.openPlaygroundConsole",
-        "title": "Open Playground Console",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/console.svg",
-          "light": "images/light/console.svg"
-        }
-      },
-      {
-        "command": "gistpad.openPlaygroundDeveloperTools",
-        "title": "Open Playground Dev Tools",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/dev-tools.svg",
-          "light": "images/light/dev-tools.svg"
-        }
-      },
-      {
         "command": "gistpad.openProfile",
-        "title": "View Profile in GitHub",
-        "category": "GistPad"
+        "title": "View Profile in GitHub"
+      },
+      {
+        "command": "gistpad.openRepositorySwing",
+        "title": "Open CodeSwing",
+        "icon": "$(folder-opened)"
       },
       {
         "command": "gistpad.openRepositoryFileInBrowser",
-        "title": "View File in GitHub",
-        "category": "GistPad"
+        "title": "View File in GitHub"
       },
       {
         "command": "gistpad.openRepositoryInBrowser",
-        "title": "View Repository in GitHub",
-        "category": "GistPad"
+        "title": "View Repository in GitHub"
       },
       {
         "command": "gistpad.openTodayPage",
@@ -591,12 +413,7 @@
       },
       {
         "command": "gistpad.pasteImage",
-        "title": "Paste Image",
-        "category": "GistPad"
-      },
-      {
-        "command": "gistpad.recordCodeTour",
-        "title": "Record CodeTour"
+        "title": "Paste Image"
       },
       {
         "command": "gistpad.recordRepoCodeTour",
@@ -623,7 +440,6 @@
       {
         "command": "gistpad.refreshShowcase",
         "title": "Refresh Showcase",
-        "category": "GistPad",
         "icon": {
           "dark": "images/dark/refresh.svg",
           "light": "images/light/refresh.svg"
@@ -631,13 +447,11 @@
       },
       {
         "command": "gistpad.renameDirectory",
-        "title": "Rename Directory",
-        "category": "GistPad"
+        "title": "Rename Directory"
       },
       {
         "command": "gistpad.renameFile",
-        "title": "Rename File",
-        "category": "GistPad"
+        "title": "Rename File"
       },
       {
         "command": "gistpad.renameRepositoryFile",
@@ -647,15 +461,6 @@
         "command": "gistpad.replyGistComment",
         "title": "Reply",
         "enablement": "!commentIsEmpty"
-      },
-      {
-        "command": "gistpad.runPlayground",
-        "title": "Run Playground",
-        "category": "GistPad",
-        "icon": {
-          "dark": "images/dark/run.svg",
-          "light": "images/light/run.svg"
-        }
       },
       {
         "command": "gistpad.saveGistComment",
@@ -774,8 +579,8 @@
           "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.newPlayground",
-          "when": "gistpad:state == SignedIn"
+          "command": "gistpad.newSwing",
+          "when": "gistpad:state == SignedIn && gistpad:codeSwingEnabled"
         },
         {
           "command": "gistpad.newPublicGist",
@@ -790,8 +595,8 @@
           "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.newSecretPlayground",
-          "when": "gistpad:state == SignedIn"
+          "command": "gistpad.newSecretSwing",
+          "when": "gistpad:state == SignedIn && gistpad:codeSwingEnabled"
         },
         {
           "command": "gistpad.refreshGists",
@@ -806,32 +611,12 @@
           "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.addPlaygroundLibrary",
-          "when": "gistpad:inPlayground"
-        },
-        {
-          "command": "gistpad.changePlaygroundLayout",
-          "when": "gistpad:inPlayground"
-        },
-        {
           "command": "gistpad.exportGistToCodePen",
-          "when": "gistpad:inPlayground"
-        },
-        {
-          "command": "gistpad.openPlaygroundConsole",
-          "when": "gistpad:inPlayground"
-        },
-        {
-          "command": "gistpad.openPlaygroundDeveloperTools",
-          "when": "gistpad:inPlayground"
+          "when": "gistpad:inSwing"
         },
         {
           "command": "gistpad.pasteGistFile",
           "when": "editorTextFocus"
-        },
-        {
-          "command": "gistpad.runPlayground",
-          "when": "gistpad:inPlayground"
         },
         {
           "command": "gistpad.addDirectoryFile",
@@ -978,11 +763,11 @@
           "when": "false"
         },
         {
-          "command": "gistpad.recordCodeTour",
+          "command": "gistpad.recordRepoCodeTour",
           "when": "false"
         },
         {
-          "command": "gistpad.recordRepoCodeTour",
+          "command": "gistpad.refreshShowcase",
           "when": "false"
         },
         {
@@ -1023,6 +808,10 @@
         },
         {
           "command": "gistpad.openRepositoryFileInBrowser",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.openRepositorySwing",
           "when": "false"
         },
         {
@@ -1175,13 +964,13 @@
           "group": "new@2"
         },
         {
-          "command": "gistpad.newPlayground",
-          "when": "viewItem == gists",
+          "command": "gistpad.newSwing",
+          "when": "viewItem == gists && gistpad:codeSwingEnabled",
           "group": "newAdvanced@1"
         },
         {
-          "command": "gistpad.newSecretPlayground",
-          "when": "viewItem == gists",
+          "command": "gistpad.newSecretSwing",
+          "when": "viewItem == gists && gistpad:codeSwingEnabled",
           "group": "newAdvanced@2"
         },
         {
@@ -1231,12 +1020,12 @@
         },
         {
           "command": "gistpad.exportGistToCodePen",
-          "when": "viewItem =~ /^gists.gist.playground$/",
+          "when": "viewItem =~ /^gists.gist.swing$/",
           "group": "browse@4"
         },
         {
           "command": "gistpad.openGistInBlocks",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.playground.block$/",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.swing.block$/",
           "group": "browse@4"
         },
         {
@@ -1271,12 +1060,12 @@
         },
         {
           "command": "gistpad.addFile",
-          "when": "viewItem =~ /^gists.gist/ || viewItem =~ /^tempGist\\./",
+          "when": "viewItem =~ /^gists.gist/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.uploadFileToGist",
-          "when": "viewItem =~ /^gists.gist/ || viewItem =~ /^tempGist\\./",
+          "when": "viewItem =~ /^gists.gist/",
           "group": "manage@2"
         },
         {
@@ -1326,42 +1115,42 @@
         },
         {
           "command": "gistpad.renameFile",
-          "when": "viewItem == gistFile.editable || viewItem =~ /^tempGistFile/",
+          "when": "viewItem == gistFile.editable",
           "group": "manage@1"
         },
         {
           "command": "gistpad.duplicateFile",
-          "when": "viewItem == gistFile.editable || viewItem =~ /^tempGistFile/",
+          "when": "viewItem == gistFile.editable",
           "group": "manage@2"
         },
         {
           "command": "gistpad.deleteFile",
-          "when": "viewItem == gistFile.editable || viewItem =~ /^tempGistFile/",
+          "when": "viewItem == gistFile.editable",
           "group": "manage@3"
         },
         {
           "command": "gistpad.addDirectoryFile",
-          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "when": "viewItem == gistDirectory.editable",
           "group": "manage@1"
         },
         {
           "command": "gistpad.uploadFileToDirectory",
-          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "when": "viewItem == gistDirectory.editable",
           "group": "manage@2"
         },
         {
           "command": "gistpad.renameDirectory",
-          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "when": "viewItem == gistDirectory.editable",
           "group": "mutate@1"
         },
         {
           "command": "gistpad.duplicateDirectory",
-          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "when": "viewItem == gistDirectory.editable",
           "group": "mutate@2"
         },
         {
           "command": "gistpad.deleteDirectory",
-          "when": "viewItem == gistDirectory.editable || viewItem =~ /^tempGistDirectory/",
+          "when": "viewItem == gistDirectory.editable",
           "group": "mutate@3"
         },
         {
@@ -1386,22 +1175,32 @@
         },
         {
           "command": "gistpad.copyRepositoryUrl",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)(.branch)?(.hasTours)?$/",
           "group": "browse@1"
         },
         {
           "command": "gistpad.openRepositoryInBrowser",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)(.branch)?(.hasTours)?$/",
           "group": "browse@2"
         },
         {
+          "command": "gistpad.openRepositorySwing",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.swing$/",
+          "group": "browse@3"
+        },
+        {
           "command": "gistpad.addRepositoryFile",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.repo(.branch|Directory)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|swing)(.branch|Directory)?(.hasTours)?$/",
           "group": "inline@1"
         },
         {
           "command": "gistpad.openTodayPage",
           "when": "view == gistpad.repos && viewItem =~ /^gistpad.wiki$/",
+          "group": "inline@1"
+        },
+        {
+          "command": "gistpad.openRepositorySwing",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.swing$/",
           "group": "inline@1"
         },
         {
@@ -1421,17 +1220,17 @@
         },
         {
           "command": "gistpad.addRepositoryFile",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch|Directory)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)(.branch|Directory)?(.hasTours)?$/",
           "group": "manage@1"
         },
         {
           "command": "gistpad.uploadRepositoryFile",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch|Directory)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)(.branch|Directory)?(.hasTours)?$/",
           "group": "manage@2"
         },
         {
           "command": "gistpad.cloneManagedRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)(.branch)?(.hasTours)?$/",
           "group": "manage@3"
         },
         {
@@ -1461,12 +1260,12 @@
         },
         {
           "command": "gistpad.closeRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)(.branch)?(.hasTours)?$/",
           "group": "unmanage@1"
         },
         {
           "command": "gistpad.deleteRepository",
-          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki)(.branch)?(.hasTours)?$/",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)(.branch)?(.hasTours)?$/",
           "group": "unmanage@2"
         },
         {
@@ -1532,42 +1331,12 @@
       ],
       "editor/title": [
         {
-          "command": "gistpad.runPlayground",
-          "when": "gistpad:inPlayground",
-          "group": "navigation@1"
-        },
-        {
-          "command": "gistpad.openPlaygroundConsole",
-          "when": "gistpad:inPlayground",
-          "group": "navigation@2"
-        },
-        {
-          "command": "gistpad.changePlaygroundLayout",
-          "when": "gistpad:inPlayground",
-          "group": "navigation@3"
-        },
-        {
-          "command": "gistpad.addPlaygroundLibrary",
-          "when": "gistpad:inPlayground",
-          "group": "navigation@4"
-        },
-        {
-          "command": "gistpad.openPlaygroundDeveloperTools",
-          "when": "gistpad:inPlayground",
-          "group": "navigation@5"
-        },
-        {
           "command": "gistpad.renameFile",
           "when": "resourceScheme == gist"
         },
         {
           "command": "gistpad.deleteFile",
           "when": "resourceScheme == gist"
-        },
-        {
-          "command": "gistpad.recordCodeTour",
-          "when": "gistpad:inPlayground && gistpad:allowCodeTourRecording",
-          "group": "codetour@1"
         },
         {
           "command": "gistpad.renameRepositoryFile",
@@ -1659,21 +1428,17 @@
           "name": "Repositories"
         },
         {
-          "id": "gistpad.activeGist",
-          "name": "Playground",
-          "when": "gistpad:inPlayground"
-        },
-        {
           "id": "gistpad.showcase",
           "name": "Showcase",
-          "visibility": "collapsed"
+          "visibility": "collapsed",
+          "when": "gistpad:state == SignedIn"
         }
       ]
     },
     "viewsWelcome": [
       {
         "view": "gistpad.gists",
-        "contents": "Open any GitHub Gist (by URL or ID), and/or create new [interactive playgrounds](https://github.com/vsls-contrib/gistpad#playgrounds).\n\n[$(folder-opened) Open Gist](command:gistpad.openGist)\n\n[$(new-file) New Playground](command:gistpad.newPlayground)\n\nManage your gists, by signing in with a GitHub account.\n\n[$(github-inverted) Sign In](command:gistpad.signIn)"
+        "contents": "Open any GitHub Gist, by either its URL or ID.\n\n[$(folder-opened) Open Gist](command:gistpad.openGist)\n\nManage your gists, by signing in with a GitHub account.\n\n[$(github-inverted) Sign In](command:gistpad.signIn)"
       },
       {
         "view": "gistpad.repos",
@@ -1688,52 +1453,17 @@
     ],
     "jsonValidation": [
       {
-        "fileMatch": "playground.json",
-        "url": "https://gist.githubusercontent.com/lostintangent/21727eab0d79c7b9fd0dde92df7b1f50/raw/schema.json"
-      },
-      {
-        "fileMatch": "gallery.json",
-        "url": "https://gist.githubusercontent.com/lostintangent/091c0eec1f6443b526566d1cd3a85294/raw/schema.json"
-      },
-      {
         "fileMatch": "showcase.json",
         "url": "https://gist.githubusercontent.com/lostintangent/5290f684afc38cfe713246226c1d0f72/raw/schema.json"
       }
     ],
-    "languages": [
-      {
-        "id": "typescriptreact",
-        "filenames": [
-          "script.babel"
-        ]
-      },
-      {
-        "id": "yaml",
-        "filenames": [
-          ".block"
-        ]
-      }
-    ],
-    "gistpad.playgrounds.templateGalleries": [
-      {
-        "id": "web:basic",
-        "url": "https://gist.githubusercontent.com/lostintangent/5b8d7f1319cdf0321a6c3aeffa909876/raw/gallery.json"
-      },
-      {
-        "id": "web:languages",
-        "url": "https://gist.githubusercontent.com/lostintangent/2c8209b16b9c3a6e20facb430d5424bc/raw/gallery.json"
-      },
-      {
-        "id": "web:libraries",
-        "url": "https://gist.githubusercontent.com/lostintangent/ece303a6b8c7cbf0293b850b600e3cb6/raw/gallery.json"
-      },
-      {
-        "id": "web:blocks",
-        "url": "https://gist.githubusercontent.com/lostintangent/0c40492c59d607862ec9acfd17a980a1/raw/gallery.json"
-      }
-    ],
     "markdown.markdownItPlugins": true
   },
+  "extensionPack": [
+    "codespaces-contrib.codeswing",
+    "bierner.emojisense",
+    "bierner.markdown-checkbox"
+  ],
   "scripts": {
     "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
     "build:node": "webpack --config ./webpack/webpack.node.config.js",
@@ -1742,36 +1472,22 @@
     "vscode:prepublish": "npm run build:node",
     "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
   },
-  "extensionPack": [
-    "bierner.emojisense",
-    "bierner.markdown-checkbox"
-  ],
   "dependencies": {
-    "@types/debounce": "^1.2.0",
-    "@types/less": "^3.0.1",
-    "@types/moment": "^2.13.0",
-    "@types/pug": "^2.0.4",
-    "@types/sass": "^1.16.0",
-    "axios": "^0.19.0",
-    "case": "^1.6.2",
-    "debounce": "^1.2.0",
+    "axios": "^0.19.2",
     "diff-match-patch": "^1.0.5",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "is-binary-path": "^2.1.0",
-    "less": "^3.10.3",
     "markdown-it": "^10.0.0",
     "markdown-it-regex": "^0.2.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
-    "pug": "^2.0.4",
     "rxjs": "^6.5.4",
-    "sass": "^1.24.0",
     "simple-git": "^1.126.0",
     "title-case": "^3.0.2"
   },
   "devDependencies": {
-    "@types/keytar": "^4.4.2",
+    "@types/moment": "^2.13.0",
     "@types/node": "^8.10.25",
     "@types/vscode": "^1.48.0",
     "copy-webpack-plugin": "^5.0.5",

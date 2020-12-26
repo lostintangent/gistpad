@@ -32,7 +32,7 @@ export async function getApi(newToken?: string) {
   return new GitHub({ apiurl, token });
 }
 
-const TOKEN_RESPONSE = "Enter token";
+const TOKEN_RESPONSE = "Sign in";
 export async function ensureAuthenticated() {
   if (store.isSignedIn) {
     return;
@@ -150,7 +150,7 @@ export async function initializeAuth() {
           return;
         }
 
-        // The end-user just signed in to Gist via the 
+        // The end-user just signed in to Gist via the
         // VS Code account UI, and therefore, we need
         // to grab the session token/etc.
         await attemptSilentSignin();

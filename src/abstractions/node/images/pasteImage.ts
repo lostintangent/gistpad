@@ -1,6 +1,5 @@
 import * as vscode from "vscode";
 import * as config from "../../../config";
-import { log } from "../../../logger";
 import { pasteImageAsBase64 } from "./pasteImageAsBase64";
 import { pasteImageAsFile } from "./pasteImageAsFile";
 import { createUploadMarkup } from "./utils/createUploadMarkup";
@@ -61,9 +60,7 @@ async function tryToRemoveUploadingMarkup(
 
       edit.replace(range, "");
     });
-  } catch (e) {
-    log.error(e);
-  }
+  } catch {}
 }
 
 export async function pasteImageCommand(editor: vscode.TextEditor) {

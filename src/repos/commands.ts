@@ -5,6 +5,7 @@ import {
   commands,
   env,
   ExtensionContext,
+  extensions,
   QuickInputButtons,
   Uri,
   window,
@@ -586,6 +587,24 @@ export async function registerRepoCommands(context: ExtensionContext) {
             }
           }
         }
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.openRepositorySwing`,
+      async (node: RepositoryNode) => {
+        const uri = RepoFileSystemProvider.getFileUri(node.repo.name);
+        const extension = extensions.getExtension(
+          "codespaces-contrib.codeswing"
+        );
+
+        if (extension!.isActive) {
+          await extension?.activate();
+        }
+
+        extension?.exports.openSwing(uri);
       }
     )
   );

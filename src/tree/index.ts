@@ -11,7 +11,7 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_NAME, TEMP_GIST_ID } from "../constants";
+import { EXTENSION_NAME } from "../constants";
 import { Gist, GroupType, Store } from "../store";
 import { encodeDirectoryName, fileNameToUri, sortGists } from "../utils";
 import {
@@ -114,9 +114,9 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
           )
       );
     } else {
-      return sortGists(gists)
-        .filter((gist) => gist.id !== TEMP_GIST_ID)
-        .map((gist) => new nodeConstructor(gist, this.extensionContext));
+      return sortGists(gists).map(
+        (gist) => new nodeConstructor(gist, this.extensionContext)
+      );
     }
   }
 

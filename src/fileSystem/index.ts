@@ -2,7 +2,6 @@ import * as path from "path";
 import { Subject } from "rxjs";
 import { buffer, debounceTime } from "rxjs/operators";
 import {
-  commands,
   Disposable,
   Event,
   EventEmitter,
@@ -20,7 +19,6 @@ import {
 import {
   DIRECTORY_SEPARATOR,
   ENCODED_DIRECTORY_SEPARATOR,
-  EXTENSION_NAME,
   FS_SCHEME,
   ZERO_WIDTH_SPACE
 } from "../constants";
@@ -32,15 +30,11 @@ import {
   encodeDirectoryUri,
   getGistDetailsFromUri,
   isOwnedGist,
-  isTempGistUri,
-  openGistAsWorkspace,
   stringToByteArray,
   uriToFileName
 } from "../utils";
 import { getFileContents, updateGistFiles } from "./api";
 import * as gitFS from "./git";
-import { registerInputFileSystemProvider } from "./input";
-import * as tempFS from "./temp";
 const isBinaryPath = require("is-binary-path");
 
 interface WriteOperation {
@@ -162,10 +156,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
   async delete(uri: Uri, options: { recursive: boolean }): Promise<void> {
     uri = encodeDirectoryUri(uri);
 
-    if (isTempGistUri(uri)) {
-      return tempFS.deleteFile(uri);
-    }
-
     await ensureAuthenticated();
 
     const { gistId, file } = getGistDetailsFromUri(uri);
@@ -183,10 +173,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
   async readFile(uri: Uri): Promise<Uint8Array> {
     uri = encodeDirectoryUri(uri);
 
-    if (isTempGistUri(uri)) {
-      return tempFS.readFile(uri);
-    }
-
     const file = await this.getFileFromUri(uri);
     let contents = await getFileContents(file);
 
@@ -203,18 +189,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
     if (uri.path === "/") {
       const { gistId } = getGistDetailsFromUri(uri);
-      if (gistId === "new") {
-        const gist = await commands.executeCommand<any>(
-          `${EXTENSION_NAME}.newSecretGist`
-        );
-        openGistAsWorkspace(gist.id);
-      } else if (gistId === "playground") {
-        await commands.executeCommand(
-          `${EXTENSION_NAME}.newPlayground`,
-          null,
-          /*openAsWorkspace*/ true
-        );
-      }
 
       let gist = this.store.gists
         .concat(this.store.starredGists)
@@ -293,10 +267,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
     oldUri = encodeDirectoryUri(oldUri);
     newUri = encodeDirectoryUri(newUri);
 
-    if (isTempGistUri(oldUri)) {
-      return tempFS.renameFile(oldUri, newUri);
-    }
-
     await ensureAuthenticated();
 
     const file = await this.getFileFromUri(oldUri);
@@ -372,10 +342,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
   ): Promise<void> {
     uri = encodeDirectoryUri(uri);
 
-    if (isTempGistUri(uri)) {
-      return tempFS.writeFile(uri, content);
-    }
-
     const { gistId } = getGistDetailsFromUri(uri);
     await ensureAuthenticated();
 
@@ -437,6 +403,4 @@ export function registerFileSystemProvider(store: Store) {
     FS_SCHEME,
     new GistFileSystemProvider(store)
   );
-
-  registerInputFileSystemProvider();
 }

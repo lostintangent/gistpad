@@ -1,3 +1,9 @@
+## v0.2.0 (12/26/2020)
+
+- Removed the playgrounds feature from GistPad, in favor of an integration with the new [CodeSwing](https://aka.ms/codeswin) extension. Note that all existing functionality should remain the same, but the playgrounds feature is now more broadly useful, than just with gists (e.g. you can create playgrounds in GitHub repos and local directories)
+- Renamed the following gist types: `doc` -> `note`, `playground` -> `code-swing`, `playground-template` -> `swing-template`, `tour` -> `code-tour`, `tutorial` -> `code-swing-tutorial`, `flash-card` -> `flash-code`.
+- The `Showcase` view now only appears after you've signed in, in order to prevent issues with API throttling for anoymous users
+
 ## v0.1.13 (12/02/2020)
 
 - Introduced support for embedding wiki pages, using the `![[link]]` syntax
@@ -6,6 +12,8 @@
 - Repo files can now be copied to gists, by right-clicking their editor tab and selecting `Copy File to Gist`
 
 ## v0.1.12 (11/26/2020)
+
+`
 
 - The `GistPad: Open Today Page` and `GistPad: Add Wiki Page` commands are now exposed in the command palette, as long as you have a wiki repo open.
 - Added status bar items for opening the "today page" and adding a new wiki page.

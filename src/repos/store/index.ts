@@ -1,6 +1,7 @@
 import { computed, observable } from "mobx";
 import * as path from "path";
 import { CommentThread, Location, Uri } from "vscode";
+import { SWING_FILE } from "../../constants";
 import { GistComment, store as mainStore } from "../../store";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { isWiki } from "../wiki/utils";
@@ -152,6 +153,11 @@ export class Repository {
   }
 
   @computed
+  get isSwing(): boolean {
+    return !!this.tree?.tree.find((item) => item.path === SWING_FILE);
+  }
+
+  @computed
   get tours(): string[] {
     return (
       this.tree?.tree
@@ -164,7 +170,9 @@ export class Repository {
 export const store = observable({
   repos: [] as Repository[],
   get wiki(): Repository | undefined {
-    return this.repos.find((repo: Repository) => repo.isWiki && repo.name.startsWith(mainStore.login));
+    return this.repos.find(
+      (repo: Repository) => repo.isWiki && repo.name.startsWith(mainStore.login)
+    );
   },
   isInCodeTour: false
 });

@@ -15,7 +15,8 @@ export class RepositoryNode extends TreeItem {
     const iconName = repo.isWiki ? "book" : "repo";
     this.iconPath = new ThemeIcon(iconName);
 
-    this.contextValue = "gistpad." + (repo.isWiki ? "wiki" : "repo");
+    this.contextValue =
+      "gistpad." + (repo.isSwing ? "swing" : repo.isWiki ? "wiki" : "repo");
 
     if (repo.isWiki && store.wiki?.name === repo.name) {
       this.description = "Primary";

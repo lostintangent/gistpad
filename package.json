@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets, developer notes and interactive samples using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "extensionKind": [
     "ui",
     "workspace"
@@ -611,10 +611,6 @@
           "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.exportGistToCodePen",
-          "when": "gistpad:inSwing"
-        },
-        {
           "command": "gistpad.pasteGistFile",
           "when": "editorTextFocus"
         },
@@ -740,6 +736,10 @@
         },
         {
           "command": "gistpad.editRepositoryComment",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.exportGistToCodePen",
           "when": "false"
         },
         {
@@ -1460,7 +1460,6 @@
     "markdown.markdownItPlugins": true
   },
   "extensionPack": [
-    "codespaces-contrib.codeswing",
     "bierner.emojisense",
     "bierner.markdown-checkbox"
   ],

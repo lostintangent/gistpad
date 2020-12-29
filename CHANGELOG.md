@@ -1,3 +1,8 @@
+## v0.2.1 (12/28/2020)
+
+- Fixed the `Export to CodePen` command for swing gists
+- Removed the CodeSwing dependency, in order to keep GistPad more focused
+
 ## v0.2.0 (12/26/2020)
 
 - Removed the playgrounds feature from GistPad, in favor of an integration with the new [CodeSwing](https://aka.ms/codeswin) extension. Note that all existing functionality should remain the same, but the playgrounds feature is now more broadly useful, than just with gists (e.g. you can create playgrounds in GitHub repos and local directories)
@@ -12,8 +17,6 @@
 - Repo files can now be copied to gists, by right-clicking their editor tab and selecting `Copy File to Gist`
 
 ## v0.1.12 (11/26/2020)
-
-`
 
 - The `GistPad: Open Today Page` and `GistPad: Add Wiki Page` commands are now exposed in the command palette, as long as you have a wiki repo open.
 - Added status bar items for opening the "today page" and adding a new wiki page.

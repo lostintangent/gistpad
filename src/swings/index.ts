@@ -117,6 +117,16 @@ export async function registerCodeSwingModule(
     )
   );
 
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      `${EXTENSION_NAME}.exportGistToCodePen`,
+      async (node: GistNode) => {
+        const uri = fileNameToUri(node.gist.id);
+        swingApi.exportSwingToCodePen(uri);
+      }
+    )
+  );
+
   swingApi.registerTemplateProvider("gist", templateProvider, {
     title: "Gists",
     description:

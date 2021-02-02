@@ -1,4 +1,4 @@
-## v0.2.2 (02/01/2020)
+## v0.2.2 (02/02/2020)
 
 - Fixed renaming of repo files
 - Fixed viewing binary files in a repo (e.g. images)

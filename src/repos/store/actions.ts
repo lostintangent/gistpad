@@ -1,10 +1,13 @@
 import * as vscode from "vscode";
 import { Repository, store, Tree, TreeItem } from ".";
 import { getApi } from "../../store/actions";
+import { byteArrayToString } from "../../utils";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { storage } from "../store/storage";
 import { sanitizeName } from "../utils";
 import { updateTree } from "../wiki/actions";
+
+const base64ToUintArray = require("base64-to-uint8array");
 
 export async function addRepoFile(
   repoName: string,
@@ -90,17 +93,13 @@ export async function createRepositoryFromTemplate(
   return response.body;
 }
 
-export async function createTree(
-  repo: string,
-  baseTree: string,
-  changes: any[]
-) {
+export async function createTree(repo: string, baseTree: string, tree: any[]) {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
   const response = await api.post(`/repos/${repo}/git/trees`, {
     base_tree: baseTree,
-    tree: changes
+    tree
   });
 
   return response.body;
@@ -120,21 +119,20 @@ export async function deleteRepository(repo: string) {
   return api.delete(`/repos/${repo}`);
 }
 
-export async function deleteRepoFile(repo: Repository, file: TreeItem) {
-  const GitHub = require("github-base");
-  const api = await getApi(GitHub);
-
-  await api.delete(`/repos/${repo.name}/contents/${file.path}`, {
-    message: `Delete ${file.path}`,
-    sha: file.sha,
-    branch: repo.branch
-  });
-
-  repo.tree!.tree = repo.tree!.tree.filter(
-    (treeItem) => treeItem.path !== file.path
+export async function deleteTreeItem(repo: Repository, treeItem: TreeItem) {
+  return updateTreeItem(
+    repo,
+    treeItem,
+    `Deleting ${treeItem.path}`,
+    ({ path, mode, type }) => [
+      {
+        path,
+        sha: null,
+        mode,
+        type
+      }
+    ]
   );
-
-  await updateRepository(repo.name, repo.branch);
 }
 
 export async function getBranches(repo: string) {
@@ -153,12 +151,15 @@ export async function getLatestCommit(repo: string, branch: string) {
   return response.body.object.sha;
 }
 
-export async function getRepoFile(repo: string, sha: string) {
+export async function getRepoFile(
+  repo: string,
+  sha: string
+): Promise<Uint8Array> {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
   const response = await api.get(`/repos/${repo}/git/blobs/${sha}`);
-  return Buffer.from(response.body.content, "base64").toString();
+  return base64ToUintArray(response.body.content);
 }
 
 export async function getRepo(
@@ -237,36 +238,58 @@ export async function rebaseBranch(
   }
 }
 
-export async function renameFile(
+export async function renameTreeItem(
   repo: Repository,
-  file: TreeItem,
+  treeItem: TreeItem,
   newPath: string
 ) {
+  return updateTreeItem(
+    repo,
+    treeItem,
+    `Renaming ${treeItem.path} to ${newPath}`,
+    ({ path, mode, sha, type }) => [
+      {
+        path,
+        sha: null,
+        mode,
+        type
+      },
+      {
+        path: path.replace(treeItem.path, newPath),
+        mode,
+        sha,
+        type
+      }
+    ]
+  );
+}
+
+async function updateTreeItem(
+  repo: Repository,
+  treeItem: TreeItem,
+  commitMessage: string,
+  updateFunction: (treeItem: TreeItem) => any[]
+) {
+  const files =
+    treeItem.type === "blob"
+      ? [treeItem]
+      : repo.tree!.tree.filter(
+          (item) => item.path.startsWith(treeItem.path) && item.type === "blob"
+        );
+
+  const treeChanges = files.flatMap(updateFunction);
+
   const commitSha = await getLatestCommit(repo.name, repo.branch);
-  const newTree = await createTree(repo.name, repo.tree!.sha, [
-    {
-      path: file.path,
-      sha: null,
-      mode: file.mode,
-      type: "blob"
-    },
-    {
-      path: newPath,
-      mode: file.mode,
-      sha: file.sha,
-      type: "blob"
-    }
-  ]);
+  const newTree = await createTree(repo.name, repo.tree!.sha, treeChanges);
 
   const commit = await createCommit(
     repo.name,
-    `Renaming ${file.path} to ${newPath}`,
+    commitMessage,
     newTree.sha,
     commitSha
   );
 
   await updateBranch(repo.name, repo.branch, commit.sha);
-
   return updateRepository(repo.name, repo.branch);
 }
 
@@ -462,7 +485,7 @@ export async function updateRepoFile(
     const diffMatchPatch = require("diff-match-patch");
     const dmp = new diffMatchPatch();
 
-    const originalFile = await getRepoFile(repo, sha);
+    const originalFile = byteArrayToString(await getRepoFile(repo, sha));
     const diff = dmp.patch_make(originalFile, contents.toString());
 
     const currentFile = (await api.get(`/repos/${repo}/contents/${path}`)).body;

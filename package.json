@@ -207,8 +207,7 @@
       },
       {
         "command": "gistpad.deleteDirectory",
-        "title": "Delete Directory",
-        "category": "GistPad"
+        "title": "Delete Directory"
       },
       {
         "command": "gistpad.deleteFile",
@@ -230,6 +229,10 @@
       {
         "command": "gistpad.deleteRepositoryComment",
         "title": "Delete Comment"
+      },
+      {
+        "command": "gistpad.deleteRepositoryDirectory",
+        "title": "Delete Directory"
       },
       {
         "command": "gistpad.deleteRepositoryFile",
@@ -452,6 +455,10 @@
       {
         "command": "gistpad.renameFile",
         "title": "Rename File"
+      },
+      {
+        "command": "gistpad.renameRepositoryDirectory",
+        "title": "Rename Directory"
       },
       {
         "command": "gistpad.renameRepositoryFile",
@@ -711,6 +718,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.deleteRepositoryDirectory",
+          "when": "false"
+        },
+        {
           "command": "gistpad.deleteRepositoryFile",
           "when": "false"
         },
@@ -832,6 +843,10 @@
         },
         {
           "command": "gistpad.renameFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.renameRepositoryDirectory",
           "when": "false"
         },
         {
@@ -1280,7 +1295,7 @@
         },
         {
           "command": "gistpad.renameRepositoryFile",
-          "when": "view == gistpad.repos && viewItem == gistpad.repoFile",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)File$/",
           "group": "manage@1"
         },
         {
@@ -1290,8 +1305,18 @@
         },
         {
           "command": "gistpad.deleteRepositoryFile",
-          "when": "view == gistpad.repos && viewItem == gistpad.repoFile",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)File$/",
           "group": "manage@3"
+        },
+        {
+          "command": "gistpad.renameRepositoryDirectory",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)Directory$/",
+          "group": "mutate@1"
+        },
+        {
+          "command": "gistpad.deleteRepositoryDirectory",
+          "when": "view == gistpad.repos && viewItem =~ /^gistpad.(repo|wiki|swing)Directory$/",
+          "group": "mutate@2"
         },
         {
           "command": "gistpad.exportTour",
@@ -1473,6 +1498,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
+    "base64-to-uint8array": "^1.0.0",
     "diff-match-patch": "^1.0.5",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",

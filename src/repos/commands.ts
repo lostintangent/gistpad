@@ -384,53 +384,67 @@ export async function registerRepoCommands(context: ExtensionContext) {
     )
   );
 
+  async function deleteTreeNode(node: RepositoryFileNode) {
+    const fileType = node.file.isDirectory ? "directory" : "file";
+    if (
+      await window.showInformationMessage(
+        `Are you sure you want to delete the "${node.file.name}" ${fileType}?`,
+        "Delete"
+      )
+    ) {
+      return withProgress(`Deleting ${fileType}...`, async () => {
+        const uri = RepoFileSystemProvider.getFileUri(
+          node.repo.name,
+          node.file.path
+        );
+
+        return workspace.fs.delete(uri);
+      });
+    }
+  }
+
   context.subscriptions.push(
     commands.registerCommand(
+      `${EXTENSION_NAME}.deleteRepositoryDirectory`,
+      deleteTreeNode
+    ),
+    commands.registerCommand(
       `${EXTENSION_NAME}.deleteRepositoryFile`,
-      async (node: RepositoryFileNode) => {
-        if (
-          await window.showInformationMessage(
-            `Are you sure you want to delete the "${node.file.name}" file?`,
-            "Delete"
-          )
-        ) {
-          return withProgress("Deleting file...", async () => {
-            const uri = RepoFileSystemProvider.getFileUri(
-              node.repo.name,
-              node.file.path
-            );
-
-            return workspace.fs.delete(uri);
-          });
-        }
-      }
+      deleteTreeNode
     )
   );
 
+  async function renameTreeNode(node: RepositoryFileNode) {
+    const fileType = node.file.isDirectory ? "directory" : "file";
+    const response = await window.showInputBox({
+      prompt: `Specify the new name of the ${fileType}`,
+      value: node.file.path
+    });
+
+    if (response && response !== node.file.path) {
+      await withProgress(`Renaming ${fileType}`, async () => {
+        const fileUri = RepoFileSystemProvider.getFileUri(
+          node.repo.name,
+          node.file.path
+        );
+        const newFileUri = RepoFileSystemProvider.getFileUri(
+          node.repo.name,
+          response
+        );
+
+        return workspace.fs.rename(fileUri, newFileUri);
+      });
+    }
+  }
+
   context.subscriptions.push(
     commands.registerCommand(
+      `${EXTENSION_NAME}.renameRepositoryDirectory`,
+      renameTreeNode
+    ),
+    commands.registerCommand(
       `${EXTENSION_NAME}.renameRepositoryFile`,
-      async (node: RepositoryFileNode) => {
-        const response = await window.showInputBox({
-          prompt: "Specify the new name of the file",
-          value: node.file.path
-        });
-
-        if (response && response !== node.file.path) {
-          await withProgress("Renaming file...", async () => {
-            const fileUri = RepoFileSystemProvider.getFileUri(
-              node.repo.name,
-              node.file.path
-            );
-            const newFileUri = RepoFileSystemProvider.getFileUri(
-              node.repo.name,
-              response
-            );
-
-            return workspace.fs.rename(fileUri, newFileUri);
-          });
-        }
-      }
+      renameTreeNode
     )
   );
 

@@ -74,9 +74,11 @@ export function registerFileCommands(context: ExtensionContext) {
         if (nodeOrUri instanceof GistFileNode) {
           url = nodeOrUri.file.raw_url!;
         } else {
-          const { gistId, file } = getGistDetailsFromUri(encodeDirectoryUri(nodeOrUri));
-          const gist = store.gists.find(gist => gist.id === gistId)!;
-          url = gist.files[file].raw_url!
+          const { gistId, file } = getGistDetailsFromUri(
+            encodeDirectoryUri(nodeOrUri)
+          );
+          const gist = store.gists.find((gist) => gist.id === gistId)!;
+          url = gist.files[file].raw_url!;
         }
 
         await env.clipboard.writeText(url);
@@ -102,7 +104,7 @@ export function registerFileCommands(context: ExtensionContext) {
             fileNameToUri(node.gistId, node.file.filename!)
           );
 
-          fileLabel = targetNode.label!;
+          fileLabel = targetNode.label?.toString()!;
         } else {
           uris = [targetNode];
           fileLabel = path.basename(targetNode.toString());

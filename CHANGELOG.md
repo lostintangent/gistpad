@@ -1,3 +1,9 @@
+## v0.2.2 (02/01/2020)
+
+- Fixed renaming of repo files
+- Fixed viewing binary files in a repo (e.g. images)
+- Introduced support for renaming and deleting repo directories
+
 ## v0.2.1 (12/28/2020)
 
 - Fixed the `Export to CodePen` command for swing gists
@@ -5,7 +11,7 @@
 
 ## v0.2.0 (12/26/2020)
 
-- Removed the playgrounds feature from GistPad, in favor of an integration with the new [CodeSwing](https://aka.ms/codeswin) extension. Note that all existing functionality should remain the same, but the playgrounds feature is now more broadly useful, than just with gists (e.g. you can create playgrounds in GitHub repos and local directories)
+- Removed the playgrounds feature from GistPad, in favor of an integration with the new [CodeSwing](https://aka.ms/codeswing) extension. Note that all existing functionality should remain the same, but the playgrounds feature is now more broadly useful, than just with gists (e.g. you can create playgrounds in GitHub repos and local directories)
 - Renamed the following gist types: `doc` -> `note`, `playground` -> `code-swing`, `playground-template` -> `swing-template`, `tour` -> `code-tour`, `tutorial` -> `code-swing-tutorial`, `flash-card` -> `flash-code`.
 - The `Showcase` view now only appears after you've signed in, in order to prevent issues with API throttling for anoymous users
 

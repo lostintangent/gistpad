@@ -1,11 +1,10 @@
 import * as vscode from "vscode";
-import { stringToByteArray } from "../utils";
 import { Repository, store, TreeItem } from "./store";
 import {
   addRepoFile,
-  deleteRepoFile,
+  deleteTreeItem,
   getRepoFile,
-  renameFile,
+  renameTreeItem,
   updateRepoFile
 } from "./store/actions";
 
@@ -89,10 +88,7 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
 
   async readFile(uri: vscode.Uri): Promise<Uint8Array> {
     const [repository, file] = RepoFileSystemProvider.getRepoInfo(uri)!;
-
-    const contents = await getRepoFile(repository.name, file!.sha);
-
-    return stringToByteArray(contents);
+    return await getRepoFile(repository.name, file!.sha);
   }
 
   async writeFile(
@@ -133,7 +129,7 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
   async delete(uri: vscode.Uri): Promise<void> {
     const [repository, file] = RepoFileSystemProvider.getRepoInfo(uri)!;
 
-    await deleteRepoFile(repository, file!);
+    await deleteTreeItem(repository, file!);
 
     this._onDidChangeFile.fire([{ type: vscode.FileChangeType.Deleted, uri }]);
   }
@@ -146,7 +142,7 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
     const [repository, file] = RepoFileSystemProvider.getRepoInfo(oldUri)!;
     const [, newPath] = RepoFileSystemProvider.getFileInfo(newUri)!;
 
-    renameFile(repository, file!, newPath);
+    await renameTreeItem(repository, file!, newPath);
 
     this._onDidChangeFile.fire([
       { type: vscode.FileChangeType.Deleted, uri: oldUri },

@@ -1,5 +1,6 @@
 import { runInAction } from "mobx";
 import { Location, Range, Uri, workspace } from "vscode";
+import { byteArrayToString } from "../../utils";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { Repository, Tree, TreeItem } from "../store";
 import { getRepoFile } from "../store/actions";
@@ -38,7 +39,9 @@ export async function updateTree(repo: Repository, tree: Tree) {
   const documents = await Promise.all(
     markdownFiles.map(
       async (treeItem): Promise<TreeItem> => {
-        const contents = await getRepoFile(repo.name, treeItem.sha);
+        const contents = byteArrayToString(
+          await getRepoFile(repo.name, treeItem.sha)
+        );
         treeItem.contents = contents;
 
         const match = contents!.match(/^(?:#+\s*)(.+)$/m);

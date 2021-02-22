@@ -240,10 +240,7 @@ export class FollowedUserGistsNode extends TreeNode {
     if (user.avatarUrl) {
       this.iconPath = Uri.parse(user.avatarUrl);
     } else {
-      this.iconPath = {
-        dark: joinPath(extensionContext, "images/dark/user.svg"),
-        light: joinPath(extensionContext, "images/light/user.svg")
-      };
+      this.iconPath = new ThemeIcon("account")
     }
 
     this.contextValue = "followedUserGists";

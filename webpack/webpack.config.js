@@ -1,7 +1,7 @@
 const path = require("path");
 const webpack = require("webpack");
 
-const config = {
+module.exports = {
   mode: "production",
   target: "node",
   entry: "./src/extension.ts",
@@ -13,11 +13,7 @@ const config = {
   },
   devtool: "source-map",
   externals: {
-    vscode: "commonjs vscode",
-    "uglify-js": "commonjs uglify-js", // Pug relies on uglify-js, which doesn't play nice with Webpack. Fortunately we don't need it, so we exclude it from the bundle
-    "aws-sdk": "commonjs aws-sdk", // This comes from the Sass dependency, and is an optional dependency that we don't need
-    fsevents: "commonjs fsevents", // This comes from the SaaS dependency, but is a native module and therefore can't be webpacked
-    "@microsoft/typescript-etw": "commonjs @microsoft/typescript-etw"
+    vscode: "commonjs vscode"
   },
   resolve: {
     extensions: [".ts", ".js", ".json"],
@@ -51,5 +47,3 @@ const config = {
     })
   ]
 };
-
-module.exports = config;

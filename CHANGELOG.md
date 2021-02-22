@@ -1,3 +1,7 @@
+## v0.2.3 
+
+- Added the new public/secret gist commands to the `Your Gists` node in the `Gists` tree
+
 ## v0.2.2 (02/02/2020)
 
 - Fixed renaming of repo files

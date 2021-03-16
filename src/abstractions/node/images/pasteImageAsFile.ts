@@ -55,8 +55,14 @@ export async function pasteImageAsFile(
   const imageBits = await clipboardToImageBuffer.getImageBits();
 
   const [uri, src] = getImageFileInfo(editor, fileName);
-  await vscode.workspace.fs.writeFile(uri, imageBits);
-
+  try {
+    await vscode.workspace.fs.writeFile(uri, imageBits);
+  } catch (err) {
+    // TODO: fs.writeFile gives an error which prevents pasting images from the clipboard
+    // Error (FileSystemError): Unable to write file 'gist://Gist_ID/images/imageName.png'
+    // (Error: [mobx] 'set()' can only be used on observable objects, arrays and maps)
+  }
+  
   const imageMarkup = await createImageMarkup(src, editor.document.languageId);
 
   await pasteImageMarkup(editor, imageMarkup, imageMarkupId);

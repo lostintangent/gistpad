@@ -1,4 +1,4 @@
-## v0.2.3
+## v0.2.3 (03/19/21)
 
 - Added support for `#tags` in wiki repos
 - When you open/create a new repo, it is automatically focused in the `Repositories` tree

@@ -2,10 +2,10 @@ import { reaction } from "mobx";
 import {
   Event,
   EventEmitter,
-  ExtensionContext,
   ProviderResult,
   TreeDataProvider,
   TreeItem,
+  TreeView,
   window
 } from "vscode";
 import { EXTENSION_NAME } from "../../constants";
@@ -22,7 +22,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
   public readonly onDidChangeTreeData: Event<void> = this._onDidChangeTreeData
     .event;
 
-  constructor(private context: ExtensionContext) {
+  constructor() {
     reaction(
       () => [
         authStore.isSignedIn,
@@ -62,7 +62,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
     if (!element && authStore.isSignedIn && store.repos.length > 0) {
       return store.repos
         .sort((a, b) => a.name.localeCompare(b.name))
-        .map((repo) => new RepositoryNode(repo, this.context));
+        .map((repo) => new RepositoryNode(repo));
     } else if (element instanceof RepositoryNode) {
       if (element.repo.isLoading) {
         return [new TreeItem("Loading repository...")];
@@ -95,12 +95,22 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
       }
     }
   }
+
+  getParent(element: TreeItem): TreeItem | undefined {
+    return undefined;
+  }
 }
 
-export function registerTreeProvider(context: ExtensionContext) {
-  window.createTreeView(`${EXTENSION_NAME}.repos`, {
+let treeView: TreeView<TreeItem>;
+
+export function focusRepo(repo: Repository) {
+  treeView.reveal(new RepositoryNode(repo));
+}
+
+export function registerTreeProvider() {
+  treeView = window.createTreeView(`${EXTENSION_NAME}.repos`, {
     showCollapseAll: true,
-    treeDataProvider: new RepositoryTreeProvider(context),
+    treeDataProvider: new RepositoryTreeProvider(),
     canSelectMany: true
   });
 }

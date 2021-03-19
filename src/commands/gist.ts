@@ -569,7 +569,7 @@ export async function registerGistCommands(context: ExtensionContext) {
           // TODO: Accomodate scenarios where the end-user
           // doesn't have Git installed
           await exportToRepo(node.gist.id, name);
-          await openRepo(fullName);
+          await openRepo(fullName, true);
         });
 
         if (

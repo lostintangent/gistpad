@@ -27,7 +27,6 @@ export async function activate(context: vscode.ExtensionContext) {
   registerShowcaseModule(context);
 
   const keysForSync = ["followedUsers", "repos"].map((key) => `gistpad.${key}`);
-  // @ts-ignore
   context.globalState.setKeysForSync(keysForSync);
 
   return {

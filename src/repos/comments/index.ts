@@ -28,6 +28,7 @@ export class RepoCommitComment implements Comment {
   public label: string;
   public mode: CommentMode = CommentMode.Preview;
   public author: CommentAuthorInformation;
+
   constructor(
     comment: GistComment,
     public repo: string,
@@ -36,10 +37,12 @@ export class RepoCommitComment implements Comment {
   ) {
     this.id = comment.id;
     this.body = comment.body;
+
     this.author = {
       name: comment.user.login,
       iconPath: Uri.parse(comment.user.avatar_url)
     };
+
     this.label = comment.author_association === "OWNER" ? "Owner" : "";
     this.contextValue = currentUser === comment.user.login ? "canEdit" : "";
   }
@@ -67,14 +70,11 @@ async function checkForComments(uri: Uri) {
         []
       );
 
-      // @ts-ignore
+      thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
       thread.canReply = false;
-
       thread.comments = [
         new RepoCommitComment(comment, repo, thread, currentUser)
       ];
-
-      thread.collapsibleState = CommentThreadCollapsibleState.Expanded;
     });
   }
 }

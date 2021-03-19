@@ -4,23 +4,20 @@ import { byteArrayToString } from "../../utils";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { Repository, Tree, TreeItem } from "../store";
 import { getRepoFile } from "../store/actions";
-import { findLinks, getTreeItemFromLink, isWiki, LINK_PREFIX } from "./utils";
+import { findLinks, getTreeItemFromLink, isWiki } from "./utils";
 
 async function getBackLinks(uri: Uri, contents: string) {
   const documentLinks = [...findLinks(contents)];
   return Promise.all(
-    documentLinks.map(async ([file, index = 0]) => {
+    documentLinks.map(async ({ title, contentStart, contentEnd }) => {
       const document = await workspace.openTextDocument(uri);
-      const offset = index + LINK_PREFIX.length;
-      const start = document.positionAt(offset);
+      const start = document.positionAt(contentStart);
+      const end = document.positionAt(contentEnd);
 
       return {
-        file,
+        title,
         linePreview: document.lineAt(start).text,
-        location: new Location(
-          uri,
-          new Range(start, document.positionAt(offset + file.length))
-        )
+        location: new Location(uri, new Range(start, end))
       };
     })
   );
@@ -60,7 +57,7 @@ export async function updateTree(repo: Repository, tree: Tree) {
     const uri = RepoFileSystemProvider.getFileUri(repo.name, path);
     const links = await getBackLinks(uri, contents!);
     for (const link of links) {
-      const item = getTreeItemFromLink(repo, link.file);
+      const item = getTreeItemFromLink(repo, link.title);
       if (item) {
         const entry = documents.find((doc) => doc.path === item.path)!;
         if (entry.backLinks) {

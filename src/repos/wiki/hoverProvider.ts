@@ -8,12 +8,7 @@ import {
   TextDocument
 } from "vscode";
 import { RepoFileSystemProvider } from "../fileSystem";
-import {
-  findLinks,
-  getTreeItemFromLink,
-  LINK_PREFIX,
-  LINK_SELECTOR
-} from "./utils";
+import { findLinks, getTreeItemFromLink, LINK_SELECTOR } from "./utils";
 
 class LinkHoverProvider implements HoverProvider {
   public provideHover(document: TextDocument, position: Position) {
@@ -28,9 +23,8 @@ class LinkHoverProvider implements HoverProvider {
       return;
     }
 
-    const link = links.find(([link, linkStart]) => {
-      const linkEnd = linkStart + link.length + LINK_PREFIX.length * 2;
-      const range = new Range(position.line, linkStart, position.line, linkEnd);
+    const link = links.find(({ start, end }) => {
+      const range = new Range(position.line, start, position.line, end);
       return range.contains(position);
     });
 
@@ -38,7 +32,7 @@ class LinkHoverProvider implements HoverProvider {
       return;
     }
 
-    const treeItem = getTreeItemFromLink(repo, link[0]);
+    const treeItem = getTreeItemFromLink(repo, link.title);
     if (treeItem) {
       const contents = new MarkdownString(treeItem.contents);
       return new Hover(contents);

@@ -15,7 +15,7 @@ export async function registerRepoModule(context: ExtensionContext) {
   registerRepoCommands(context);
 
   registerRepoFileSystemProvider();
-  registerTreeProvider(context);
+  registerTreeProvider();
 
   initializeStorage(context);
 

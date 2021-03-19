@@ -1,5 +1,4 @@
 import {
-  ExtensionContext,
   ThemeIcon,
   TreeItem,
   TreeItemCollapsibleState,
@@ -9,7 +8,7 @@ import { RepoFileSystemProvider } from "../fileSystem";
 import { Repository, RepositoryFile, store, TreeItemBackLink } from "../store";
 
 export class RepositoryNode extends TreeItem {
-  constructor(public repo: Repository, context: ExtensionContext) {
+  constructor(public repo: Repository) {
     super(repo.name, TreeItemCollapsibleState.Expanded);
 
     const iconName = repo.isWiki ? "book" : "repo";

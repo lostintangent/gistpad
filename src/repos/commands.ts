@@ -25,14 +25,12 @@ import {
   createRepositoryFromTemplate,
   deleteBranch,
   deleteRepository,
-  displayReadme,
   getBranches,
   listRepos,
   openRepo,
   rebaseBranch,
   refreshRepositories
 } from "./store/actions";
-import { promptForTour } from "./tours/actions";
 import { RepositoryFileNode, RepositoryNode } from "./tree/nodes";
 import { openRepoDocument } from "./utils";
 import moment = require("moment");
@@ -193,19 +191,14 @@ export async function registerRepoCommands(context: ExtensionContext) {
                   response === CREATE_PRIVATE_TEMPLATE_REPO_RESPONSE
                 );
 
-                const repository = await openRepo(full_name);
-                await displayReadme(repository!, false);
+                await openRepo(full_name, true);
               });
             }
           });
 
           templateQuickPick.show();
         } else {
-          const repository = await openRepo(response);
-          if (repository) {
-            displayReadme(repository);
-            promptForTour(repository);
-          }
+          await openRepo(response, true);
         }
       });
 

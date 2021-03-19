@@ -4,6 +4,8 @@ import { getApi } from "../../store/actions";
 import { byteArrayToString } from "../../utils";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { storage } from "../store/storage";
+import { promptForTour } from "../tours/actions";
+import { focusRepo } from "../tree";
 import { sanitizeName } from "../utils";
 import { updateTree } from "../wiki/actions";
 
@@ -302,13 +304,15 @@ export async function updateBranch(repo: string, branch: string, sha: string) {
   });
 }
 
-export async function openRepo(repoName: string) {
+export async function openRepo(repoName: string, showReadme: boolean = false) {
   // TODO: Add repo validation
   const repository = new Repository(repoName);
 
   const repos = storage.repos;
   if (repos.find((repo) => repo === repository.name)) {
-    vscode.window.showInformationMessage("You're already managing this repo");
+    vscode.window.showInformationMessage(
+      "You've already opened this repository."
+    );
     return;
   } else {
     repos.push(repoName);
@@ -331,6 +335,20 @@ export async function openRepo(repoName: string) {
       repository.name,
       repository.branch
     );
+
+    if (showReadme) {
+      displayReadme(repository);
+
+      // TODO: Replace this hack with something
+      // better. We're currently doing this because
+      // the repo node might not actually be present
+      // in the tree, in order to focus it yet.
+      setTimeout(() => {
+        focusRepo(repository);
+      }, 1000);
+
+      promptForTour(repository);
+    }
   }
 
   return repository;
@@ -517,14 +535,10 @@ export async function updateRepoFile(
   }
 }
 
-export async function displayReadme(
-  repository: Repository,
-  showPreview: boolean = true
-) {
+export async function displayReadme(repository: Repository) {
   const readme = repository.readme;
   if (readme) {
     const uri = RepoFileSystemProvider.getFileUri(repository.name, readme);
-    const command = showPreview ? "markdown.showPreview" : "vscode.open";
-    vscode.commands.executeCommand(command, uri);
+    vscode.commands.executeCommand("markdown.showPreview", uri);
   }
 }

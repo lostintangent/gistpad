@@ -1,8 +1,9 @@
 .vscode/**
+.github/**
 src/**
+webpack/**
 .gitignore
 **/tsconfig.json
 **/tslint.json
 **/*.map
 **/*.ts
-galleries/**

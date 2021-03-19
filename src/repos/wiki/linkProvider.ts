@@ -17,7 +17,6 @@ import {
   getPageFilePath,
   getTreeItemFromLink,
   getUriFromLink,
-  LINK_PREFIX,
   LINK_SELECTOR
 } from "./utils";
 
@@ -42,17 +41,16 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
     }
 
     const documentLinks = [...findLinks(document.getText())];
-    return documentLinks.map(([link, index = 0]) => {
-      const offset = index + LINK_PREFIX.length;
+    return documentLinks.map(({ title, contentStart, contentEnd }) => {
       const linkRange = new Range(
-        document.positionAt(offset),
-        document.positionAt(offset + link.length)
+        document.positionAt(contentStart),
+        document.positionAt(contentEnd)
       );
 
-      const treeItem = getTreeItemFromLink(repo, link);
-      const linkUri = treeItem ? getUriFromLink(repo, link) : undefined;
+      const treeItem = getTreeItemFromLink(repo, title);
+      const linkUri = treeItem ? getUriFromLink(repo, title) : undefined;
 
-      return new WikiDocumentLink(repo, link, linkRange, linkUri);
+      return new WikiDocumentLink(repo, title, linkRange, linkUri);
     });
   }
 

@@ -11,13 +11,13 @@
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/vsls-contrib/gistpad"
+    "url": "https://github.com/lostintangent/gistpad"
   },
   "bugs": {
-    "url": "https://github.com/vsls-contrib/gistpad/issues"
+    "url": "https://github.com/lostintangent/gistpad/issues"
   },
-  "homepage": "https://github.com/vsls-contrib/gistpad#readme",
-  "license": "ISC",
+  "homepage": "https://github.com/lostintangent/gistpad#readme",
+  "license": "MIT",
   "engines": {
     "vscode": "^1.48.0"
   },

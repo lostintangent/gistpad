@@ -26,7 +26,7 @@ async function handleOpenRequest(query: URLSearchParams) {
   if (gistId) {
     openGist(gistId, !!openAsWorkspace);
   } else if (repoName) {
-    openRepo(repoName);
+    openRepo(repoName, true);
   }
 }
 

@@ -1,7 +1,5 @@
 # GistPad 📘
 
-[![Join space](https://vslscommunitieswebapp.azurewebsites.net/badge/gistpad)](http://vslscommunitieswebapp.azurewebsites.net/join_redirect/gistpad)
-
 GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists](https://gist.github.com/) and repositories remotely, and entirely within the editor. You can open, create, delete, fork and star gists and repositories, and then seamlessly begin editing files **as if they were local**, without ever cloning, pushing or pulling anything. It's like your very own developer library for building and referencing code snippets, commonly-used config/scripts, programming-related notes, [knowledge bases](#wikis) and [interactive samples](#codeswing).
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />

@@ -1,9 +1,9 @@
 {
   "name": "gistfs",
   "displayName": "GistPad",
-  "description": "Manage your code snippets, developer notes and interactive samples using GitHub Gists and repositories.",
+  "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "extensionKind": [
     "ui",
     "workspace"
@@ -1467,10 +1467,6 @@
     ],
     "markdown.markdownItPlugins": true
   },
-  "extensionPack": [
-    "bierner.emojisense",
-    "bierner.markdown-checkbox"
-  ],
   "scripts": {
     "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
     "build:node": "webpack --config ./webpack/webpack.node.config.js",

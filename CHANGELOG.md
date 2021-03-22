@@ -1,3 +1,7 @@
+## v0.2.6 (03/21/21)
+
+- Removed all bundled extensions, to keep GistPad as small as possible
+
 ## v0.2.5 (03/21/21)
 
 - Adding reference to "office hours" in the readme, and removing the reference to VSLS spaces

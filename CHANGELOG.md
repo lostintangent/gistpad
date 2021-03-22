@@ -4,7 +4,7 @@
 
 ## v0.2.5 (03/21/21)
 
-- Adding reference to "office hours" in the readme, and removing the reference to VSLS spaces
+- Remove the reference to Live Share Spaces in the `README`
 
 ## v0.2.4 (03/21/21)
 

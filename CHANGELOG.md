@@ -1,6 +1,9 @@
-## v0.2.3 (03/19/21)
+## v0.2.4 (03/21/21)
 
 - Added support for `#tags` in wiki repos
+
+## v0.2.3 (03/19/21)
+
 - When you open/create a new repo, it is automatically focused in the `Repositories` tree
 - Added the commands for creating a new public/secret gist to the `Your Gists` node in the `Gists` tree
 - Updated some of the tree icons to use VS Code Codicons instead of custom icons

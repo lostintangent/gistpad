@@ -1,3 +1,7 @@
+## v0.2.5 (03/21/21)
+
+- Adding reference to "office hours" in the readme, and removing the reference to VSLS spaces
+
 ## v0.2.4 (03/21/21)
 
 - Added support for `#tags` in wiki repos

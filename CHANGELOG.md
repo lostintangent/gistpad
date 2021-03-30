@@ -1,3 +1,7 @@
+## v0.2.7 (03/29/21)
+
+- Removed the `GistPad > Api Url` setting, since it was no longer supported after GistPad moved over to using VS Code's native authentication.
+
 ## v0.2.6 (03/21/21)
 
 - Removed all bundled extensions, to keep GistPad as small as possible

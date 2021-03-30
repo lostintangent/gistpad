@@ -285,34 +285,32 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 ## Configuration Settings
 
-- `Gistpad: Api Url` - Specifies the GitHub API server to use. By default, this points at GitHub.com (`https://api.github.com`), but if you're using GitHub Enterprise, then you need to set this to the v3 API URL of your GitHub server. This should be something like `https://[YOUR_HOST]/api/v3`.
+- `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
 
-* `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
-
-* `GistPad > Comments: Show Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
+- `GistPad > Comments: Show Thread` - Specifies when to show the comment thread UI whenever you open a Gist file. Can be set to one of the following values:
 
   - `always`: Always display the comment thread whenever you open a Gist file. You can manually collapse it as needed.
   - `never`: Never automatically open the comment thread when you open a Gist file. You can manually expand it as needed.
   - `whenNotEmpty` _(default)_: Automatically display the comment thread whenever there are actually comments in a Gist file. Otherwise, leave it collapsed.
 
-* `Gistpad > Images: Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
+- `Gistpad > Images: Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
 
   - `markdown` _(default)_: Pastes the image reference using `Markdown` format (e.g. `![image](link)`).
   - `html`: Pastes the image reference using `HTML` format (e.g. `<img src="link" />`). Note, when you paste an image into an HTML file, it will always use this format type, regardless what the setting is.
 
-* `Gistpad > Images: Paste Type`: Specifies the method to use when pasting an image into a gist file. Can be set to one of the following values:
+- `Gistpad > Images: Paste Type`: Specifies the method to use when pasting an image into a gist file. Can be set to one of the following values:
 
   - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to file it's pasted into.
   - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
 
-* `Gistpad > Images: Upload Directory Name`: Specifies the name of the directory to upload images to. Defaults to `images`.
+- `Gistpad > Images: Upload Directory Name`: Specifies the name of the directory to upload images to. Defaults to `images`.
 
-* `GistPad > Scratch Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new scratch notes. Defaults to `LL` (e.g. `March 6, 2020`).
+- `GistPad > Scratch Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new scratch notes. Defaults to `LL` (e.g. `March 6, 2020`).
 
-* `GistPad > Scratch Notes: File Extension` - Specifies the file extension to use when generating new scratch notes. Defaults to `.md`.
+- `GistPad > Scratch Notes: File Extension` - Specifies the file extension to use when generating new scratch notes. Defaults to `.md`.
 
-* `GistPad > Scratch Notes: File Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new scratch notes. Defaults to `LT` (e.g. `2:52 PM`).
+- `GistPad > Scratch Notes: File Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new scratch notes. Defaults to `LT` (e.g. `2:52 PM`).
 
-* `GistPad > Scratch Notes: Show` - Specifies whether or not to display the scratch notes node in the gists tree view. Defaults to `true`.
+- `GistPad > Scratch Notes: Show` - Specifies whether or not to display the scratch notes node in the gists tree view. Defaults to `true`.
 
-* `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
+- `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.

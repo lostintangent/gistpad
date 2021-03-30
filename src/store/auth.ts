@@ -5,7 +5,6 @@ import {
   window
 } from "vscode";
 import { store } from ".";
-import * as config from "../config";
 import { EXTENSION_NAME } from "../constants";
 import { refreshGists } from "./actions";
 const GitHub = require("github-base");
@@ -27,9 +26,7 @@ const DELETE_REPO_SCOPE = "delete_repo";
 // TODO: Replace github-base with octokit
 export async function getApi(newToken?: string) {
   const token = newToken || (await getToken());
-  const apiurl = config.get("apiUrl");
-
-  return new GitHub({ apiurl, token });
+  return new GitHub({ token });
 }
 
 const TOKEN_RESPONSE = "Sign in";

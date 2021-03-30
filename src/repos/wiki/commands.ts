@@ -43,26 +43,27 @@ export function registerCommands(context: ExtensionContext) {
       async (node?: RepositoryNode | RepositoryFileNode) => {
         const repoName = node?.repo.name || store.wiki!.name;
 
-        const input = await window.createInputBox();
+        const input = window.createInputBox();
         input.title = `Add wiki page (${repoName})`;
-        input.prompt =  "Enter the name of the new page you'd like to create";
+        input.prompt = "Enter the name of the new page you'd like to create";
 
         input.onDidAccept(async () => {
           input.hide();
-          
+
           if (input.value) {
             const path = getPageFilePath(input.value);
             const filePath =
               node instanceof RepositoryFileNode
                 ? `${node.file.path}/${path}`
                 : path;
-  
-            
-            await withProgress("Adding new page...", async () => createWikiPage(input.value, repoName, filePath));
+
+            await withProgress("Adding new page...", async () =>
+              createWikiPage(input.value, repoName, filePath)
+            );
             openRepoDocument(repoName, filePath);
           }
-        })
-        
+        });
+
         input.show();
       }
     )
@@ -87,9 +88,9 @@ export function registerCommands(context: ExtensionContext) {
         const [, file] = RepoFileSystemProvider.getRepoInfo(uri)!;
 
         if (!file) {
-          await withProgress("Adding new page...", async () => {
-            return createWikiPage(pageTitle, repoName, filePath);
-          });
+          await withProgress("Adding new page...", async () =>
+            createWikiPage(pageTitle, repoName, filePath)
+          );
         }
 
         openRepoDocument(repoName, filePath);

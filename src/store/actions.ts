@@ -26,14 +26,7 @@ const Gists = require("gists");
 
 export async function getApi(constructor = Gists) {
   const token = await getToken();
-  const apiurl = config.get("apiUrl");
-
-  if (!apiurl) {
-    const message = "No API URL is set.";
-    throw new Error(message);
-  }
-
-  return new constructor({ apiurl, token });
+  return new constructor({ token });
 }
 
 export async function duplicateGist(

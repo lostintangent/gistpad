@@ -1,3 +1,7 @@
+## v0.2.8 (04/07/21)
+
+- Added support for the [GistPad CLI](https://aka.ms/gistpad-cli), so that you can open repos/gists, and launch into a scratch note or today page from your terminal
+
 ## v0.2.7 (03/29/21)
 
 - Removed the `GistPad > Api Url` setting, since it was no longer supported after GistPad moved over to using VS Code's native authentication.

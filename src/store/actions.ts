@@ -237,7 +237,7 @@ export async function newGist(
   return gist;
 }
 
-export async function newScratchNote() {
+export async function newScratchNote(displayProgress: boolean = true) {
   const directoryFormat = config.get("scratchNotes.directoryFormat");
   const fileFormat = config.get("scratchNotes.fileFormat");
   const extension = config.get("scratchNotes.fileExtension");
@@ -253,7 +253,6 @@ export async function newScratchNote() {
 
   if (!store.scratchNotes.gist) {
     const api = await getApi();
-
     const response = await api.create({
       description: SCRATCH_GIST_NAME,
       public: false,
@@ -266,12 +265,17 @@ export async function newScratchNote() {
 
     store.scratchNotes.gist = response.body;
   } else if (!store.scratchNotes.gist.files.hasOwnProperty(filename)) {
-    await withProgress("Creating scratch note...", async () => {
-      await workspace.fs.writeFile(
+    const writeFile = async () =>
+      workspace.fs.writeFile(
         fileNameToUri(store.scratchNotes.gist!.id, filename),
         stringToByteArray("")
       );
-    });
+
+    if (displayProgress) {
+      await withProgress("Creating scratch note...", writeFile);
+    } else {
+      await writeFile();
+    }
   }
 
   const uri = fileNameToUri(store.scratchNotes.gist!.id, filename);

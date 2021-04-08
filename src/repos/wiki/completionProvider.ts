@@ -73,7 +73,7 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
       newDocumentItem.command = {
         command: `${EXTENSION_NAME}._createWikiPage`,
         title: "Create new page",
-        arguments: [repo.name, link]
+        arguments: [repo, link]
       };
 
       documentItems.unshift(newDocumentItem);

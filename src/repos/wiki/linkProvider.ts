@@ -63,7 +63,7 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
       await withProgress("Creating page...", async () =>
         commands.executeCommand(
           `${EXTENSION_NAME}._createWikiPage`,
-          link.repo.name,
+          link.repo,
           link.title
         )
       );

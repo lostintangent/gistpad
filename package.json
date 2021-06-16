@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "extensionKind": [
     "ui",
     "workspace"
@@ -1461,6 +1461,12 @@
       }
     ],
     "markdown.markdownItPlugins": true
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": true
+    },
+    "virtualWorkspaces": true
   },
   "scripts": {
     "build:browser": "webpack --config ./webpack/webpack.browser.config.js",

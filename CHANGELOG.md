@@ -1,3 +1,8 @@
+## v0.2.9 (06/06/21)
+
+- Added support for untrusted and virtual workspaces
+- Files are now automatically opened, when added to an existing gist
+
 ## v0.2.8 (04/07/21)
 
 - Added support for the [GistPad CLI](https://aka.ms/gistpad-cli), so that you can open repos/gists, and launch into a scratch note or today page from your terminal

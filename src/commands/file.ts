@@ -38,16 +38,13 @@ export function registerFileCommands(context: ExtensionContext) {
         });
 
         if (fileName) {
-          await withProgress("Adding file(s)...", () => {
-            const fileNames = fileName.split(",");
-            return Promise.all(
-              fileNames.map((fileName) => {
-                return workspace.fs.writeFile(
-                  fileNameToUri(node.gist.id, fileName),
-                  stringToByteArray("")
-                );
-              })
-            );
+          await withProgress("Adding file(s)...", async () => {
+            const fileUris = fileName.split(",").map(fileName => fileNameToUri(node.gist.id, fileName));
+            const emptyBuffer = stringToByteArray("");
+
+            await Promise.all(fileUris.map(uri => workspace.fs.writeFile(uri, emptyBuffer)));
+
+            fileUris.reverse().forEach(uri => openGistFile(uri));
           });
         }
       }

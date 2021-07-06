@@ -1,9 +1,11 @@
 .vscode/**
 .github/**
 src/**
-webpack/**
 .gitignore
+**/webpack.config.js
 **/tsconfig.json
 **/tslint.json
+**/prettierrc.json
 **/*.map
 **/*.ts
+node_modules/**

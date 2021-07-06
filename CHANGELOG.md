@@ -1,3 +1,7 @@
+## v0.3.0 (07/06/21)
+
+- Fixed a bug with updating notebook files
+
 ## v0.2.9 (06/06/21)
 
 - Added support for untrusted and virtual workspaces

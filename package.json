@@ -3,8 +3,9 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "extensionKind": [
+    "web",
     "ui",
     "workspace"
   ],
@@ -36,7 +37,8 @@
     "onFileSystem:repo",
     "onFileSystem:gist"
   ],
-  "main": "./out/prod/extension.js",
+  "main": "./dist/extension.js",
+  "browser": "./dist/extension-web.js",
   "contributes": {
     "configuration": {
       "type": "object",
@@ -1469,11 +1471,9 @@
     "virtualWorkspaces": true
   },
   "scripts": {
-    "build:browser": "webpack --config ./webpack/webpack.browser.config.js",
-    "build:node": "webpack --config ./webpack/webpack.node.config.js",
     "compile": "tsc -p ./",
     "package": "vsce package",
-    "vscode:prepublish": "npm run build:node",
+    "vscode:prepublish": "webpack",
     "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
   },
   "dependencies": {
@@ -1499,10 +1499,9 @@
     "ts-loader": "^6.2.1",
     "tslint": "^5.8.0",
     "typescript": "^3.7.3",
-    "vsce": "^1.81.1",
+    "vsce": "^1.95.0",
     "vscode-nls-dev": "^3.3.1",
     "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10",
-    "webpack-merge": "^4.2.2"
+    "webpack-cli": "^3.3.10"
   }
 }

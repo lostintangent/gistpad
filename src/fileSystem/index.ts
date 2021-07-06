@@ -22,7 +22,7 @@ import {
   FS_SCHEME,
   ZERO_WIDTH_SPACE
 } from "../constants";
-import { GistFile, Store } from "../store";
+import { Gist, GistFile, Store } from "../store";
 import { forkGist, getGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import {
@@ -46,7 +46,6 @@ interface WriteOperation {
   resolve: () => void;
 }
 
-let count = 0;
 export class GistFileSystemProvider implements FileSystemProvider {
   private _pendingWrites = new Subject<WriteOperation>();
 
@@ -104,8 +103,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
     return !!Object.keys(gist.files).find((file) => file.startsWith(prefix));
   }
 
-  private async getFileFromUri(uri: Uri): Promise<GistFile> {
-    const { gistId, file } = getGistDetailsFromUri(uri);
+  private async getGistFromUri(uri: Uri): Promise<Gist> {
+    const { gistId } = getGistDetailsFromUri(uri);
     let gist = this.store.gists
       .concat(this.store.starredGists)
       .find((gist) => gist.id === gistId);
@@ -114,6 +113,15 @@ export class GistFileSystemProvider implements FileSystemProvider {
       gist = await getGist(gistId);
     }
 
+    return gist;
+  }
+
+  private async getFileFromUri(uri: Uri, gist?: Gist): Promise<GistFile> {
+    const { file } = getGistDetailsFromUri(uri);
+    if (!gist) {
+      gist = await this.getGistFromUri(uri);
+    }
+    
     return gist.files[file];
   }
 
@@ -321,7 +329,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
     uri = encodeDirectoryUri(uri);
 
-    const file = await this.getFileFromUri(uri);
+    const gist = await this.getGistFromUri(uri);
+    const file = await this.getFileFromUri(uri, gist);
 
     if (!file) {
       throw FileSystemError.FileNotFound(uri);
@@ -330,7 +339,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     return {
       type: FileType.File,
       ctime: 0,
-      mtime: ++count,
+      mtime: gist.updated_at ? Date.parse(gist.updated_at) : Date.now(),
       size: file.size!
     };
   }

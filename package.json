@@ -5,7 +5,6 @@
   "publisher": "vsls-contrib",
   "version": "0.3.0",
   "extensionKind": [
-    "web",
     "ui",
     "workspace"
   ],

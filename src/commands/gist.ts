@@ -498,7 +498,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
-      `${EXTENSION_NAME}.openGistWorkspaceNewWindow`,
+      `${EXTENSION_NAME}.openGistNewWindow`,
       (node?: GistNode) => {
         openGistInternal({ node, openAsWorkspace: true, forceNewWindow: true });
       }

@@ -362,7 +362,7 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.openGistWorkspaceNewWindow",
+        "command": "gistpad.openGistNewWindow",
         "title": "Open Gist in New Window",
         "category": "GistPad"
       },

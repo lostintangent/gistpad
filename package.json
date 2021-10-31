@@ -412,10 +412,7 @@
       {
         "command": "gistpad.refreshShowcase",
         "title": "Refresh Showcase",
-        "icon": {
-          "dark": "images/dark/refresh.svg",
-          "light": "images/light/refresh.svg"
-        }
+        "icon": "$(refresh)"
       },
       {
         "command": "gistpad.renameDirectory",

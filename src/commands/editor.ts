@@ -95,11 +95,16 @@ export async function promptForGistSelection(files: GistFile[]) {
 }
 
 export function registerEditorCommands(context: ExtensionContext) {
+  // This command can be called from four different contexts:
+  // 1) Right-clicking a file in the "Explorer" tree (Uri)
+  // 2) Right-clicking the editor tab of a file (Uri)
+  // 3) Right-clicking a file in the "Gists" tree (GistFileNode)
+  // 4) From the toolbar of the notebook editor
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.addFileToGist`,
       async (
-        targetNode: GistFileNode | Uri,
+        targetNode: GistFileNode | Uri | { notebookEditor: { notebookUri: Uri }},
         multiSelectNodes?: GistFileNode[] | Uri[]
       ) => {
         await ensureAuthenticated();
@@ -124,12 +129,14 @@ export function registerEditorCommands(context: ExtensionContext) {
               )
             });
           } else {
+            const uri = node instanceof Uri ? node : node.notebookEditor.notebookUri;
+            
             // The command is being called as a response to
             // right-clicking a file node in the explorer
             // and/or right-clicking the editor tab
             files.push({
-              filename: path.basename(node.path),
-              content: byteArrayToString(await workspace.fs.readFile(node))
+              filename: path.basename(uri.path),
+              content: byteArrayToString(await workspace.fs.readFile(uri))
             });
           }
         }

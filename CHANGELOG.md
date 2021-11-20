@@ -1,3 +1,8 @@
+## v0.4.0 (11/20/21)
+
+- Added `Copy File to Gist` command to the notebook editor toolbar
+- Changed the `Showcase` view to be hidden by default
+
 ## v0.3.0 (07/06/21)
 
 - Fixed a bug with updating notebook files

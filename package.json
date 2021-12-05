@@ -1005,7 +1005,7 @@
         {
           "command": "gistpad.openGistNewWindow",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
-          "group": "base@2"
+          "group": "base@3"
         },
         {
           "command": "gistpad.copyGistUrl",

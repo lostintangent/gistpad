@@ -363,6 +363,11 @@
         "category": "GistPad"
       },
       {
+        "command": "gistpad.openGistNewWindow",
+        "title": "Open Gist in New Window",
+        "category": "GistPad"
+      },
+      {
         "command": "gistpad.openProfile",
         "title": "View Profile in GitHub"
       },
@@ -994,6 +999,11 @@
           "command": "gistpad.openGistWorkspace",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "base@2"
+        },
+        {
+          "command": "gistpad.openGistNewWindow",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
+          "group": "base@3"
         },
         {
           "command": "gistpad.copyGistUrl",

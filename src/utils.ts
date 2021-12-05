@@ -116,19 +116,23 @@ export function isGistWorkspace() {
   );
 }
 
-export async function openGist(id: string, openAsWorkspace: boolean) {
+export async function openGist(
+  id: string,
+  openAsWorkspace: boolean,
+  forceNewWindow?: boolean
+) {
   if (openAsWorkspace) {
-    return openGistAsWorkspace(id);
+    return openGistAsWorkspace(id, !!forceNewWindow);
   }
 
   return openGistFiles(id);
 }
 
-export function openGistAsWorkspace(id: string) {
+export function openGistAsWorkspace(id: string, forceNewWindow: boolean) {
   // TODO: Add support for adding the Gist as a new
   // root to an existing workspace
   const uri = Uri.parse(`${FS_SCHEME}://${id}/`);
-  commands.executeCommand("vscode.openFolder", uri, false);
+  commands.executeCommand("vscode.openFolder", uri, forceNewWindow);
 }
 
 export async function openGistFiles(id: string) {

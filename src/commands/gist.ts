@@ -127,6 +127,7 @@ const CREATE_GIST_ITEMS = [
 
 interface IOpenGistOptions {
   openAsWorkspace?: boolean;
+  forceNewWindow?: boolean;
   node?: GistNode;
   gistUrl?: string;
   gistId?: string;
@@ -142,16 +143,16 @@ const getGistIdFromUrl = (gistUrl: string) => {
 };
 
 async function openGistInternal(
-  options: IOpenGistOptions = { openAsWorkspace: false }
+  options: IOpenGistOptions = { openAsWorkspace: false, forceNewWindow: false }
 ) {
-  const { node, openAsWorkspace, gistUrl, gistId } = options;
+  const { node, openAsWorkspace, forceNewWindow, gistUrl, gistId } = options;
 
   if (gistUrl || gistId) {
     const id = gistId ? gistId : getGistIdFromUrl(gistUrl!); // (!) since the `gistId` is not set, means the `gistUrl` is set
 
-    return openGist(id, !!openAsWorkspace);
+    return openGist(id, !!openAsWorkspace, !!forceNewWindow);
   } else if (node) {
-    return openGist(node.gist.id, !!openAsWorkspace);
+    return openGist(node.gist.id, !!openAsWorkspace, !!forceNewWindow);
   }
 
   let gistItems: GistQuickPickItem[] = [];
@@ -491,6 +492,15 @@ export async function registerGistCommands(context: ExtensionContext) {
       `${EXTENSION_NAME}.openGistWorkspace`,
       (node?: GistNode) => {
         openGistInternal({ node, openAsWorkspace: true });
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.openGistNewWindow`,
+      (node?: GistNode) => {
+        openGistInternal({ node, openAsWorkspace: true, forceNewWindow: true });
       }
     )
   );

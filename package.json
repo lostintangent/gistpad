@@ -1495,7 +1495,7 @@
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "is-binary-path": "^2.1.0",
-    "markdown-it": "^10.0.0",
+    "markdown-it": "^12.3.2",
     "markdown-it-regex": "^0.2.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",

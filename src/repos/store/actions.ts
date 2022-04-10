@@ -161,7 +161,17 @@ export async function getRepoFile(
   const api = await getApi(GitHub);
 
   const response = await api.get(`/repos/${repo}/git/blobs/${sha}`);
-  return base64ToUintArray(response.body.content);
+
+  return new Uint8Array(
+    Buffer.from(response.body.content, "base64")
+      .toString("latin1")
+      .split("")
+      .map(charCodeAt)
+  );
+}
+
+function charCodeAt(c: string) {
+  return c.charCodeAt(0);
 }
 
 export async function getRepo(

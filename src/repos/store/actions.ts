@@ -180,11 +180,12 @@ export async function getRepo(
     );
 
     if (response.statusCode === 200) {
-      return [response.body, response.headers.etag];
+      return [response.body, response.rawHeaders[13]]; // response.rawHeaders[13] is etag
     } else {
       return [];
     }
   } catch (e) {
+    console.log(e);
     // If the repo is empty (i.e. it has no files yet), then
     // the call to get the tree will return a 409.
     // TODO: Indicate when the repository has been
@@ -529,7 +530,7 @@ export async function updateRepoFile(
       );
     } else {
       vscode.window.showInformationMessage(
-        "Can't save this file to do an unresoveable conflict with the remote repository."
+        "Can't save this file to do an unresolvable conflict with the remote repository."
       );
     }
   }

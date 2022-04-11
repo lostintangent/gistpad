@@ -9,8 +9,6 @@ import { focusRepo } from "../tree";
 import { sanitizeName } from "../utils";
 import { updateTree } from "../wiki/actions";
 
-const base64ToUintArray = require("base64-to-uint8array");
-
 export async function addRepoFile(
   repoName: string,
   branch: string,

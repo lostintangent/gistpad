@@ -179,12 +179,6 @@ async function openGistInternal(
   list.items = gistItems;
   list.ignoreFocusOut = true;
 
-  list.onDidChangeValue((gistId) => {
-    list.items = gistId
-      ? [{ label: gistId, id: gistId }, ...gistItems]
-      : gistItems;
-  });
-
   const clipboardValue = await env.clipboard.readText();
   if (GIST_NAME_PATTERN.test(clipboardValue)) {
     list.value = clipboardValue;

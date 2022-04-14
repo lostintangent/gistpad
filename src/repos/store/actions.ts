@@ -9,8 +9,6 @@ import { focusRepo } from "../tree";
 import { sanitizeName } from "../utils";
 import { updateTree } from "../wiki/actions";
 
-const base64ToUintArray = require("base64-to-uint8array");
-
 export async function addRepoFile(
   repoName: string,
   branch: string,
@@ -161,7 +159,17 @@ export async function getRepoFile(
   const api = await getApi(GitHub);
 
   const response = await api.get(`/repos/${repo}/git/blobs/${sha}`);
-  return base64ToUintArray(response.body.content);
+
+  return new Uint8Array(
+    Buffer.from(response.body.content, "base64")
+      .toString("latin1")
+      .split("")
+      .map(charCodeAt)
+  );
+}
+
+function charCodeAt(c: string) {
+  return c.charCodeAt(0);
 }
 
 export async function getRepo(
@@ -180,17 +188,33 @@ export async function getRepo(
     );
 
     if (response.statusCode === 200) {
-      return [response.body, response.headers.etag];
+      return [response.body, response.rawHeaders[13]]; // response.rawHeaders[13] is etag
     } else {
       return [];
     }
   } catch (e) {
+    console.log(e);
     // If the repo is empty (i.e. it has no files yet), then
     // the call to get the tree will return a 409.
     // TODO: Indicate when the repository has been
     // deleted on the server, or the user has lost
     // access permissions, so we can unmanage it.
   }
+}
+
+export async function getDefaultBranch(repoName: string) {
+  const GitHub = require("github-base");
+  const api = await getApi(GitHub);
+
+  let defaultBranch = "master";
+  try {
+    const response = await api.get(`/repos/${repoName}`);
+    defaultBranch = response.body.default_branch;
+  } catch (e) {
+    console.log(`Gistpad: cannot get default branch for ${repoName}`);
+  }
+
+  return defaultBranch;
 }
 
 export async function listRepos() {
@@ -306,7 +330,8 @@ export async function updateBranch(repo: string, branch: string, sha: string) {
 
 export async function openRepo(repoName: string, showReadme: boolean = false) {
   // TODO: Add repo validation
-  const repository = new Repository(repoName);
+  const defaultBranch = await getDefaultBranch(repoName);
+  const repository = new Repository(repoName, defaultBranch);
 
   const repos = storage.repos;
   if (repos.find((repo) => repo === repository.name)) {
@@ -382,7 +407,13 @@ export async function refreshRepositories() {
     clearInterval(refreshTimer);
   }
 
-  store.repos = storage.repos.map((repo) => new Repository(repo));
+  store.repos = await Promise.all(
+    storage.repos.map(async (repo) => {
+      const defaultBranch = await getDefaultBranch(repo);
+      return new Repository(repo, defaultBranch);
+    })
+  );
+
   await updateRepositories(true);
 
   setInterval(updateRepositories, REFRESH_INTERVAL);
@@ -529,7 +560,7 @@ export async function updateRepoFile(
       );
     } else {
       vscode.window.showInformationMessage(
-        "Can't save this file to do an unresoveable conflict with the remote repository."
+        "Can't save this file to do an unresolvable conflict with the remote repository."
       );
     }
   }

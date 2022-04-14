@@ -61,7 +61,7 @@ class RepositoryTreeProvider implements TreeDataProvider<TreeItem> {
   getChildren(element?: TreeItem): ProviderResult<TreeItem[]> {
     if (!element && authStore.isSignedIn && store.repos.length > 0) {
       return store.repos
-        .sort((a, b) => a.name.localeCompare(b.name))
+        .slice().sort((a, b) => a.name.localeCompare(b.name))
         .map((repo) => new RepositoryNode(repo));
     } else if (element instanceof RepositoryNode) {
       if (element.repo.isLoading) {

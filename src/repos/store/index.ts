@@ -1,6 +1,5 @@
 import { computed, observable } from "mobx";
 import * as path from "path";
-// import { getApi } from "src/store/actions";
 import { CommentThread, Location, Uri } from "vscode";
 import { SWING_FILE } from "../../constants";
 import { GistComment, store as mainStore } from "../../store";

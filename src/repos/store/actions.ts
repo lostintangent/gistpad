@@ -206,15 +206,15 @@ export async function getDefaultBranch(repoName: string) {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
 
-  let default_branch = "master";
+  let defaultBranch = "master";
   try {
     const response = await api.get(`/repos/${repoName}`);
-    default_branch = response.body.default_branch;
+    defaultBranch = response.body.default_branch;
   } catch (e) {
     console.log(`Gistpad: cannot get default branch for ${repoName}`);
   }
 
-  return default_branch;
+  return defaultBranch;
 }
 
 export async function listRepos() {
@@ -330,8 +330,8 @@ export async function updateBranch(repo: string, branch: string, sha: string) {
 
 export async function openRepo(repoName: string, showReadme: boolean = false) {
   // TODO: Add repo validation
-  const default_branch = await getDefaultBranch(repoName);
-  const repository = new Repository(repoName, default_branch);
+  const defaultBranch = await getDefaultBranch(repoName);
+  const repository = new Repository(repoName, defaultBranch);
 
   const repos = storage.repos;
   if (repos.find((repo) => repo === repository.name)) {
@@ -407,11 +407,9 @@ export async function refreshRepositories() {
     clearInterval(refreshTimer);
   }
 
-  store.repos = storage.repos.map((repo) => new Repository(repo));
-
   store.repos = await Promise.all(
     storage.repos.map(async (repo) => {
-      let defaultBranch = await getDefaultBranch(repo);
+      const defaultBranch = await getDefaultBranch(repo);
       return new Repository(repo, defaultBranch);
     })
   );

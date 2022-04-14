@@ -21,9 +21,10 @@ export class RepositoryNode extends TreeItem {
       this.description = "Primary";
     }
 
-    this.contextValue += ".branch";
-    this.description = repo.branch;
-
+    if (repo.branch !== Repository.DEFAULT_BRANCH) {
+      this.contextValue += ".branch";
+      this.description = repo.branch;
+    }
     if (repo.hasTours) {
       this.contextValue += ".hasTours";
     }

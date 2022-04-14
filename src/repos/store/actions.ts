@@ -202,6 +202,21 @@ export async function getRepo(
   }
 }
 
+export async function getDefaultBranch(repoName: string) {
+  const GitHub = require("github-base");
+  const api = await getApi(GitHub);
+
+  let default_branch = "master";
+  try {
+    const response = await api.get(`/repos/${repoName}`);
+    default_branch = response.body.default_branch;
+  } catch (e) {
+    console.log(`Gistpad: cannot get default branch for ${repoName}`);
+  }
+
+  return default_branch;
+}
+
 export async function listRepos() {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
@@ -315,7 +330,8 @@ export async function updateBranch(repo: string, branch: string, sha: string) {
 
 export async function openRepo(repoName: string, showReadme: boolean = false) {
   // TODO: Add repo validation
-  const repository = new Repository(repoName);
+  const default_branch = await getDefaultBranch(repoName);
+  const repository = new Repository(repoName, default_branch);
 
   const repos = storage.repos;
   if (repos.find((repo) => repo === repository.name)) {
@@ -392,6 +408,14 @@ export async function refreshRepositories() {
   }
 
   store.repos = storage.repos.map((repo) => new Repository(repo));
+
+  store.repos = await Promise.all(
+    storage.repos.map(async (repo) => {
+      let defaultBranch = await getDefaultBranch(repo);
+      return new Repository(repo, defaultBranch);
+    })
+  );
+
   await updateRepositories(true);
 
   setInterval(updateRepositories, REFRESH_INTERVAL);

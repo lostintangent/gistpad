@@ -1,5 +1,6 @@
 import { computed, observable } from "mobx";
 import * as path from "path";
+// import { getApi } from "src/store/actions";
 import { CommentThread, Location, Uri } from "vscode";
 import { SWING_FILE } from "../../constants";
 import { GistComment, store as mainStore } from "../../store";
@@ -109,14 +110,14 @@ export class Repository {
   name: string;
   branch: string;
 
-  constructor(public fullName: string) {
+  constructor(public fullName: string, public defaultBranch?: string) {
     if (this.fullName.includes("#")) {
       const parts = this.fullName.split("#");
       this.name = parts[0];
       this.branch = parts[1];
     } else {
       this.name = fullName;
-      this.branch = Repository.DEFAULT_BRANCH;
+      defaultBranch ? this.branch = defaultBranch : this.branch = Repository.DEFAULT_BRANCH;
     }
   }
 

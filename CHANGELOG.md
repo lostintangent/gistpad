@@ -1,5 +1,7 @@
-## v0.4.0 (11/20/21)
+## v0.4.0 (04/15/22)
 
+- The default branch is now properly detected when opening a repo
+- Fixed a bug with editing repo files in github.dev/vscode.github.dev
 - Added `Copy File to Gist` command to the notebook editor toolbar
 - Changed the `Showcase` view to be hidden by default
 

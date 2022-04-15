@@ -14,7 +14,7 @@ import {
 import { EXTENSION_NAME } from "../constants";
 import { store as globalStore } from "../store";
 import { elevateSignin, getCurrentUser } from "../store/auth";
-import { withProgress } from "../utils";
+import { byteArrayToString, withProgress } from "../utils";
 import { RepoFileSystemProvider } from "./fileSystem";
 import { Repository } from "./store";
 import {
@@ -323,8 +323,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
             node.repo.name,
             node.repo.branch,
             filePath,
-            // @ts-ignore
-            contents.toString("base64")
+            byteArrayToString(contents)
           );
         });
 

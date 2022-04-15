@@ -526,8 +526,7 @@ export async function updateRepoFile(
       repo,
       branch,
       path,
-      // @ts-ignore
-      contents.toString("base64"),
+      base64ToUintArray(contents),
       sha
     );
   } catch (e) {

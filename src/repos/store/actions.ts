@@ -231,10 +231,11 @@ export async function listRepos() {
 export async function rebaseBranch(
   repo: string,
   branch: string,
-  message: string = `Merging ${branch}`
+  message: string = `Merging ${branch}`,
+  defaultBranch: string
 ) {
   // 1) Create a new temp branch that's based on the latest commit on the default branch
-  const commitSha = await getLatestCommit(repo, Repository.DEFAULT_BRANCH);
+  const commitSha = await getLatestCommit(repo, defaultBranch);
   const tempBranch = `temp/${Date.now()}`;
   await createBranch(repo, tempBranch, commitSha);
 
@@ -253,7 +254,7 @@ export async function rebaseBranch(
 
     // 4) Update the default branch to point at the newly committed
     //    changes, and then delete the source and temp branches.
-    await updateBranch(repo, Repository.DEFAULT_BRANCH, commit.sha);
+    await updateBranch(repo, defaultBranch, commit.sha);
     await deleteBranch(repo, branch);
   } catch {
     vscode.window.showErrorMessage(
@@ -382,7 +383,7 @@ export async function openRepo(repoName: string, showReadme: boolean = false) {
 export async function mergeBranch(
   repo: string,
   branch: string,
-  baseBranch = Repository.DEFAULT_BRANCH
+  baseBranch: string
 ) {
   const GitHub = require("github-base");
   const api = await getApi(GitHub);
@@ -526,7 +527,7 @@ export async function updateRepoFile(
       repo,
       branch,
       path,
-      base64ToUintArray(contents),
+      Buffer.from(contents).toString("base64"),
       sha
     );
   } catch (e) {

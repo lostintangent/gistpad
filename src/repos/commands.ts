@@ -14,9 +14,8 @@ import {
 import { EXTENSION_NAME } from "../constants";
 import { store as globalStore } from "../store";
 import { elevateSignin, getCurrentUser } from "../store/auth";
-import { byteArrayToString, withProgress } from "../utils";
+import { withProgress } from "../utils";
 import { RepoFileSystemProvider } from "./fileSystem";
-import { Repository } from "./store";
 import {
   addRepoFile,
   closeRepo,
@@ -35,10 +34,10 @@ import { RepositoryFileNode, RepositoryNode } from "./tree/nodes";
 import { openRepoDocument } from "./utils";
 import moment = require("moment");
 
-function getGitHubUrl(repo: string, branch: string, filePath?: string) {
+function getGitHubUrl(repo: string, branch: string, defaultBranch: string, filePath?: string) {
   const suffix = filePath
     ? `/blob/${branch}/${filePath}`
-    : branch !== Repository.DEFAULT_BRANCH
+    : branch !== defaultBranch
     ? `/tree/${branch}`
     : "";
 
@@ -226,7 +225,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.copyRepositoryUrl`,
       async (node: RepositoryNode) => {
-        const url = getGitHubUrl(node.repo.name, node.repo.branch);
+        const url = getGitHubUrl(node.repo.name, node.repo.branch, node.repo.defaultBranch);
         env.clipboard.writeText(url);
       }
     )
@@ -239,6 +238,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
         const url = getGitHubUrl(
           node.repo.name,
           node.repo.branch,
+          node.repo.defaultBranch,
           node.file.path
         );
         env.clipboard.writeText(url);
@@ -250,7 +250,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.openRepositoryInBrowser`,
       async (node: RepositoryNode) => {
-        const url = getGitHubUrl(node.repo.name, node.repo.branch);
+        const url = getGitHubUrl(node.repo.name, node.repo.branch, node.repo.defaultBranch);
         env.openExternal(Uri.parse(url));
       }
     )
@@ -263,6 +263,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
         const url = getGitHubUrl(
           node.repo.name,
           node.repo.branch,
+          node.repo.defaultBranch,
           node.file.path
         );
         env.openExternal(Uri.parse(url));
@@ -323,7 +324,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
             node.repo.name,
             node.repo.branch,
             filePath,
-            byteArrayToString(contents)
+            Buffer.from(contents).toString("base64")
           );
         });
 
@@ -478,7 +479,7 @@ export async function registerRepoCommands(context: ExtensionContext) {
         });
 
         await withProgress("Merging branch...", async () => {
-          await rebaseBranch(node.repo.name, node.repo.branch, response);
+          await rebaseBranch(node.repo.name, node.repo.branch, response, node.repo.defaultBranch);
 
           await closeRepo(node.repo.name, node.repo.branch);
           await openRepo(node.repo.name);

@@ -1,5 +1,4 @@
 import * as vscode from "vscode";
-import { byteArrayToString } from "../utils";
 import { Repository, store, TreeItem } from "./store";
 import {
   addRepoFile,
@@ -105,7 +104,7 @@ export class RepoFileSystemProvider implements vscode.FileSystemProvider {
         repository.name,
         repository.branch,
         filePath,
-        byteArrayToString(content)
+        Buffer.from(content).toString("base64")
       );
 
       this._onDidChangeFile.fire([

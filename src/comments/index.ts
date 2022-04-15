@@ -33,7 +33,7 @@ export class GistCodeComment implements Comment {
     public currentUser: string
   ) {
     this.id = comment.id;
-    this.body = comment.body;
+    this.body = new MarkdownString(comment.body);
     this.author = {
       name: comment.user.login,
       iconPath: Uri.parse(comment.user.avatar_url)

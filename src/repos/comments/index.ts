@@ -36,7 +36,7 @@ export class RepoCommitComment implements Comment {
     public currentUser: string
   ) {
     this.id = comment.id;
-    this.body = comment.body;
+    this.body = new MarkdownString(comment.body);
 
     this.author = {
       name: comment.user.login,

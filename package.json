@@ -418,6 +418,7 @@
       {
         "command": "gistpad.refreshShowcase",
         "title": "Refresh Showcase",
+        "category": "GistPad",
         "icon": "$(refresh)"
       },
       {

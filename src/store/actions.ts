@@ -194,10 +194,36 @@ export async function listGists(): Promise<Gist[]> {
 }
 
 export async function listUserGists(username: string): Promise<Gist[]> {
-  const api = await getApi();
-  const response = await api.list(username);
+  // api.list unfortunately does not support pagination (it does support page size but it only returns the first page),
+  // we need to call the GitHub API directly
+  // https://docs.github.com/en/rest/reference/gists#list-public-gists
+  // @investigate: should we cap how many gists are fetched and provide a way to load more? It theory, users with hundreds of gists could be problematic to handle if we try to load all gists at once
+  const GitHub = require("github-base");
+  const api = await getApi(GitHub);
+  let page = 1;
+  let responseBody: any[] = [];
+  let getNextPage = true;
 
-  return response.body.sort(
+  while (getNextPage) {
+    const response = await api.get(
+      `/users/${username}/gists?per_page=100&page=${page}`
+    );
+
+    responseBody = [...responseBody, ...response.body];
+
+    if (responseBody.length === 0) {
+      getNextPage = false;
+    }
+
+    page++;
+
+    let linkIndex = response.rawHeaders[23].indexOf('rel="next"'); // Link header starts at index 23
+    if (linkIndex === -1) {
+      getNextPage = false;
+    }
+  }
+
+  return responseBody.sort(
     (a: Gist, b: Gist) => Date.parse(b.updated_at) - Date.parse(a.updated_at)
   );
 }

@@ -203,6 +203,7 @@ export async function listUserGists(username: string): Promise<Gist[]> {
   let page = 1;
   let responseBody: any[] = [];
   let getNextPage = true;
+  let linkIndex = 0;
 
   while (getNextPage) {
     const response = await api.get(
@@ -217,8 +218,9 @@ export async function listUserGists(username: string): Promise<Gist[]> {
 
     page++;
 
-    let linkIndex = response.rawHeaders[23].indexOf('rel="next"'); // Link header starts at index 23
-    if (linkIndex === -1) {
+    linkIndex = response.rawHeaders.indexOf("Link") + 1;
+    let nextIndex = response.rawHeaders[linkIndex].indexOf('rel="next"');
+    if (nextIndex === -1) {
       getNextPage = false;
     }
   }

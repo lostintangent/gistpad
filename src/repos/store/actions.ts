@@ -188,7 +188,8 @@ export async function getRepo(
     );
 
     if (response.statusCode === 200) {
-      return [response.body, response.rawHeaders[13]]; // response.rawHeaders[13] is etag
+      let eTagIndex = response.rawHeaders.indexOf("ETag") + 1;
+      return [response.body, response.rawHeaders[eTagIndex]];
     } else {
       return [];
     }

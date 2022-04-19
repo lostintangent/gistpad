@@ -1,6 +1,10 @@
+## v0.4.1 (04/19/2022)
+
+- Gists for followed users with more than 100 are not displayed properly; previously, the list was capped at the first 100 gists
+
 ## v0.4.0 (04/15/22)
 
-- The default branch is now properly detected when opening a new repo (as oposed to defaulting to `master`)
+- The default branch is now properly detected when opening a new repo (as opposed to defaulting to `master`)
 - Added `Copy File to Gist` command to the notebook editor toolbar
 - Changed the `Showcase` view to be hidden by default
 

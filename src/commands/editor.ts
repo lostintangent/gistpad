@@ -2,7 +2,6 @@ import { pasteImageCommand } from "@abstractions/images/pasteImage";
 import * as path from "path";
 import {
   commands,
-  env,
   ExtensionContext,
   ProgressLocation,
   TextEditor,
@@ -204,8 +203,9 @@ export function registerEditorCommands(context: ExtensionContext) {
         const uri = fileNameToUri(gist!.id, selectedFile);
         const contents = byteArrayToString(await workspace.fs.readFile(uri));
 
-        await env.clipboard.writeText(contents);
-        await commands.executeCommand("editor.action.clipboardPasteAction");
+        editor.edit((editBuilder) => {
+          editBuilder.insert(editor.selection.active, contents);
+        });
       }
     )
   );

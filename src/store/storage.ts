@@ -30,7 +30,7 @@ export let storage: IStorage;
 export async function initializeStorage(context: ExtensionContext) {
   storage = {
     get followedUsers() {
-      return context.globalState.get<string[]>(FOLLOW_KEY, []).sort();
+      return context.globalState.get(FOLLOW_KEY, []).sort();
     },
     set followedUsers(followedUsers: string[]) {
       context.globalState.update(FOLLOW_KEY, followedUsers);

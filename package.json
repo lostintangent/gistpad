@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.4.1",
+  "version": "0.5.0",
   "extensionKind": [
     "ui",
     "workspace"
@@ -113,6 +113,21 @@
           "default": "LL",
           "type": "string",
           "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."
+        },
+        "gistpad.output": {
+          "default": false,
+          "type": "boolean",
+          "description": "Specifies whether or not to enable the output channel for tracing."
+        },
+        "gistpad.downloadOverwrite": {
+          "type": "string",
+          "enum": [
+            "ask",
+            "always",
+            "never"
+          ],
+          "default": "ask",
+          "description": "Specifies whether or not to overwrite files when downloading from a gist."
         }
       }
     },
@@ -530,6 +545,18 @@
       {
         "command": "gistpad.viewForks",
         "title": "View Forks"
+      },
+      {
+        "command": "gistpad.downloadFile",
+        "title": "Download..."
+      },
+      {
+        "command": "gistpad.downloadGist",
+        "title": "Download..."
+      },
+      {
+        "command": "gistpad.downloadAllGists",
+        "title": "Download all gists..."
       }
     ],
     "menus": {
@@ -672,6 +699,18 @@
         },
         {
           "command": "gistpad.deleteFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.downloadFile",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.downloadGist",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.downloadAllGists",
           "when": "false"
         },
         {
@@ -1082,6 +1121,11 @@
           "group": "manage@4"
         },
         {
+          "command": "gistpad.downloadGist",
+          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
+          "group": "download@1"
+        },
+        {
           "command": "gistpad.viewForks",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "star@1"
@@ -1100,6 +1144,11 @@
           "command": "gistpad.unfollowUser",
           "when": "viewItem == followedUserGists",
           "group": "base@1"
+        },
+        {
+          "command": "gistpad.downloadAllGists",
+          "when": "viewItem =~ /(?!gistFile)^(gists|starredGists|followedUserGists|scratchGist)(?!\\.gist)/",
+          "group": "download@1"
         },
         {
           "command": "gistpad.copyFileUrl",
@@ -1130,6 +1179,11 @@
           "command": "gistpad.deleteFile",
           "when": "viewItem == gistFile.editable",
           "group": "manage@3"
+        },
+        {
+          "command": "gistpad.downloadFile",
+          "when": "viewItem =~ /^gistFile/",
+          "group": "download@1"
         },
         {
           "command": "gistpad.addDirectoryFile",
@@ -1487,7 +1541,7 @@
     "compile": "tsc -p ./",
     "package": "vsce package",
     "vscode:prepublish": "webpack",
-    "watch": "webpack --mode=development --watch --progress --config ./webpack/webpack.node.config.js"
+    "watch": "webpack --mode development --watch --progress"
   },
   "dependencies": {
     "axios": "^0.19.2",

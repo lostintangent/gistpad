@@ -11,7 +11,9 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
+import { output } from "../extension";
 import { duplicateGist, exportToRepo } from "../fileSystem/git";
+import { messageType } from "../output";
 import { openRepo } from "../repos/store/actions";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
@@ -37,7 +39,10 @@ import { createGistPadOpenUrl } from "../uriHandler";
 import {
   byteArrayToString,
   closeGistFiles,
+  confirmOverwrite,
+  confirmOverwriteOptions,
   encodeDirectoryName,
+  ensureIsValidFileSystemName,
   fileNameToUri,
   getGistDescription,
   getGistLabel,
@@ -49,9 +54,10 @@ import {
   updateGistTags,
   withProgress
 } from "../utils";
+import { downloadFile } from "./file";
 const isBinaryPath = require("is-binary-path");
 
-const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
+const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i; // prettier-ignore
 
 export interface GistQuickPickItem extends QuickPickItem {
   id?: string;
@@ -378,6 +384,258 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
+      `${EXTENSION_NAME}.downloadGist`,
+      async (targetNode?: GistNode, multiSelectNodes?: GistNode[]) => {
+        await ensureAuthenticated();
+
+        let folder = await window.showOpenDialog({
+          canSelectFiles: false,
+          canSelectFolders: true,
+          canSelectMany: false
+        });
+
+        let overwrite = new confirmOverwrite();
+        window.withProgress(
+          {
+            location: ProgressLocation.Notification,
+            title: "Downloading gists...",
+            cancellable: true
+          },
+          async (progress, token) => {
+            token.onCancellationRequested(() => {
+              output?.appendLine(
+                "Gist download cancelled by user.",
+                messageType.Info
+              );
+              overwrite.cancel();
+              return;
+            });
+
+            if (folder) {
+              for (const node of multiSelectNodes || [targetNode]) {
+                try {
+                  // create the folder for the Gist, use the Gist label as name
+                  let folderName = ensureIsValidFileSystemName(
+                    node!.label!.toString()
+                  );
+
+                  // @investigate: can treeNode.label be undefined?
+                  let newFolder = Uri.joinPath(folder[0], folderName);
+                  // check if the user wants to overwrite the folder
+                  let canOverwrite = await overwrite.confirm(newFolder);
+
+                  if (
+                    (overwrite.userChoice as confirmOverwriteOptions) ===
+                    confirmOverwriteOptions.Cancel
+                  ) {
+                    // the user cancelled the operation, so we can just return
+                    return;
+                  }
+
+                  if (!canOverwrite) {
+                    continue;
+                  }
+
+                  // create the folder for the Gist
+                  workspace.fs.createDirectory(newFolder);
+
+                  // download the files
+                  for (const gistFile of Object.values<any>(node!.gist.files)) {
+                    const validFsName = ensureIsValidFileSystemName(
+                      gistFile.filename
+                    );
+                    let newFileUri = Uri.joinPath(newFolder, validFsName);
+
+                    // check if the user wants to overwrite the folder
+                    canOverwrite = await overwrite.confirm(newFileUri);
+
+                    if (
+                      (overwrite.userChoice as confirmOverwriteOptions) ===
+                      confirmOverwriteOptions.Cancel
+                    ) {
+                      // the user cancelled the download
+                      output?.appendLine(
+                        "Gist download cancelled by user.",
+                        messageType.Info
+                      );
+                      return;
+                    }
+
+                    if (!canOverwrite) {
+                      continue;
+                    }
+
+                    // get the file content; for this we need to use the raw file name and needs to be extracted from raw_url
+                    const rawFileName = gistFile.raw_url.split("/").at(-1);
+                    // workspace.fs.readFile should return a Uint8Array but in testing I found that fileContent is of type string if I do not explicitly mark it as Uint8Array
+                    const fileContent: Uint8Array = await workspace.fs.readFile(
+                      fileNameToUri(node!.gist.id, rawFileName)
+                    );
+
+                    downloadFile(newFileUri, fileContent);
+                  }
+                } catch (e) {
+                  // @todo: add Output trace to show the error
+                  output?.appendLine(
+                    `Error downloading gist: ${e}`,
+                    messageType.Error
+                  );
+                }
+              }
+            }
+          }
+        );
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.downloadAllGists`,
+      async (targetNode?: any, multiSelectNodes?: any[]) => {
+        await ensureAuthenticated();
+
+        let folder = await window.showOpenDialog({
+          canSelectFiles: false,
+          canSelectFolders: true,
+          canSelectMany: false
+        });
+
+        let overwrite = new confirmOverwrite();
+        window.withProgress(
+          {
+            location: ProgressLocation.Notification,
+            title: "Downloading gists...",
+            cancellable: true
+          },
+          async (progress, token) => {
+            token.onCancellationRequested(() => {
+              output?.appendLine(
+                "Gist download cancelled by user.",
+                messageType.Info
+              );
+              overwrite.cancel();
+              return;
+            });
+
+            if (folder) {
+              for (const node of multiSelectNodes || [targetNode]) {
+                try {
+                  // create a folder for the user
+                  // gitGroupFolderName is the folder that will contain all gists downloaded for Gist group, e.g. followedUsers
+                  let gistGroupFolderName = "";
+                  let gists: any;
+
+                  [gistGroupFolderName, gists] = getGistFolderAndStore(node);
+
+                  let userFolderName =
+                    ensureIsValidFileSystemName(gistGroupFolderName);
+                  // create the folder for the Gist, use the Gist label as the name
+                  // @investigate: can treeNode.label be undefined?
+                  let newFolder = Uri.joinPath(folder[0], userFolderName);
+
+                  // check if the user wants to overwrite the folder
+                  let canOverwrite = await overwrite.confirm(newFolder);
+
+                  if (
+                    (overwrite.userChoice as confirmOverwriteOptions) ===
+                    confirmOverwriteOptions.Cancel
+                  ) {
+                    // the user cancelled the operation, so we can just return
+                    return;
+                  }
+
+                  if (!canOverwrite) {
+                    continue;
+                  }
+
+                  // create the folder for the Gist
+                  workspace.fs.createDirectory(newFolder);
+
+                  // download the files
+                  let gist: any;
+                  for (gist of gists) {
+                    let gistName = gist.description;
+                    if (!gistName) {
+                      gistName =
+                        gist.files[Object.keys(gist.files)[0]].filename;
+                    }
+
+                    let gistFolderName = ensureIsValidFileSystemName(gistName);
+                    // create the gist folder (username/gistname)
+                    let newFolder = Uri.joinPath(folder[0], userFolderName, gistFolderName); // prettier-ignore
+
+                    // check if the user wants to overwrite the folder
+                    canOverwrite = await overwrite.confirm(newFolder);
+
+                    if (
+                      (overwrite.userChoice as confirmOverwriteOptions) ===
+                      confirmOverwriteOptions.Cancel
+                    ) {
+                      // the user cancelled the operation, so we can just return
+                      output?.appendLine(
+                        "Gist download cancelled by user.",
+                        messageType.Info
+                      );
+                      return;
+                    }
+
+                    if (!canOverwrite) {
+                      continue;
+                    }
+
+                    // create the folder for the Gist
+                    workspace.fs.createDirectory(newFolder);
+
+                    // download the files
+                    for (const gistFile of Object.values<any>(gist?.files)) {
+                      const validFsName = ensureIsValidFileSystemName(
+                        gistFile.filename
+                      );
+                      let newFileUri = Uri.joinPath(newFolder, validFsName);
+
+                      // check if the user wants to overwrite the folder
+                      canOverwrite = await overwrite.confirm(newFileUri);
+
+                      if (
+                        (overwrite.userChoice as confirmOverwriteOptions) ===
+                        confirmOverwriteOptions.Cancel
+                      ) {
+                        // the user cancelled the download
+                        output?.appendLine(
+                          "Gist download cancelled by user.",
+                          messageType.Info
+                        );
+                        return;
+                      }
+
+                      if (!canOverwrite) {
+                        continue;
+                      }
+
+                      // get the file content; for this we need to use the raw file name and needs to be extracted from raw_url
+                      const rawFileName = gistFile.raw_url.split("/").at(-1);
+                      // workspace.fs.readFile should return a Uint8Array but in testing I found that fileContent is of type string if I do not explicitly mark it as Uint8Array
+                      const fileContent: Uint8Array =
+                        await workspace.fs.readFile(
+                          fileNameToUri(gist.id, rawFileName)
+                        );
+
+                      downloadFile(newFileUri, fileContent);
+                    }
+                  }
+                } catch (e) {}
+              }
+            }
+            return Promise.resolve();
+          }
+        );
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
       `${EXTENSION_NAME}.forkGist`,
       async (node?: StarredGistNode | FollowedUserGistNode) => {
         await ensureAuthenticated();
@@ -688,4 +946,56 @@ export async function registerGistCommands(context: ExtensionContext) {
       }
     )
   );
+}
+
+function getGistFolderAndStore(node: any): [string, any, boolean] {
+  let gistGroupFolderName = "";
+  let gists: any;
+  let isGistContainer = false;
+
+  switch (node.contextValue) {
+    case "followedUserGists":
+      gistGroupFolderName = node!.user!.username;
+      gists = store.followedUsers.filter(
+        (user) => user.username === gistGroupFolderName
+      )[0].gists;
+      isGistContainer = true;
+      break;
+
+    case "starredGists":
+      gistGroupFolderName = "Starred gists";
+      gists = store.starredGists;
+      isGistContainer = true;
+      break;
+
+    case "gists":
+      gistGroupFolderName = "My gists";
+      gists = store.gists;
+      isGistContainer = true;
+      break;
+
+    case "scratchGist":
+      gistGroupFolderName = "Scratch notes";
+      gists = store.scratchNotes.gist;
+      isGistContainer = true;
+      break;
+
+    case "followedUser.gist":
+      break;
+
+    case "gists.gist":
+      break;
+
+    case "gistFile.editable":
+      break;
+
+    default:
+      output?.appendLine(
+        `GistPad; downloadAllGists: unknown context value: ${node.contextValue}`,
+        messageType.Error
+      );
+      break;
+  }
+
+  return [gistGroupFolderName, gists, isGistContainer];
 }

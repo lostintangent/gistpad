@@ -1,16 +1,12 @@
-name: Publish to VSCode Marketplace
+name: Release
 
 on:
-  workflow_dispatch:
+  release:
+    types:
+      - created
 
-  push:
-    branches:
-      - master
-    tags:
-      - "*"
-  
 jobs:
-  deploy:
+  Release:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,7 +16,7 @@ jobs:
         with:
           node-version: 14.x
       - run: npm install
-      - name: Publish to VSCode Marketplace
+      - name: Publish to VS Marketplace
         run: npx vsce publish
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}

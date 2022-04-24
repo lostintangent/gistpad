@@ -108,6 +108,22 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). In that event, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
 
+### Download Gists and Files
+
+You can download Gists or gist Files for offline use or bulk search/edit. Right click on a Gist group (for example Starred Gists), on a Gist or on a File and select `Download...` and select the destination folder. You can use the setting `gistpad.downloadOverwrite` to control what GistPad should do if the gists and files you are downloading already exist. Use the CTRL or SHIFT keys to select multiple gists or files to download.
+
+_download multiple files_:
+
+![download multiple files](https://user-images.githubusercontent.com/5784415/180655855-bc535427-da77-4390-b349-724036067364.gif)
+
+_download all Gists from a Followed User_:
+
+![download gists followed user](https://user-images.githubusercontent.com/5784415/180655890-a47f3650-5327-44fe-b993-c72acfcb674e.gif)
+
+_confirm download overwrite_:
+
+![download gist overwrite](https://user-images.githubusercontent.com/5784415/180655896-84288755-efe5-433d-8bf7-faa9cdf27463.gif)
+
 ### Scratch Notes
 
 To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document, whose name is formatted based on the day/time it was created.

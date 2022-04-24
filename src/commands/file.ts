@@ -5,18 +5,24 @@ import {
   commands,
   env,
   ExtensionContext,
+  ProgressLocation,
   Uri,
   window,
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
+import { output } from "../extension";
+import { messageType } from "../output";
 import { store } from "../store";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
 import {
   byteArrayToString,
+  confirmOverwrite,
+  confirmOverwriteOptions,
   decodeDirectoryName,
   encodeDirectoryUri,
+  ensureIsValidFileSystemName,
   fileNameToUri,
   getGistDetailsFromUri,
   openGistFile,
@@ -39,12 +45,14 @@ export function registerFileCommands(context: ExtensionContext) {
 
         if (fileName) {
           await withProgress("Adding file(s)...", async () => {
-            const fileUris = fileName.split(",").map(fileName => fileNameToUri(node.gist.id, fileName));
+            const fileUris = fileName
+              .split(",")
+              .map((fileName) => fileNameToUri(node.gist.id, fileName));
             const emptyBuffer = stringToByteArray("");
 
-            await Promise.all(fileUris.map(uri => workspace.fs.writeFile(uri, emptyBuffer)));
+            await Promise.all(fileUris.map((uri) => workspace.fs.writeFile(uri, emptyBuffer))); // prettier-ignore
 
-            fileUris.reverse().forEach(uri => openGistFile(uri));
+            fileUris.reverse().forEach((uri) => openGistFile(uri));
           });
         }
       }
@@ -59,6 +67,66 @@ export function registerFileCommands(context: ExtensionContext) {
           fileNameToUri(node.gistId, node.file.filename!)
         );
         await env.clipboard.writeText(byteArrayToString(contents));
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.downloadFile`,
+      async (targetNode: GistFileNode, targetNodes?: GistFileNode[]) => {
+        const nodes = targetNodes || [targetNode];
+        let folder = await window.showOpenDialog({
+          canSelectFiles: false,
+          canSelectFolders: true,
+          canSelectMany: false
+        });
+
+        let overwrite = new confirmOverwrite();
+        window.withProgress(
+          {
+            location: ProgressLocation.Notification,
+            title: "Downloading gists...",
+            cancellable: true
+          },
+          async (progress, token) => {
+            token.onCancellationRequested(() => {
+              console.log("Gist download cancelled by user.");
+              overwrite.cancel();
+              return;
+            });
+
+            if (folder && nodes) {
+              for (let node of nodes) {
+                let fileName = ensureIsValidFileSystemName(node.file.filename!);
+                let newFileUri = Uri.joinPath(folder![0], fileName);
+
+                // check if the user wants to overwrite the file
+                let canOverwrite = await overwrite.confirm(newFileUri);
+
+                if (overwrite.userChoice === confirmOverwriteOptions.Cancel) {
+                  // the user cancelled the download
+                  output?.appendLine(
+                    "File download cancelled by user.",
+                    messageType.Info
+                  );
+                  return;
+                }
+
+                if (!canOverwrite) {
+                  continue;
+                }
+
+                // workspace.fs.readFile should return a Uint8Array but in testing I found that fileContent is of type string if I do not explicitly mark it as Uint8Array
+                const fileContent: Uint8Array = await workspace.fs.readFile(
+                  fileNameToUri(node.gistId, fileName)
+                );
+
+                downloadFile(newFileUri, fileContent);
+              }
+            }
+          }
+        );
       }
     )
   );
@@ -230,4 +298,19 @@ export function registerFileCommands(context: ExtensionContext) {
       }
     )
   );
+}
+
+/**
+ * Download a Gist file to a local file.
+ *
+ * @export
+ * @param {Uri} newFileUri Uri of the new file; this is where the file will be downloaded to
+ * @param {Uint8Array} fileContent Content of the file to be downloaded
+ */
+export function downloadFile(newFileUri: Uri, fileContent: Uint8Array) {
+  try {
+    workspace.fs.writeFile(newFileUri, fileContent);
+  } catch (e) {
+    output?.appendLine(`Error writing file: ${e}`, messageType.Error);
+  }
 }

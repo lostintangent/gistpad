@@ -1,8 +1,9 @@
-## v0.4.1 (04/23/2022)
+## v0.4.1 (04/25/2022)
 
-- Gists for followed users with more than 100 are not displayed properly; previously, the list was capped at the first 100 gists.
-- Followed users are properly synchronized across machines when [Settings Sync](https://code.visualstudio.com/docs/editor/settings-sync) is enabled.
+- Gists for followed users with more than 100 are now displayed properly (previously, the list was capped at the first 100 gists)
+- Followed users are now properly synchronized across machines when [Settings Sync](https://code.visualstudio.com/docs/editor/settings-sync) is enabled.
 - Fix paste gist file editor's action: insert text in the editor view using the dedicated vscode api instead of using copy and paste from the clipboard.
+- Fixed markdown rendering in gist/repo comments
 
 ## v0.4.0 (04/15/22)
 

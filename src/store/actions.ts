@@ -19,7 +19,7 @@ import {
   withProgress
 } from "../utils";
 import { getToken } from "./auth";
-import { storage } from "./storage";
+import { followedUsersStorage } from "./storage";
 import moment = require("moment");
 
 const Gists = require("gists");
@@ -124,13 +124,13 @@ export async function followUser(username: string) {
     return;
   }
 
-  const followedUsers = storage.followedUsers;
+  const followedUsers = followedUsersStorage.followedUsers;
   if (followedUsers.find((user) => user === username)) {
     window.showInformationMessage("You're already following this user");
     return;
   } else {
     followedUsers.push(username);
-    storage.followedUsers = followedUsers;
+    followedUsersStorage.followedUsers = followedUsers;
   }
 
   const user: FollowedUser = observable({
@@ -333,12 +333,14 @@ export async function refreshGists() {
 
   store.starredGists = updateGistTags(await starredGists());
 
-  if (storage.followedUsers.length > 0) {
-    store.followedUsers = storage.followedUsers.map((username) => ({
-      username,
-      gists: [],
-      isLoading: true
-    }));
+  if (followedUsersStorage.followedUsers.length > 0) {
+    store.followedUsers = followedUsersStorage.followedUsers.map(
+      (username) => ({
+        username,
+        gists: [],
+        isLoading: true
+      })
+    );
 
     for (const followedUser of store.followedUsers) {
       followedUser.avatarUrl = await getUserAvatar(followedUser.username);
@@ -357,9 +359,8 @@ export async function starredGists(): Promise<Gist[]> {
 }
 
 export async function unfollowUser(username: string) {
-  storage.followedUsers = storage.followedUsers.filter(
-    (user) => user !== username
-  );
+  followedUsersStorage.followedUsers =
+    followedUsersStorage.followedUsers.filter((user) => user !== username);
 
   store.followedUsers = store.followedUsers.filter(
     (user) => user.username !== username

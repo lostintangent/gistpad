@@ -15,10 +15,6 @@ export class Trace {
 
   constructor() {
     this._outputChannel = vscode.window.createOutputChannel("GistPad");
-
-    if (config.get("tracing.automaticallyShowOutputChannel")) {
-      this._outputChannel.show();
-    }
   }
 
   private getDate(): string {

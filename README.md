@@ -316,5 +316,3 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 
 - `GistPad > Tracing > Enable Output Channel` - When enabled, creates an Output trace channel at VSCode startup.
-
-- `Gistpad > Tracing > Automatically Show Output Channel` - When enabled, if `GistPad > Tracing > Enable Output Channel` is also enabled, VSCode will automatically open and focus the GistPad Output channel.

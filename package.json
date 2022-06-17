@@ -118,11 +118,6 @@
           "default": false,
           "type": "boolean",
           "description": "Specifies whether or not to enable the output channel for tracing."
-        },
-        "gistpad.tracing.automaticallyShowOutputChannel": {
-          "default": false,
-          "type": "boolean",
-          "description": "Specifies whether or not to show the tracing output channel automatically when it is opened."
         }
       }
     },

@@ -3,7 +3,6 @@
 - Fix sync across machines (for real this time)
 - Add optional Output trace channel
   - `gistpad.tracing.enableOutputChannel`: default `false`. When enabled, creates an Output trace channel at VSCode startup
-  - `gistpad.tracing.automaticallyShowOutputChannel`: default `false`. When enabled, if `gistpad.tracing.enableOutputChannel` is also enabled, VSCode will automatically open and focus the GistPad Output channel
 
 ## v0.4.1 (04/25/2022)
 

@@ -13,7 +13,6 @@ export function get(key: "scratchNotes.show"): boolean;
 export function get(key: "showcaseUrl"): string;
 export function get(key: "comments.showThread"): string;
 export function get(key: "tracing.enableOutputChannel"): boolean;
-export function get(key: "tracing.automaticallyShowOutputChannel"): boolean;
 export function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);
   return extensionConfig.get(key);

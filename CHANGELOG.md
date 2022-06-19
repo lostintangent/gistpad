@@ -2,7 +2,7 @@
 
 - Fix sync across machines (for real this time)
 - Add optional Output trace channel
-  - `gistpad.tracing.enableOutputChannel`: default `false`. When enabled, creates an Output trace channel at VSCode startup
+  - `gistpad.output`: default `false`. When enabled, creates an Output trace channel at VSCode startup
 
 ## v0.4.1 (04/25/2022)
 
@@ -430,9 +430,9 @@
 
   ![console](https://user-images.githubusercontent.com/116461/71329302-49540380-24d8-11ea-900c-afbf84b50da9.gif)
 
-* Introduced the `GistPad > Playground: Auto Run` setting, which allows you to control when playground code is run. Additionally, we added the `GistPad: Run Playground` command, which allows you to manually run a playground.
+- Introduced the `GistPad > Playground: Auto Run` setting, which allows you to control when playground code is run. Additionally, we added the `GistPad: Run Playground` command, which allows you to manually run a playground.
 
-* Added the `Add Document to Gist` command to the editor's context menu (e.g. when you right-click the editor tab).
+- Added the `Add Document to Gist` command to the editor's context menu (e.g. when you right-click the editor tab).
 
 ## v0.0.25 (12/21/2019)
 
@@ -499,7 +499,7 @@
 - Added a new `Copy URL` context menu item to Gist files, in order to quickly get their "raw URL"
 - Add the ability to open gists with a custom protocol handler:
 
-  - `Using gist URL`: vscode://vsls-contrib.gistfs/open-gist?url=https://gist.github.com/legomushroom/b01737ed99192dab436adea1d6d92975
+  - `Using gist URL`: vscode://vsls-contrib.gistfs/open-gist?url=<https://gist.github.com/legomushroom/b01737ed99192dab436adea1d6d92975>
   - `Using gist Id`: vscode://vsls-contrib.gistfs/open-gist?id=b01737ed99192dab436adea1d6d92975
 
 ## v0.0.14 (12/07/2019)
@@ -537,8 +537,8 @@
 
      <img width="252" src="https://user-images.githubusercontent.com/116461/69890797-c03e1800-12ef-11ea-85be-7d6fe2c8c7ef.png" />
 
-* Added a new `Open Gist in Browser` command to the `Gists` view, which opens a Gist in your default browser
-* Added a new `Copy Gist URL` command to the `Gists` view, which allows you to copy a Gist's URL to your clipboard
+- Added a new `Open Gist in Browser` command to the `Gists` view, which opens a Gist in your default browser
+- Added a new `Copy Gist URL` command to the `Gists` view, which allows you to copy a Gist's URL to your clipboard
 
 ## v0.0.8 (11/29/2019)
 

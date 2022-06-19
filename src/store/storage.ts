@@ -3,7 +3,7 @@ import { commands, ExtensionContext, workspace } from "vscode";
 import { GroupType, SortOrder, store } from ".";
 import * as config from "../config";
 import { EXTENSION_NAME } from "../constants";
-import { tracing } from "../extension";
+import { output } from "../extension";
 
 const FOLLOW_KEY = "gistpad.followedUsers";
 
@@ -31,18 +31,17 @@ export let followedUsersStorage: IStorage;
 export async function initializeStorage(context: ExtensionContext) {
   followedUsersStorage = {
     get followedUsers() {
-      tracing.appendLine(
-        `Getting followedUsers from global state = ${context.globalState
-          .get(FOLLOW_KEY, [])
-          .sort()}`,
-        tracing.messageType.Info
+      let followedUsers = context.globalState.get(FOLLOW_KEY, []).sort();
+      output.appendLine(
+        `Getting followed users from global state = ${followedUsers}`,
+        output.messageType.Info
       );
-      return context.globalState.get(FOLLOW_KEY, []).sort();
+      return followedUsers;
     },
     set followedUsers(followedUsers: string[]) {
-      tracing.appendLine(
-        `Setting followedUsers to ${followedUsers}`,
-        tracing.messageType.Info
+      output.appendLine(
+        `Setting followed users to ${followedUsers}`,
+        output.messageType.Info
       );
       context.globalState.update(FOLLOW_KEY, followedUsers);
     }

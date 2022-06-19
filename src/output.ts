@@ -9,7 +9,7 @@ export enum messageType {
   Debug = "Debug"
 }
 
-export class Trace {
+export class Output {
   private _outputChannel: any;
   public messageType = messageType;
 
@@ -25,10 +25,22 @@ export class Trace {
   }
 
   public appendLine(message: string, messageType: messageType) {
-    if (config.get("tracing.enableOutputChannel")) {
+    if (config.get("output")) {
       this._outputChannel.appendLine(
         `${this.getDate()} - ${messageType}: ${message}`
       );
     }
+  }
+
+  public hide() {
+    this._outputChannel.hide();
+  }
+
+  public show() {
+    this._outputChannel.show();
+  }
+
+  public dispose() { 
+    this._outputChannel.dispose();
   }
 }

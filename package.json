@@ -114,7 +114,7 @@
           "type": "string",
           "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."
         },
-        "gistpad.tracing.enableOutputChannel": {
+        "gistpad.output": {
           "default": false,
           "type": "boolean",
           "description": "Specifies whether or not to enable the output channel for tracing."

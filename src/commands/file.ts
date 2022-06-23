@@ -216,11 +216,11 @@ export function registerFileCommands(context: ExtensionContext) {
             Promise.all(
               files.map(async (file) => {
                 const fileName = path.basename(file.path);
-                const content = workspace.fs.readFile(file);
+                const content = await workspace.fs.readFile(file);
 
                 return workspace.fs.writeFile(
                   fileNameToUri(node.gist.id, fileName),
-                  await content
+                  content
                 );
               })
             )

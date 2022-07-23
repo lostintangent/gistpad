@@ -314,3 +314,5 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > Scratch Notes: Show` - Specifies whether or not to display the scratch notes node in the gists tree view. Defaults to `true`.
 
 - `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
+
+- `GistPad > Tracing > Enable Output Channel` - When enabled, creates an Output trace channel at VSCode startup.

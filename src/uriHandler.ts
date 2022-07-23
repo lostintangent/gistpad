@@ -104,7 +104,7 @@ class GistPadPUriHandler implements vscode.UriHandler {
   }
 }
 
-export function registerProtocolHander() {
+export function registerProtocolHandler() {
   if (typeof vscode.window.registerUriHandler === "function") {
     vscode.window.registerUriHandler(new GistPadPUriHandler());
   }

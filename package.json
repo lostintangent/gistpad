@@ -1504,7 +1504,7 @@
     "markdown-it": "^10.0.0",
     "markdown-it-regex": "^0.2.0",
     "mobx": "^5.14.2",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "rxjs": "^6.5.4",
     "simple-git": "^1.126.0",
     "title-case": "^3.0.2"

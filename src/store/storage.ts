@@ -3,6 +3,7 @@ import { commands, ExtensionContext, workspace } from "vscode";
 import { GroupType, SortOrder, store } from ".";
 import * as config from "../config";
 import { EXTENSION_NAME } from "../constants";
+import { output } from "../extension";
 
 const FOLLOW_KEY = "gistpad.followedUsers";
 
@@ -26,13 +27,22 @@ function updateGroupType(context: ExtensionContext, groupType: GroupType) {
   commands.executeCommand("setContext", GROUP_TYPE_KEY, groupType);
 }
 
-export let storage: IStorage;
+export let followedUsersStorage: IStorage;
 export async function initializeStorage(context: ExtensionContext) {
-  storage = {
+  followedUsersStorage = {
     get followedUsers() {
-      return context.globalState.get(FOLLOW_KEY, []).sort();
+      let followedUsers = context.globalState.get(FOLLOW_KEY, []).sort();
+      output.appendLine(
+        `Getting followed users from global state = ${followedUsers}`,
+        output.messageType.Info
+      );
+      return followedUsers;
     },
     set followedUsers(followedUsers: string[]) {
+      output.appendLine(
+        `Setting followed users to ${followedUsers}`,
+        output.messageType.Info
+      );
       context.globalState.update(FOLLOW_KEY, followedUsers);
     }
   };

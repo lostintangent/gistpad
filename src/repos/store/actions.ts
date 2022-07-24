@@ -3,7 +3,7 @@ import { Repository, store, Tree, TreeItem } from ".";
 import { getApi } from "../../store/actions";
 import { byteArrayToString } from "../../utils";
 import { RepoFileSystemProvider } from "../fileSystem";
-import { storage } from "../store/storage";
+import { reposStorage } from "../store/storage";
 import { promptForTour } from "../tours/actions";
 import { focusRepo } from "../tree";
 import { sanitizeName } from "../utils";
@@ -335,7 +335,7 @@ export async function openRepo(repoName: string, showReadme: boolean = false) {
   const defaultBranch = await getDefaultBranch(repoName);
   const repository = new Repository(repoName, defaultBranch);
 
-  const repos = storage.repos;
+  const repos = reposStorage.repos;
   if (repos.find((repo) => repo === repository.name)) {
     vscode.window.showInformationMessage(
       "You've already opened this repository."
@@ -343,7 +343,7 @@ export async function openRepo(repoName: string, showReadme: boolean = false) {
     return;
   } else {
     repos.push(repoName);
-    storage.repos = repos;
+    reposStorage.repos = repos;
   }
 
   store.repos.push(repository);
@@ -401,7 +401,7 @@ export async function mergeBranch(
 const REFRESH_INTERVAL = 1000 * 60 * 5;
 let refreshTimer: NodeJS.Timer;
 export async function refreshRepositories() {
-  if (storage.repos.length === 0) {
+  if (reposStorage.repos.length === 0) {
     return;
   }
 
@@ -410,7 +410,7 @@ export async function refreshRepositories() {
   }
 
   store.repos = await Promise.all(
-    storage.repos.map(async (repo) => {
+    reposStorage.repos.map(async (repo) => {
       const defaultBranch = await getDefaultBranch(repo);
       return new Repository(repo, defaultBranch);
     })
@@ -477,7 +477,7 @@ export async function updateRepository(
 }
 
 export async function closeRepo(repoName: string, branch: string) {
-  storage.repos = storage.repos.filter(
+  reposStorage.repos = reposStorage.repos.filter(
     (repo) => repo !== repoName && repo !== `${repoName}#${branch}`
   );
   store.repos = store.repos.filter((repo) => repo.name !== repoName);

@@ -1,6 +1,4 @@
-import * as fs from "fs";
 import * as path from "path";
-import { URL } from "url";
 import {
   commands,
   env,
@@ -280,12 +278,13 @@ export function registerFileCommands(context: ExtensionContext) {
           openLabel: "Upload"
         });
 
+
         if (files) {
           withProgress("Uploading file(s)...", () =>
             Promise.all(
-              files.map((file) => {
+              files.map(async (file) => {
                 const fileName = path.basename(file.path);
-                const content = fs.readFileSync(new URL(file.toString()));
+                const content = await workspace.fs.readFile(file);
 
                 return workspace.fs.writeFile(
                   fileNameToUri(node.gist.id, fileName),

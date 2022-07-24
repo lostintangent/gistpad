@@ -27,9 +27,9 @@ function updateGroupType(context: ExtensionContext, groupType: GroupType) {
   commands.executeCommand("setContext", GROUP_TYPE_KEY, groupType);
 }
 
-export let storage: IStorage;
+export let followedUsersStorage: IStorage;
 export async function initializeStorage(context: ExtensionContext) {
-  storage = {
+  followedUsersStorage = {
     get followedUsers() {
       let followedUsers = context.globalState.get(FOLLOW_KEY, []).sort();
       output?.appendLine(

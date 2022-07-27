@@ -89,7 +89,6 @@ export function registerFileCommands(context: ExtensionContext) {
           },
           async (progress, token) => {
             token.onCancellationRequested(() => {
-              console.log("Gist download cancelled by user.");
               overwrite.cancel();
               return;
             });
@@ -115,9 +114,14 @@ export function registerFileCommands(context: ExtensionContext) {
                   continue;
                 }
 
+                // get the file content; for this we need to use the raw file name and needs to be extracted from raw_url
+                // note: oddly, node.file.raw_url?.split("/").at(-1) throws compilation error (but it works for a gist)
+                const rawUrlParts = node.file.raw_url?.split("/");
+                const rawFileName = rawUrlParts![rawUrlParts!.length - 1];
+
                 // workspace.fs.readFile should return a Uint8Array but in testing I found that fileContent is of type string if I do not explicitly mark it as Uint8Array
                 const fileContent: Uint8Array = await workspace.fs.readFile(
-                  fileNameToUri(node.gistId, fileName)
+                  fileNameToUri(node.gistId, rawFileName)
                 );
 
                 downloadFile(newFileUri, fileContent);

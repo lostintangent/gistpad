@@ -475,7 +475,6 @@ export async function registerGistCommands(context: ExtensionContext) {
                     downloadFile(newFileUri, fileContent);
                   }
                 } catch (e) {
-                  // @todo: add Output trace to show the error
                   output?.appendLine(
                     `Error downloading gist: ${e}`,
                     messageType.Error

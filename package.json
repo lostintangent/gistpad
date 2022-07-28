@@ -32,9 +32,11 @@
     "notes"
   ],
   "activationEvents": [
-    "*",
     "onFileSystem:repo",
-    "onFileSystem:gist"
+    "onFileSystem:gist",
+    "onView:gistpad.gists",
+    "onView:gistpad.repos",
+    "onView:gistpad.showcase"
   ],
   "main": "./dist/extension.js",
   "browser": "./dist/extension-web.js",

@@ -175,6 +175,10 @@ export async function openGistFiles(id: string) {
 }
 
 export async function openGistFile(uri: Uri, allowPreview: boolean = true) {
+  const rawUrlParts = uri.toString()?.split("/");
+  const rawFileName = rawUrlParts![rawUrlParts!.length - 1];
+
+  uri = fileNameToUri(uri.authority, rawFileName);
   commands.executeCommand("vscode.open", uri, {
     preview: true,
     viewColumn: ViewColumn.Active

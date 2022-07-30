@@ -60,6 +60,7 @@
     "onCommand:gistpad.starredGists",
     "onFileSystem:gist",
     "onFileSystem:repo",
+    "onStartupFinished",
     "onUri",
     "onView:gistpad.gists",
     "onView:gistpad.repos",

@@ -37,12 +37,6 @@ npm install
 code .
 ```
 
-You can now go to the Debug viewlet (`Ctrl+Shift+D`) and select `Run Extension (watch)` then hit run (`F5`).
-
-#### Lint
-
-You can run `npm run lint` on the command-line to check for lint errors in your program. You can also use the [TSLint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin) plugin to see errors as you code.
-
 ### Run
 
 To run the extension with your patch, open the Run view (`Ctrl+Shift+D` or `⌘+⇧+D`), select Launch Extension, and click Run (`F5`).
@@ -56,6 +50,10 @@ You can go to the Debug viewlet (`Ctrl+Shift+D`) and select `Run Extension (watc
 If you make subsequent edits in the codebase, you can reload (`Ctrl+R` or `⌘+R`) the `[Extension Development Host]` instance of VS Code, which will load the new code. The debugger will automatically reattach.
 
 In the original VS Code window, you can now add breakpoints which will be hit when you use any of the the plugin's features in the second window.
+
+#### Lint
+
+You can run `npm run lint` on the command-line to check for lint errors in your program. You can also use the [TSLint](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-typescript-tslint-plugin) plugin to see errors as you code.
 
 ## Sideloading the extension
 

@@ -13,7 +13,7 @@ The goal of this documentation is to provide a high-level overview of how you ca
   - [Run](#run)
   - [Debug](#debug)
   - [Sideload](#sideloading-the-extension)
-- **[Submit your change for review](#submit-your-change-for-review)
+- **[Submit your change for review](#submit-your-change-for-review)**
 
 ## Before you start coding
 

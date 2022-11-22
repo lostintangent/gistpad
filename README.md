@@ -106,11 +106,11 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 ### Exporting to Repositories
 
-At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). In that event, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
+At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). In that event, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
 
 ### Scratch Notes
 
-To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document named be default for the time it was created.
+To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document named by default for the time it was created.
 
 By default, scratch notes are Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting. Furthermore, scratch notes are created per day, but you can customize this by setting the `GistPad > Scratch Notes: Directory Format` and `GistPad > Scratch Notes: File Format` settings.
 
@@ -130,7 +130,7 @@ To see what can be done with gists and [code swings](#codeswing), and to keep up
 
 ### GistLog
 
-In addition to using Gists to share code snippets/files, you can also use create a mini-blog with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new gthat includes two files, `blog.md` and `gistlog.yml`.
+In addition to using Gists to share code snippets/files, you can also create a mini-blog with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new mini-blog that includes two files, `blog.md` and `gistlog.yml`.
 
 ![GistLog](https://user-images.githubusercontent.com/116461/70856110-fdc3a900-1e8a-11ea-8e26-2c3917e11db0.gif)
 
@@ -160,7 +160,7 @@ In addition to creating a new repo "from scratch", you can also create a reposit
 
 By default, when you create/manage a repository, GistPad will assume you're interested in editing the `master` branch. However, when managing a repo, you can specify a different branch by appending `#<branch>` to the specified repo name (e.g. `vsls-contrib/gistpad#featureA`). When you're managing a non-master branch, the repo node in the `Repositories` tree will display the branch name.
 
-If at any time, you want to switch branches, simply right-click the repo node in the `Repositories` tree and select `Switch Branch`. This will let you pick one of the repo's remote branches, as well as create a new branch. When you're done with a branch, simply right-click the repo and select either `Delete Branch` or `Merge Branch`. The later will perform a "squash merge" against `master`. Using branches allows you to "batch" change sets together, and then apply them in a single/semantic commit.
+If at any time, you want to switch branches, simply right-click the repo node in the `Repositories` tree and select `Switch Branch`. This will let you pick one of the repo's remote branches, as well as create a new branch. When you're done with a branch, simply right-click the repo and select either `Delete Branch` or `Merge Branch`. The latter will perform a "squash merge" against `master`. Using branches allows you to "batch" change sets together, and then apply them in a single/semantic commit.
 
 ### Pasting Images
 
@@ -187,7 +187,7 @@ Additionally, to make it really simple to add a new wiki page, you can either ru
 
 <img width="75px" src="https://user-images.githubusercontent.com/116461/100490918-7c354d00-30d4-11eb-97d1-28035258656b.png" />
 
-> Note: While wikis add a "pages" abstraction layer on top of repos, they are still repos behind the scenes. As a result, if you like to add an arbitrary [file or directory](#files-and-directories) to your wiki, you can right-click it's node in the tree and select `Add New File`.
+> Note: While wikis add a "pages" abstraction layer on top of repos, they are still repos behind the scenes. As a result, if you like to add an arbitrary [file or directory](#files-and-directories) to your wiki, you can right-click its node in the tree and select `Add New File`.
 
 #### Daily Pages
 
@@ -205,7 +205,7 @@ Additionally, to make it really simple to open your "today page", you can either
 
 In order to create connections between pages, you can add `[[links]]` to a page. When you type `[[`, GistPad will display a completion list of the name of all existing pages. Furthermore, you can type a new topic/page title, and GistPad will automatically create that page for you.
 
-When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. If the page doesn't already exit, then `cmd+clicking` it will automatically create the page before opening it. This workflow makes it easy to author and navigate the set of pages within your wiki.
+When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. If the page doesn't already exist, then `cmd+clicking` it will automatically create the page before opening it. This workflow makes it easy to author and navigate the set of pages within your wiki.
 
 <img width="800px" src="https://user-images.githubusercontent.com/116461/87234714-96ba9400-c388-11ea-92c3-544d9a3bb633.png" />
 
@@ -217,11 +217,11 @@ Furthermore, when you open a page that contains backlinks, the set of backlinks 
 
 #### Embedding Files
 
-In addition to adding links to pages, it's sometimes valuable to embed the contents of another page directly into a note, so that you can easily read them together. To do this, you can use the `![[link]]` syntax, where you'll recieve auto-completion support just like regular links. When you use an embed link, the target page's contents will be displayed within the note whenever you view it's markdown preview.
+In addition to adding links to pages, it's sometimes valuable to embed the contents of another page directly into a note, so that you can easily read them together. To do this, you can use the `![[link]]` syntax, where you'll receive auto-completion support just like regular links. When you use an embed link, the target page's contents will be displayed within the note whenever you view its markdown preview.
 
 ## CodeSwing
 
-If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template fiels, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
+If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template files, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
 When you create a new swing, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries and languages you intend to use (e.g. React.js, Vue.js). Since the swing is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other swings that you'd like to use, simply fork them and create your own swings. That way, you can use Gists as "templates" for swing environments, and collaborate on them with others just like you would any other gist. When you're done with a swing, simply close the preview window and all other documents will be automatically closed. If you no longer need the swing, then delete it just like any other gist 👍
 
@@ -300,7 +300,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `Gistpad > Images: Paste Type`: Specifies the method to use when pasting an image into a gist file. Can be set to one of the following values:
 
-  - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to file it's pasted into.
+  - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to the file it's pasted into.
   - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
 
 - `Gistpad > Images: Upload Directory Name`: Specifies the name of the directory to upload images to. Defaults to `images`.
@@ -316,3 +316,17 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 
 - `GistPad > Tracing > Enable Output Channel` - When enabled, creates an Output trace channel at VSCode startup.
+
+### Reporting Bugs and Issues
+
+If you believe you have found a bug, try searching our open [Github Issues](https://github.com/lostintangent/gistpad/issues) to see if anyone has posted about a similar problem. If you're confident it's a new bug that has not been addressed, [create a new issue](https://github.com/lostintangent/gistpad/issues/new/choose). Be sure to include as much information as possible so we can reproduce the bug.
+
+### Contributing
+
+Thank you for your interest in contributing to Gistpad! We welcome all contributions to update, maintain, and improve the project. 
+
+> #### [Please follow these steps to contribute](CONTRIBUTING.md).
+
+### License
+
+The content of this repository is licensed under the [MIT License](LICENSE.md) license.

@@ -240,7 +240,7 @@ export class FollowedUserGistsNode extends TreeNode {
     if (user.avatarUrl) {
       this.iconPath = Uri.parse(user.avatarUrl);
     } else {
-      this.iconPath = new ThemeIcon("account")
+      this.iconPath = new ThemeIcon("account");
     }
 
     this.contextValue = "followedUserGists";
@@ -282,13 +282,13 @@ export class GistGroupNode extends TreeNode {
   ) {
     super(label, collapsibleState);
 
-    this.contextValue = "gistType";
     this.description = gists.length.toString();
 
     const iconType = GistTypes.includes(label as GistType)
       ? (label as GistType)
       : "tag";
 
+    this.contextValue = `gistType.${iconType}`;
     this.iconPath = this.getGistTypeIcon(iconType, true, extensionContext);
   }
 }

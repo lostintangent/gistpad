@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "extensionKind": [
     "ui",
     "workspace"
@@ -41,6 +41,7 @@
     "onCommand:gistpad.followUser",
     "onCommand:gistpad.forkGist",
     "onCommand:gistpad.newGistLog",
+    "onCommand:gistpad.newNotebook",
     "onCommand:gistpad.newPublicGist",
     "onCommand:gistpad.newScratchNote",
     "onCommand:gistpad.newSecretGist",
@@ -363,6 +364,12 @@
         "icon": "$(gist-secret)"
       },
       {
+        "command": "gistpad.newNotebook",
+        "title": "New Notebook",
+        "category": "GistPad",
+        "icon": "$(add)"
+      },
+      {
         "command": "gistpad.openGist",
         "title": "Open Gist",
         "category": "GistPad",
@@ -591,6 +598,10 @@
         },
         {
           "command": "gistpad.newGistLog",
+          "when": "gistpad:state == SignedIn"
+        },
+        {
+          "command": "gistpad.newNotebook",
           "when": "gistpad:state == SignedIn"
         },
         {
@@ -1345,6 +1356,16 @@
           "command": "gistpad.exportTour",
           "when": "viewItem =~ /^codetour.tour(.active)?$/",
           "group": "export@2"
+        },
+        {
+          "command": "gistpad.newNotebook",
+          "when": "viewItem == gistType.notebook",
+          "group": "inline@1"
+        },
+        {
+          "command": "gistpad.newNotebook",
+          "when": "viewItem == gistType.notebook",
+          "group": "basic@1"
         }
       ],
       "explorer/context": [

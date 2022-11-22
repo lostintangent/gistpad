@@ -15,9 +15,6 @@ export function getCurrentUser() {
   return store.login;
 }
 
-// NOTE: The following isn't actually used for anything. It's simply for testing our secret scanning
-const AUTH_KEY = "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";
-
 const STATE_CONTEXT_KEY = `${EXTENSION_NAME}:state`;
 const STATE_SIGNED_IN = "SignedIn";
 const STATE_SIGNED_OUT = "SignedOut";

@@ -1,3 +1,7 @@
+## v0.5.1 (11/22/2022)
+
+- Added a new `New Notebook` command, for quickly creating Jupyter notebook-based gists
+
 ## v0.5.0 (06/16/2022)
 
 - Fix sync across machines (for real this time)

@@ -5,6 +5,7 @@ Thank you for your interest in contributing to GistPad!
 
 The goal of this documentation is to provide a high-level overview of how you can build and debug the project. 
 
+Please join the communication channels to effectively communicate with the members!
 
 # Building, Debugging and Sildeloading the extension in Visual Studio Code:
 
@@ -37,6 +38,11 @@ After making changes to the extension, you might want to test it end to end inst
 6. Run the command `Extensions: Install from VSIX...`, choose the vsix file generated in the previous step
 
 For more information on using GistPad extension, follow the instructions for [getting started](https://github.com/vsls-contrib/gistpad#getting-started).
+
+## Sideloading the extension
+
+Visit our Youtube channel for a step by step tutorial:
+www.youtube.com/GistPad
 
 ## Attribution
 

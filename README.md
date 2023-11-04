@@ -16,7 +16,6 @@ GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists]
   - [Exporting to Repositories](#exporting-to-repositories)
   - [Scratch Notes](#scratch-notes)
   - [Showcase](#showcase)
-  - [GistLog](#gistlog)
 - **[Repository Management](#repositories)**
   - [Branches](#branches)
   - [Wikis](#wikis)
@@ -127,16 +126,6 @@ You can create as many scratch notes as you need, and when you're done with them
 To see what can be done with gists and [code swings](#codeswing), and to keep up with the cool stuff that folks in the community are building, check out the `Showcase` view in the `GistPad` tab. This is a list of categories intended to highlight different use-cases for gists, along with examples. Simply click the `Open` button for any gist in order to explore it, or expand the gist to see its file contents. If you have a gist that you think is worth showcasing, please open an issue and let us know about it. We'll keep the showcase updated periodically to highlight new and interesting things, so stay tuned!
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/74891549-2c9f4500-533c-11ea-9bbb-c5907d41a589.png" />
-
-### GistLog
-
-In addition to using Gists to share code snippets/files, you can also use create a mini-blog with [GistLog](https://gistlog.co). In order to start blogging, simply run the `GistPad: New GistLog` command, which will create a new gthat includes two files, `blog.md` and `gistlog.yml`.
-
-![GistLog](https://user-images.githubusercontent.com/116461/70856110-fdc3a900-1e8a-11ea-8e26-2c3917e11db0.gif)
-
-`blog.md` will open for editing, and as soon as you're ready to publish your post, open `gistlog.yml` and set the `published` property to `true`. Then, right-click your gist and select the `Open Gist in GistLog` menu. This will open your browser to the post's URL, which you can share.
-
-In addition to being able to view individual posts on GistLog, you can also open your entire feed by right-clicking the `Your Gists` tree node and selecting the `Open Feed in GistLog` menu item. This will launch your GistLog landing page that shows published GistLog posts.
 
 ## Repositories
 
@@ -272,8 +261,6 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
 - `GistPad: New CodeSwing` - Creates a new [CodeSwing](#CodeSwing).
-
-- `GistPad: New GistLog` - Creates a [GistLog](#gistlog).
 
 - `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
 

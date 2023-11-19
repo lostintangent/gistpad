@@ -32,14 +32,14 @@ export async function initializeStorage(context: ExtensionContext) {
   followedUsersStorage = {
     get followedUsers() {
       let followedUsers = context.globalState.get(FOLLOW_KEY, []).sort();
-      output.appendLine(
+      output?.appendLine(
         `Getting followed users from global state = ${followedUsers}`,
         output.messageType.Info
       );
       return followedUsers;
     },
     set followedUsers(followedUsers: string[]) {
-      output.appendLine(
+      output?.appendLine(
         `Setting followed users to ${followedUsers}`,
         output.messageType.Info
       );

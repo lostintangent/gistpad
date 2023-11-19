@@ -318,15 +318,15 @@
       },
       {
         "command": "gistpad.newPublicGist",
-        "title": "New Gist",
+        "title": "New Public Gist",
         "category": "GistPad",
-        "icon": "$(add)"
+        "icon": "$(gist)"
       },
       {
         "command": "gistpad.newSecretGist",
         "title": "New Secret Gist",
         "category": "GistPad",
-        "icon": "$(gist-secret)"
+        "icon": "$(add)"
       },
       {
         "command": "gistpad.newGistFromTag",
@@ -885,12 +885,12 @@
       ],
       "view/title": [
         {
-          "command": "gistpad.newPublicGist",
+          "command": "gistpad.newSecretGist",
           "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn",
           "group": "navigation@1"
         },
         {
-          "command": "gistpad.newSecretGist",
+          "command": "gistpad.newPublicGist",
           "when": "view =~ /^gistpad.gists(.explorer)?$/ && gistpad:state == SignedIn",
           "group": "navigation@2"
         },
@@ -942,22 +942,22 @@
       ],
       "view/item/context": [
         {
-          "command": "gistpad.newPublicGist",
+          "command": "gistpad.newSecretGist",
           "when": "viewItem == gists",
           "group": "inline@1"
         },
         {
-          "command": "gistpad.newSecretGist",
+          "command": "gistpad.newPublicGist",
           "when": "viewItem == gists",
           "group": "inline@2"
         },
         {
-          "command": "gistpad.newPublicGist",
+          "command": "gistpad.newSecretGist",
           "when": "viewItem == gists",
           "group": "new@1"
         },
         {
-          "command": "gistpad.newSecretGist",
+          "command": "gistpad.newPublicGist",
           "when": "viewItem == gists",
           "group": "new@2"
         },

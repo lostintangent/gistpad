@@ -1,3 +1,8 @@
+## v0.6.1 (11/19/2023)
+
+- Changed the default gist type to secret, by making the `+` icon in the tree create a new secret gist (as opposed to a public gist)
+- Fixed an error when refreshing the gists tree
+
 ## v0.6.0 (11/19/2023)
 
 - Added the `New Gist` context menu to tag groups in the tree, which allows quickly creating a gist with the selected tag

@@ -38,8 +38,8 @@ function getGitHubUrl(repo: string, branch: string, defaultBranch: string, fileP
   const suffix = filePath
     ? `/blob/${branch}/${filePath}`
     : branch !== defaultBranch
-    ? `/tree/${branch}`
-    : "";
+      ? `/tree/${branch}`
+      : "";
 
   return `https://github.com/${repo}${suffix}`;
 }
@@ -189,6 +189,12 @@ export async function registerRepoCommands(context: ExtensionContext) {
                   repoName,
                   response === CREATE_PRIVATE_TEMPLATE_REPO_RESPONSE
                 );
+
+                // When immediately querying a new template repo, the default
+                // branch can momentarily be incorrect. So we need to wait
+                // for just a bit, before trying to actually open it.
+                // TODO: Look into whether there's a better fix
+                await new Promise((resolve) => setTimeout(resolve, 2000));
 
                 await openRepo(full_name, true);
               });

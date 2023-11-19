@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "extensionKind": [
     "ui",
     "workspace"
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/lostintangent/gistpad#readme",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.48.0"
+    "vscode": "^1.75.0"
   },
   "categories": [
     "Other"
@@ -32,40 +32,10 @@
     "notes"
   ],
   "activationEvents": [
-    "onCommand:gistpad.addFileToGist",
-    "onCommand:gistpad.addSelectionToGist",
-    "onCommand:gistpad.copyFileUrl",
-    "onCommand:gistpad.copyRepositoryFileUrl",
-    "onCommand:gistpad.deleteFile",
-    "onCommand:gistpad.deleteGist",
-    "onCommand:gistpad.followUser",
-    "onCommand:gistpad.forkGist",
-    "onCommand:gistpad.newGistLog",
-    "onCommand:gistpad.newNotebook",
-    "onCommand:gistpad.newPublicGist",
-    "onCommand:gistpad.newScratchNote",
-    "onCommand:gistpad.newSecretGist",
-    "onCommand:gistpad.newSecretSwing",
-    "onCommand:gistpad.newSwing",
-    "onCommand:gistpad.openGist",
-    "onCommand:gistpad.openGistNewWindow",
-    "onCommand:gistpad.openGistWorkspace",
-    "onCommand:gistpad.openRepository",
-    "onCommand:gistpad.openTodayPage",
-    "onCommand:gistpad.pasteGistFile",
-    "onCommand:gistpad.pasteImage",
-    "onCommand:gistpad.refreshGists",
-    "onCommand:gistpad.refreshRepositories",
-    "onCommand:gistpad.renameFile",
-    "onCommand:gistpad.renameRepositoryFile",
-    "onCommand:gistpad.starredGists",
     "onFileSystem:gist",
     "onFileSystem:repo",
     "onStartupFinished",
-    "onUri",
-    "onView:gistpad.gists",
-    "onView:gistpad.repos",
-    "onView:gistpad.showcase"
+    "onUri"
   ],
   "main": "./dist/extension.js",
   "browser": "./dist/extension-web.js",
@@ -331,11 +301,6 @@
         "title": "Merge Branch"
       },
       {
-        "command": "gistpad.newGistLog",
-        "title": "New GistLog",
-        "category": "GistPad"
-      },
-      {
         "command": "gistpad.newSwing",
         "title": "New CodeSwing",
         "category": "GistPad"
@@ -364,6 +329,11 @@
         "icon": "$(gist-secret)"
       },
       {
+        "command": "gistpad.newGistFromTag",
+        "title": "New Gist",
+        "icon": "$(add)"
+      },
+      {
         "command": "gistpad.newNotebook",
         "title": "New Notebook",
         "category": "GistPad",
@@ -380,20 +350,12 @@
         "title": "Open Gist File"
       },
       {
-        "command": "gistpad.openGistLogFeed",
-        "title": "View Feed in GistLog"
-      },
-      {
         "command": "gistpad.openGistInBrowser",
         "title": "View Gist in GitHub"
       },
       {
         "command": "gistpad.openGistInBlocks",
         "title": "View Gist in Bl.ocks"
-      },
-      {
-        "command": "gistpad.openGistInGistLog",
-        "title": "View Gist in GistLog"
       },
       {
         "command": "gistpad.openGistInNbViewer",
@@ -597,10 +559,6 @@
           "when": "gistpad:state != SignedIn"
         },
         {
-          "command": "gistpad.newGistLog",
-          "when": "gistpad:state == SignedIn"
-        },
-        {
           "command": "gistpad.newNotebook",
           "when": "gistpad:state == SignedIn"
         },
@@ -793,6 +751,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.newGistFromTag",
+          "when": "false"
+        },
+        {
           "command": "gistpad.recordRepoCodeTour",
           "when": "false"
         },
@@ -821,15 +783,7 @@
           "when": "false"
         },
         {
-          "command": "gistpad.openGistLogFeed",
-          "when": "false"
-        },
-        {
           "command": "gistpad.openGistInNbViewer",
-          "when": "false"
-        },
-        {
-          "command": "gistpad.openGistInGistLog",
           "when": "false"
         },
         {
@@ -1028,9 +982,14 @@
           "group": "open@2"
         },
         {
-          "command": "gistpad.openGistLogFeed",
-          "when": "viewItem == gists",
-          "group": "open@3"
+          "command": "gistpad.newGistFromTag",
+          "when": "viewItem == gistType.tag",
+          "group": "inline@1"
+        },
+        {
+          "command": "gistpad.newGistFromTag",
+          "when": "viewItem == gistType.tag",
+          "group": "new@1"
         },
         {
           "command": "gistpad.openGist",
@@ -1075,11 +1034,6 @@
         {
           "command": "gistpad.openGistInBlocks",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist.swing.block$/",
-          "group": "browse@4"
-        },
-        {
-          "command": "gistpad.openGistInGistLog",
-          "when": "viewItem =~ /^(gists|starredGists|followedUser).gist$/",
           "group": "browse@4"
         },
         {
@@ -1551,26 +1505,33 @@
     "diff-match-patch": "^1.0.5",
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
+    "https-browserify": "^1.0.0",
     "is-binary-path": "^2.1.0",
     "markdown-it": "^10.0.0",
     "markdown-it-regex": "^0.2.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",
+    "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
+    "querystring-es3": "^0.2.1",
     "rxjs": "^6.5.4",
     "simple-git": "^1.126.0",
-    "title-case": "^3.0.2"
+    "stream-http": "^3.2.0",
+    "title-case": "^3.0.2",
+    "url": "^0.11.3",
+    "util": "^0.12.5"
   },
   "devDependencies": {
     "@types/moment": "^2.13.0",
     "@types/node": "^8.10.25",
-    "@types/vscode": "^1.48.0",
+    "@types/vscode": "^1.75.0",
     "copy-webpack-plugin": "^5.0.5",
-    "ts-loader": "^6.2.1",
+    "ts-loader": "^9.5.1",
     "tslint": "^5.8.0",
-    "typescript": "^3.7.3",
-    "vsce": "^1.95.0",
+    "typescript": "^5.2.2",
+    "vsce": "^2.15.0",
     "vscode-nls-dev": "^3.3.1",
-    "webpack": "^4.41.2",
-    "webpack-cli": "^3.3.10"
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
   }
 }

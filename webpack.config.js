@@ -71,13 +71,21 @@ const webConfig = {
     ...config.resolve,
     alias: {
       "@abstractions": path.join(__dirname, "./src/abstractions/browser")
+    },
+    fallback: {
+      "child_process": false,
+      "crypto": false,
+      "fs": false, // TODO: Implement file uploading in the browser
+      "http": require.resolve("stream-http"),
+      "https": require.resolve("https-browserify"),
+      "os": require.resolve("os-browserify/browser"),
+      "path": require.resolve("path-browserify"),
+      "querystring": require.resolve("querystring-es3"),
+      "stream": false,
+      "url": require.resolve("url/"),
+      "util": require.resolve("util/"),
+      "zlib": false
     }
-  },
-  node: {
-    util: true,
-    fs: "empty",
-    readline: "empty",
-    child_process: "empty"
   }
 };
 

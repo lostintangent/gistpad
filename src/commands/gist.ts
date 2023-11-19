@@ -29,6 +29,7 @@ import {
 import { ensureAuthenticated, getApi, signIn } from "../store/auth";
 import {
   FollowedUserGistNode,
+  GistGroupNode,
   GistNode,
   GistsNode,
   StarredGistNode
@@ -60,7 +61,7 @@ export interface GistQuickPickItem extends QuickPickItem {
 const newPublicGist = newGistInternal.bind(null, true);
 const newSecretGist = newGistInternal.bind(null, false);
 
-async function newGistInternal(isPublic: boolean = true) {
+async function newGistInternal(isPublic: boolean = true, description: string = "") {
   await ensureAuthenticated();
 
   const title = "Create new " + (isPublic ? "" : "secret ") + "gist";
@@ -72,6 +73,8 @@ async function newGistInternal(isPublic: boolean = true) {
   descriptionInputBox.prompt = "Enter an optional description for the new Gist";
   descriptionInputBox.step = currentStep++;
   descriptionInputBox.totalSteps = totalSteps;
+  descriptionInputBox.value = description;
+  descriptionInputBox.valueSelection = [0, 0];
 
   descriptionInputBox.onDidAccept(() => {
     descriptionInputBox.hide();
@@ -287,9 +290,8 @@ export async function registerGistCommands(context: ExtensionContext) {
       async (node: GistNode) => {
         // Note: The "html_url" property doesn't include the Gist's owner
         // in it, and the API doesn't support that URL format
-        const url = `https://gist.github.com/${node.gist.owner!.login}/${
-          node.gist.id
-        }`;
+        const url = `https://gist.github.com/${node.gist.owner!.login}/${node.gist.id
+          }`;
         env.clipboard.writeText(url);
       }
     )
@@ -450,6 +452,13 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_NAME}.newGistFromTag`, (node: GistGroupNode) => {
+      const description = ` #${node.label}`;
+      newSecretGist(description);
+    })
+  );
+
+  context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.openGist`,
       (node?: GistNode | GistsNode) => {
@@ -459,8 +468,8 @@ export async function registerGistCommands(context: ExtensionContext) {
         // don't pass on the tree node object to the open gist method.
         const gistNode =
           node instanceof GistNode ||
-          node instanceof StarredGistNode ||
-          node instanceof FollowedUserGistNode
+            node instanceof StarredGistNode ||
+            node instanceof FollowedUserGistNode
             ? node
             : undefined;
         openGistInternal({ node: gistNode });

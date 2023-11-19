@@ -85,10 +85,7 @@ export async function createRepositoryFromTemplate(
   const name = sanitizeName(repoName);
   const response = await api.post(`/repos/${template}/generate`, {
     name,
-    private: isPrivate,
-    headers: {
-      Accept: "application/vnd.github.baptiste-preview+json"
-    }
+    private: isPrivate
   });
   return response.body;
 }
@@ -302,8 +299,8 @@ async function updateTreeItem(
     treeItem.type === "blob"
       ? [treeItem]
       : repo.tree!.tree.filter(
-          (item) => item.path.startsWith(treeItem.path) && item.type === "blob"
-        );
+        (item) => item.path.startsWith(treeItem.path) && item.type === "blob"
+      );
 
   const treeChanges = files.flatMap(updateFunction);
 

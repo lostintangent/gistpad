@@ -76,9 +76,9 @@ export class GistFileSystemProvider implements FileSystemProvider {
                 write.type === FileChangeType.Deleted
                   ? null
                   : {
-                      filename: write.filename!,
-                      content: write.content!
-                    };
+                    filename: write.filename!,
+                    content: write.content!
+                  };
               return [write.filename, value];
             })
           );
@@ -121,7 +121,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     if (!gist) {
       gist = await this.getGistFromUri(uri);
     }
-    
+
     return gist.files[file];
   }
 
@@ -315,7 +315,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
         mtime: 0
       };
     } else if (uri.path.endsWith(DIRECTORY_SEPARATOR)) {
-      if (this.isDirectory(uri)) {
+      if (await this.isDirectory(uri)) {
         return {
           type: FileType.Directory,
           size: 0,
@@ -403,7 +403,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     uri: Uri,
     options: { recursive: boolean; excludes: string[] }
   ): Disposable {
-    return new Disposable(() => {});
+    return new Disposable(() => { });
   }
 }
 

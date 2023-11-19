@@ -1,3 +1,10 @@
+## v0.6.0 (11/19/2023)
+
+- Added the `New Gist` context menu to tag groups in the tree, which allows quickly creating a gist with the selected tag
+- Fixed the ability to create new repos from a repo template
+- Removed the GistLog integration, since that service is no longer active
+- Updated the minimum VS Code version to >=1.75
+
 ## v0.5.1 (11/22/2022)
 
 - Added a new `New Notebook` command, for quickly creating Jupyter notebook-based gists

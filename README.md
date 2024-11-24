@@ -24,17 +24,23 @@ GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists]
 - **[Configuration Settings](#configuration-settings)**
 
 <details>
-  <summary>## Getting Started</summary>
+  <summary>Getting Started</summary>
+
+## Getting Started
 
 1. Install this extension from the marketplace, then run `Developer: Reload Window`.
 
 2. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a gist or GitHub repo by ID/URL, or sign in with a GitHub account in order to manage your [gists](#gist-management) and [repositories](#repositories). To sign-in, simply click the `Sign In` button and follow the provided flow in order to authenticate with your GitHub account.
 
 You can create and edit [gists](#gist-management), [repositories](#repositories), [wikis](#wikis) and [runnable code samples](#codeswing). Have fun, and let us know how we can make your knowledge-management experience even more awesome! 🙌
+<br>
+
 [Back to Table of Contents](#table-of-contents)
 </details>
 <details>
-  <summary>## Gist Management</summary>
+  <summary>Gist Management</summary>
+
+## Gist Management
 
 In order to create a new gist, simply open the `Gists` tree in the `GistPad` tab, and click the `+` icon in the toolbar. Specify the description and files to seed it with (including support for [directories](#files-and-directories)!). Additionally, you can create gists from local files or snippets by right-clicking them in the `Explorer` tree, or by right-clicking an editor window/tab and selecting `Copy File to Gist`, `Add Selection to Gist`, or `Paste Gist File Contents` ([details](#contributed-commands-editor)).
 
@@ -129,11 +135,14 @@ You can create as many scratch notes as you need, and when you're done with them
 To see what can be done with gists and [code swings](#codeswing), and to keep up with the cool stuff that folks in the community are building, check out the `Showcase` view in the `GistPad` tab. This is a list of categories intended to highlight different use-cases for gists, along with examples. Simply click the `Open` button for any gist in order to explore it, or expand the gist to see its file contents. If you have a gist that you think is worth showcasing, please open an issue and let us know about it. We'll keep the showcase updated periodically to highlight new and interesting things, so stay tuned!
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/74891549-2c9f4500-533c-11ea-9bbb-c5907d41a589.png" />
+<br>
 
 [Back to Table of Contents](#table-of-contents)
 </details>
 <details>
-  <summary>## Repositories</summary>
+  <summary>Repositories</summary>
+
+## Repositories
 
 GistPad also allows you to create and edit GitHub repos without needing to clone anything locally. To get started, run the `GistPad: Open Repository` command, and specify/select the name of the repo you'd like to start managing. If you want to create a new repo, then select the `Create new repo` or `Create new private repo` options, then specify the name of the repo.
 
@@ -213,20 +222,25 @@ Furthermore, when you open a page that contains backlinks, the set of backlinks 
 #### Embedding Files
 
 In addition to adding links to pages, it's sometimes valuable to embed the contents of another page directly into a note, so that you can easily read them together. To do this, you can use the `![[link]]` syntax, where you'll recieve auto-completion support just like regular links. When you use an embed link, the target page's contents will be displayed within the note whenever you view it's markdown preview.
+<br>
 
 [Back to Table of Contents](#table-of-contents)
 </details>
 <details>
-  <summary>## CodeSwing</summary>
+  <summary>CodeSwing</summary>
+
+## CodeSwing
 
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template fields, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
 When you create a new swing, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries and languages you intend to use (e.g. React.js, Vue.js). Since the swing is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other swings that you'd like to use, simply fork them and create your own swings. That way, you can use Gists as "templates" for swing environments, and collaborate on them with others just like you would any other gist. When you're done with a swing, simply close the preview window and all other documents will be automatically closed. If you no longer need the swing, then delete it just like any other gist 👍
-
+<br>
 [Back to Table of Contents](#table-of-contents)
 </details>
 <details>
-  <summary>## Contributed Commands</summary>
+  <summary>Contributed Commands</summary>
+
+## Contributed Commands
 
 ### Contributed Commands (File Explorer)
 
@@ -283,11 +297,14 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
 
 - `GistPad: Paste Gist File` - Allows you to paste the contents of a gist file into the active editor
+<br>
 
 [Back to Table of Contents](#table-of-contents)
 </details>
 <details>
-  <summary>## Configuration Settings</summary>
+  <summary>Configuration Settings</summary>
+
+## Configuration Settings
 
 - `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
 
@@ -320,6 +337,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 
 - `GistPad > Tracing > Enable Output Channel` - When enabled, creates an Output trace channel at VSCode startup.
+<br>
 
 [Back to Table of Contents](#table-of-contents)
 </details>

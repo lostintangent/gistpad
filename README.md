@@ -43,7 +43,7 @@ From here, you can edit gists by expanding the gist and clicking on the desired 
 
 ### Sorting and Grouping
 
-By default, the `Gists` tree sorts gist by their update time, which allows you to focus on your most recently used gists. If you'd like to sort your gists alphabetically, click the Sort toggle button on the `Gists` tree's toolbar.
+By default, the `Gists` tree sorts gists by their update time, which allows you to focus on your most recently used gists. If you'd like to sort your gists alphabetically, click the Sort toggle button on the `Gists` tree's toolbar.
 
 <img width="200px" src="https://user-images.githubusercontent.com/116461/75098896-65276480-5570-11ea-9880-a76347a15f73.png" />
 
@@ -55,8 +55,8 @@ By default, your gists are displayed as a flat list. If you'd like to group them
 
 When grouping is enabled, gists are grouped into the following built-in types:
 
-- **note** - Gists that are composed of nothing but `.txt`, `.md`/`.markdown` or `.adoc` files
-- **notebook** - Gists that are compose of nothing by Jupyter Notebook files (`.ipynb`)
+- **note** - Gists that are composed of nothing but `.txt`, `.md`/`.markdown` or `.adoc` files.
+- **notebook** - Gists that are composed of nothing but Jupyter Notebook files (`.ipynb`).
 - **code-swing** - Gists that include either a `codeswing.json` file and/or an `index.html` file. Read more about swings [here](#codeswing).
 - **code-swing-template** - Swings whose `codeswing.json` file sets the `template` property to `true`. Read more about swing templates [here](#user-templates).
 - **code-swing-tutorial** - Swings whose `codeswing.json` file specifies a `tutorial` property. Read more about tutorials [here](#tutorials).
@@ -105,11 +105,11 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 ### Exporting to Repositories
 
-At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). In that event, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
+At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). When this occurs, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
 
 ### Scratch Notes
 
-To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document named be default for the time it was created.
+To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document named by default for the time it was created.
 
 By default, scratch notes are Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting. Furthermore, scratch notes are created per day, but you can customize this by setting the `GistPad > Scratch Notes: Directory Format` and `GistPad > Scratch Notes: File Format` settings.
 
@@ -143,7 +143,7 @@ In order to create new directories, simply add a new file and include the direct
 
 ### Repo Templates
 
-In addition to creating a new repo "from scratch", you can also create a repository from a [a template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template). To do this, simply run the `GistPad: Open Repository` command and select the `Create new repo from template` or `Create new private repo from template` options. You'll be presented with some "well-known" repo templates to select from, but you can also specify the name of an arbitrary repo template as well.
+In addition to creating a new repo "from scratch", you can also create a repository from a [template](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template). To do this, simply run the `GistPad: Open Repository` command and select the `Create new repo from template` or `Create new private repo from template` options. You'll be presented with some "well-known" repo templates to select from, but you can also specify the name of an arbitrary repo template as well.
 
 ### Branches
 
@@ -210,7 +210,7 @@ In addition to adding links to pages, it's sometimes valuable to embed the conte
 
 ## CodeSwing
 
-If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template fiels, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
+If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template fields, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
 When you create a new swing, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries and languages you intend to use (e.g. React.js, Vue.js). Since the swing is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other swings that you'd like to use, simply fork them and create your own swings. That way, you can use Gists as "templates" for swing environments, and collaborate on them with others just like you would any other gist. When you're done with a swing, simply close the preview window and all other documents will be automatically closed. If you no longer need the swing, then delete it just like any other gist 👍
 
@@ -224,9 +224,9 @@ In addition to the `Gists` view, GistPad also contributes an `Copy File to Gist`
 
 In addition to the `Explorer` file tree commands, GistPad also contributes the following commands to the editor's context menu:
 
-- `Add Selection to Gist` - Allows you to add a snippet/selection of code to a Gist, instead of the entire document
+- `Add Selection to Gist` - Allows you to add a snippet/selection of code to a Gist, instead of the entire document.
 
-- `Paste Gist File` - Allows you to paste the contents of a Gist file into the active editor
+- `Paste Gist File` - Allows you to paste the contents of a Gist file into the active editor.
 
 - `Paste Image` - Allows you to paste an image from your clipboard into a markdown, HTML or Pug file. The command will automatically upload the image and then add a reference to it.
 
@@ -244,7 +244,7 @@ In addition to the commands added to the editor context menu, GistPad also contr
 
 In addition to the `Gists` view, this extension also provides the following commands:
 
-- `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a gist workspace open, it will delete that and then close the folder
+- `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a gist workspace open, it will delete that and then close the folder.
 
 - `GistPad: Follow User` - Follow another GitHub user, which allows you to browser/access/fork their Gists from within the `Gists` view.
 
@@ -260,7 +260,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
-- `GistPad: New CodeSwing` - Creates a new [CodeSwing](#CodeSwing).
+- `GistPad: New CodeSwing` - Creates a new [CodeSwing](#codeswing).
 
 - `GistPad: Refresh Gists` - Refreshes the gist data and reloads the `Gists` tree.
 

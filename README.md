@@ -235,6 +235,7 @@ If you're building web applications, and want to create a quick playground envir
 
 When you create a new swing, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries and languages you intend to use (e.g. React.js, Vue.js). Since the swing is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other swings that you'd like to use, simply fork them and create your own swings. That way, you can use Gists as "templates" for swing environments, and collaborate on them with others just like you would any other gist. When you're done with a swing, simply close the preview window and all other documents will be automatically closed. If you no longer need the swing, then delete it just like any other gist 👍
 <br>
+
 [Back to Table of Contents](#table-of-contents)
 </details>
 <details>

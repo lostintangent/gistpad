@@ -140,7 +140,7 @@ To see what can be done with gists and [code swings](#codeswing), and to keep up
 [Back to Table of Contents](#table-of-contents)
 </details>
 <details>
-  <summary>Repositories</summary>
+  <summary>Repository Management</summary>
 
 ## Repositories
 

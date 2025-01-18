@@ -16,6 +16,7 @@ import {
   window,
   workspace
 } from "vscode";
+import * as config from "../config";
 import {
   DIRECTORY_SEPARATOR,
   ENCODED_DIRECTORY_SEPARATOR,
@@ -385,6 +386,12 @@ export class GistFileSystemProvider implements FileSystemProvider {
     } else {
       const file = await this.getFileFromUri(uri);
       const type = file ? FileChangeType.Changed : FileChangeType.Created;
+
+      const autoSyncEnabled = config.get("autoSyncWhenSave");
+      if (!autoSyncEnabled && type === FileChangeType.Changed) {
+        this._onDidChangeFile.fire([{ type, uri }]);
+        return;
+      }
 
       return new Promise((resolve) => {
         this._pendingWrites.next({

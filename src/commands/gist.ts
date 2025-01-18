@@ -11,6 +11,7 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
+import { updateGistFiles } from "../fileSystem/api";
 import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { openRepo } from "../repos/store/actions";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
@@ -41,9 +42,11 @@ import {
   encodeDirectoryName,
   fileNameToUri,
   getGistDescription,
+  getGistDetailsFromUri,
   getGistLabel,
   getGistWorkspaceId,
   isGistWorkspace,
+  isOwnedGist,
   openGist,
   openGistFiles,
   sortGists,
@@ -51,6 +54,7 @@ import {
   withProgress
 } from "../utils";
 const isBinaryPath = require("is-binary-path");
+const path = require("path");
 
 const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
 
@@ -116,6 +120,55 @@ async function newGistInternal(isPublic: boolean = true, description: string = "
   });
 
   descriptionInputBox.show();
+}
+
+async function syncGistInternal() {
+  await ensureAuthenticated();
+  
+  let error: Error | undefined;
+  
+  await window.withProgress(
+    {
+      location: ProgressLocation.Notification,
+      title: "Uploading to GitHub Gist..."
+    },
+    async () => {
+      try {
+        const activeEditor = window.activeTextEditor;
+        if (!activeEditor) {
+          throw new Error("No active editor");
+        }
+        
+        const uri = activeEditor.document.uri;
+        const { gistId } = getGistDetailsFromUri(uri);
+        
+        if (!isOwnedGist(gistId)) {
+          throw new Error("You can't sync a Gist you don't own");
+        }
+
+        const content = activeEditor.document.getText();
+        const filename = path.basename(uri.path);
+        
+        await updateGistFiles(gistId, [
+          [filename, { 
+            filename: filename,
+            content: content 
+          }]
+        ]);
+
+        await refreshGist(gistId);
+      } catch (err) {
+        error = err as Error;
+      }
+    }
+  );
+
+  if (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error occurred';
+    window.showErrorMessage(`Failed to upload: ${message}`);
+  } else {
+    window.showInformationMessage("Successfully uploaded to GitHub Gist");
+  }
 }
 
 const SIGN_IN_ITEM = "Sign in to view Gists...";
@@ -696,5 +749,9 @@ export async function registerGistCommands(context: ExtensionContext) {
         );
       }
     )
+  );
+  
+  context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_NAME}.syncGist`, syncGistInternal)
   );
 }

@@ -119,6 +119,11 @@
           "default": false,
           "type": "boolean",
           "description": "Specifies whether or not to enable the output channel for tracing."
+        },
+        "gistpad.autoSyncWhenSave": {
+          "default": true,
+          "type": "boolean",
+          "description": "Specifies whether or not to enable the auto sync feature when saving a file. By default, this is enabled."
         }
       }
     },
@@ -534,6 +539,11 @@
       {
         "command": "gistpad.viewForks",
         "title": "View Forks"
+      },
+      {
+        "command": "gistpad.syncGist",
+        "title": "Sync Gist",
+        "icon": "$(sync)"
       }
     ],
     "menus": {
@@ -1364,6 +1374,11 @@
         {
           "command": "gistpad.renameRepositoryFile",
           "when": "resourceScheme == repo"
+        },
+        {
+          "command": "gistpad.syncGist",
+          "when": "resourceScheme == gist && !gistpad.autoSyncWhenSave",
+          "group": "navigation@1"
         }
       ],
       "editor/title/context": [

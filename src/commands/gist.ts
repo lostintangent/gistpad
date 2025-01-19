@@ -126,6 +126,10 @@ async function syncGistInternal() {
   await ensureAuthenticated();
   
   let error: Error | undefined;
+  const activeEditor = window.activeTextEditor;
+  if (!activeEditor) {
+    throw new Error("No active editor");
+  }
   
   await window.withProgress(
     {
@@ -134,11 +138,6 @@ async function syncGistInternal() {
     },
     async () => {
       try {
-        const activeEditor = window.activeTextEditor;
-        if (!activeEditor) {
-          throw new Error("No active editor");
-        }
-        
         const uri = activeEditor.document.uri;
         const { gistId } = getGistDetailsFromUri(uri);
         
@@ -157,6 +156,8 @@ async function syncGistInternal() {
         ]);
 
         await refreshGist(gistId);
+        
+        store.unsyncedFiles.delete(uri.toString());
       } catch (err) {
         error = err as Error;
       }

@@ -12,6 +12,7 @@ import {
   FileSystemProvider,
   FileType,
   ProgressLocation,
+  TabInputText,
   Uri,
   window,
   workspace
@@ -24,7 +25,7 @@ import {
   ZERO_WIDTH_SPACE
 } from "../constants";
 import { Gist, GistFile, Store } from "../store";
-import { forkGist, getGist } from "../store/actions";
+import { forkGist, getGist, refreshGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import {
   byteArrayToString,
@@ -55,6 +56,55 @@ export class GistFileSystemProvider implements FileSystemProvider {
     ._onDidChangeFile.event;
 
   constructor(private store: Store) {
+
+    window.tabGroups.onDidChangeTabs(async (tabGroups) => {
+      if (tabGroups.closed.length === 0) {
+        return;
+      }
+
+      for (const tab of tabGroups.closed) {
+        const input = tab.input as TabInputText;
+        if (!(input instanceof TabInputText) || !input.uri) {
+          continue;
+        }
+
+        const uri = input.uri.toString();
+        if (!uri.startsWith(FS_SCHEME) || !this.store.unsyncedFiles.has(uri)) {
+          continue; 
+        }
+
+        const filename = path.basename(Uri.parse(uri).path);
+        const { gistId } = getGistDetailsFromUri(Uri.parse(uri));
+
+        const result = await window.showWarningMessage(
+          `${filename} has changes that have not been synced to GitHub. Do you want to sync them now?`,
+          { modal: true },
+          "Yes", 
+          "Discard Changes"
+        );
+
+        if (result === "Yes") {
+          const document = workspace.textDocuments.find(doc => doc.uri.toString() === uri);
+          if (document) {
+            try {
+              await updateGistFiles(gistId, [
+                [filename, {
+                  filename,
+                  content: document.getText()
+                }]
+              ]);
+              
+              await refreshGist(gistId);
+            } catch (err: any) {
+              window.showErrorMessage(`Failed to sync changes: ${err.message}`);
+            }
+          }
+        }
+
+        this.store.unsyncedFiles.delete(uri);
+      }
+    });
+
     this._pendingWrites
       .pipe(buffer(this._pendingWrites.pipe(debounceTime(100))))
       .subscribe((operations: WriteOperation[]) => {
@@ -389,6 +439,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
       const autoSyncEnabled = config.get("autoSyncWhenSave");
       if (!autoSyncEnabled && type === FileChangeType.Changed) {
+        this.store.unsyncedFiles.add(uri.toString());
         this._onDidChangeFile.fire([{ type, uri }]);
         return;
       }

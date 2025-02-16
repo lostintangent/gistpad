@@ -1544,7 +1544,7 @@
     "typescript": "^5.2.2",
     "vsce": "^2.15.0",
     "vscode-nls-dev": "^3.3.1",
-    "webpack": "^5.89.0",
+    "webpack": "^5.98.0",
     "webpack-cli": "^5.1.4"
   }
 }

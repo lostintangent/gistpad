@@ -7,11 +7,12 @@ import { openRepo } from "./repos/store/actions";
 import { store } from "./store";
 import { followUser, newScratchNote } from "./store/actions";
 import { ensureAuthenticated as ensureAuthenticatedInternal } from "./store/auth";
-import { openGist, withProgress } from "./utils";
+import { decodeDirectoryName, fileNameToUri, openGist, openGistFile, withProgress } from "./utils";
 
 const OPEN_PATH = "/open";
 const GIST_PARAM = "gist";
 const REPO_PARAM = "repo";
+const FILE_PARAM = "file";
 
 async function ensureAuthenticated() {
   await when(() => store.isSignedIn, { timeout: 3000 });
@@ -33,10 +34,16 @@ async function handleFollowRequest(query: URLSearchParams) {
 async function handleOpenRequest(query: URLSearchParams) {
   const gistId = query.get(GIST_PARAM);
   const repoName = query.get(REPO_PARAM);
+  const file = query.get(FILE_PARAM);
   const openAsWorkspace = query.get("workspace") !== null;
 
   if (gistId) {
-    openGist(gistId, !!openAsWorkspace);
+    if (file) {
+      const uri = fileNameToUri(gistId, decodeDirectoryName(file));
+      openGistFile(uri)
+    } else {
+      openGist(gistId, !!openAsWorkspace);
+    }
   } else if (repoName) {
     openRepo(repoName, true);
   }
@@ -84,8 +91,15 @@ async function handleTodayRequest() {
   });
 }
 
-export function createGistPadOpenUrl(gistId: string) {
-  return `vscode://${EXTENSION_ID}${OPEN_PATH}?${GIST_PARAM}=${gistId}`;
+export function createGistPadOpenUrl(gistId: string, file?: string) {
+  const fileParam = file ? `&${FILE_PARAM}=${file}` : "";
+  return `vscode://${EXTENSION_ID}${OPEN_PATH}?${GIST_PARAM}=${gistId}${fileParam}`;
+}
+
+export function createGistPadWebUrl(gistId: string, file: string = "README.md", preview: boolean = true) {
+  const path = file && file !== "README.md" ? `/${file}` : "";
+  const query = preview ? `?view=preview` : "";
+  return `https://gistpad.dev/#${gistId}${path}${query}`;
 }
 
 class GistPadPUriHandler implements vscode.UriHandler {

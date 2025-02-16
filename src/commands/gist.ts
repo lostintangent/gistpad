@@ -34,7 +34,7 @@ import {
   GistsNode,
   StarredGistNode
 } from "../tree/nodes";
-import { createGistPadOpenUrl } from "../uriHandler";
+import { createGistPadOpenUrl, createGistPadWebUrl } from "../uriHandler";
 import {
   byteArrayToString,
   closeGistFiles,
@@ -301,7 +301,10 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.copyGistPadUrl`,
       async (node: GistNode) => {
-        const url = createGistPadOpenUrl(node.gist.id);
+        const url = node.gist.type === "note"
+          ? createGistPadWebUrl(node.gist.id)
+          : createGistPadOpenUrl(node.gist.id);
+
         env.clipboard.writeText(url);
       }
     )
@@ -444,11 +447,11 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.newPublicGist`, newPublicGist)
+    commands.registerCommand(`${EXTENSION_NAME}.newPublicGist`, () => newPublicGist())
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.newSecretGist`, newSecretGist)
+    commands.registerCommand(`${EXTENSION_NAME}.newSecretGist`, () => newSecretGist())
   );
 
   context.subscriptions.push(
@@ -481,7 +484,12 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.openGistInBrowser`,
       async (node: GistNode) => {
-        env.openExternal(Uri.parse(node.gist.html_url));
+        let url = node.gist.html_url;
+        if (node.gist.type === "note") {
+          url = createGistPadWebUrl(node.gist.id);
+        }
+
+        env.openExternal(Uri.parse(url));
       }
     )
   );

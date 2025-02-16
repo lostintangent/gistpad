@@ -161,6 +161,7 @@ function getFileDisplayName(file: GistFile) {
 
   return file.filename!;
 }
+
 export class GistFileNode extends TreeNode {
   constructor(public gistId: string, public file: GistFile) {
     super(getFileDisplayName(file));

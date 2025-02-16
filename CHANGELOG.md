@@ -1,6 +1,8 @@
-## v0.6.1 (11/19/2023)
+## v0.7.0 (02/10/25)
 
 - Changed the default gist type to secret, by making the `+` icon in the tree create a new secret gist (as opposed to a public gist)
+- Added a new `Copy GistPad URL` menu item to file nodes in the `Gists` tree
+- Updated the `Copy GistPad URL` and `View gist in browser` menu items for gist nodes, so that they use `https://gistpad.dev` links for "note" type gists
 - Fixed an error when refreshing the gists tree
 
 ## v0.6.0 (11/19/2023)

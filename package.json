@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "extensionKind": [
     "ui",
     "workspace"
@@ -183,6 +183,10 @@
         "title": "Copy File Contents"
       },
       {
+        "command": "gistpad.copyGistPadFileUrl",
+        "title": "Copy GistPad URL"
+      },
+      {
         "command": "gistpad.copyFileUrl",
         "title": "Copy GitHub URL"
       },
@@ -351,7 +355,7 @@
       },
       {
         "command": "gistpad.openGistInBrowser",
-        "title": "View Gist in GitHub"
+        "title": "View Gist in Browser"
       },
       {
         "command": "gistpad.openGistInBlocks",
@@ -664,6 +668,10 @@
         },
         {
           "command": "gistpad.copyFileContents",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.copyGistPadFileUrl",
           "when": "false"
         },
         {
@@ -1012,12 +1020,12 @@
           "group": "base@3"
         },
         {
-          "command": "gistpad.copyGistUrl",
+          "command": "gistpad.copyGistPadUrl",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "browse@1"
         },
         {
-          "command": "gistpad.copyGistPadUrl",
+          "command": "gistpad.copyGistUrl",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "browse@2"
         },
@@ -1102,19 +1110,24 @@
           "group": "base@1"
         },
         {
-          "command": "gistpad.copyFileUrl",
+          "command": "gistpad.copyGistPadFileUrl",
           "when": "viewItem =~ /^gistFile/",
           "group": "base@1"
         },
         {
-          "command": "gistpad.copyFileContents",
+          "command": "gistpad.copyFileUrl",
           "when": "viewItem =~ /^gistFile/",
           "group": "base@2"
         },
         {
+          "command": "gistpad.copyFileContents",
+          "when": "viewItem =~ /^gistFile/",
+          "group": "copy@2"
+        },
+        {
           "command": "gistpad.addFileToGist",
           "when": "viewItem =~ /^gistFile/",
-          "group": "base@3"
+          "group": "copy@3"
         },
         {
           "command": "gistpad.renameFile",

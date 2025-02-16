@@ -11,6 +11,7 @@ import { EXTENSION_NAME } from "../constants";
 import { store } from "../store";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
+import { createGistPadOpenUrl, createGistPadWebUrl } from "../uriHandler";
 import {
   byteArrayToString,
   decodeDirectoryName,
@@ -57,6 +58,27 @@ export function registerFileCommands(context: ExtensionContext) {
           fileNameToUri(node.gistId, node.file.filename!)
         );
         await env.clipboard.writeText(byteArrayToString(contents));
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.copyGistPadFileUrl`,
+      async (nodeOrUri: GistFileNode | Uri) => {
+        let details: { gistId: string, file: string } | undefined;
+        if (nodeOrUri instanceof GistFileNode) {
+          details = { gistId: nodeOrUri.gistId, file: nodeOrUri.file.filename! };
+        } else {
+          const { gistId, file } = getGistDetailsFromUri(
+            encodeDirectoryUri(nodeOrUri)
+          );
+          details = { gistId, file };
+        }
+        const url = details.file.endsWith(".md")
+          ? createGistPadWebUrl(details.gistId, details.file)
+          : createGistPadOpenUrl(details.gistId, details.file);
+        await env.clipboard.writeText(url);
       }
     )
   );

@@ -1513,7 +1513,7 @@
     "watch": "webpack --mode development --watch --progress"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^1.8.2",
     "base64-to-uint8array": "^1.0.0",
     "diff-match-patch": "^1.0.5",
     "gists": "github:lostintangent/gists",

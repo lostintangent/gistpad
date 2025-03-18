@@ -1,6 +1,6 @@
 # GistPad 📘
 
-GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists](https://gist.github.com/) and repositories from the comfort of your favorite editor. You can open, create, delete, fork and star gists and repositories, and then seamlessly begin editing files **as if they were local**, without ever cloning, pushing or pulling anything. It's like your very own developer library for building and referencing code snippets, commonly used config/scripts, programming-related notes, [knowledge bases](#wikis) and [interactive samples](#codeswing).
+GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists](https://gist.github.com/) and repositories from the comfort of your favorite editor. You can open, create, delete, fork, archive, and star gists/repositories, and then seamlessly begin editing files **as if they were local**, without ever cloning, pushing or pulling anything. It's like your very own developer library for building and referencing code snippets, commonly used config/scripts, programming-related notes, [knowledge bases](#wikis) and [interactive samples](#codeswing).
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
 
@@ -10,6 +10,7 @@ GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists]
 - **[Gist Management](#gist-management)**
   - [Sorting and grouping](#sorting-and-grouping)
   - [Files and Directories](#files-and-directories)
+  - [Archiving Gists](#archiving-gists)
   - [Commenting](#gist-commenting)
   - [Pasting Images](#pasting-images)
   - [Following Users](#following-users)
@@ -78,6 +79,12 @@ For example, if you create a new gist, and specify `reminders.txt,todos/personal
 <img width="200px" src="https://user-images.githubusercontent.com/116461/74593846-7b6b7880-4fe4-11ea-9bf8-722bf7887ef1.png" />
 
 You can add new files to a gist or directory from the Explorer at any time by right-clicking them and selecting `Add New File(s)` or `Upload File(s)`. You can also rename/delete directories as well, by right-clicking them in the tree and selecting the appropriate command. If you'd like to move a file from one directory to another, simply right-click the file, select `Rename File` and edit the directory name that it's in. It's that simple!
+
+### Archiving Gists
+
+To help keep your gist list organized, you can archive gists that you want to keep but don't actively use. To archive a gist, simply right-click it in the `Gists` tree and select `Archive Gist`. Archived gists will appear in a separate `Archived gists` node at the bottom of the `Gists` tree view.
+
+To unarchive a gist, right-click it in the `Archived gists` node and select `Unarchive Gist`. This will move it back to the main gist list. Additionally, archived gists can be edited/used/shared exactly like "regular" gists.
 
 ### Gist Commenting
 

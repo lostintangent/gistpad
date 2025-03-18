@@ -15,6 +15,7 @@ import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { openRepo } from "../repos/store/actions";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
+  archiveGist,
   changeDescription,
   deleteGist,
   forkGist,
@@ -24,9 +25,8 @@ import {
   refreshGists,
   starGist,
   starredGists,
-  unstarGist,
-  archiveGist,
-  unarchiveGist
+  unarchiveGist,
+  unstarGist
 } from "../store/actions";
 import { ensureAuthenticated, getApi, signIn } from "../store/auth";
 import {
@@ -45,6 +45,7 @@ import {
   getGistDescription,
   getGistLabel,
   getGistWorkspaceId,
+  isArchivedGist,
   isGistWorkspace,
   openGist,
   openGistFiles,
@@ -263,15 +264,26 @@ export async function registerGistCommands(context: ExtensionContext) {
         await ensureAuthenticated();
 
         if (node) {
-          const description = await window.showInputBox({
+          // If this is an archived gist, we need to remove the "archived" prefix
+          const isArchived = isArchivedGist(node.gist);
+
+          const description = isArchived ? node.gist.description.replace(" [Archived]", "") : node.gist.description;
+          let newDescription = await window.showInputBox({
             prompt: "Specify the description for this Gist",
-            value: node.gist.description
+            value: description
           });
 
-          if (!description) {
+          if (!newDescription) {
             return;
           }
-          await changeDescription(node.gist.id, description);
+
+          // If the gist was archived, we need to add the "archived" prefix
+          // back to the description, since we stripped it out above.
+          if (isArchived) {
+            newDescription += " [Archived]";
+          }
+
+          await changeDescription(node.gist.id, newDescription);
         }
       }
     )

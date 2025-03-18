@@ -163,6 +163,10 @@
         "icon": "$(add)"
       },
       {
+        "command": "gistpad.archiveGist",
+        "title": "Archive Gist"
+      },
+      {
         "command": "gistpad.changeGistDescription",
         "title": "Change Description"
       },
@@ -516,6 +520,10 @@
         "title": "Close Repository"
       },
       {
+        "command": "gistpad.unarchiveGist",
+        "title": "Unarchive Gist"
+      },
+      {
         "command": "gistpad.unfollowUser",
         "title": "Unfollow User"
       },
@@ -633,6 +641,10 @@
         {
           "command": "gistpad.addWikiPage",
           "when": "gistpad:state == SignIn && gistpad:hasWiki"
+        },
+        {
+          "command": "gistpad.archiveGist",
+          "when": "false"
         },
         {
           "command": "gistpad.changeGistDescription",
@@ -871,6 +883,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.unarchiveGist",
+          "when": "false"
+        },
+        {
           "command": "gistpad.unstarGist",
           "when": "false"
         },
@@ -1090,19 +1106,29 @@
           "group": "manage@4"
         },
         {
+          "command": "gistpad.archiveGist",
+          "when": "viewItem =~ /^gists.gist(?!.archived$)/",
+          "group": "star@1"
+        },
+        {
+          "command": "gistpad.unarchiveGist",
+          "when": "viewItem =~ /^gists.gist(.*).archived$/",
+          "group": "star@1"
+        },
+        {
           "command": "gistpad.viewForks",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
-          "group": "star@1"
+          "group": "star@2"
         },
         {
           "command": "gistpad.starGist",
           "when": "viewItem =~ /^(gists|followedUser).gist/",
-          "group": "star@2"
+          "group": "star@3"
         },
         {
           "command": "gistpad.unstarGist",
           "when": "viewItem =~ /^starredGists.gist/",
-          "group": "star@2"
+          "group": "star@3"
         },
         {
           "command": "gistpad.unfollowUser",

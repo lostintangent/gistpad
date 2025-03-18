@@ -22,6 +22,7 @@ import {
   getGistDescription,
   getGistLabel,
   getIconPath,
+  isArchivedGist,
   isNotebookGist,
   isOwnedGist,
   isSwingGist,
@@ -132,6 +133,11 @@ export class GistNode extends TreeNode {
         contextValue += ".block";
       }
     }
+
+    if (isArchivedGist(this.gist)) {
+      contextValue += ".archived";
+    }
+
     return contextValue;
   }
 
@@ -316,5 +322,15 @@ export class NewScratchNoteNode extends TreeNode {
       command: `${EXTENSION_NAME}.newScratchNote`,
       title: "New scratch note..."
     };
+  }
+}
+
+export class ArchivedGistsNode extends TreeNode {
+  constructor(gistCount: number) {
+    super("Archived Gists", TreeItemCollapsibleState.Collapsed);
+
+    this.iconPath = new ThemeIcon("archive");
+    this.contextValue = "archivedGists";
+    this.description = gistCount.toString();
   }
 }

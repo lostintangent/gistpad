@@ -15,6 +15,7 @@ import { EXTENSION_NAME } from "../constants";
 import { Gist, GroupType, Store } from "../store";
 import { encodeDirectoryName, fileNameToUri, sortGists } from "../utils";
 import {
+  ArchivedGistsNode,
   CreateNewGistNode,
   FollowedUserGistNode,
   FollowedUserGistsNode,
@@ -45,9 +46,9 @@ export async function getGistFiles(gist: Gist, subDirectory?: string) {
       return fileType === FileType.Directory
         ? new GistDirectoryNode(gist, file)
         : new GistFileNode(
-            gist.id,
-            gist.files[`${encodeDirectoryName(directory)}${file}`]
-          );
+          gist.id,
+          gist.files[`${encodeDirectoryName(directory)}${file}`]
+        );
     });
 }
 
@@ -55,8 +56,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
 
   private _onDidChangeTreeData = new EventEmitter<void>();
-  public readonly onDidChangeTreeData: Event<void> = this._onDidChangeTreeData
-    .event;
+  public readonly onDidChangeTreeData: Event<void> =
+    this._onDidChangeTreeData.event;
 
   constructor(
     private store: Store,
@@ -67,6 +68,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
         store.scratchNotes.gist ? store.scratchNotes.gist.updated_at : null,
         store.scratchNotes.show,
         store.gists.map((gist) => [gist.description, gist.updated_at]),
+        store.archivedGists.map((gist) => [gist.description, gist.updated_at]),
         store.starredGists.map((gist) => [gist.description, gist.updated_at]),
         store.followedUsers.map((user) => user.isLoading),
         store.isLoading,
@@ -163,6 +165,10 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
             });
           }
 
+          if (this.store.archivedGists.length > 0) {
+            nodes.push(new ArchivedGistsNode(this.store.archivedGists.length));
+          }
+
           return nodes;
         }
       }
@@ -172,6 +178,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       } else {
         return this.groupGists(this.store.gists, GistNode);
       }
+    } else if (element instanceof ArchivedGistsNode) {
+      return this.groupGists(this.store.archivedGists, GistNode);
     } else if (element instanceof StarredGistsNode) {
       if (this.store.starredGists.length === 0) {
         return [new NoStarredGistsNode()];

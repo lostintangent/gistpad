@@ -12,6 +12,7 @@ import {
   closeGistFiles,
   encodeDirectoryName,
   fileNameToUri,
+  isArchivedGist,
   openGistFiles,
   sortGists,
   stringToByteArray,
@@ -73,7 +74,9 @@ export async function changeDescription(id: string, description: string) {
     description
   });
 
-  const gist = store.gists.find((gist) => gist.id === id)!;
+  const gist =
+    store.gists.find((gist) => gist.id === id)! ||
+    store.archivedGists.find((gist) => gist.id === id)!;
 
   runInAction(() => {
     gist.description = body.description;
@@ -95,7 +98,9 @@ export async function createGistComment(
 export async function deleteGist(id: string) {
   const api = await getApi();
   await api.delete(id);
+
   store.gists = store.gists.filter((gist) => gist.id !== id);
+  store.archivedGists = store.archivedGists.filter((gist) => gist.id !== id);
 }
 
 export async function deleteGistComment(
@@ -325,9 +330,14 @@ export async function refreshGists() {
   store.scratchNotes.gist =
     gists.find((gist) => gist.description === SCRATCH_GIST_NAME) || null;
 
-  store.gists = store.scratchNotes.gist
-    ? gists.filter((gist) => gist.description !== SCRATCH_GIST_NAME)
-    : gists;
+  // Filter out scratch notes and split gists into archived and non-archived
+  const nonScratchGists = gists.filter(
+    (gist) => gist.description !== SCRATCH_GIST_NAME
+  );
+
+  // Split gists into archived and non-archived
+  store.archivedGists = nonScratchGists.filter(isArchivedGist);
+  store.gists = nonScratchGists.filter((gist) => !isArchivedGist(gist));
 
   store.isLoading = false;
 
@@ -369,7 +379,9 @@ export async function unfollowUser(username: string) {
 
 export async function refreshGist(id: string) {
   const gist = await getGist(id);
-  const oldGist = store.gists.find((gist) => gist.id === id);
+  const oldGist = isArchivedGist(gist)
+    ? store.archivedGists.find((g) => g.id === id)
+    : store.gists.find((gist) => gist.id === id);
   set(oldGist!, gist);
 }
 
@@ -385,4 +397,26 @@ export async function unstarGist(id: string) {
   await api.unstar(id);
 
   store.starredGists = store.starredGists.filter((gist) => gist.id !== id);
+}
+
+export async function archiveGist(id: string) {
+  const gist = store.gists.find((g) => g.id === id);
+  if (!gist) return;
+
+  const updatedDescription = `${gist.description} [Archived]`;
+  await changeDescription(id, updatedDescription);
+
+  store.archivedGists.push(gist);
+  store.gists = store.gists.filter((g) => g.id !== id);
+}
+
+export async function unarchiveGist(id: string) {
+  const gist = store.archivedGists.find((g) => g.id === id);
+  if (!gist) return;
+
+  const updatedDescription = gist.description.replace(/ \[Archived\]$/, "");
+  await changeDescription(id, updatedDescription);
+
+  store.gists.push(gist);
+  store.archivedGists = store.archivedGists.filter((g) => g.id !== id);
 }

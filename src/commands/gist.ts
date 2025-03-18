@@ -24,7 +24,9 @@ import {
   refreshGists,
   starGist,
   starredGists,
-  unstarGist
+  unstarGist,
+  archiveGist,
+  unarchiveGist
 } from "../store/actions";
 import { ensureAuthenticated, getApi, signIn } from "../store/auth";
 import {
@@ -702,6 +704,26 @@ export async function registerGistCommands(context: ExtensionContext) {
             }
           }
         );
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.archiveGist`,
+      async (node: GistNode) => {
+        await ensureAuthenticated();
+        await withProgress("Archiving gist...", () => archiveGist(node.gist.id));
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.unarchiveGist`,
+      async (node: GistNode) => {
+        await ensureAuthenticated();
+        await withProgress("Unarchiving gist...", () => unarchiveGist(node.gist.id));
       }
     )
   );

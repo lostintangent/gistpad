@@ -107,6 +107,7 @@ export interface Store {
   scratchNotes: ScratchNotes;
   followedUsers: FollowedUser[];
   gists: Gist[];
+  archivedGists: Gist[];
   isLoading: boolean;
   isSignedIn: boolean;
   login: string;
@@ -125,7 +126,8 @@ export const store: Store = observable({
   },
   followedUsers: [],
   gists: [],
-  isLoading: false,
+  archivedGists: [],
+  isLoading: false,  
   isSignedIn: false,
   login: "",
   sortOrder: SortOrder.updatedTime,

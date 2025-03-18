@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "extensionKind": [
     "ui",
     "workspace"
@@ -86,7 +86,7 @@
           "description": "Specifies the moment.js format string to use when generating new scratch notes."
         },
         "gistpad.scratchNotes.fileFormat": {
-          "default": "LL",
+          "default": "YYYY-MM-DD",
           "type": "string",
           "description": "Specifies the moment.js format string to use when generating new scratch notes."
         },

@@ -284,7 +284,7 @@ export function uriToFileName(uri: Uri): string {
   return decodeURIComponent(path.basename(uri.toString()));
 }
 
-const IMAGE_EXTENSIONS = [".png"];
+const IMAGE_EXTENSIONS = [".png", ".tldraw"];
 const METADATA_EXTENSIONS = [".yml", ".json"];
 const DOCUMENT_EXTENSIONS = [".adoc", ".md", ".markdown", ".txt"];
 const ALL_DOCUMENT_EXTENSIONS = [

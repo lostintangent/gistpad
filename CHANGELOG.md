@@ -1,3 +1,8 @@
+## v0.8.0 (03/18/25)
+
+- Introduced the `GistPad > Sync on Save` setting, which allows you to manually control when edits are synced by to your gist (using the new `GistPad: Sync gist` command). Thanks @junqi-lu for this contribution ❤️
+- Updated the daily notes gist to be called `📆 Daily notes` in order to align with [GistPad.dev](https://gistpad.dev) and [Gistpad-MCP](https://npmjs.com/gistpad-mcp).
+
 ## v0.7.0 (02/10/25)
 
 - Changed the default gist type to secret, by making the `+` icon in the tree create a new secret gist (as opposed to a public gist)

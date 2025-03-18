@@ -29,13 +29,16 @@ class CodeSwingTemplateProvider {
 const templateProvider = new CodeSwingTemplateProvider();
 
 function loadSwingManifests() {
-  store.gists.concat(store.starredGists).forEach(async (gist) => {
-    const manifest = gist.files[SWING_FILE];
-    if (manifest) {
-      await vscode.workspace.fs.readFile(fileNameToUri(gist.id, SWING_FILE));
-      updateGistTags(gist);
-    }
-  });
+  store.gists
+    .concat(store.starredGists)
+    .concat(store.archivedGists)
+    .forEach(async (gist) => {
+      const manifest = gist.files[SWING_FILE];
+      if (manifest) {
+        await vscode.workspace.fs.readFile(fileNameToUri(gist.id, SWING_FILE));
+        updateGistTags(gist);
+      }
+    });
 
   templateProvider._onDidChangeTemplate.fire();
 }

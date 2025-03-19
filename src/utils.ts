@@ -30,6 +30,7 @@ export function isOwnedGist(gistId: string): boolean {
   return (
     store.isSignedIn &&
     (!!store.gists.find((gist) => gist.id === gistId) ||
+      !!store.archivedGists?.find((gist) => gist.id === gistId) ||
       (store.scratchNotes.gist ? store.scratchNotes.gist.id === gistId : false))
   );
 }
@@ -94,6 +95,10 @@ export function getGistLabel(gist: Gist, stripTags: boolean = false): string {
       );
     }
 
+    if (isArchivedGist(gist)) {
+      description = description.replace(/ \[Archived\]$/, "");
+    }
+
     return description;
   }
 
@@ -139,6 +144,7 @@ export async function openGistFiles(id: string) {
   try {
     const gist =
       store.gists.find((gist) => gist.id === id) ||
+      store.archivedGists.find((gist) => gist.id === id) ||
       store.starredGists.find((gist) => gist.id === id) ||
       (await getGist(id));
 
@@ -284,7 +290,7 @@ export function uriToFileName(uri: Uri): string {
   return decodeURIComponent(path.basename(uri.toString()));
 }
 
-const IMAGE_EXTENSIONS = [".png"];
+const IMAGE_EXTENSIONS = [".png", ".tldraw"];
 const METADATA_EXTENSIONS = [".yml", ".json"];
 const DOCUMENT_EXTENSIONS = [".adoc", ".md", ".markdown", ".txt"];
 const ALL_DOCUMENT_EXTENSIONS = [
@@ -391,4 +397,8 @@ export function getIconPath(context: ExtensionContext, iconName: string) {
     dark: joinPath(context, `images/dark/${iconName}`),
     light: joinPath(context, `images/light/${iconName}`)
   };
+}
+
+export function isArchivedGist(gist: Gist): boolean {
+  return !!gist.description?.endsWith(" [Archived]");
 }

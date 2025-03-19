@@ -43,7 +43,8 @@ export async function updateGistFiles(
   const gist =
     store.scratchNotes.gist && store.scratchNotes.gist.id === id
       ? store.scratchNotes.gist
-      : store.gists.find((gist) => gist.id === id)!;
+      : (store.gists.find((gist) => gist.id === id) ||
+        store.archivedGists.find((gist) => gist.id === id))!;
 
   runInAction(() => {
     gist.files = body.files;

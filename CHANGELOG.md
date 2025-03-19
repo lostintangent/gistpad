@@ -1,6 +1,13 @@
-## v0.6.1 (11/19/2023)
+## v0.8.0 (03/18/25)
+
+- Introduced support for archiving gists, which will then display them in a new `Archived gists` node at the bottom of the `Gists` tree view
+- Updated the daily notes gist to be called `📆 Daily notes` in order to align with [GistPad.dev](https://gistpad.dev) and [Gistpad-MCP](https://npmjs.com/gistpad-mcp).
+
+## v0.7.0 (02/10/25)
 
 - Changed the default gist type to secret, by making the `+` icon in the tree create a new secret gist (as opposed to a public gist)
+- Added a new `Copy GistPad URL` menu item to file nodes in the `Gists` tree
+- Updated the `Copy GistPad URL` and `View gist in browser` menu items for gist nodes, so that they use `https://gistpad.dev` links for "note" type gists
 - Fixed an error when refreshing the gists tree
 
 ## v0.6.0 (11/19/2023)

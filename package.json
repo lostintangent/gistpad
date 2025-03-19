@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.6.0",
+  "version": "0.8.0",
   "extensionKind": [
     "ui",
     "workspace"
@@ -86,7 +86,7 @@
           "description": "Specifies the moment.js format string to use when generating new scratch notes."
         },
         "gistpad.scratchNotes.fileFormat": {
-          "default": "LL",
+          "default": "YYYY-MM-DD",
           "type": "string",
           "description": "Specifies the moment.js format string to use when generating new scratch notes."
         },
@@ -168,6 +168,10 @@
         "icon": "$(add)"
       },
       {
+        "command": "gistpad.archiveGist",
+        "title": "Archive Gist"
+      },
+      {
         "command": "gistpad.changeGistDescription",
         "title": "Change Description"
       },
@@ -186,6 +190,10 @@
       {
         "command": "gistpad.copyFileContents",
         "title": "Copy File Contents"
+      },
+      {
+        "command": "gistpad.copyGistPadFileUrl",
+        "title": "Copy GistPad URL"
       },
       {
         "command": "gistpad.copyFileUrl",
@@ -356,7 +364,7 @@
       },
       {
         "command": "gistpad.openGistInBrowser",
-        "title": "View Gist in GitHub"
+        "title": "View Gist in Browser"
       },
       {
         "command": "gistpad.openGistInBlocks",
@@ -517,6 +525,10 @@
         "title": "Close Repository"
       },
       {
+        "command": "gistpad.unarchiveGist",
+        "title": "Unarchive Gist"
+      },
+      {
         "command": "gistpad.unfollowUser",
         "title": "Unfollow User"
       },
@@ -641,6 +653,10 @@
           "when": "gistpad:state == SignIn && gistpad:hasWiki"
         },
         {
+          "command": "gistpad.archiveGist",
+          "when": "false"
+        },
+        {
           "command": "gistpad.changeGistDescription",
           "when": "false"
         },
@@ -674,6 +690,10 @@
         },
         {
           "command": "gistpad.copyFileContents",
+          "when": "false"
+        },
+        {
+          "command": "gistpad.copyGistPadFileUrl",
           "when": "false"
         },
         {
@@ -873,6 +893,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.unarchiveGist",
+          "when": "false"
+        },
+        {
           "command": "gistpad.unstarGist",
           "when": "false"
         },
@@ -1022,12 +1046,12 @@
           "group": "base@3"
         },
         {
-          "command": "gistpad.copyGistUrl",
+          "command": "gistpad.copyGistPadUrl",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "browse@1"
         },
         {
-          "command": "gistpad.copyGistPadUrl",
+          "command": "gistpad.copyGistUrl",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "browse@2"
         },
@@ -1092,19 +1116,29 @@
           "group": "manage@4"
         },
         {
+          "command": "gistpad.archiveGist",
+          "when": "viewItem =~ /^gists.gist(?!.archived$)/",
+          "group": "star@1"
+        },
+        {
+          "command": "gistpad.unarchiveGist",
+          "when": "viewItem =~ /^gists.gist(.*).archived$/",
+          "group": "star@1"
+        },
+        {
           "command": "gistpad.viewForks",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
-          "group": "star@1"
+          "group": "star@2"
         },
         {
           "command": "gistpad.starGist",
           "when": "viewItem =~ /^(gists|followedUser).gist/",
-          "group": "star@2"
+          "group": "star@3"
         },
         {
           "command": "gistpad.unstarGist",
           "when": "viewItem =~ /^starredGists.gist/",
-          "group": "star@2"
+          "group": "star@3"
         },
         {
           "command": "gistpad.unfollowUser",
@@ -1112,19 +1146,24 @@
           "group": "base@1"
         },
         {
-          "command": "gistpad.copyFileUrl",
+          "command": "gistpad.copyGistPadFileUrl",
           "when": "viewItem =~ /^gistFile/",
           "group": "base@1"
         },
         {
-          "command": "gistpad.copyFileContents",
+          "command": "gistpad.copyFileUrl",
           "when": "viewItem =~ /^gistFile/",
           "group": "base@2"
         },
         {
+          "command": "gistpad.copyFileContents",
+          "when": "viewItem =~ /^gistFile/",
+          "group": "copy@2"
+        },
+        {
           "command": "gistpad.addFileToGist",
           "when": "viewItem =~ /^gistFile/",
-          "group": "base@3"
+          "group": "copy@3"
         },
         {
           "command": "gistpad.renameFile",

@@ -14,6 +14,6 @@ export const ZERO_WIDTH_SPACE = "‎‎\u200B";
 export const DIRECTORY_SEPARATOR = "/";
 export const ENCODED_DIRECTORY_SEPARATOR = "---";
 
-// This is the ID of the "magic" Gist that we created
-// in order to store scratch notes on behalf of the end-user.
-export const SCRATCH_GIST_NAME = "gistpad-scratch";
+// This is the ID of the "magic" Gist that we create
+// in order to store daily notes on behalf of the end-user.
+export const SCRATCH_GIST_NAME = "📆 Daily notes";

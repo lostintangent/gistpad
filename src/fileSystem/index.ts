@@ -52,8 +52,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
   private _pendingWrites = new Subject<WriteOperation>();
 
   private _onDidChangeFile = new EventEmitter<FileChangeEvent[]>();
-  public readonly onDidChangeFile: Event<FileChangeEvent[]> = this
-    ._onDidChangeFile.event;
+  public readonly onDidChangeFile: Event<FileChangeEvent[]> =
+    this._onDidChangeFile.event;
 
   constructor(private store: Store) {
 
@@ -141,7 +141,10 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
   private async isDirectory(uri: Uri): Promise<boolean> {
     const { gistId } = getGistDetailsFromUri(uri);
-    let gist = this.store.gists.find((gist) => gist.id === gistId);
+    let gist = this.store.gists
+      .concat(this.store.archivedGists)
+      .concat(this.store.starredGists)
+      .find((gist) => gist.id === gistId);
 
     if (!gist) {
       gist = await getGist(gistId);
@@ -156,6 +159,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
   private async getGistFromUri(uri: Uri): Promise<Gist> {
     const { gistId } = getGistDetailsFromUri(uri);
     let gist = this.store.gists
+      .concat(this.store.archivedGists)
       .concat(this.store.starredGists)
       .find((gist) => gist.id === gistId);
 
@@ -250,6 +254,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
       let gist = this.store.gists
         .concat(this.store.starredGists)
+        .concat(this.store.archivedGists)
         .find((gist) => gist.id === gistId);
 
       if (!gist) {
@@ -287,6 +292,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
       let gist = this.store.gists
         .concat(this.store.starredGists)
+        .concat(this.store.archivedGists)
         .find((gist) => gist.id === gistId);
 
       if (!gist) {

@@ -6,6 +6,7 @@ import {
   ExtensionContext,
   ProgressLocation,
   QuickPickItem,
+  TextEditor,
   Uri,
   window,
   workspace
@@ -122,14 +123,8 @@ async function newGistInternal(isPublic: boolean = true, description: string = "
   descriptionInputBox.show();
 }
 
-async function syncGistFileInternal() {
+async function syncGistFileInternal(textEditor: TextEditor) {
   await ensureAuthenticated();
-  
-  let error: Error | undefined;
-  const activeEditor = window.activeTextEditor;
-  if (!activeEditor) {
-    throw new Error("No active editor");
-  }
   
   await window.withProgress(
     {
@@ -137,39 +132,32 @@ async function syncGistFileInternal() {
       title: "Syncing changes with gist..."
     },
     async () => {
-      try {
-        const uri = activeEditor.document.uri;
-        const { gistId } = getGistDetailsFromUri(uri);
-        
-        if (!isOwnedGist(gistId)) {
-          throw new Error("You can't sync a Gist you don't own");
-        }
-
-        const content = activeEditor.document.getText();
-        const filename = path.basename(uri.path);
-        
-        await updateGistFiles(gistId, [
-          [filename, { 
-            filename: filename,
-            content: content 
-          }]
-        ]);
-
-        await refreshGist(gistId);
-        
-        store.unsyncedFiles.delete(uri.toString());
-      } catch (err) {
-        error = err as Error;
+      const uri = textEditor.document.uri;
+      const { gistId } = getGistDetailsFromUri(uri);
+      
+      if (!isOwnedGist(gistId)) {
+        throw new Error("You can't sync a Gist you don't own");
       }
-    }
-  );
 
-  if (error) {
-    const message = error instanceof Error ? error.message : 'Unknown error occurred';
-    window.showErrorMessage(`Failed to upload: ${message}`);
-  } else {
-    window.showInformationMessage("Successfully uploaded to GitHub Gist");
-  }
+      const content = textEditor.document.getText();
+      const filename = path.basename(uri.path);
+      
+      await updateGistFiles(gistId, [
+        [filename, { 
+          filename: filename,
+          content: content 
+        }]
+      ]);
+
+      await refreshGist(gistId);
+      
+      store.unsyncedFiles.delete(uri.toString());
+    }
+  ).then(() => {}, (err) => {
+    // TODO how to close the progress dialog first?
+    const message = err instanceof Error ? err.message : 'Unknown error occurred';
+    window.showErrorMessage(`Failed to sync file: ${message}`);
+  });
 }
 
 const SIGN_IN_ITEM = "Sign in to view Gists...";
@@ -753,6 +741,6 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
   
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.syncGistFile`, syncGistFileInternal)
+    commands.registerTextEditorCommand(`${EXTENSION_NAME}.syncGistFile`, syncGistFileInternal)
   );
 }

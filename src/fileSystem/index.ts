@@ -73,8 +73,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
           continue; 
         }
 
-        const filename = path.basename(Uri.parse(uri).path);
-        const { gistId } = getGistDetailsFromUri(Uri.parse(uri));
+        const { gistId, file: filename } = getGistDetailsFromUri(input.uri);
 
         const result = await window.showWarningMessage(
           `"${filename}" has changes that haven't been synced.`,

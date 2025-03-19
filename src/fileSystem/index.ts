@@ -77,13 +77,13 @@ export class GistFileSystemProvider implements FileSystemProvider {
         const { gistId } = getGistDetailsFromUri(Uri.parse(uri));
 
         const result = await window.showWarningMessage(
-          `${filename} has changes that have not been synced to GitHub. Do you want to sync them now?`,
+          `"${filename}" has changes that haven't been synced.`,
           { modal: true },
-          "Yes", 
+          "Sync Changes", 
           "Discard Changes"
         );
 
-        if (result === "Yes") {
+        if (result === "Sync Changes") {
           const document = workspace.textDocuments.find(doc => doc.uri.toString() === uri);
           if (document) {
             try {
@@ -437,8 +437,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
       const file = await this.getFileFromUri(uri);
       const type = file ? FileChangeType.Changed : FileChangeType.Created;
 
-      const autoSyncEnabled = config.get("autoSyncWhenSave");
-      if (!autoSyncEnabled && type === FileChangeType.Changed) {
+      const syncOnSaveEnabled = config.get("syncOnSave");
+      if (!syncOnSaveEnabled && type === FileChangeType.Changed) {
         this.store.unsyncedFiles.add(uri.toString());
         this._onDidChangeFile.fire([{ type, uri }]);
         return;

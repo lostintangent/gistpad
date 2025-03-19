@@ -120,10 +120,10 @@
           "type": "boolean",
           "description": "Specifies whether or not to enable the output channel for tracing."
         },
-        "gistpad.autoSyncWhenSave": {
+        "gistpad.syncOnSave": {
           "default": true,
           "type": "boolean",
-          "description": "Specifies whether or not to enable the auto sync feature when saving a file. By default, this is enabled."
+          "description": "Specifies whether to automatically sync a file with GitHub when saving it. Defaults to true."
         }
       }
     },
@@ -541,7 +541,7 @@
         "title": "View Forks"
       },
       {
-        "command": "gistpad.syncGist",
+        "command": "gistpad.syncGistFile",
         "title": "Sync Gist",
         "icon": "$(sync)"
       }
@@ -1376,8 +1376,8 @@
           "when": "resourceScheme == repo"
         },
         {
-          "command": "gistpad.syncGist",
-          "when": "resourceScheme == gist && !gistpad.autoSyncWhenSave",
+          "command": "gistpad.syncGistFile",
+          "when": "resourceScheme == gist && !gistpad.syncOnSave",
           "group": "navigation@1"
         }
       ],

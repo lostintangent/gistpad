@@ -122,7 +122,7 @@ async function newGistInternal(isPublic: boolean = true, description: string = "
   descriptionInputBox.show();
 }
 
-async function syncGistInternal() {
+async function syncGistFileInternal() {
   await ensureAuthenticated();
   
   let error: Error | undefined;
@@ -134,7 +134,7 @@ async function syncGistInternal() {
   await window.withProgress(
     {
       location: ProgressLocation.Notification,
-      title: "Uploading to GitHub Gist..."
+      title: "Syncing changes with gist..."
     },
     async () => {
       try {
@@ -753,6 +753,6 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
   
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.syncGist`, syncGistInternal)
+    commands.registerCommand(`${EXTENSION_NAME}.syncGistFile`, syncGistFileInternal)
   );
 }

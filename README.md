@@ -239,7 +239,7 @@ The `Copy File to Gist` command is also available on the editor tab's context me
 In addition to the commands added to the editor context menu, GistPad also contributes the following commands to the editor's title bar menu (click the `...` in the upper right section of an editor window):
 
 - `Rename File` - Allows you to rename the current file.
-- `Sync Gist` - Sync the current gist file to GitHub. Only available when `gistpad.autoSyncWhenSave` is disabled.
+- `Sync Gist` - Sync the current gist file to GitHub. Only available when `gistpad.syncOnSave` is disabled.
 
 ## Contributed Commands (Command Palette)
 

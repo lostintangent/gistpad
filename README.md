@@ -246,6 +246,7 @@ The `Copy File to Gist` command is also available on the editor tab's context me
 In addition to the commands added to the editor context menu, GistPad also contributes the following commands to the editor's title bar menu (click the `...` in the upper right section of an editor window):
 
 - `Rename File` - Allows you to rename the current file.
+- `Sync Gist` - Sync the current gist file to GitHub. Only available when `gistpad.syncOnSave` is disabled.
 
 ## Contributed Commands (Command Palette)
 
@@ -310,3 +311,5 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 
 - `GistPad > Tracing > Enable Output Channel` - When enabled, creates an Output trace channel at VSCode startup.
+
+- `GistPad > Auto Sync When Save` - Specifies whether or not to enable the auto sync feature when saving a file. Consider disabling this option when VS Code's `files.autoSave` is enabled to prevent frequent syncing operations. Defaults to `true`.

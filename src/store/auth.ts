@@ -69,7 +69,7 @@ async function getSession(
     isSigningIn = false;
 
     return session;
-  } catch {}
+  } catch { }
 }
 
 export async function getToken() {
@@ -82,8 +82,8 @@ async function markUserAsSignedIn(
 ) {
   loginSession = session.id;
 
-  store.isSignedIn = true;
   store.token = session.accessToken;
+  store.isSignedIn = true;
   store.login = session.account.label;
   store.canCreateRepos = session.scopes.includes(REPO_SCOPE);
   store.canDeleteRepos = session.scopes.includes(DELETE_REPO_SCOPE);

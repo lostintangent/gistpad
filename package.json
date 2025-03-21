@@ -19,7 +19,7 @@
   "homepage": "https://github.com/lostintangent/gistpad#readme",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.75.0"
+    "vscode": "^1.95.0"
   },
   "categories": [
     "Other"
@@ -39,16 +39,14 @@
   ],
   "main": "./dist/extension.js",
   "browser": "./dist/extension-web.js",
+  "enabledApiProposals": [
+    "mcpConfigurationProvider"
+  ],
   "contributes": {
     "configuration": {
       "type": "object",
       "title": "GistPad",
       "properties": {
-        "gistpad.treeIcons": {
-          "default": "true",
-          "type": "boolean",
-          "description": "Specifies whether to show the gist type icons in the gists tree."
-        },
         "gistpad.comments.showThread": {
           "default": "whenNotEmpty",
           "type": "string",
@@ -80,6 +78,21 @@
           ],
           "description": "Specifies the upload method to use when pasting an image into a gist file."
         },
+        "gistpad.mcp.enabled": {
+          "default": "true",
+          "type": "boolean",
+          "description": "Specifies whether to enable the MCP server for GistPad. Defaults to true."
+        },
+        "gistpad.mcp.markdownOnly": {
+          "default": "false",
+          "type": "boolean",
+          "description": "Specifies whether to filter the gists that the MCP server returns, to only those that contain markdown. Defaults to false."
+        },
+        "gistpad.output": {
+          "default": false,
+          "type": "boolean",
+          "description": "Specifies whether or not to enable the output channel for tracing."
+        },
         "gistpad.scratchNotes.directoryFormat": {
           "default": "",
           "type": "string",
@@ -105,6 +118,11 @@
           "type": "string",
           "description": "Specifies the URL of the showcase to display gists from."
         },
+        "gistpad.treeIcons": {
+          "default": "true",
+          "type": "boolean",
+          "description": "Specifies whether to show the gist type icons in the gists tree."
+        },
         "gistpad.wikis.daily.directoryName": {
           "default": "Daily",
           "type": "string",
@@ -114,11 +132,6 @@
           "default": "LL",
           "type": "string",
           "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."
-        },
-        "gistpad.output": {
-          "default": false,
-          "type": "boolean",
-          "description": "Specifies whether or not to enable the output channel for tracing."
         }
       }
     },
@@ -1524,7 +1537,13 @@
         "url": "https://gist.githubusercontent.com/lostintangent/5290f684afc38cfe713246226c1d0f72/raw/schema.json"
       }
     ],
-    "markdown.markdownItPlugins": true
+    "markdown.markdownItPlugins": true,
+    "modelContextServerCollections": [
+      {
+        "id": "gistpad",
+        "label": "GistPad"
+      }
+    ]
   },
   "capabilities": {
     "untrustedWorkspaces": {
@@ -1563,7 +1582,8 @@
   "devDependencies": {
     "@types/moment": "^2.13.0",
     "@types/node": "^8.10.25",
-    "@types/vscode": "^1.75.0",
+    "@types/vscode": "^1.95.0",
+    "@vscode/dts": "^0.4.1",
     "copy-webpack-plugin": "^5.0.5",
     "ts-loader": "^9.5.1",
     "tslint": "^5.8.0",

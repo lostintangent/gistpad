@@ -117,6 +117,7 @@ export interface Store {
   starredGists: Gist[];
   canCreateRepos: boolean;
   canDeleteRepos: boolean;
+  unsyncedFiles: Set<string>;
 }
 
 export const store: Store = observable({
@@ -134,5 +135,6 @@ export const store: Store = observable({
   groupType: GroupType.none,
   starredGists: [],
   canCreateRepos: false,
-  canDeleteRepos: false
+  canDeleteRepos: false,
+  unsyncedFiles: new Set<string>()
 });

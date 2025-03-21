@@ -14,6 +14,7 @@ export function get(key: "scratchNotes.fileExtension"): string;
 export function get(key: "scratchNotes.fileFormat"): string;
 export function get(key: "scratchNotes.show"): boolean;
 export function get(key: "showcaseUrl"): string;
+export function get(key: "syncOnSave"): boolean;
 export function get(key: "treeIcons"): boolean;
 
 export function get(key: any) {

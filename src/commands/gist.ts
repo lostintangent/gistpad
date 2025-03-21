@@ -6,11 +6,13 @@ import {
   ExtensionContext,
   ProgressLocation,
   QuickPickItem,
+  TextEditor,
   Uri,
   window,
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
+import { updateGistFiles } from "../fileSystem/api";
 import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { openRepo } from "../repos/store/actions";
 import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
@@ -43,10 +45,12 @@ import {
   encodeDirectoryName,
   fileNameToUri,
   getGistDescription,
+  getGistDetailsFromUri,
   getGistLabel,
   getGistWorkspaceId,
   isArchivedGist,
   isGistWorkspace,
+  isOwnedGist,
   openGist,
   openGistFiles,
   sortGists,
@@ -54,6 +58,7 @@ import {
   withProgress
 } from "../utils";
 const isBinaryPath = require("is-binary-path");
+const path = require("path");
 
 const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
 
@@ -119,6 +124,43 @@ async function newGistInternal(isPublic: boolean = true, description: string = "
   });
 
   descriptionInputBox.show();
+}
+
+async function syncGistFileInternal(textEditor: TextEditor) {
+  await ensureAuthenticated();
+  
+  await window.withProgress(
+    {
+      location: ProgressLocation.Notification,
+      title: "Syncing changes with gist..."
+    },
+    async () => {
+      const uri = textEditor.document.uri;
+      const { gistId } = getGistDetailsFromUri(uri);
+      
+      if (!isOwnedGist(gistId)) {
+        throw new Error("You can't sync a Gist you don't own");
+      }
+
+      const content = textEditor.document.getText();
+      const filename = path.basename(uri.path);
+      
+      await updateGistFiles(gistId, [
+        [filename, { 
+          filename: filename,
+          content: content 
+        }]
+      ]);
+
+      await refreshGist(gistId);
+      
+      store.unsyncedFiles.delete(uri.toString());
+    }
+  ).then(() => {}, (err) => {
+    // TODO how to close the progress dialog first?
+    const message = err instanceof Error ? err.message : 'Unknown error occurred';
+    window.showErrorMessage(`Failed to sync file: ${message}`);
+  });
 }
 
 const SIGN_IN_ITEM = "Sign in to view Gists...";
@@ -738,5 +780,9 @@ export async function registerGistCommands(context: ExtensionContext) {
         await withProgress("Unarchiving gist...", () => unarchiveGist(node.gist.id));
       }
     )
+  );
+  
+  context.subscriptions.push(
+    commands.registerTextEditorCommand(`${EXTENSION_NAME}.syncGistFile`, syncGistFileInternal)
   );
 }

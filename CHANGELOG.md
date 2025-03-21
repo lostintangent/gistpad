@@ -1,3 +1,7 @@
+## v0.8.1 (03/18/25)
+
+- Introduced the `GistPad: Sync on Save` setting, which allows you to disable auto-syncing a gist with GitHub every time you save. When disabled, a new `Sync Gist` button will appear in the editor toolbar, which lets you control when to sync changes.
+
 ## v0.8.0 (03/18/25)
 
 - Introduced support for archiving gists, which will then display them in a new `Archived gists` node at the bottom of the `Gists` tree view

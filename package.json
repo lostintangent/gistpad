@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "extensionKind": [
     "ui",
     "workspace"
@@ -1416,7 +1416,7 @@
         },
         {
           "command": "gistpad.syncGistFile",
-          "when": "resourceScheme == gist && !gistpad.syncOnSave",
+          "when": "resourceScheme == gist && !config.gistpad.syncOnSave",
           "group": "navigation@1"
         }
       ],

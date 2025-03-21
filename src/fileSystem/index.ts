@@ -70,7 +70,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
         const uri = input.uri.toString();
         if (!uri.startsWith(FS_SCHEME) || !this.store.unsyncedFiles.has(uri)) {
-          continue; 
+          continue;
         }
 
         const { gistId, file: filename } = getGistDetailsFromUri(input.uri);
@@ -78,7 +78,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
         const result = await window.showWarningMessage(
           `"${filename}" has changes that haven't been synced.`,
           { modal: true },
-          "Sync Changes", 
+          "Sync Changes",
           "Discard Changes"
         );
 
@@ -88,16 +88,17 @@ export class GistFileSystemProvider implements FileSystemProvider {
             try {
               await updateGistFiles(gistId, [
                 [filename, {
-                  filename,
                   content: document.getText()
                 }]
               ]);
-              
-              await refreshGist(gistId);
             } catch (err: any) {
               window.showErrorMessage(`Failed to sync changes: ${err.message}`);
             }
           }
+        } else if (result === "Discard Changes") {
+          // We need to reset any changes that user made, which
+          // were persisted in the store, but have now been discarded.
+          await refreshGist(gistId);
         }
 
         this.store.unsyncedFiles.delete(uri);

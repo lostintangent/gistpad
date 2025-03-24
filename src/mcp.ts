@@ -42,16 +42,11 @@ export function registerMcpConfigurationProvider(context: ExtensionContext) {
                     args.push("--markdown");
                 }
 
-                const mcpServerConfig: McpStdioServerDefinition = {
-                    label: "GistPad",
-                    command: "npx",
-                    args,
-                    env: {
+                return [
+                    new McpStdioServerDefinition("GistPad", "npx", args, {
                         GITHUB_TOKEN: store.token!
-                    }
-                };
-
-                return [mcpServerConfig];
+                    })
+                ];
             }
         })
     );

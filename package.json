@@ -25,11 +25,10 @@
     "Other"
   ],
   "keywords": [
-    "github",
     "gist",
     "snippets",
-    "wiki",
-    "notes"
+    "notes",
+    "language-model-tools"
   ],
   "activationEvents": [
     "onFileSystem:gist",

@@ -1,3 +1,8 @@
+## v0.8.2 (03/31/25)
+
+- The `GistPad: Sync on Save` setting now properly works for scratch notes
+- The expanded/collapsed state is now persisted for the top-level nodes in the `Gists` tree
+
 ## v0.8.1 (03/18/25)
 
 - Introduced the `GistPad: Sync on Save` setting, which allows you to disable auto-syncing a gist with GitHub every time you save. When disabled, a new `Sync Gist` button will appear in the editor toolbar, which lets you control when to sync changes.

@@ -56,7 +56,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
     this._onDidChangeFile.event;
 
   constructor(private store: Store) {
-
     window.tabGroups.onDidChangeTabs(async (tabGroups) => {
       if (tabGroups.closed.length === 0) {
         return;
@@ -83,7 +82,9 @@ export class GistFileSystemProvider implements FileSystemProvider {
         );
 
         if (result === "Sync Changes") {
-          const document = workspace.textDocuments.find(doc => doc.uri.toString() === uri);
+          const document = workspace.textDocuments.find(
+            (doc) => doc.uri.toString() === uri
+          );
           if (document) {
             try {
               await updateGistFiles(gistId, [
@@ -159,11 +160,15 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
   private async getGistFromUri(uri: Uri): Promise<Gist> {
     const { gistId } = getGistDetailsFromUri(uri);
-    let gist = this.store.gists
+    const gists = this.store.gists
       .concat(this.store.archivedGists)
-      .concat(this.store.starredGists)
-      .find((gist) => gist.id === gistId);
+      .concat(this.store.starredGists);
 
+    if (this.store.scratchNotes.gist) {
+      gists.push(this.store.scratchNotes.gist);
+    }
+
+    let gist = gists.find((gist) => gist.id === gistId);
     if (!gist) {
       gist = await getGist(gistId);
     }

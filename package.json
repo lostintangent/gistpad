@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "extensionKind": [
     "ui",
     "workspace"
@@ -29,7 +29,8 @@
     "gist",
     "snippets",
     "wiki",
-    "notes"
+    "notes",
+    "language-model-tools"
   ],
   "activationEvents": [
     "onFileSystem:gist",

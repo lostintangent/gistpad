@@ -244,7 +244,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     const file = await this.getFileFromUri(uri);
     let contents = await getFileContents(file);
 
-    if (isBinaryPath(file.filename)) {
+    if (isBinaryPath(path.basename(file.filename!))) {
       return <any>contents;
     } else {
       if (contents.trim() === ZERO_WIDTH_SPACE) {
@@ -343,7 +343,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
     const { gistId } = getGistDetailsFromUri(oldUri);
     const newFileName = uriToFileName(newUri);
 
-    if (isBinaryPath(file.filename!)) {
+    if (isBinaryPath(path.basename(file.filename!))) {
       await gitFS.renameFile(gistId, file.filename!, newFileName);
     } else {
       await updateGistFiles(gistId, [
@@ -435,7 +435,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
       return;
     }
 
-    if (isBinaryPath(uri.path)) {
+    if (isBinaryPath(path.basename(uri.path))) {
       await gitFS.addFile(gistId, path.basename(uri.path), content);
 
       this._onDidChangeFile.fire([

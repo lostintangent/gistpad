@@ -60,7 +60,8 @@ import {
 const isBinaryPath = require("is-binary-path");
 const path = require("path");
 
-const GIST_NAME_PATTERN = /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
+const GIST_NAME_PATTERN =
+  /(\/)?(?<owner>([a-z\d]+-)*[a-z\d]+)\/(?<id>[^\/]+)$/i;
 
 export interface GistQuickPickItem extends QuickPickItem {
   id?: string;
@@ -69,7 +70,10 @@ export interface GistQuickPickItem extends QuickPickItem {
 const newPublicGist = newGistInternal.bind(null, true);
 const newSecretGist = newGistInternal.bind(null, false);
 
-async function newGistInternal(isPublic: boolean = true, description: string = "") {
+async function newGistInternal(
+  isPublic: boolean = true,
+  description: string = ""
+) {
   await ensureAuthenticated();
 
   const title = "Create new " + (isPublic ? "" : "secret ") + "gist";
@@ -128,7 +132,7 @@ async function newGistInternal(isPublic: boolean = true, description: string = "
 
 async function syncGistFileInternal(textEditor: TextEditor) {
   await ensureAuthenticated();
-  
+
   await window.withProgress(
     {
       location: ProgressLocation.Notification,
@@ -137,30 +141,30 @@ async function syncGistFileInternal(textEditor: TextEditor) {
     async () => {
       const uri = textEditor.document.uri;
       const { gistId } = getGistDetailsFromUri(uri);
-      
+
       if (!isOwnedGist(gistId)) {
         throw new Error("You can't sync a Gist you don't own");
       }
 
       const content = textEditor.document.getText();
       const filename = path.basename(uri.path);
-      
+
       await updateGistFiles(gistId, [
-        [filename, { 
-          filename: filename,
-          content: content 
-        }]
+        [filename, { content }],
       ]);
 
-      await refreshGist(gistId);
-      
       store.unsyncedFiles.delete(uri.toString());
     }
-  ).then(() => {}, (err) => {
-    // TODO how to close the progress dialog first?
-    const message = err instanceof Error ? err.message : 'Unknown error occurred';
-    window.showErrorMessage(`Failed to sync file: ${message}`);
-  });
+  )
+    .then(
+      () => { },
+      (err) => {
+        // TODO how to close the progress dialog first?
+        const message =
+          err instanceof Error ? err.message : "Unknown error occurred";
+        window.showErrorMessage(`Failed to sync file: ${message}`);
+      }
+    );
 }
 
 const SIGN_IN_ITEM = "Sign in to view Gists...";
@@ -309,7 +313,9 @@ export async function registerGistCommands(context: ExtensionContext) {
           // If this is an archived gist, we need to remove the "archived" prefix
           const isArchived = isArchivedGist(node.gist);
 
-          const description = isArchived ? node.gist.description.replace(" [Archived]", "") : node.gist.description;
+          const description = isArchived
+            ? node.gist.description.replace(" [Archived]", "")
+            : node.gist.description;
           let newDescription = await window.showInputBox({
             prompt: "Specify the description for this Gist",
             value: description
@@ -357,9 +363,10 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.copyGistPadUrl`,
       async (node: GistNode) => {
-        const url = node.gist.type === "note"
-          ? createGistPadWebUrl(node.gist.id)
-          : createGistPadOpenUrl(node.gist.id);
+        const url =
+          node.gist.type === "note"
+            ? createGistPadWebUrl(node.gist.id)
+            : createGistPadOpenUrl(node.gist.id);
 
         env.clipboard.writeText(url);
       }
@@ -503,18 +510,25 @@ export async function registerGistCommands(context: ExtensionContext) {
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.newPublicGist`, () => newPublicGist())
+    commands.registerCommand(`${EXTENSION_NAME}.newPublicGist`, () =>
+      newPublicGist()
+    )
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.newSecretGist`, () => newSecretGist())
+    commands.registerCommand(`${EXTENSION_NAME}.newSecretGist`, () =>
+      newSecretGist()
+    )
   );
 
   context.subscriptions.push(
-    commands.registerCommand(`${EXTENSION_NAME}.newGistFromTag`, (node: GistGroupNode) => {
-      const description = ` #${node.label}`;
-      newSecretGist(description);
-    })
+    commands.registerCommand(
+      `${EXTENSION_NAME}.newGistFromTag`,
+      (node: GistGroupNode) => {
+        const description = ` #${node.label}`;
+        newSecretGist(description);
+      }
+    )
   );
 
   context.subscriptions.push(
@@ -767,7 +781,9 @@ export async function registerGistCommands(context: ExtensionContext) {
       `${EXTENSION_NAME}.archiveGist`,
       async (node: GistNode) => {
         await ensureAuthenticated();
-        await withProgress("Archiving gist...", () => archiveGist(node.gist.id));
+        await withProgress("Archiving gist...", () =>
+          archiveGist(node.gist.id)
+        );
       }
     )
   );
@@ -777,12 +793,17 @@ export async function registerGistCommands(context: ExtensionContext) {
       `${EXTENSION_NAME}.unarchiveGist`,
       async (node: GistNode) => {
         await ensureAuthenticated();
-        await withProgress("Unarchiving gist...", () => unarchiveGist(node.gist.id));
+        await withProgress("Unarchiving gist...", () =>
+          unarchiveGist(node.gist.id)
+        );
       }
     )
   );
-  
+
   context.subscriptions.push(
-    commands.registerTextEditorCommand(`${EXTENSION_NAME}.syncGistFile`, syncGistFileInternal)
+    commands.registerTextEditorCommand(
+      `${EXTENSION_NAME}.syncGistFile`,
+      syncGistFileInternal
+    )
   );
 }

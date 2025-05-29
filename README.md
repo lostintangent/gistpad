@@ -245,8 +245,12 @@ The `Copy File to Gist` command is also available on the editor tab's context me
 
 In addition to the commands added to the editor context menu, GistPad also contributes the following commands to the editor's title bar menu (click the `...` in the upper right section of an editor window):
 
+- `Delete File` - Allows you to delete the current file.
 - `Rename File` - Allows you to rename the current file.
-- `Sync Gist` - Sync the current gist file to GitHub. Only available when `gistpad.syncOnSave` is disabled.
+
+Additionally, if you disable the `Gistpad: Sync on Save` setting, then the following command will appear as an icon button on the main toolbar (as opposed to nested within the `...` menu):
+
+- `Sync Gist` - Sync the file's pending changes back to GitHub.
 
 ## Contributed Commands (Command Palette)
 
@@ -276,11 +280,9 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Starred Gists` - Lists your starred Gists, and then opens the files for the selected one.
 
-- `GistPad: Paste Gist File` - Allows you to paste the contents of a gist file into the active editor
+- `GistPad: Paste Gist File` - Allows you to paste the contents of a gist file into the active editor.
 
 ## Configuration Settings
-
-- `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
 
 - `GistPad > Comments: Show Thread` - Specifies when to show the comment thread UI whenever you open a gist file. Can be set to one of the following values:
 
@@ -288,7 +290,9 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `never`: Never automatically open the comment thread when you open a gist file. You can manually expand it as needed.
   - `whenNotEmpty` _(default)_: Automatically display the comment thread whenever there are actually comments in a gist file. Otherwise, leave it collapsed.
 
-- `Gistpad > Images: Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
+- `Gistpad > Images: Directory Name`: Specifies the name of the directory to upload images to. Defaults to `images`.
+
+- `Gistpad > Images: Markdown Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
 
   - `markdown` _(default)_: Pastes the image reference using `Markdown` format (e.g. `![image](link)`).
   - `html`: Pastes the image reference using `HTML` format (e.g. `<img src="link" />`). Note, when you paste an image into an HTML file, it will always use this format type, regardless what the setting is.
@@ -298,7 +302,7 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to file it's pasted into.
   - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
 
-- `Gistpad > Images: Upload Directory Name`: Specifies the name of the directory to upload images to. Defaults to `images`.
+- `GistPad: Output` - When enabled, creates an Output trace channel at VSCode startup.
 
 - `GistPad > Scratch Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new scratch notes. Defaults to `LL` (e.g. `March 6, 2020`).
 
@@ -308,8 +312,12 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad > Scratch Notes: Show` - Specifies whether or not to display the scratch notes node in the gists tree view. Defaults to `true`.
 
-- `GistPad > Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
+- `GistPad: Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 
-- `GistPad > Tracing > Enable Output Channel` - When enabled, creates an Output trace channel at VSCode startup.
+- `GistPad: Sync on Save` - Specifies whether or not to enable the auto sync feature when saving a file. Consider disabling this option when VS Code's `files.autoSave` is enabled to prevent frequent syncing operations. Defaults to `true`.
 
-- `GistPad > Auto Sync When Save` - Specifies whether or not to enable the auto sync feature when saving a file. Consider disabling this option when VS Code's `files.autoSave` is enabled to prevent frequent syncing operations. Defaults to `true`.
+- `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
+
+- `Gistpad > Wikis > Daily: Directory Name` - Specifies the name of the directory that daily pages are organized within. Defaults to `Daily`.
+
+- `Gistpad > Wikis > Daily: Title Format` - Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages. Defaults to `LL`.

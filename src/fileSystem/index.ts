@@ -56,7 +56,6 @@ export class GistFileSystemProvider implements FileSystemProvider {
     this._onDidChangeFile.event;
 
   constructor(private store: Store) {
-
     window.tabGroups.onDidChangeTabs(async (tabGroups) => {
       if (tabGroups.closed.length === 0) {
         return;
@@ -70,7 +69,7 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
         const uri = input.uri.toString();
         if (!uri.startsWith(FS_SCHEME) || !this.store.unsyncedFiles.has(uri)) {
-          continue; 
+          continue;
         }
 
         const { gistId, file: filename } = getGistDetailsFromUri(input.uri);
@@ -78,26 +77,29 @@ export class GistFileSystemProvider implements FileSystemProvider {
         const result = await window.showWarningMessage(
           `"${filename}" has changes that haven't been synced.`,
           { modal: true },
-          "Sync Changes", 
+          "Sync Changes",
           "Discard Changes"
         );
 
         if (result === "Sync Changes") {
-          const document = workspace.textDocuments.find(doc => doc.uri.toString() === uri);
+          const document = workspace.textDocuments.find(
+            (doc) => doc.uri.toString() === uri
+          );
           if (document) {
             try {
               await updateGistFiles(gistId, [
                 [filename, {
-                  filename,
                   content: document.getText()
                 }]
               ]);
-              
-              await refreshGist(gistId);
             } catch (err: any) {
               window.showErrorMessage(`Failed to sync changes: ${err.message}`);
             }
           }
+        } else if (result === "Discard Changes") {
+          // We need to reset any changes that user made, which
+          // were persisted in the store, but have now been discarded.
+          await refreshGist(gistId);
         }
 
         this.store.unsyncedFiles.delete(uri);
@@ -158,11 +160,15 @@ export class GistFileSystemProvider implements FileSystemProvider {
 
   private async getGistFromUri(uri: Uri): Promise<Gist> {
     const { gistId } = getGistDetailsFromUri(uri);
-    let gist = this.store.gists
+    const gists = this.store.gists
       .concat(this.store.archivedGists)
-      .concat(this.store.starredGists)
-      .find((gist) => gist.id === gistId);
+      .concat(this.store.starredGists);
 
+    if (this.store.scratchNotes.gist) {
+      gists.push(this.store.scratchNotes.gist);
+    }
+
+    let gist = gists.find((gist) => gist.id === gistId);
     if (!gist) {
       gist = await getGist(gistId);
     }

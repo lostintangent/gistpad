@@ -27,6 +27,7 @@
   "keywords": [
     "gist",
     "snippets",
+    "wiki",
     "notes",
     "language-model-tools"
   ],
@@ -1425,7 +1426,7 @@
         },
         {
           "command": "gistpad.syncGistFile",
-          "when": "resourceScheme == gist && !gistpad.syncOnSave",
+          "when": "resourceScheme == gist && !config.gistpad.syncOnSave",
           "group": "navigation@1"
         }
       ],
@@ -1569,7 +1570,7 @@
     "watch": "webpack --mode development --watch --progress"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.30.0",
     "base64-to-uint8array": "^1.0.0",
     "diff-match-patch": "^1.0.5",
     "gists": "github:lostintangent/gists",

@@ -54,10 +54,11 @@ export async function getGistFiles(gist: Gist, subDirectory?: string) {
 
 class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   private _disposables: Disposable[] = [];
-
   private _onDidChangeTreeData = new EventEmitter<void>();
   public readonly onDidChangeTreeData: Event<void> =
     this._onDidChangeTreeData.event;
+
+  private readonly COLLAPSED_STATES_KEY = "gistTreeCollapsedStates";
 
   constructor(
     private store: Store,
@@ -82,7 +83,43 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     );
   }
 
+  private getCollapsedStates(): { [key: string]: boolean } {
+    return this.extensionContext.globalState.get(this.COLLAPSED_STATES_KEY, {});
+  }
+
+  private isRootNode(node: TreeNode): boolean {
+    return (
+      node instanceof GistsNode ||
+      node instanceof StarredGistsNode ||
+      node instanceof ScratchGistNode ||
+      node instanceof ArchivedGistsNode
+    );
+  }
+
+  public async setCollapsedState(node: TreeNode, collapsed: boolean) {
+    if (this.isRootNode(node)) {
+      const states = this.getCollapsedStates();
+      states[node.contextValue!] = collapsed;
+
+      await this.extensionContext.globalState.update(
+        this.COLLAPSED_STATES_KEY,
+        states
+      );
+    }
+  }
+
   getTreeItem(node: TreeNode): TreeItem {
+    if (this.isRootNode(node)) {
+      const states = this.getCollapsedStates();
+      const state = states[node.contextValue!];
+
+      if (state !== undefined) {
+        node.collapsibleState = state
+          ? TreeItemCollapsibleState.Collapsed
+          : TreeItemCollapsibleState.Expanded;
+      }
+    }
+
     return node;
   }
 
@@ -235,9 +272,17 @@ export function registerTreeProvider(
   extensionContext: ExtensionContext
 ) {
   const treeDataProvider = new GistTreeProvider(store, extensionContext);
-  window.createTreeView(`${EXTENSION_NAME}.gists`, {
+  const treeView = window.createTreeView(`${EXTENSION_NAME}.gists`, {
     showCollapseAll: true,
     treeDataProvider,
     canSelectMany: true
   });
+
+  treeView.onDidCollapseElement((e) =>
+    treeDataProvider.setCollapsedState(e.element, true)
+  );
+
+  treeView.onDidExpandElement((e) =>
+    treeDataProvider.setCollapsedState(e.element, false)
+  );
 }

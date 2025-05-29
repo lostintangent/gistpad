@@ -1,3 +1,7 @@
+## v0.9.0 (//25)
+
+- Introduced support for MCP
+
 ## v0.8.2 (03/31/25)
 
 - The `GistPad: Sync on Save` setting now properly works for scratch notes

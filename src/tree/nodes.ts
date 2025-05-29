@@ -296,7 +296,10 @@ export class GistGroupNode extends TreeNode {
       : "tag";
 
     this.contextValue = `gistType.${iconType}`;
-    this.iconPath = this.getGistTypeIcon(iconType, true, extensionContext);
+    const iconPath = this.getGistTypeIcon(iconType, true, extensionContext);
+    if (iconPath) {
+      this.iconPath = iconPath!;
+    }
   }
 }
 

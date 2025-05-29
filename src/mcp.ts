@@ -3,13 +3,17 @@ import {
     EventEmitter,
     ExtensionContext,
     lm,
+    // @ts-ignore
     McpStdioServerDefinition,
     workspace
 } from "vscode";
 import * as config from "./config";
 import { store } from "./store";
 
-export function registerMcpConfigurationProvider(context: ExtensionContext) {
+export function registerMcpServerDefinitionProvider(context: ExtensionContext) {
+    // @ts-ignore
+    if (!lm.registerMcpServerDefinitionProvider) return;
+
     const onDidChange = new EventEmitter<void>();
 
     // When the user signs in or update, let VS Code
@@ -32,8 +36,9 @@ export function registerMcpConfigurationProvider(context: ExtensionContext) {
     );
 
     context.subscriptions.push(
-        lm.registerMcpConfigurationProvider("gistpad", {
-            onDidChange: onDidChange.event,
+        // @ts-ignore
+        lm.registerMcpServerDefinitionProvider("gistpad", {
+            onDidChangeMcpServerDefinitions: onDidChange.event,
             provideMcpServerDefinitions() {
                 if (!store.isSignedIn || !config.get("mcp.enabled")) return [];
 

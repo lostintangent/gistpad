@@ -394,8 +394,8 @@ export function joinPath(context: ExtensionContext, fragment: string) {
 
 export function getIconPath(context: ExtensionContext, iconName: string) {
   return {
-    dark: joinPath(context, `images/dark/${iconName}`),
-    light: joinPath(context, `images/light/${iconName}`)
+    dark: joinPath(context, `images/dark/${iconName}`) as Uri,
+    light: joinPath(context, `images/light/${iconName}`) as Uri
   };
 }
 

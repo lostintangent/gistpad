@@ -1,3 +1,7 @@
+## v0.9.0 (//25)
+
+- Introduced support for MCP
+
 ## v0.8.0 (03/18/25)
 
 - Introduced support for archiving gists, which will then display them in a new `Archived gists` node at the bottom of the `Gists` tree view

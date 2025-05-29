@@ -4,7 +4,7 @@ import { registerCommands } from "./commands";
 import { registerCommentController } from "./comments";
 import * as config from "./config";
 import { registerFileSystemProvider } from "./fileSystem";
-import { registerMcpConfigurationProvider } from "./mcp";
+import { registerMcpServerDefinitionProvider } from "./mcp";
 import { Output } from "./output";
 import { registerRepoModule } from "./repos";
 import { extendMarkdownIt } from "./repos/wiki/markdownPreview";
@@ -56,7 +56,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
   context.globalState.setKeysForSync(keysForSync);
 
-  registerMcpConfigurationProvider(context);
+  registerMcpServerDefinitionProvider(context);
 
   return {
     extendMarkdownIt

@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.8.0",
+  "version": "0.9.0",
   "extensionKind": [
     "ui",
     "workspace"
@@ -19,7 +19,7 @@
   "homepage": "https://github.com/lostintangent/gistpad#readme",
   "license": "MIT",
   "engines": {
-    "vscode": "^1.95.0"
+    "vscode": "^1.101.0"
   },
   "categories": [
     "Other"
@@ -38,9 +38,6 @@
   ],
   "main": "./dist/extension.js",
   "browser": "./dist/extension-web.js",
-  "enabledApiProposals": [
-    "mcpConfigurationProvider"
-  ],
   "contributes": {
     "configuration": {
       "type": "object",
@@ -1552,7 +1549,7 @@
       }
     ],
     "markdown.markdownItPlugins": true,
-    "modelContextServerCollections": [
+    "mcpServerDefinitionProviders": [
       {
         "id": "gistpad",
         "label": "GistPad"
@@ -1596,7 +1593,7 @@
   "devDependencies": {
     "@types/moment": "^2.13.0",
     "@types/node": "^8.10.25",
-    "@types/vscode": "^1.95.0",
+    "@types/vscode": "^1.100.0",
     "@vscode/dts": "^0.4.1",
     "copy-webpack-plugin": "^5.0.5",
     "ts-loader": "^9.5.1",

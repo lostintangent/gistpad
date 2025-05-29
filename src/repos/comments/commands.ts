@@ -38,7 +38,7 @@ export function registerCommentCommands(context: ExtensionContext) {
           repo,
           path,
           text,
-          thread.range.start.line + 1
+          thread.range!.start.line + 1
         );
 
         repository?.comments.push(comment);

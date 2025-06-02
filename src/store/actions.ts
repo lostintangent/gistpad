@@ -5,6 +5,7 @@ import * as config from "../config";
 import {
   DIRECTORY_SEPARATOR,
   SCRATCH_GIST_NAME,
+  SCRATCH_TEMPLATE_FILENAME,
   ZERO_WIDTH_SPACE
 } from "../constants";
 import {
@@ -298,10 +299,23 @@ export async function newScratchNote(displayProgress: boolean = true) {
 
     store.scratchNotes.gist = response.body;
   } else if (!store.scratchNotes.gist.files.hasOwnProperty(filename)) {
+    // Determine if there's a scratch template to seed the new note
+    let initialContentBytes = stringToByteArray("");
+
+    if (store.scratchNotes.gist.files.hasOwnProperty(SCRATCH_TEMPLATE_FILENAME)) {
+      try {
+        initialContentBytes = await workspace.fs.readFile(
+          fileNameToUri(store.scratchNotes.gist.id, SCRATCH_TEMPLATE_FILENAME)
+        );
+      } catch {
+        // ignore and fallback to empty content
+      }
+    }
+
     const writeFile = async () =>
       workspace.fs.writeFile(
         fileNameToUri(store.scratchNotes.gist!.id, filename),
-        stringToByteArray("")
+        initialContentBytes
       );
 
     if (displayProgress) {
@@ -309,6 +323,34 @@ export async function newScratchNote(displayProgress: boolean = true) {
     } else {
       await writeFile();
     }
+  }
+
+  const uri = fileNameToUri(store.scratchNotes.gist!.id, filename);
+  window.showTextDocument(uri);
+}
+
+export async function openScratchTemplate() {
+  const filename = SCRATCH_TEMPLATE_FILENAME;
+
+  if (!store.scratchNotes.gist) {
+    // Create the scratch gist with template file
+    const api = await getApi();
+    const response = await api.create({
+      description: SCRATCH_GIST_NAME,
+      public: false,
+      files: {
+        [encodeDirectoryName(filename)]: {
+          content: ZERO_WIDTH_SPACE
+        }
+      }
+    });
+
+    store.scratchNotes.gist = response.body;
+  } else if (!store.scratchNotes.gist.files.hasOwnProperty(filename)) {
+    await workspace.fs.writeFile(
+      fileNameToUri(store.scratchNotes.gist.id, filename),
+      stringToByteArray("")
+    );
   }
 
   const uri = fileNameToUri(store.scratchNotes.gist!.id, filename);

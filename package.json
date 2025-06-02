@@ -566,6 +566,12 @@
         "command": "gistpad.syncGistFile",
         "title": "Sync Gist",
         "icon": "$(sync)"
+      },
+      {
+        "command": "gistpad.openScratchTemplate",
+        "title": "Open Scratch Template",
+        "category": "GistPad",
+        "icon": "$(edit)"
       }
     ],
     "menus": {
@@ -1221,9 +1227,19 @@
           "group": "inline@1"
         },
         {
+          "command": "gistpad.openScratchTemplate",
+          "when": "viewItem == scratchGist",
+          "group": "inline@2"
+        },
+        {
           "command": "gistpad.newScratchNote",
           "when": "viewItem == scratchGist",
           "group": "base@1"
+        },
+        {
+          "command": "gistpad.openScratchTemplate",
+          "when": "viewItem == scratchGist",
+          "group": "base@2"
         },
         {
           "command": "gistpad.clearScratchNotes",

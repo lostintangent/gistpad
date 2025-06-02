@@ -11,7 +11,7 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_NAME } from "../constants";
+import { EXTENSION_NAME, SCRATCH_TEMPLATE_FILENAME } from "../constants";
 import { Gist, GroupType, Store } from "../store";
 import { encodeDirectoryName, fileNameToUri, sortGists } from "../utils";
 import {
@@ -254,10 +254,19 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     } else if (element instanceof GistDirectoryNode) {
       return getGistFiles(element.gist, element.directory);
     } else if (element instanceof ScratchGistNode) {
-      if (!element.gist || Object.keys(element.gist.files).length === 0) {
+      if (
+        !element.gist ||
+        Object.keys(element.gist.files).filter(
+          (file) => file !== SCRATCH_TEMPLATE_FILENAME
+        ).length === 0
+      ) {
         return [new NewScratchNoteNode()];
       } else {
-        return getGistFiles(element.gist);
+        const children = await getGistFiles(element.gist);
+        return children.filter(
+          (child) =>
+            !(child instanceof GistFileNode && child.file.filename === SCRATCH_TEMPLATE_FILENAME)
+        );
       }
     }
   }

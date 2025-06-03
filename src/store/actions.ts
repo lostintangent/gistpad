@@ -297,7 +297,25 @@ export async function newScratchNote(displayProgress: boolean = true) {
       }
     });
 
-    store.scratchNotes.gist = response.body;
+    const scratchGist = response.body;
+    store.scratchNotes.gist = scratchGist;
+
+    // If the template exists (for example, because the user previously created it via another device),
+    // then seed the newly created note with its contents.
+    try {
+      const templateUri = fileNameToUri(
+        scratchGist.id,
+        SCRATCH_TEMPLATE_FILENAME
+      );
+      const templateContent = await workspace.fs.readFile(templateUri);
+
+      await workspace.fs.writeFile(
+        fileNameToUri(scratchGist.id, filename),
+        templateContent
+      );
+    } catch {
+      // Template doesn't exist yet; ignore.
+    }
   } else if (!store.scratchNotes.gist.files.hasOwnProperty(filename)) {
     // Determine if there's a scratch template to seed the new note
     let initialContentBytes = stringToByteArray("");

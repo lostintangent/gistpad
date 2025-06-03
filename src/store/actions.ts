@@ -5,6 +5,7 @@ import * as config from "../config";
 import {
   DIRECTORY_SEPARATOR,
   SCRATCH_GIST_NAME,
+  SCRATCH_TEMPLATE_FILENAME,
   ZERO_WIDTH_SPACE
 } from "../constants";
 import {
@@ -298,10 +299,17 @@ export async function newScratchNote(displayProgress: boolean = true) {
 
     store.scratchNotes.gist = response.body;
   } else if (!store.scratchNotes.gist.files.hasOwnProperty(filename)) {
+    let initialContentBytes = stringToByteArray("");
+    if (store.scratchNotes.gist.files.hasOwnProperty(SCRATCH_TEMPLATE_FILENAME)) {
+      initialContentBytes = await workspace.fs.readFile(
+        fileNameToUri(store.scratchNotes.gist.id, SCRATCH_TEMPLATE_FILENAME)
+      );
+    }
+
     const writeFile = async () =>
       workspace.fs.writeFile(
         fileNameToUri(store.scratchNotes.gist!.id, filename),
-        stringToByteArray("")
+        initialContentBytes
       );
 
     if (displayProgress) {
@@ -312,6 +320,33 @@ export async function newScratchNote(displayProgress: boolean = true) {
   }
 
   const uri = fileNameToUri(store.scratchNotes.gist!.id, filename);
+  window.showTextDocument(uri);
+}
+
+// This function is fairly duplicative of the above function, but I'm
+// keeping it seperate for now to make it easier to understand.
+export async function openScratchTemplate() {
+  if (!store.scratchNotes.gist) {
+    const api = await getApi();
+    const response = await api.create({
+      description: SCRATCH_GIST_NAME,
+      public: false,
+      files: {
+        [encodeDirectoryName(SCRATCH_TEMPLATE_FILENAME)]: {
+          content: ZERO_WIDTH_SPACE
+        }
+      }
+    });
+
+    store.scratchNotes.gist = response.body;
+  } else if (!store.scratchNotes.gist.files.hasOwnProperty(SCRATCH_TEMPLATE_FILENAME)) {
+    await workspace.fs.writeFile(
+      fileNameToUri(store.scratchNotes.gist.id, SCRATCH_TEMPLATE_FILENAME),
+      stringToByteArray("")
+    );
+  }
+
+  const uri = fileNameToUri(store.scratchNotes.gist!.id, SCRATCH_TEMPLATE_FILENAME);
   window.showTextDocument(uri);
 }
 

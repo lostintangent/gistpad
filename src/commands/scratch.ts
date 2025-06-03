@@ -2,11 +2,15 @@ import { commands, ExtensionContext, window } from "vscode";
 import * as config from "../config";
 import { EXTENSION_NAME } from "../constants";
 import { store } from "../store";
-import { clearScratchNotes, newScratchNote } from "../store/actions";
+import { clearScratchNotes, newScratchNote, openScratchTemplate } from "../store/actions";
 
 export async function registerScratchCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(`${EXTENSION_NAME}.newScratchNote`, newScratchNote)
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(`${EXTENSION_NAME}.openScratchTemplate`, openScratchTemplate)
   );
 
   context.subscriptions.push(

@@ -7,7 +7,7 @@ import {
   Uri
 } from "vscode";
 import * as config from "../config";
-import { ENCODED_DIRECTORY_SEPARATOR, EXTENSION_NAME } from "../constants";
+import { ENCODED_DIRECTORY_SEPARATOR, EXTENSION_NAME, SCRATCH_TEMPLATE_FILENAME } from "../constants";
 import {
   FollowedUser,
   Gist,
@@ -311,7 +311,14 @@ export class ScratchGistNode extends TreeNode {
     super("Scratch Notes", TreeItemCollapsibleState.Expanded);
 
     this.contextValue = "scratchGist";
-    this.description = gist ? Object.keys(gist.files).length.toString() : "";
+    if (gist) {
+      const scratchFileCount = Object.keys(gist.files).filter(
+        (file) => file !== SCRATCH_TEMPLATE_FILENAME
+      ).length;
+      this.description = scratchFileCount.toString();
+    } else {
+      this.description = "";
+    }
 
     this.iconPath = joinPath(extensionContext, "images/scratch.svg");
   }

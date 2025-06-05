@@ -7,7 +7,7 @@ import {
   Uri
 } from "vscode";
 import * as config from "../config";
-import { ENCODED_DIRECTORY_SEPARATOR, EXTENSION_NAME, SCRATCH_TEMPLATE_FILENAME } from "../constants";
+import { DAILY_TEMPLATE_FILENAME, ENCODED_DIRECTORY_SEPARATOR, EXTENSION_NAME } from "../constants";
 import {
   FollowedUser,
   Gist,
@@ -303,34 +303,34 @@ export class GistGroupNode extends TreeNode {
   }
 }
 
-export class ScratchGistNode extends TreeNode {
+export class DailyGistNode extends TreeNode {
   constructor(
     extensionContext: ExtensionContext,
     public gist: Gist | null = null
   ) {
-    super("Scratch Notes", TreeItemCollapsibleState.Expanded);
+    super("Daily Notes", TreeItemCollapsibleState.Expanded);
 
-    this.contextValue = "scratchGist";
+    this.contextValue = "dailyGist";
     if (gist) {
-      const scratchFileCount = Object.keys(gist.files).filter(
-        (file) => file !== SCRATCH_TEMPLATE_FILENAME
+      const dailyFileCount = Object.keys(gist.files).filter(
+        (file) => file !== DAILY_TEMPLATE_FILENAME
       ).length;
-      this.description = scratchFileCount.toString();
+      this.description = dailyFileCount.toString();
     } else {
       this.description = "";
     }
 
-    this.iconPath = joinPath(extensionContext, "images/scratch.svg");
+    this.iconPath = joinPath(extensionContext, "images/daily.svg");
   }
 }
 
-export class NewScratchNoteNode extends TreeNode {
+export class OpenTodayNoteNode extends TreeNode {
   constructor() {
-    super("New scratch note...");
+    super("Open today's note...");
 
     this.command = {
-      command: `${EXTENSION_NAME}.newScratchNote`,
-      title: "New scratch note..."
+      command: `${EXTENSION_NAME}.openTodayNote`,
+      title: "Open today's note..."
     };
   }
 }

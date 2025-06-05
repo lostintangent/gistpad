@@ -1,13 +1,13 @@
 import { ExtensionContext } from "vscode";
 import { registerAuthCommands } from "./auth";
 import { registerCommentCommands } from "./comments";
+import { registerDailyCommands } from "./daily";
 import { registerDirectoryCommands } from "./directory";
 import { registerEditorCommands } from "./editor";
 import { registerFileCommands } from "./file";
 import { registerFollowCommands } from "./follow";
 import { registerGistCommands } from "./gist";
 import { registerNotebookCommands } from "./notebook";
-import { registerScratchCommands } from "./scratch";
 import { registerTourCommands } from "./tour";
 
 export function registerCommands(context: ExtensionContext) {
@@ -19,6 +19,6 @@ export function registerCommands(context: ExtensionContext) {
   registerFollowCommands(context);
   registerGistCommands(context);
   registerNotebookCommands(context);
-  registerScratchCommands(context);
+  registerDailyCommands(context);
   registerTourCommands(context);
 }

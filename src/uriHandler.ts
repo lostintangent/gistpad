@@ -5,7 +5,7 @@ import { EXTENSION_ID, EXTENSION_NAME } from "./constants";
 import { store as repoStore } from "./repos/store";
 import { openRepo } from "./repos/store/actions";
 import { store } from "./store";
-import { followUser, newScratchNote } from "./store/actions";
+import { followUser, openTodayNote } from "./store/actions";
 import { ensureAuthenticated as ensureAuthenticatedInternal } from "./store/auth";
 import { decodeDirectoryName, fileNameToUri, openGist, openGistFile, withProgress } from "./utils";
 
@@ -49,16 +49,16 @@ async function handleOpenRequest(query: URLSearchParams) {
   }
 }
 
-async function handleScratchRequest() {
-  withProgress("Opening scratch note...", async () => {
+async function handleDailyRequest() {
+  withProgress("Opening daily note...", async () => {
     await ensureAuthenticated();
 
     // We need to wait for the gists to fully load
     // so that we know whether there's already a
-    // scratch gist or not, before opening it.
+    // daily gist or not, before opening it.
     await when(() => !store.isLoading);
     await vscode.commands.executeCommand("gistpad.gists.focus");
-    await newScratchNote(false);
+    await openTodayNote(false);
   });
 }
 
@@ -110,8 +110,8 @@ class GistPadPUriHandler implements vscode.UriHandler {
         return await handleOpenRequest(query);
       case "/follow":
         return await handleFollowRequest(query);
-      case "/scratch":
-        return await handleScratchRequest();
+      case "/daily":
+        return await handleDailyRequest();
       case "/today":
         return await handleTodayRequest();
     }

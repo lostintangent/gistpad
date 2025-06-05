@@ -31,7 +31,7 @@ export function isOwnedGist(gistId: string): boolean {
     store.isSignedIn &&
     (!!store.gists.find((gist) => gist.id === gistId) ||
       !!store.archivedGists?.find((gist) => gist.id === gistId) ||
-      (store.scratchNotes.gist ? store.scratchNotes.gist.id === gistId : false))
+      (store.dailyNotes.gist ? store.dailyNotes.gist.id === gistId : false))
   );
 }
 

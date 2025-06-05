@@ -11,12 +11,13 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_NAME, SCRATCH_TEMPLATE_FILENAME } from "../constants";
+import { DAILY_TEMPLATE_FILENAME, EXTENSION_NAME } from "../constants";
 import { Gist, GroupType, Store } from "../store";
 import { encodeDirectoryName, fileNameToUri, sortGists } from "../utils";
 import {
   ArchivedGistsNode,
   CreateNewGistNode,
+  DailyGistNode,
   FollowedUserGistNode,
   FollowedUserGistsNode,
   GistDirectoryNode,
@@ -25,10 +26,9 @@ import {
   GistNode,
   GistsNode,
   LoadingNode,
-  NewScratchNoteNode,
   NoStarredGistsNode,
   NoUserGistsNode,
-  ScratchGistNode,
+  OpenTodayNoteNode,
   StarredGistNode,
   StarredGistsNode,
   TreeNode
@@ -66,8 +66,8 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
   ) {
     reaction(
       () => [
-        store.scratchNotes.gist ? store.scratchNotes.gist.updated_at : null,
-        store.scratchNotes.show,
+        store.dailyNotes.gist ? store.dailyNotes.gist.updated_at : null,
+        store.dailyNotes.show,
         store.gists.map((gist) => [gist.description, gist.updated_at]),
         store.archivedGists.map((gist) => [gist.description, gist.updated_at]),
         store.starredGists.map((gist) => [gist.description, gist.updated_at]),
@@ -91,7 +91,7 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
     return (
       node instanceof GistsNode ||
       node instanceof StarredGistsNode ||
-      node instanceof ScratchGistNode ||
+      node instanceof DailyGistNode ||
       node instanceof ArchivedGistsNode
     );
   }
@@ -176,11 +176,11 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
             )
           ];
 
-          if (this.store.scratchNotes.show) {
+          if (this.store.dailyNotes.show) {
             nodes.unshift(
-              new ScratchGistNode(
+              new DailyGistNode(
                 this.extensionContext,
-                this.store.scratchNotes.gist
+                this.store.dailyNotes.gist
               )
             );
           }
@@ -253,19 +253,19 @@ class GistTreeProvider implements TreeDataProvider<TreeNode>, Disposable {
       return getGistFiles(element.gist);
     } else if (element instanceof GistDirectoryNode) {
       return getGistFiles(element.gist, element.directory);
-    } else if (element instanceof ScratchGistNode) {
+    } else if (element instanceof DailyGistNode) {
       if (
         !element.gist ||
         Object.keys(element.gist.files).filter(
-          (file) => file !== SCRATCH_TEMPLATE_FILENAME
+          (file) => file !== DAILY_TEMPLATE_FILENAME
         ).length === 0
       ) {
-        return [new NewScratchNoteNode()];
+        return [new OpenTodayNoteNode()];
       } else {
         const children = await getGistFiles(element.gist);
         return children.filter(
           (child) =>
-            !(child instanceof GistFileNode && child.file.filename === SCRATCH_TEMPLATE_FILENAME)
+            !(child instanceof GistFileNode && child.file.filename === DAILY_TEMPLATE_FILENAME)
         );
       }
     }

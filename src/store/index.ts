@@ -98,13 +98,13 @@ export enum GroupType {
   tagAndType = "tagAndType"
 }
 
-export interface ScratchNotes {
+export interface DailyNotes {
   gist: Gist | null;
   show: boolean;
 }
 
 export interface Store {
-  scratchNotes: ScratchNotes;
+  dailyNotes: DailyNotes;
   followedUsers: FollowedUser[];
   gists: Gist[];
   archivedGists: Gist[];
@@ -121,14 +121,14 @@ export interface Store {
 }
 
 export const store: Store = observable({
-  scratchNotes: {
+  dailyNotes: {
     gist: null,
     show: false
   },
   followedUsers: [],
   gists: [],
   archivedGists: [],
-  isLoading: false,  
+  isLoading: false,
   isSignedIn: false,
   login: "",
   sortOrder: SortOrder.updatedTime,

@@ -11,7 +11,7 @@ const FOLLOW_KEY = "gistpad.followedUsers";
 const SORT_ORDER_KEY = "gistpad:sortOrder";
 const GROUP_TYPE_KEY = "gistpad:groupType";
 
-const SHOW_SCRATCH_NOTES_KEY = "scratchNotes.show";
+const SHOW_DAILY_NOTES_KEY = "dailyNotes.show";
 
 export interface IStorage {
   followedUsers: string[];
@@ -69,11 +69,11 @@ export async function initializeStorage(context: ExtensionContext) {
     () => updateGroupType(context, store.groupType)
   );
 
-  store.scratchNotes.show = await config.get(SHOW_SCRATCH_NOTES_KEY);
+  store.dailyNotes.show = await config.get(SHOW_DAILY_NOTES_KEY);
 
   workspace.onDidChangeConfiguration(async (e) => {
-    if (e.affectsConfiguration(`${EXTENSION_NAME}.${SHOW_SCRATCH_NOTES_KEY}`)) {
-      store.scratchNotes.show = await config.get(SHOW_SCRATCH_NOTES_KEY);
+    if (e.affectsConfiguration(`${EXTENSION_NAME}.${SHOW_DAILY_NOTES_KEY}`)) {
+      store.dailyNotes.show = await config.get(SHOW_DAILY_NOTES_KEY);
     }
   });
 }

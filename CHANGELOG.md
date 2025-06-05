@@ -1,6 +1,7 @@
 ## v0.9.0 (//25)
 
-- Introduced support for MCP
+- Introduced support for MCP (tools, resources, and prompts)
+- Renamed `Scratch notes` to `Daily notes` and introduced support for a daily notes template
 
 ## v0.8.2 (03/31/25)
 

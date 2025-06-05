@@ -16,6 +16,5 @@ export const ENCODED_DIRECTORY_SEPARATOR = "---";
 
 // This is the ID of the "magic" Gist that we create
 // in order to store daily notes on behalf of the end-user.
-export const SCRATCH_GIST_NAME = "📆 Daily notes";
-
-export const SCRATCH_TEMPLATE_FILENAME = "template.md";
+export const DAILY_GIST_NAME = "📆 Daily notes";
+export const DAILY_TEMPLATE_FILENAME = "template.md";

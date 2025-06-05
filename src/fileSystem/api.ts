@@ -41,8 +41,8 @@ export async function updateGistFiles(
   const { body } = await api.edit(id, { files });
 
   const gist =
-    store.scratchNotes.gist && store.scratchNotes.gist.id === id
-      ? store.scratchNotes.gist
+    store.dailyNotes.gist && store.dailyNotes.gist.id === id
+      ? store.dailyNotes.gist
       : (store.gists.find((gist) => gist.id === id) ||
         store.archivedGists.find((gist) => gist.id === id))!;
 

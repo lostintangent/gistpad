@@ -15,7 +15,7 @@ GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists]
   - [Pasting Images](#pasting-images)
   - [Following Users](#following-users)
   - [Exporting to Repositories](#exporting-to-repositories)
-  - [Scratch Notes](#scratch-notes)
+  - [Daily Notes](#daily-notes)
   - [Showcase](#showcase)
 - **[Repository Management](#repositories)**
   - [Branches](#branches)
@@ -114,19 +114,19 @@ GitHub Gists already allows you to star other user's gists, and when you do that
 
 At some point, your code/notes might outgrow the feature set offered by Gists (e.g. when you want to start collaborating on the content with other developers). When this occurs, you can simply right-click the gist, and select the `Export to Repository` command in order to create a new GitHub repository, that contains the content of your gist. The created repo will be public or private, depending on the public/private state of the exported gist.
 
-### Scratch Notes
+### Daily Notes
 
-To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "scratch notes" by clicking the `New scratch note...` command under the `Scratch Notes` node in the `Gists` tree (or running the `GistPad: New Scratch Note` command). A scratch note is simply a text document named by default for the time it was created.
+To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "daily notes" by clicking the `New daily note` command under the `Daily Notes` node in the `Gists` tree (or running the `GistPad: New Daily Note` command). A daily note is simply a text document named by default for the time it was created.
 
-By default, scratch notes are Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Scratch Notes: File Extension` setting. Furthermore, scratch notes are created per day, but you can customize this by setting the `GistPad > Scratch Notes: Directory Format` and `GistPad > Scratch Notes: File Format` settings.
+By default, daily notes are Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Daily Notes: File Extension` setting. Furthermore, daily notes are created per day, but you can customize this by setting the `GistPad > Daily Notes: Directory Format` and `GistPad > Daily Notes: File Format` settings.
 
-In order to help differentiate scratch notes from Notes in the `Your Gists` node, scratch notes appear as children of a top-level `Scratch Notes` node in the `Gists` tree. This makes it easy to view your outstanding scratch notes, so you can periodically audit them and migrate meaningful content to a more appropriate location (e.g. a new or existing gist).
+In order to help differentiate daily notes from Notes in the `Your Gists` node, daily notes appear as children of a top-level `Daily Notes` node in the `Gists` tree. This makes it easy to view your outstanding daily notes, so you can periodically audit them and migrate meaningful content to a more appropriate location (e.g. a new or existing gist).
 
 <img width="200px" src="https://user-images.githubusercontent.com/116461/75699016-908f0b00-5c64-11ea-95d9-e8c8faf93738.png" />
 
-You can create as many scratch notes as you need, and when you're done with them, you can delete individual notes and/or clear all of your notes by right-clicking the `Scratch Notes` node in the tree and selecting `Clear Scratch Notes`.
+You can create as many daily notes as you need, and when you're done with them, you can delete individual notes and/or clear all of your notes by right-clicking the `Daily Notes` node in the tree and selecting `Clear Daily Notes`.
 
-> Behind the scenes, scratch notes are simply files that are managed within a "special" secret gist on your behalf. This way, you can focus entirely on the ephemeral nature of the notes, and not worry about creating/deleting gists.
+> Behind the scenes, daily notes are simply files that are managed within a "special" secret gist on your behalf. This way, you can focus entirely on the ephemeral nature of the notes, and not worry about creating/deleting gists.
 
 ### Showcase
 
@@ -268,7 +268,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-separated list of names (e.g. `foo.txt,bar.js`).
 
-- `GistPad: New Scratch Note` - Creates a new "scratch note", which is a file whose name is derived from the `GistPad > Scratch Notes: Extension` and `Gist > Scratch Notes: Format` settings.
+- `GistPad: Open Daily Note` - Creates a new daily note, which is a file whose name is derived from the `GistPad > Daily Notes: Extension` and `Gist > Daily Notes: Format` settings.
 
 - `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
@@ -304,13 +304,13 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Output` - When enabled, creates an Output trace channel at VSCode startup.
 
-- `GistPad > Scratch Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new scratch notes. Defaults to `LL` (e.g. `March 6, 2020`).
+- `GistPad > Daily Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new daily notes. Defaults to `LL` (e.g. `March 6, 2020`).
 
-- `GistPad > Scratch Notes: File Extension` - Specifies the file extension to use when generating new scratch notes. Defaults to `.md`.
+- `GistPad > Daily Notes: File Extension` - Specifies the file extension to use when generating new daily notes. Defaults to `.md`.
 
-- `GistPad > Scratch Notes: File Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new scratch notes. Defaults to `LT` (e.g. `2:52 PM`).
+- `GistPad > Daily Notes: File Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new daily notes. Defaults to `LT` (e.g. `2:52 PM`).
 
-- `GistPad > Scratch Notes: Show` - Specifies whether or not to display the scratch notes node in the gists tree view. Defaults to `true`.
+- `GistPad > Daily Notes: Show` - Specifies whether or not to display the daily notes node in the gists tree view. Defaults to `true`.
 
 - `GistPad: Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 

@@ -164,8 +164,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
       .concat(this.store.archivedGists)
       .concat(this.store.starredGists);
 
-    if (this.store.scratchNotes.gist) {
-      gists.push(this.store.scratchNotes.gist);
+    if (this.store.dailyNotes.gist) {
+      gists.push(this.store.dailyNotes.gist);
     }
 
     let gist = gists.find((gist) => gist.id === gistId);

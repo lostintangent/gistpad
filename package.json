@@ -90,25 +90,25 @@
           "type": "boolean",
           "description": "Specifies whether or not to enable the output channel for tracing."
         },
-        "gistpad.scratchNotes.directoryFormat": {
+        "gistpad.dailyNotes.directoryFormat": {
           "default": "",
           "type": "string",
-          "description": "Specifies the moment.js format string to use when generating new scratch notes."
+          "description": "Specifies the moment.js format string to use when generating new daily notes."
         },
-        "gistpad.scratchNotes.fileFormat": {
+        "gistpad.dailyNotes.fileFormat": {
           "default": "YYYY-MM-DD",
           "type": "string",
-          "description": "Specifies the moment.js format string to use when generating new scratch notes."
+          "description": "Specifies the moment.js format string to use when generating new daily notes."
         },
-        "gistpad.scratchNotes.fileExtension": {
+        "gistpad.dailyNotes.fileExtension": {
           "default": ".md",
           "type": "string",
-          "description": "Specifies the file extension to use when generating new scratch notes."
+          "description": "Specifies the file extension to use when generating new daily notes."
         },
-        "gistpad.scratchNotes.show": {
+        "gistpad.dailyNotes.show": {
           "default": true,
           "type": "boolean",
-          "description": "Specifies whether or not to display the scratch notes node in the gists tree view."
+          "description": "Specifies whether or not to display the daily notes node in the gists tree view."
         },
         "gistpad.showcaseUrl": {
           "default": "https://aka.ms/gistpad-showcase",
@@ -186,8 +186,8 @@
         "title": "Change Description"
       },
       {
-        "command": "gistpad.clearScratchNotes",
-        "title": "Clear Scratch Notes"
+        "command": "gistpad.clearDailyNotes",
+        "title": "Clear Daily Notes"
       },
       {
         "command": "gistpad.cloneManagedRepository",
@@ -315,8 +315,8 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.hideScratchNotes",
-        "title": "Hide Scratch Notes",
+        "command": "gistpad.hideDailyNotes",
+        "title": "Hide Daily Notes",
         "category": "GistPad"
       },
       {
@@ -329,10 +329,10 @@
         "category": "GistPad"
       },
       {
-        "command": "gistpad.newScratchNote",
-        "title": "New Scratch Note",
+        "command": "gistpad.openTodayNote",
+        "title": "Open Today's Note",
         "category": "GistPad",
-        "icon": "$(add)"
+        "icon": "$(calendar)"
       },
       {
         "command": "gistpad.newSecretSwing",
@@ -568,10 +568,10 @@
         "icon": "$(sync)"
       },
       {
-        "command": "gistpad.openScratchTemplate",
-        "title": "Open Scratch Template",
+        "command": "gistpad.openDailyTemplate",
+        "title": "Open Daily Template",
         "category": "GistPad",
-        "icon": "$(edit)"
+        "icon": "$(notebook-template)"
       }
     ],
     "menus": {
@@ -613,7 +613,7 @@
           "when": "gistpad:state == SignedIn"
         },
         {
-          "command": "gistpad.newScratchNote",
+          "command": "gistpad.openTodayNote",
           "when": "gistpad:state == SignedIn"
         },
         {
@@ -677,7 +677,7 @@
           "when": "false"
         },
         {
-          "command": "gistpad.clearScratchNotes",
+          "command": "gistpad.clearDailyNotes",
           "when": "false"
         },
         {
@@ -789,7 +789,7 @@
           "when": "false"
         },
         {
-          "command": "gistpad.hideScratchNotes",
+          "command": "gistpad.hideDailyNotes",
           "when": "false"
         },
         {
@@ -849,7 +849,7 @@
           "when": "false"
         },
         {
-          "command": "gistpad.openScratchTemplate",
+          "command": "gistpad.openDailyTemplate",
           "when": "false"
         },
         {
@@ -1226,33 +1226,33 @@
           "group": "mutate@3"
         },
         {
-          "command": "gistpad.newScratchNote",
-          "when": "viewItem == scratchGist",
+          "command": "gistpad.openTodayNote",
+          "when": "viewItem == dailyGist",
           "group": "inline@1"
         },
         {
-          "command": "gistpad.openScratchTemplate",
-          "when": "viewItem == scratchGist",
+          "command": "gistpad.openDailyTemplate",
+          "when": "viewItem == dailyGist",
           "group": "inline@2"
         },
         {
-          "command": "gistpad.newScratchNote",
-          "when": "viewItem == scratchGist",
+          "command": "gistpad.openTodayNote",
+          "when": "viewItem == dailyGist",
           "group": "base@1"
         },
         {
-          "command": "gistpad.openScratchTemplate",
-          "when": "viewItem == scratchGist",
+          "command": "gistpad.openDailyTemplate",
+          "when": "viewItem == dailyGist",
           "group": "base@2"
         },
         {
-          "command": "gistpad.clearScratchNotes",
-          "when": "viewItem == scratchGist",
+          "command": "gistpad.clearDailyNotes",
+          "when": "viewItem == dailyGist",
           "group": "manage@1"
         },
         {
-          "command": "gistpad.hideScratchNotes",
-          "when": "viewItem == scratchGist",
+          "command": "gistpad.hideDailyNotes",
+          "when": "viewItem == dailyGist",
           "group": "manage@2"
         },
         {

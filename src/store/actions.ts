@@ -3,9 +3,9 @@ import { window, workspace } from "vscode";
 import { FollowedUser, Gist, GistComment, GistFile, store } from ".";
 import * as config from "../config";
 import {
+  DAILY_GIST_NAME,
+  DAILY_TEMPLATE_FILENAME,
   DIRECTORY_SEPARATOR,
-  SCRATCH_GIST_NAME,
-  SCRATCH_TEMPLATE_FILENAME,
   ZERO_WIDTH_SPACE
 } from "../constants";
 import {
@@ -271,10 +271,10 @@ export async function newGist(
   return gist;
 }
 
-export async function newScratchNote(displayProgress: boolean = true) {
-  const directoryFormat = config.get("scratchNotes.directoryFormat");
-  const fileFormat = config.get("scratchNotes.fileFormat");
-  const extension = config.get("scratchNotes.fileExtension");
+export async function openTodayNote(displayProgress: boolean = true) {
+  const directoryFormat = config.get("dailyNotes.directoryFormat");
+  const fileFormat = config.get("dailyNotes.fileFormat");
+  const extension = config.get("dailyNotes.fileExtension");
 
   const sharedMoment = moment();
   const directory = directoryFormat
@@ -285,10 +285,10 @@ export async function newScratchNote(displayProgress: boolean = true) {
 
   const filename = `${directory}${file}${extension}`;
 
-  if (!store.scratchNotes.gist) {
+  if (!store.dailyNotes.gist) {
     const api = await getApi();
     const response = await api.create({
-      description: SCRATCH_GIST_NAME,
+      description: DAILY_GIST_NAME,
       public: false,
       files: {
         [encodeDirectoryName(filename)]: {
@@ -297,82 +297,82 @@ export async function newScratchNote(displayProgress: boolean = true) {
       }
     });
 
-    store.scratchNotes.gist = response.body;
-  } else if (!store.scratchNotes.gist.files.hasOwnProperty(filename)) {
+    store.dailyNotes.gist = response.body;
+  } else if (!store.dailyNotes.gist.files.hasOwnProperty(filename)) {
     let initialContentBytes = stringToByteArray("");
-    if (store.scratchNotes.gist.files.hasOwnProperty(SCRATCH_TEMPLATE_FILENAME)) {
+    if (store.dailyNotes.gist.files.hasOwnProperty(DAILY_TEMPLATE_FILENAME)) {
       initialContentBytes = await workspace.fs.readFile(
-        fileNameToUri(store.scratchNotes.gist.id, SCRATCH_TEMPLATE_FILENAME)
+        fileNameToUri(store.dailyNotes.gist.id, DAILY_TEMPLATE_FILENAME)
       );
     }
 
     const writeFile = async () =>
       workspace.fs.writeFile(
-        fileNameToUri(store.scratchNotes.gist!.id, filename),
+        fileNameToUri(store.dailyNotes.gist!.id, filename),
         initialContentBytes
       );
 
     if (displayProgress) {
-      await withProgress("Creating scratch note...", writeFile);
+      await withProgress("Creating daily note...", writeFile);
     } else {
       await writeFile();
     }
   }
 
-  const uri = fileNameToUri(store.scratchNotes.gist!.id, filename);
+  const uri = fileNameToUri(store.dailyNotes.gist!.id, filename);
   window.showTextDocument(uri);
 }
 
 // This function is fairly duplicative of the above function, but I'm
 // keeping it seperate for now to make it easier to understand.
-export async function openScratchTemplate() {
-  if (!store.scratchNotes.gist) {
+export async function openDailyTemplate() {
+  if (!store.dailyNotes.gist) {
     const api = await getApi();
     const response = await api.create({
-      description: SCRATCH_GIST_NAME,
+      description: DAILY_GIST_NAME,
       public: false,
       files: {
-        [encodeDirectoryName(SCRATCH_TEMPLATE_FILENAME)]: {
+        [encodeDirectoryName(DAILY_TEMPLATE_FILENAME)]: {
           content: ZERO_WIDTH_SPACE
         }
       }
     });
 
-    store.scratchNotes.gist = response.body;
-  } else if (!store.scratchNotes.gist.files.hasOwnProperty(SCRATCH_TEMPLATE_FILENAME)) {
+    store.dailyNotes.gist = response.body;
+  } else if (!store.dailyNotes.gist.files.hasOwnProperty(DAILY_TEMPLATE_FILENAME)) {
     await workspace.fs.writeFile(
-      fileNameToUri(store.scratchNotes.gist.id, SCRATCH_TEMPLATE_FILENAME),
+      fileNameToUri(store.dailyNotes.gist.id, DAILY_TEMPLATE_FILENAME),
       stringToByteArray("")
     );
   }
 
-  const uri = fileNameToUri(store.scratchNotes.gist!.id, SCRATCH_TEMPLATE_FILENAME);
+  const uri = fileNameToUri(store.dailyNotes.gist!.id, DAILY_TEMPLATE_FILENAME);
   window.showTextDocument(uri);
 }
 
-export async function clearScratchNotes() {
+export async function clearDailyNotes() {
   const api = await getApi();
-  await api.delete(store.scratchNotes.gist!.id);
+  await api.delete(store.dailyNotes.gist!.id);
 
-  closeGistFiles(store.scratchNotes.gist!);
-  store.scratchNotes.gist = null;
+  closeGistFiles(store.dailyNotes.gist!);
+  store.dailyNotes.gist = null;
 }
 
 export async function refreshGists() {
   store.isLoading = true;
 
   const gists = updateGistTags(await listGists());
-  store.scratchNotes.gist =
-    gists.find((gist) => gist.description === SCRATCH_GIST_NAME) || null;
+  store.dailyNotes.gist =
+    gists.find((gist) => gist.description === DAILY_GIST_NAME) || null;
 
-  // Filter out scratch notes and split gists into archived and non-archived
-  const nonScratchGists = gists.filter(
-    (gist) => gist.description !== SCRATCH_GIST_NAME
+  // Filter out daily notes and split gists into archived and non-archived
+  const nonDailyGists = gists.filter(
+    (gist) => gist.description !== DAILY_GIST_NAME
   );
 
   // Split gists into archived and non-archived
-  store.archivedGists = nonScratchGists.filter(isArchivedGist);
-  store.gists = nonScratchGists.filter((gist) => !isArchivedGist(gist));
+  store.archivedGists = nonDailyGists.filter(isArchivedGist);
+  store.gists = nonDailyGists.filter((gist) => !isArchivedGist(gist));
 
   store.isLoading = false;
 

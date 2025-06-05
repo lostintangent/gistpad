@@ -282,7 +282,6 @@ export async function openTodayNote(displayProgress: boolean = true) {
     : "";
 
   const file = sharedMoment.format(fileFormat);
-
   const filename = `${directory}${file}${extension}`;
 
   if (!store.dailyNotes.gist) {
@@ -299,17 +298,22 @@ export async function openTodayNote(displayProgress: boolean = true) {
 
     store.dailyNotes.gist = response.body;
   } else if (!store.dailyNotes.gist.files.hasOwnProperty(filename)) {
-    let initialContentBytes = stringToByteArray("");
+    let initialContent = "# {{date}}\n\n";
     if (store.dailyNotes.gist.files.hasOwnProperty(DAILY_TEMPLATE_FILENAME)) {
-      initialContentBytes = await workspace.fs.readFile(
+      initialContent = byteArrayToString(await workspace.fs.readFile(
         fileNameToUri(store.dailyNotes.gist.id, DAILY_TEMPLATE_FILENAME)
-      );
+      ));
     }
+
+    initialContent = initialContent.replace(
+      "{{date}}",
+      sharedMoment.format(config.get("dailyNotes.fileFormat"))
+    );
 
     const writeFile = async () =>
       workspace.fs.writeFile(
         fileNameToUri(store.dailyNotes.gist!.id, filename),
-        initialContentBytes
+        stringToByteArray(initialContent)
       );
 
     if (displayProgress) {
@@ -326,6 +330,7 @@ export async function openTodayNote(displayProgress: boolean = true) {
 // This function is fairly duplicative of the above function, but I'm
 // keeping it seperate for now to make it easier to understand.
 export async function openDailyTemplate() {
+  const defaultContent = "# {{date}}\n\n";
   if (!store.dailyNotes.gist) {
     const api = await getApi();
     const response = await api.create({
@@ -333,7 +338,7 @@ export async function openDailyTemplate() {
       public: false,
       files: {
         [encodeDirectoryName(DAILY_TEMPLATE_FILENAME)]: {
-          content: ZERO_WIDTH_SPACE
+          content: defaultContent
         }
       }
     });
@@ -342,7 +347,7 @@ export async function openDailyTemplate() {
   } else if (!store.dailyNotes.gist.files.hasOwnProperty(DAILY_TEMPLATE_FILENAME)) {
     await workspace.fs.writeFile(
       fileNameToUri(store.dailyNotes.gist.id, DAILY_TEMPLATE_FILENAME),
-      stringToByteArray("")
+      stringToByteArray(defaultContent)
     );
   }
 

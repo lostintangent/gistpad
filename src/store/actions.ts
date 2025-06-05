@@ -298,7 +298,7 @@ export async function openTodayNote(displayProgress: boolean = true) {
 
     store.dailyNotes.gist = response.body;
   } else if (!store.dailyNotes.gist.files.hasOwnProperty(filename)) {
-    let initialContent = "# {{date}}\n\n";
+    let initialContent = "# 📆 {{date}}\n\n";
     if (store.dailyNotes.gist.files.hasOwnProperty(DAILY_TEMPLATE_FILENAME)) {
       initialContent = byteArrayToString(await workspace.fs.readFile(
         fileNameToUri(store.dailyNotes.gist.id, DAILY_TEMPLATE_FILENAME)
@@ -330,7 +330,7 @@ export async function openTodayNote(displayProgress: boolean = true) {
 // This function is fairly duplicative of the above function, but I'm
 // keeping it seperate for now to make it easier to understand.
 export async function openDailyTemplate() {
-  const defaultContent = "# {{date}}\n\n";
+  const defaultContent = "# 📆 {{date}}\n\n";
   if (!store.dailyNotes.gist) {
     const api = await getApi();
     const response = await api.create({

@@ -96,10 +96,9 @@ export function createGistPadOpenUrl(gistId: string, file?: string) {
   return `vscode://${EXTENSION_ID}${OPEN_PATH}?${GIST_PARAM}=${gistId}${fileParam}`;
 }
 
-export function createGistPadWebUrl(gistId: string, file: string = "README.md", preview: boolean = true) {
+export function createGistPadWebUrl(gistId: string, file: string = "README.md") {
   const path = file && file !== "README.md" ? `/${file}` : "";
-  const query = preview ? `?view=preview` : "";
-  return `https://gistpad.dev/#${gistId}${path}${query}`;
+  return `https://gistpad.dev/#share/${gistId}${path}`;
 }
 
 class GistPadPUriHandler implements vscode.UriHandler {

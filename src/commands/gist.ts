@@ -15,7 +15,7 @@ import { EXTENSION_NAME } from "../constants";
 import { updateGistFiles } from "../fileSystem/api";
 import { duplicateGist, exportToRepo } from "../fileSystem/git";
 import { openRepo } from "../repos/store/actions";
-import { Gist, GistFile, GroupType, SortOrder, store } from "../store";
+import { findGistInStore, Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
   archiveGist,
   changeDescription,
@@ -48,6 +48,7 @@ import {
   getGistDetailsFromUri,
   getGistLabel,
   getGistWorkspaceId,
+  getUrlFileNameHash,
   isArchivedGist,
   isGistWorkspace,
   isOwnedGist,
@@ -553,28 +554,17 @@ export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.openGistInBrowser`,
-      async (node?: GistNode) => {
+      async (nodeOrUri?: GistNode | Uri) => {
         let gist: Gist | undefined;
-        
-        if (node) {
-          // Called from tree context with GistNode
-          gist = node.gist;
-        } else {
-          // Called from editor context - use active editor
-          const editor = window.activeTextEditor;
-          if (!editor || editor.document.uri.scheme !== 'gist') {
-            return;
-          }
-          
-          const { gistId } = getGistDetailsFromUri(editor.document.uri);
-          
-          // Find the gist in the store
-          gist = store.gists.find(g => g.id === gistId) ||
-                 store.archivedGists.find(g => g.id === gistId) ||
-                 store.starredGists.find(g => g.id === gistId);
-          
+        let filename: string | undefined;
+        if (nodeOrUri instanceof GistNode) {
+          gist = nodeOrUri.gist;
+        } else if (nodeOrUri instanceof Uri) {
+          const { gistId, file } = getGistDetailsFromUri(nodeOrUri);
+          gist = findGistInStore(gistId);
+          filename = file ? decodeURIComponent(file) : undefined;
+
           if (!gist) {
-            // Fallback: construct URL manually
             const url = `https://gist.github.com/${gistId}`;
             env.openExternal(Uri.parse(url));
             return;
@@ -587,7 +577,9 @@ export async function registerGistCommands(context: ExtensionContext) {
 
         let url = gist.html_url;
         if (gist.type === "note") {
-          url = createGistPadWebUrl(gist.id);
+          url = createGistPadWebUrl(gist.id, filename);
+        } else if (filename) {
+          url += getUrlFileNameHash(filename);
         }
 
         env.openExternal(Uri.parse(url));

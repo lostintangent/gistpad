@@ -1,4 +1,10 @@
-## v0.9.0 (//25)
+## v0.9.1 (06/10/25)
+
+- The editor toolbar now displays an icon (globe) for opening the current gist file in your browser (either GitHub or GistPad.dev)
+- The `Copy GitHub URL` context menu (available in the `Gists` tree) now copies the URL to the "friendly" page vs. the "raw" contents.
+- Wiki repos can now be created in orgs as opposed to your personal GitHub account
+
+## v0.9.0 (06/10/25)
 
 - Introduced support for MCP (tools, resources, and prompts) by integrating https://npmjs.com/gistpad-mcp directly into this extension
 - Renamed `Scratch notes` to `Daily notes` and introduced support for a daily notes template

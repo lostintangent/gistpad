@@ -8,7 +8,7 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
-import { store } from "../store";
+import { findGistInStore } from "../store";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
 import { createGistPadOpenUrl, createGistPadWebUrl } from "../uriHandler";
@@ -18,6 +18,7 @@ import {
   encodeDirectoryUri,
   fileNameToUri,
   getGistDetailsFromUri,
+  getUrlFileNameHash,
   openGistFile,
   stringToByteArray,
   withProgress
@@ -38,12 +39,16 @@ export function registerFileCommands(context: ExtensionContext) {
 
         if (fileName) {
           await withProgress("Adding file(s)...", async () => {
-            const fileUris = fileName.split(",").map(fileName => fileNameToUri(node.gist.id, fileName));
+            const fileUris = fileName
+              .split(",")
+              .map((fileName) => fileNameToUri(node.gist.id, fileName));
             const emptyBuffer = stringToByteArray("");
 
-            await Promise.all(fileUris.map(uri => workspace.fs.writeFile(uri, emptyBuffer)));
+            await Promise.all(
+              fileUris.map((uri) => workspace.fs.writeFile(uri, emptyBuffer))
+            );
 
-            fileUris.reverse().forEach(uri => openGistFile(uri));
+            fileUris.reverse().forEach((uri) => openGistFile(uri));
           });
         }
       }
@@ -66,9 +71,12 @@ export function registerFileCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.copyGistPadFileUrl`,
       async (nodeOrUri: GistFileNode | Uri) => {
-        let details: { gistId: string, file: string } | undefined;
+        let details: { gistId: string; file: string } | undefined;
         if (nodeOrUri instanceof GistFileNode) {
-          details = { gistId: nodeOrUri.gistId, file: nodeOrUri.file.filename! };
+          details = {
+            gistId: nodeOrUri.gistId,
+            file: nodeOrUri.file.filename!
+          };
         } else {
           const { gistId, file } = getGistDetailsFromUri(
             encodeDirectoryUri(nodeOrUri)
@@ -89,14 +97,15 @@ export function registerFileCommands(context: ExtensionContext) {
       async (nodeOrUri: GistFileNode | Uri) => {
         let url: string;
         if (nodeOrUri instanceof GistFileNode) {
-          const gist = store.gists.find((gist) => gist.id === nodeOrUri.gistId)!;
-          url = `${gist.html_url}#${nodeOrUri.file.filename}`;
+          const gist = findGistInStore(nodeOrUri.gistId)!;
+          url = `${gist.html_url}${getUrlFileNameHash(nodeOrUri.file.filename!)}`;
         } else {
           const { gistId, file } = getGistDetailsFromUri(
             encodeDirectoryUri(nodeOrUri)
           );
-          const gist = store.gists.find((gist) => gist.id === gistId)!;
-          url = `${gist.html_url}#${file}`;
+
+          const gist = findGistInStore(gistId)!;
+          url = `${gist.html_url}${getUrlFileNameHash(file)}`;
         }
 
         await env.clipboard.writeText(url);
@@ -232,7 +241,6 @@ export function registerFileCommands(context: ExtensionContext) {
           canSelectMany: true,
           openLabel: "Upload"
         });
-
 
         if (files) {
           withProgress("Uploading file(s)...", () =>

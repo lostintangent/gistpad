@@ -402,3 +402,9 @@ export function getIconPath(context: ExtensionContext, iconName: string) {
 export function isArchivedGist(gist: Gist): boolean {
   return !!gist.description?.endsWith(" [Archived]");
 }
+
+export function getUrlFileNameHash(fileName: string): string {
+  return `#file-${fileName
+    .replace(/[^a-zA-Z0-9]/g, "-")
+    .toLocaleLowerCase()}`;
+}

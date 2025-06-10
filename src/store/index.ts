@@ -120,6 +120,17 @@ export interface Store {
   unsyncedFiles: Set<string>;
 }
 
+export function findGistInStore(gistId: string) {
+  if (store.dailyNotes.gist?.id === gistId) {
+    return store.dailyNotes.gist;
+  }
+
+  return store.gists
+    .concat(store.archivedGists)
+    .concat(store.starredGists)
+    .find((gist) => gist.id === gistId);
+}
+
 export const store: Store = observable({
   dailyNotes: {
     gist: null,

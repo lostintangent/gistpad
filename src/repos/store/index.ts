@@ -2,7 +2,7 @@ import { computed, observable } from "mobx";
 import * as path from "path";
 import { CommentThread, Location, Uri } from "vscode";
 import { SWING_FILE } from "../../constants";
-import { GistComment, store as mainStore } from "../../store";
+import { GistComment } from "../../store";
 import { RepoFileSystemProvider } from "../fileSystem";
 import { isWiki } from "../wiki/utils";
 

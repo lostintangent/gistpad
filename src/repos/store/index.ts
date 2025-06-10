@@ -169,7 +169,7 @@ export const store = observable({
   repos: [] as Repository[],
   get wiki(): Repository | undefined {
     return this.repos.find(
-      (repo: Repository) => repo.isWiki && repo.name.startsWith(mainStore.login)
+      (repo: Repository) => repo.isWiki
     );
   },
   isInCodeTour: false

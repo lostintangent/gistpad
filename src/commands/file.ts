@@ -89,13 +89,14 @@ export function registerFileCommands(context: ExtensionContext) {
       async (nodeOrUri: GistFileNode | Uri) => {
         let url: string;
         if (nodeOrUri instanceof GistFileNode) {
-          url = nodeOrUri.file.raw_url!;
+          const gist = store.gists.find((gist) => gist.id === nodeOrUri.gistId)!;
+          url = `${gist.html_url}#${nodeOrUri.file.filename}`;
         } else {
           const { gistId, file } = getGistDetailsFromUri(
             encodeDirectoryUri(nodeOrUri)
           );
           const gist = store.gists.find((gist) => gist.id === gistId)!;
-          url = gist.files[file].raw_url!;
+          url = `${gist.html_url}#${file}`;
         }
 
         await env.clipboard.writeText(url);

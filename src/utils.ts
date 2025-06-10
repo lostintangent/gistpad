@@ -133,10 +133,37 @@ export async function openGist(
   return openGistFiles(id);
 }
 
-export function openGistAsWorkspace(id: string, forceNewWindow: boolean) {
+export async function openGistAsWorkspace(id: string, forceNewWindow: boolean) {
   // TODO: Add support for adding the Gist as a new
   // root to an existing workspace
-  const uri = Uri.parse(`${FS_SCHEME}://${id}/`);
+  
+  // First try to get the gist from the store
+  let gist = store.gists
+    .concat(store.archivedGists)
+    .concat(store.starredGists)
+    .find((g) => g.id === id);
+  
+  // If not found in store, fetch it from the API
+  if (!gist) {
+    try {
+      gist = await getGist(id);
+    } catch (error) {
+      // If we can't fetch the gist, fall back to the original behavior
+      const uri = Uri.parse(`${FS_SCHEME}://${id}/`);
+      commands.executeCommand("vscode.openFolder", uri, forceNewWindow);
+      return;
+    }
+  }
+  
+  // Create a descriptive workspace name: "GistName [Gist]"
+  const gistLabel = getGistLabel(gist);
+  const workspaceName = `${gistLabel} [Gist]`;
+  
+  // Encode the workspace name for use in URI path
+  // VS Code will use this path for the workspace display name
+  const encodedWorkspaceName = encodeURIComponent(workspaceName);
+  const uri = Uri.parse(`${FS_SCHEME}://${id}/${encodedWorkspaceName}/`);
+  
   commands.executeCommand("vscode.openFolder", uri, forceNewWindow);
 }
 
@@ -221,6 +248,47 @@ export function fileNameToUri(gistId: string, filename: string = ""): Uri {
 
 export function getGistDetailsFromUri(uri: Uri) {
   const pathWithoutPrefix = uri.path.substr(1);
+  
+  // Check if this is a workspace root URI (single path segment ending with /)
+  // e.g., "/workspaceName/" should be treated as gist root
+  const isWorkspaceRoot = pathWithoutPrefix.endsWith("/") && 
+                         !pathWithoutPrefix.slice(0, -1).includes(DIRECTORY_SEPARATOR);
+  
+  if (isWorkspaceRoot) {
+    // For workspace root URIs, treat as gist root (no directory/file)
+    return {
+      gistId: uri.authority,
+      directory: "",
+      file: ""
+    };
+  }
+  
+  const pathParts = pathWithoutPrefix.split(DIRECTORY_SEPARATOR);
+  
+  // Check if the first path segment looks like a workspace name (ends with " [Gist]")
+  const firstSegment = decodeURIComponent(pathParts[0]);
+  const isWorkspaceURI = firstSegment.endsWith(" [Gist]");
+  
+  if (isWorkspaceURI) {
+    // This is a workspace URI, skip the first segment
+    if (pathParts.length === 2 && pathParts[1] !== "") {
+      // File directly under workspace: "/workspaceName/file.js" -> directory="", file="file.js"
+      return {
+        gistId: uri.authority,
+        directory: "",
+        file: decodeURIComponent(pathParts[1])
+      };
+    } else if (pathParts.length > 2) {
+      // File in subdirectory: "/workspaceName/src/file.js" -> directory="src", file="file.js"
+      return {
+        gistId: uri.authority,
+        directory: decodeURIComponent(pathParts[1]),
+        file: decodeURIComponent(path.basename(uri.path))
+      };
+    }
+  }
+  
+  // Original logic for old-format URIs or edge cases
   const directory = pathWithoutPrefix.includes(DIRECTORY_SEPARATOR)
     ? pathWithoutPrefix.split(DIRECTORY_SEPARATOR)[0]
     : "";

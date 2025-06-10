@@ -255,8 +255,10 @@ export class GistFileSystemProvider implements FileSystemProvider {
   }
 
   async readDirectory(uri: Uri): Promise<[string, FileType][]> {
-    if (uri.path === "/") {
-      const { gistId } = getGistDetailsFromUri(uri);
+    const { gistId, directory, file } = getGistDetailsFromUri(uri);
+    
+    // Check if this is the gist root (either "/" or workspace root like "/workspaceName/")
+    if (uri.path === "/" || (directory === "" && file === "")) {
 
       let gist = this.store.gists
         .concat(this.store.starredGists)

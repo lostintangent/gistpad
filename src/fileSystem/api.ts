@@ -8,14 +8,28 @@ const isBinaryPath = require("is-binary-path");
 export async function getFileContents(file: GistFile) {
   if (file.truncated || !file.content) {
     const responseType = isBinaryPath(file.filename!) ? "arraybuffer" : "text";
-    const { data } = await axios.get(file.raw_url!, {
-      responseType,
-      transformResponse: (data) => {
-        return data;
+    try {
+      const { data } = await axios.get(file.raw_url!, {
+        responseType,
+        transformResponse: (data) => {
+          return data;
+        }
+      });
+      file.content = data;
+    } catch (error: any) {
+      console.error(`Error fetching file content: ${(error as Error).message}`);
+      // Fallback: try to fetch content directly from raw_url
+      try {
+        const response = await fetch(file.raw_url!);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        file.content = await response.text();
+      } catch (fallbackError: any) {
+        console.error(`Fallback fetch failed: ${(fallbackError as Error).message}`);
+        throw new Error(`Failed to fetch file content: ${fallbackError.message}`);
       }
-    });
-
-    file.content = data;
+    }
   }
 
   return file.content!;

@@ -137,7 +137,10 @@ export function openGistAsWorkspace(id: string, forceNewWindow: boolean) {
   // TODO: Add support for adding the Gist as a new
   // root to an existing workspace
   const uri = Uri.parse(`${FS_SCHEME}://${id}/`);
-  commands.executeCommand("vscode.openFolder", uri, forceNewWindow);
+  commands.executeCommand("vscode.openFolder", uri, {
+    forceNewWindow,
+    noRecentEntry: true
+  });
 }
 
 export async function openGistFiles(id: string) {
@@ -404,7 +407,5 @@ export function isArchivedGist(gist: Gist): boolean {
 }
 
 export function getUrlFileNameHash(fileName: string): string {
-  return `#file-${fileName
-    .replace(/[^a-zA-Z0-9]/g, "-")
-    .toLocaleLowerCase()}`;
+  return `#file-${fileName.replace(/[^a-zA-Z0-9]/g, "-").toLocaleLowerCase()}`;
 }

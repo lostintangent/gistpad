@@ -1,3 +1,7 @@
+## v0.9.2 (06/10/25)
+
+- The `Open Gist as Workspace` command no longer adds the gist to the `Open Recent` list in VS Code
+
 ## v0.9.1 (06/10/25)
 
 - The editor toolbar now displays an icon (globe) for opening the current gist file in your browser (either GitHub or GistPad.dev)

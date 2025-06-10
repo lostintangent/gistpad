@@ -1,6 +1,6 @@
 ## v0.9.0 (//25)
 
-- Introduced support for MCP (tools, resources, and prompts)
+- Introduced support for MCP (tools, resources, and prompts) by integrating https://npmjs.com/gistpad-mcp directly into this extension
 - Renamed `Scratch notes` to `Daily notes` and introduced support for a daily notes template
 
 ## v0.8.2 (03/31/25)

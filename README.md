@@ -21,6 +21,7 @@ GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists]
   - [Branches](#branches)
   - [Wikis](#wikis)
 - **[CodeSwing](#codeswing)**
+- **[Copilot chat](#copilot-chat)**
 - **[Contributed Commands](#contributed-commands-file-explorer)**
 - **[Configuration Settings](#configuration-settings)**
 
@@ -30,7 +31,7 @@ GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists]
 
 1. Open the `GistPad` tab _(look for the notebook icon in the activity bar)_. From there, you can open a gist or GitHub repo by ID/URL, or sign in with a GitHub account in order to manage your [gists](#gist-management) and [repositories](#repositories). To sign-in, simply click the `Sign In` button and follow the provided flow in order to authenticate with your GitHub account.
 
-You can create and edit [gists](#gist-management), [repositories](#repositories), [wikis](#wikis) and [runnable code samples](#codeswing). Have fun, and let us know how we can make your knowledge-management experience even more awesome! 🙌
+From here, you can create and edit [gists](#gist-management), [repositories](#repositories), [wikis](#wikis) and [runnable code samples](#codeswing). And in addition to doing this from the `Gists` tree view, you can also do it from [Copilot chat](#copilot-chat) (thanks to a [built-in MCP server](https://npmjs.com/gistpad-mcp)). Have fun, and let us know how we can make your knowledge-management experience even more awesome! 🙌
 
 ## Gist Management
 
@@ -220,6 +221,12 @@ In addition to adding links to pages, it's sometimes valuable to embed the conte
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template fields, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
 When you create a new swing, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries and languages you intend to use (e.g. React.js, Vue.js). Since the swing is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other swings that you'd like to use, simply fork them and create your own swings. That way, you can use Gists as "templates" for swing environments, and collaborate on them with others just like you would any other gist. When you're done with a swing, simply close the preview window and all other documents will be automatically closed. If you no longer need the swing, then delete it just like any other gist 👍
+
+## Copilot chat
+
+In addition to managing gists via the `Gists` tree view, you can also use Copilot chat (in `Agent` mode) to discuss and edit your gists/daily notes via natural language. For example, if you opened up Copilot chat and asked `What is the summary of my <X> gist?`, then Copilot would look up your list of gists, find the one about `<X>`, and then generate a summary for you. Or if you asked `Create a new gist that talks about the JavaScript programming language?`, then Copilot would generate a description + file contents based on the requested topic and then create a new gist for you.
+
+This experience works because the GistPad extension ships with the [GistPad MCP server](https://npmjs.com/gistpad-mcp) out of the box. Beyond simplifying setup, this approach is also more secure, since it creates and manages a GitHub token on your behald, with the minimal scopes. For more details about what you can do with GistPad + Copilot, check out the docs for the GistPad MCP server (including it's list of tools, resources, and prompts support).
 
 ## Contributed Commands (File Explorer)
 

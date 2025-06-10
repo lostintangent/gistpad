@@ -374,7 +374,8 @@
       },
       {
         "command": "gistpad.openGistInBrowser",
-        "title": "View Gist in Browser"
+        "title": "View Gist in Browser",
+        "icon": "$(globe)"
       },
       {
         "command": "gistpad.openGistInBlocks",
@@ -1445,9 +1446,14 @@
           "when": "resourceScheme == repo"
         },
         {
+          "command": "gistpad.openGistInBrowser",
+          "when": "resourceScheme == gist",
+          "group": "navigation@1"
+        },
+        {
           "command": "gistpad.syncGistFile",
           "when": "resourceScheme == gist && !config.gistpad.syncOnSave",
-          "group": "navigation@1"
+          "group": "navigation@2"
         }
       ],
       "editor/title/context": [

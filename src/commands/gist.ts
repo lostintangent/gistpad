@@ -553,10 +553,41 @@ export async function registerGistCommands(context: ExtensionContext) {
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.openGistInBrowser`,
-      async (node: GistNode) => {
-        let url = node.gist.html_url;
-        if (node.gist.type === "note") {
-          url = createGistPadWebUrl(node.gist.id);
+      async (node?: GistNode) => {
+        let gist: Gist | undefined;
+        
+        if (node) {
+          // Called from tree context with GistNode
+          gist = node.gist;
+        } else {
+          // Called from editor context - use active editor
+          const editor = window.activeTextEditor;
+          if (!editor || editor.document.uri.scheme !== 'gist') {
+            return;
+          }
+          
+          const { gistId } = getGistDetailsFromUri(editor.document.uri);
+          
+          // Find the gist in the store
+          gist = store.gists.find(g => g.id === gistId) ||
+                 store.archivedGists.find(g => g.id === gistId) ||
+                 store.starredGists.find(g => g.id === gistId);
+          
+          if (!gist) {
+            // Fallback: construct URL manually
+            const url = `https://gist.github.com/${gistId}`;
+            env.openExternal(Uri.parse(url));
+            return;
+          }
+        }
+
+        if (!gist) {
+          return;
+        }
+
+        let url = gist.html_url;
+        if (gist.type === "note") {
+          url = createGistPadWebUrl(gist.id);
         }
 
         env.openExternal(Uri.parse(url));

@@ -90,13 +90,13 @@ export function registerFileCommands(context: ExtensionContext) {
         let url: string;
         if (nodeOrUri instanceof GistFileNode) {
           const gist = store.gists.find((gist) => gist.id === nodeOrUri.gistId)!;
-          url = `https://gist.github.com/${gist.owner.login}/${gist.id}`;
+          url = `${gist.html_url}#${nodeOrUri.file.filename}`;
         } else {
-          const { gistId } = getGistDetailsFromUri(
+          const { gistId, file } = getGistDetailsFromUri(
             encodeDirectoryUri(nodeOrUri)
           );
           const gist = store.gists.find((gist) => gist.id === gistId)!;
-          url = `https://gist.github.com/${gist.owner.login}/${gist.id}`;
+          url = `${gist.html_url}#${file}`;
         }
 
         await env.clipboard.writeText(url);

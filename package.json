@@ -1044,17 +1044,17 @@
         },
         {
           "command": "gistpad.newGistFromTag",
-          "when": "viewItem == gists.gistType.tag",
+          "when": "viewItem == gistType.tag.editable",
           "group": "inline@1"
         },
         {
           "command": "gistpad.newGistFromTag",
-          "when": "viewItem == gists.gistType.tag",
+          "when": "viewItem == gistType.tag.editable",
           "group": "new@1"
         },
         {
           "command": "gistpad.newNote",
-          "when": "viewItem == gists.gistType.note",
+          "when": "viewItem == gistType.note.editable",
           "group": "inline@1"
         },
         {
@@ -1404,12 +1404,12 @@
         },
         {
           "command": "gistpad.newNotebook",
-          "when": "viewItem == gists.gistType.notebook",
+          "when": "viewItem == gistType.notebook.editable",
           "group": "inline@1"
         },
         {
           "command": "gistpad.newNotebook",
-          "when": "viewItem == gists.gistType.notebook",
+          "when": "viewItem == gistType.notebook.editable",
           "group": "basic@1"
         }
       ],

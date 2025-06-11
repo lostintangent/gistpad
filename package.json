@@ -1057,7 +1057,7 @@
         },
         {
           "command": "gistpad.newNote",
-          "when": "viewItem == gistType.note",
+          "when": "viewItem == gists.gistType.note",
           "group": "inline@1"
         },
         {

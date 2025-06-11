@@ -295,7 +295,17 @@ export class GistGroupNode extends TreeNode {
       ? (label as GistType)
       : "tag";
 
-    this.contextValue = `gistType.${iconType}`;
+    // Set context value based on the node constructor type
+    let contextPrefix = "gistType";
+    if (nodeConstructor === StarredGistNode) {
+      contextPrefix = "starredGists.gistType";
+    } else if (nodeConstructor === FollowedUserGistNode) {
+      contextPrefix = "followedUser.gistType";
+    } else if (nodeConstructor === GistNode) {
+      contextPrefix = "gists.gistType";
+    }
+
+    this.contextValue = `${contextPrefix}.${iconType}`;
     const iconPath = this.getGistTypeIcon(iconType, true, extensionContext);
     if (iconPath) {
       this.iconPath = iconPath!;

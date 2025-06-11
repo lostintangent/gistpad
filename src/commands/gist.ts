@@ -541,11 +541,10 @@ export async function registerGistCommands(context: ExtensionContext) {
         const descriptionInputBox = window.createInputBox();
         descriptionInputBox.title = "Create new note";
         descriptionInputBox.prompt = "Enter a description for the new note";
-        descriptionInputBox.placeholder = "My new note";
 
         descriptionInputBox.onDidAccept(async () => {
           descriptionInputBox.hide();
-          const description = descriptionInputBox.value || "New note";
+          const description = descriptionInputBox.value || "Untitled note";
 
           return window.withProgress(
             { location: ProgressLocation.Notification, title: "Creating Note..." },

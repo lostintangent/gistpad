@@ -534,6 +534,35 @@ export async function registerGistCommands(context: ExtensionContext) {
 
   context.subscriptions.push(
     commands.registerCommand(
+      `${EXTENSION_NAME}.newNote`,
+      async (node: GistGroupNode) => {
+        await ensureAuthenticated();
+
+        const descriptionInputBox = window.createInputBox();
+        descriptionInputBox.title = "Create new note";
+        descriptionInputBox.prompt = "Enter a description for the new note";
+        descriptionInputBox.placeholder = "My new note";
+
+        descriptionInputBox.onDidAccept(async () => {
+          descriptionInputBox.hide();
+          const description = descriptionInputBox.value || "New note";
+
+          return window.withProgress(
+            { location: ProgressLocation.Notification, title: "Creating Note..." },
+            () => {
+              const files = [{ filename: "README.md", content: "" }];
+              return newGist(files, false, description);
+            }
+          );
+        });
+
+        descriptionInputBox.show();
+      }
+    )
+  );
+
+  context.subscriptions.push(
+    commands.registerCommand(
       `${EXTENSION_NAME}.openGist`,
       (node?: GistNode | GistsNode) => {
         // We expose the "Open Gist" command on the "Your Gists" node

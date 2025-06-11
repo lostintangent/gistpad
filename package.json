@@ -357,6 +357,11 @@
         "icon": "$(add)"
       },
       {
+        "command": "gistpad.newNote",
+        "title": "New Note",
+        "icon": "$(add)"
+      },
+      {
         "command": "gistpad.newNotebook",
         "title": "New Notebook",
         "category": "GistPad",
@@ -802,6 +807,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.newNote",
+          "when": "false"
+        },
+        {
           "command": "gistpad.recordRepoCodeTour",
           "when": "false"
         },
@@ -1045,6 +1054,11 @@
           "command": "gistpad.newGistFromTag",
           "when": "viewItem == gistType.tag",
           "group": "new@1"
+        },
+        {
+          "command": "gistpad.newNote",
+          "when": "viewItem == gistType.note",
+          "group": "inline@1"
         },
         {
           "command": "gistpad.openGist",

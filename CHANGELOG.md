@@ -1,3 +1,8 @@
+## v0.9.3 (06/11/25)
+
+- Added a one-click "+" button to note-type gist groups for quickly creating new notes
+- New notes are created as secret gists with a default `README.md` file and can be customized with a description
+
 ## v0.9.2 (06/10/25)
 
 - The `Open Gist as Workspace` command no longer adds the gist to the `Open Recent` list in VS Code

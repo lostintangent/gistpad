@@ -5,6 +5,7 @@ import { RepoFileSystemProvider } from "../fileSystem";
 import { Repository, store } from "../store";
 import { RepositoryFileNode, RepositoryNode } from "../tree/nodes";
 import { openRepoDocument } from "../utils";
+import { config } from "./config";
 import { getPageFilePath } from "./utils";
 
 import moment = require("moment");
@@ -80,7 +81,11 @@ export function registerCommands(context: ExtensionContext) {
       `${EXTENSION_NAME}.openTodayPage`,
       async (node?: RepositoryNode, displayProgress: boolean = true) => {
         const sharedMoment = moment();
-        const fileName = sharedMoment.format("YYYY-MM-DD");
+        
+        // Use the new filename format setting, defaulting to "YYYY-MM-DD" if not set
+        const filenameFormat = (config.dailyFilenameFormat as string) || "YYYY-MM-DD";
+        const fileName = sharedMoment.format(filenameFormat);
+        
         const filePath = getPageFilePath(fileName);
 
         const titleFormat = workspace

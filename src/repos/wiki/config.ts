@@ -11,5 +11,8 @@ export const config = {
   },
   get dailyTitleFormat() {
     return getConfigSetting("daily.titleFormat");
+  },
+  get dailyFilenameFormat() {
+    return getConfigSetting("daily.filenameFormat");
   }
 };

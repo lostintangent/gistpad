@@ -1,3 +1,7 @@
+## v0.9.3 (06/12/25)
+
+- Added `GistPad: Clone Directory` setting, which allows you to control the name of the directory that gists are cloned into (when running the `Clone Repository` command on a gist)
+
 ## v0.9.2 (06/12/25)
 
 - Added `GistPad: New Note` command available in the command palette as well as the tree view

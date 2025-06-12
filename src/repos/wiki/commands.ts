@@ -82,7 +82,6 @@ export function registerCommands(context: ExtensionContext) {
       async (node?: RepositoryNode, displayProgress: boolean = true) => {
         const sharedMoment = moment();
         
-        // Use the new filename format setting, defaulting to "YYYY-MM-DD" if not set
         const filenameFormat = (config.dailyFilenameFormat as string) || "YYYY-MM-DD";
         const fileName = sharedMoment.format(filenameFormat);
         

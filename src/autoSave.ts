@@ -24,7 +24,6 @@ export class AutoSaveManager {
     this.disposables.push(
       vscode.window.onDidChangeActiveTextEditor((editor) => {
         if (config.get("autoSave") === "onFocusChange") {
-          // Save all dirty gist documents when focus changes
           vscode.workspace.textDocuments.forEach((document) => {
             if (this.shouldAutoSave(document) && document.isDirty) {
               this.saveDocument(document);
@@ -36,9 +35,10 @@ export class AutoSaveManager {
 
     this.disposables.push(
       vscode.workspace.onDidChangeConfiguration((event) => {
-        if (event.affectsConfiguration("gistpad.autoSave") || 
-            event.affectsConfiguration("gistpad.autoSaveDelay")) {
-          // Clear all existing timers and reschedule if needed
+        if (
+          event.affectsConfiguration("gistpad.autoSave") ||
+          event.affectsConfiguration("gistpad.autoSaveDelay")
+        ) {
           this.clearAllTimers();
           if (config.get("autoSave") === "afterDelay") {
             vscode.workspace.textDocuments.forEach((document) => {
@@ -83,13 +83,13 @@ export class AutoSaveManager {
 
   private scheduleAutoSave(document: vscode.TextDocument): void {
     const autoSaveMode = config.get("autoSave");
-    
+
     if (autoSaveMode !== "afterDelay") {
       return;
     }
 
     const uri = document.uri.toString();
-    
+
     this.clearTimer(uri);
 
     const delay = config.get("autoSaveDelay");
@@ -106,8 +106,7 @@ export class AutoSaveManager {
       if (document.isDirty) {
         await document.save();
       }
-    } catch (error) {
-    }
+    } catch (error) { }
   }
 
   private clearTimer(uri: string): void {
@@ -134,21 +133,25 @@ export class AutoSaveManager {
 
 let autoSaveManager: AutoSaveManager | undefined;
 
-export function registerAutoSaveManager(context: vscode.ExtensionContext): void {
-
+export function registerAutoSaveManager(
+  context: vscode.ExtensionContext
+): void {
   // Only initialize GistPad auto-save if VS Code's auto-save is disabled
-  const vscodeAutoSave = vscode.workspace.getConfiguration("files").get("autoSave");
+  const vscodeAutoSave = vscode.workspace
+    .getConfiguration("files")
+    .get("autoSave");
   if (vscodeAutoSave === "off") {
     autoSaveManager = new AutoSaveManager();
     context.subscriptions.push(autoSaveManager);
   }
 
-  // Handle VS Code auto-save configuration changes
   context.subscriptions.push(
     vscode.workspace.onDidChangeConfiguration((e) => {
       if (e.affectsConfiguration("files.autoSave")) {
-        const vscodeAutoSave = vscode.workspace.getConfiguration("files").get("autoSave");
-        
+        const vscodeAutoSave = vscode.workspace
+          .getConfiguration("files")
+          .get("autoSave");
+
         if (vscodeAutoSave === "off" && !autoSaveManager) {
           // VS Code auto-save was disabled, initialize GistPad auto-save
           autoSaveManager = new AutoSaveManager();

@@ -146,3 +146,33 @@ export class AutoSaveManager {
     this.disposables = [];
   }
 }
+
+export function registerAutoSaveManager(context: vscode.ExtensionContext): void {
+  let autoSaveManager: AutoSaveManager | undefined;
+
+  // Only initialize GistPad auto-save if VS Code's auto-save is disabled
+  const vscodeAutoSave = vscode.workspace.getConfiguration("files").get("autoSave");
+  if (vscodeAutoSave === "off") {
+    autoSaveManager = new AutoSaveManager();
+    context.subscriptions.push(autoSaveManager);
+  }
+
+  // Handle VS Code auto-save configuration changes
+  context.subscriptions.push(
+    vscode.workspace.onDidChangeConfiguration((e) => {
+      if (e.affectsConfiguration("files.autoSave")) {
+        const vscodeAutoSave = vscode.workspace.getConfiguration("files").get("autoSave");
+        
+        if (vscodeAutoSave === "off" && !autoSaveManager) {
+          // VS Code auto-save was disabled, initialize GistPad auto-save
+          autoSaveManager = new AutoSaveManager();
+          context.subscriptions.push(autoSaveManager);
+        } else if (vscodeAutoSave !== "off" && autoSaveManager) {
+          // VS Code auto-save was enabled, dispose GistPad auto-save
+          autoSaveManager.dispose();
+          autoSaveManager = undefined as any;
+        }
+      }
+    })
+  );
+}

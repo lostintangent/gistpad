@@ -9,6 +9,7 @@ import {
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
 import { findGistInStore } from "../store";
+import { refreshGist } from "../store/actions";
 import { ensureAuthenticated } from "../store/auth";
 import { GistFileNode, GistNode } from "../tree/nodes";
 import { createGistPadOpenUrl, createGistPadWebUrl } from "../uriHandler";
@@ -98,7 +99,9 @@ export function registerFileCommands(context: ExtensionContext) {
         let url: string;
         if (nodeOrUri instanceof GistFileNode) {
           const gist = findGistInStore(nodeOrUri.gistId)!;
-          url = `${gist.html_url}${getUrlFileNameHash(nodeOrUri.file.filename!)}`;
+          url = `${gist.html_url}${getUrlFileNameHash(
+            nodeOrUri.file.filename!
+          )}`;
         } else {
           const { gistId, file } = getGistDetailsFromUri(
             encodeDirectoryUri(nodeOrUri)
@@ -243,8 +246,8 @@ export function registerFileCommands(context: ExtensionContext) {
         });
 
         if (files) {
-          withProgress("Uploading file(s)...", () =>
-            Promise.all(
+          withProgress("Uploading file(s)...", async () => {
+            await Promise.all(
               files.map(async (file) => {
                 const fileName = path.basename(file.path);
                 const content = await workspace.fs.readFile(file);
@@ -254,8 +257,10 @@ export function registerFileCommands(context: ExtensionContext) {
                   content
                 );
               })
-            )
-          );
+            );
+
+            refreshGist(node.gist.id);
+          });
         }
       }
     )

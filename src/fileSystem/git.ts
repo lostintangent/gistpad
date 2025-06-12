@@ -15,7 +15,7 @@ async function ensureRepo(gistId: string): Promise<[string, SimpleGit]> {
     repo = git(repoPath);
     const isRepo = await repo.checkIsRepo();
     if (isRepo) {
-      await repo.pull("origin", "master", { "--force": null });
+      await repo.pull("origin", "main", { "--force": null });
     } else {
       await repo.init();
     }
@@ -44,7 +44,7 @@ export async function addFile(
 
   await repo.add(filePath);
   await repo.commit(`Adding ${fileName}`);
-  await repo.push("origin", "master");
+  await repo.push("origin", "main");
 
   return refreshGist(gistId);
 }
@@ -62,7 +62,7 @@ export async function renameFile(
 
   await repo.add([filePath, newFilePath]);
   await repo.commit(`Renaming ${fileName} to ${newFileName}`);
-  await repo.push("origin", "master");
+  await repo.push("origin", "main");
 
   return refreshGist(gistId);
 }
@@ -121,6 +121,6 @@ async function pushRemote(
     await repo.addRemote(remoteName, remoteUrl);
   }
 
-  await repo.push(remoteName, "master", { "--force": null });
+  await repo.push(remoteName, "main", { "--force": null });
   await repo.removeRemote(remoteName);
 }

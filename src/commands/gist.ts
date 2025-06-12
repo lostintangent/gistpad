@@ -397,25 +397,19 @@ export async function registerGistCommands(context: ExtensionContext) {
         const parentPath = parentDirectory[0].fsPath;
         
         try {
-          await window.withProgress(
-            {
-              location: ProgressLocation.Notification,
-              title: `Cloning gist to ${directoryName}...`
-            },
-            async () => {
-              const targetPath = await cloneGistToDirectory(node.gist.id, parentPath, directoryName);
-              
-              // Optionally open the cloned directory
-              const openAction = await window.showInformationMessage(
-                `Gist successfully cloned to "${targetPath}"`,
-                "Open in new window"
-              );
-              
-              if (openAction) {
-                commands.executeCommand("vscode.openFolder", Uri.file(targetPath), true);
-              }
+          await withProgress(`Cloning gist to ${directoryName}...`, async () => {
+            const targetPath = await cloneGistToDirectory(node.gist.id, parentPath, directoryName);
+            
+            // Optionally open the cloned directory
+            const openAction = await window.showInformationMessage(
+              `Gist successfully cloned to "${targetPath}"`,
+              "Open in new window"
+            );
+            
+            if (openAction) {
+              commands.executeCommand("vscode.openFolder", Uri.file(targetPath), true);
             }
-          );
+          });
         } catch (error) {
           const message = error instanceof Error ? error.message : "Unknown error occurred";
           window.showErrorMessage(`Failed to clone gist: ${message}`);

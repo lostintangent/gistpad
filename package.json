@@ -44,6 +44,27 @@
       "type": "object",
       "title": "GistPad",
       "properties": {
+        "gistpad.autoSave": {
+          "default": "off",
+          "type": "string",
+          "enum": [
+            "off",
+            "afterDelay",
+            "onFocusChange"
+          ],
+          "enumDescriptions": [
+            "Auto-save is disabled",
+            "Auto-save files after a configured delay",
+            "Auto-save files when focus moves away from the editor"
+          ],
+          "description": "Controls auto-saving of gist files. Defaults to off."
+        },
+        "gistpad.autoSaveDelay": {
+          "default": 1000,
+          "type": "number",
+          "minimum": 1,
+          "description": "Configure the delay in milliseconds after which a dirty file is saved automatically. Only applies when 'gistpad.autoSave' is set to 'afterDelay'. Defaults to 1000."
+        },
         "gistpad.comments.showThread": {
           "default": "whenNotEmpty",
           "type": "string",
@@ -119,27 +140,6 @@
           "default": true,
           "type": "boolean",
           "description": "Specifies whether to automatically sync a file with GitHub when saving it. Defaults to true."
-        },
-        "gistpad.autoSave": {
-          "default": "off",
-          "type": "string",
-          "enum": [
-            "off",
-            "afterDelay",
-            "onFocusChange"
-          ],
-          "enumDescriptions": [
-            "Auto-save is disabled",
-            "Auto-save files after a configured delay",
-            "Auto-save files when focus moves away from the editor"
-          ],
-          "description": "Controls auto-saving of gist files. Defaults to off."
-        },
-        "gistpad.autoSaveDelay": {
-          "default": 1000,
-          "type": "number",
-          "minimum": 1,
-          "description": "Configure the delay in milliseconds after which a dirty file is saved automatically. Only applies when 'gistpad.autoSave' is set to 'afterDelay'. Defaults to 1000."
         },
         "gistpad.treeIcons": {
           "default": "true",

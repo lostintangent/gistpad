@@ -147,8 +147,9 @@ export class AutoSaveManager {
   }
 }
 
+let autoSaveManager: AutoSaveManager | undefined;
+
 export function registerAutoSaveManager(context: vscode.ExtensionContext): void {
-  let autoSaveManager: AutoSaveManager | undefined;
 
   // Only initialize GistPad auto-save if VS Code's auto-save is disabled
   const vscodeAutoSave = vscode.workspace.getConfiguration("files").get("autoSave");

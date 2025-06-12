@@ -1,5 +1,3 @@
-## v0.9.4 (TBD)
-
 ## v0.9.3 (06/11/25)
 
 - Added "GistPad: New Note" command available in the command palette as well as the tree view

@@ -196,7 +196,7 @@ Additionally, to make it really simple to open your "today page", you can either
 
 <img width="75px" src="https://user-images.githubusercontent.com/116461/100490937-a981fb00-30d4-11eb-9e69-e7ab9b9bab61.png" />
 
-> If you'd like to change the name of the directory that daily pages are stored in, you can set the `GistPad > Wikis > Daily: Directory Name` setting. Furthermore, if you want to change the format that is used to title daily pages, you can set the `GistPad > Wikis > Daily: Title Format` setting.
+> If you'd like to change the name of the directory that daily pages are stored in, you can set the `GistPad > Wikis > Daily: Directory Name` setting. Furthermore, if you want to change the format that is used to title daily pages, you can set the `GistPad > Wikis > Daily: Title Format` setting. You can also customize the filename format separately using the `GistPad > Wikis > Daily: Filename Format` setting.
 
 #### Links
 
@@ -332,3 +332,5 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `Gistpad > Wikis > Daily: Directory Name` - Specifies the name of the directory that daily pages are organized within. Defaults to `Daily`.
 
 - `Gistpad > Wikis > Daily: Title Format` - Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages. Defaults to `LL`.
+
+- `Gistpad > Wikis > Daily: Filename Format` - Specifies the date format (using Moment.js syntax) that is used to for the filename of daily pages. Defaults to `YYYY-MM-DD`.

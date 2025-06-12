@@ -547,10 +547,9 @@ export async function registerGistCommands(context: ExtensionContext) {
           const description = descriptionInputBox.value || "Untitled note";
 
           return window.withProgress(
-            { location: ProgressLocation.Notification, title: "Creating Note..." },
+            { location: ProgressLocation.Notification, title: "Creating note..." },
             () => {
-              const files = [{ filename: "README.md", content: "" }];
-              return newGist(files, false, description);
+              return newGist([{ filename: "README.md", content: "" }], false, description);
             }
           );
         });

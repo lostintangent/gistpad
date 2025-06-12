@@ -1057,6 +1057,11 @@
           "group": "inline@1"
         },
         {
+          "command": "gistpad.newNote",
+          "when": "viewItem == gistType.note.editable",
+          "group": "new@1"
+        },
+        {
           "command": "gistpad.openGist",
           "when": "viewItem =~ /^(gists|starredGists|followedUser).gist/",
           "group": "inline@1"

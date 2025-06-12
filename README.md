@@ -263,6 +263,8 @@ Additionally, if you disable the `Gistpad: Sync on Save` setting, then the follo
 
 In addition to the `Gists` view, this extension also provides the following commands:
 
+- `GistPad: Copy File to Gist` - Allows you to copy the currently active file to a new or existing Gist. This provides the same functionality as right-clicking a file, but from the command palette.
+
 - `GistPad: Delete Gist` - Allows you to delete one of your Gists. If you have a gist workspace open, it will delete that and then close the folder.
 
 - `GistPad: Follow User` - Follow another GitHub user, which allows you to browser/access/fork their Gists from within the `Gists` view.

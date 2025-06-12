@@ -94,19 +94,31 @@ export async function promptForGistSelection(files: GistFile[]) {
 }
 
 export function registerEditorCommands(context: ExtensionContext) {
-  // This command can be called from four different contexts:
+  // This command can be called from five different contexts:
   // 1) Right-clicking a file in the "Explorer" tree (Uri)
   // 2) Right-clicking the editor tab of a file (Uri)
   // 3) Right-clicking a file in the "Gists" tree (GistFileNode)
   // 4) From the toolbar of the notebook editor
+  // 5) From the command palette (no parameters - use active editor)
   context.subscriptions.push(
     commands.registerCommand(
       `${EXTENSION_NAME}.addFileToGist`,
       async (
-        targetNode: GistFileNode | Uri | { notebookEditor: { notebookUri: Uri }},
+        targetNode?: GistFileNode | Uri | { notebookEditor: { notebookUri: Uri }},
         multiSelectNodes?: GistFileNode[] | Uri[]
       ) => {
         await ensureAuthenticated();
+
+        // If no parameters are passed (called from command palette),
+        // use the active text editor
+        if (!targetNode) {
+          const activeEditor = window.activeTextEditor;
+          if (!activeEditor) {
+            window.showErrorMessage("No active editor found. Please open a file first.");
+            return;
+          }
+          targetNode = activeEditor.document.uri;
+        }
 
         const nodes =
           multiSelectNodes && !("editorIndex" in multiSelectNodes)

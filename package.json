@@ -688,7 +688,7 @@
         },
         {
           "command": "gistpad.addFileToGist",
-          "when": "false"
+          "when": "gistpad:state == SignedIn && editorTextFocus"
         },
         {
           "command": "gistpad.addGistComment",

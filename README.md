@@ -309,6 +309,12 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to file it's pasted into.
   - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
 
+- `GistPad > Clone Directory`: Specifies how to name the directory when cloning a gist repository. Can be set to one of the following values:
+
+  - `gistId` _(default)_: Uses the original behavior where the gist GUID is used as the folder name.
+  - `description`: Uses the gist description as the folder name (with invalid characters sanitized), falling back to the gist ID if no description is available.
+  - `prompt`: Shows an input dialog asking for a custom directory name, with the gist description as the default value.
+
 - `GistPad: Output` - When enabled, creates an Output trace channel at VSCode startup.
 
 - `GistPad > Daily Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new daily notes. Defaults to `LL` (e.g. `March 6, 2020`).

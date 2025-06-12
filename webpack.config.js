@@ -36,7 +36,7 @@ const nodeConfig = {
     path: path.resolve(__dirname, "dist"),
     filename: "extension.js",
     libraryTarget: "commonjs2",
-    devtoolModuleFilenameTemplate: "../[resource-path]",
+    devtoolModuleFilenameTemplate: "../[resource-path]"
   },
   resolve: {
     ...config.resolve,
@@ -65,29 +65,36 @@ const webConfig = {
     path: path.resolve(__dirname, "dist"),
     filename: "extension-web.js",
     libraryTarget: "commonjs2",
-    devtoolModuleFilenameTemplate: "../[resource-path]",
+    devtoolModuleFilenameTemplate: "../[resource-path]"
+  },
+  externals: {
+    ...config.externals,
+    "simple-git": "commonjs simple-git"
   },
   resolve: {
     ...config.resolve,
     alias: {
-      "@abstractions": path.join(__dirname, "./src/abstractions/browser")
+      "@abstractions": path.join(__dirname, "./src/abstractions/browser"),
+      "simple-git": path.resolve(
+        __dirname,
+        "src/abstractions/browser/simple-git"
+      )
     },
     fallback: {
-      "child_process": false,
-      "crypto": false,
-      "fs": false, // TODO: Implement file uploading in the browser
-      "http": require.resolve("stream-http"),
-      "https": require.resolve("https-browserify"),
-      "os": require.resolve("os-browserify/browser"),
-      "path": require.resolve("path-browserify"),
-      "querystring": require.resolve("querystring-es3"),
-      "stream": false,
-      "url": require.resolve("url/"),
-      "util": require.resolve("util/"),
-      "zlib": false
+      child_process: false,
+      crypto: false,
+      fs: false, // TODO: Implement file uploading in the browser
+      http: require.resolve("stream-http"),
+      https: require.resolve("https-browserify"),
+      os: require.resolve("os-browserify/browser"),
+      path: require.resolve("path-browserify"),
+      querystring: require.resolve("querystring-es3"),
+      stream: false,
+      url: require.resolve("url/"),
+      util: require.resolve("util/"),
+      zlib: false
     }
   }
 };
-
 
 module.exports = [nodeConfig, webConfig];

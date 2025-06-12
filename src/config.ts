@@ -18,6 +18,7 @@ export function get(key: "syncOnSave"): boolean;
 export function get(key: "autoSave"): "off" | "afterDelay" | "onFocusChange";
 export function get(key: "autoSaveDelay"): number;
 export function get(key: "treeIcons"): boolean;
+export function get(key: "cloneDirectory"): "gistId" | "description" | "prompt";
 
 export function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

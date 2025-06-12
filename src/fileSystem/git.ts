@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import { simpleGit as git, type SimpleGit } from "simple-git";
+import { simpleGit as git, SimpleGit } from "simple-git";
 import { store } from "../store";
 import { refreshGist } from "../store/actions";
 import { getToken } from "../store/auth";
@@ -90,6 +90,20 @@ export async function duplicateGist(
     "duplicate",
     `https://${store.login}:${token}@gist.github.com/${sourceGistId}.git`
   );
+}
+
+export async function cloneGistToDirectory(
+  gistId: string,
+  parentDirectory: string,
+  directoryName: string
+) {
+  const token = await getToken();
+  const remote = `https://${store.login}:${token}@gist.github.com/${gistId}.git`;
+  const targetPath = path.join(parentDirectory, directoryName);
+
+  await git(parentDirectory).silent(true).clone(remote, directoryName);
+
+  return targetPath;
 }
 
 async function pushRemote(

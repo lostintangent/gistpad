@@ -12,8 +12,9 @@ import {
   workspace
 } from "vscode";
 import { EXTENSION_NAME } from "../constants";
+import * as config from "../config";
 import { updateGistFiles } from "../fileSystem/api";
-import { duplicateGist, exportToRepo } from "../fileSystem/git";
+import { duplicateGist, exportToRepo, cloneGistToDirectory } from "../fileSystem/git";
 import { openRepo } from "../repos/store/actions";
 import { findGistInStore, Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
@@ -54,6 +55,7 @@ import {
   isOwnedGist,
   openGist,
   openGistFiles,
+  sanitizeDirectoryName,
   sortGists,
   updateGistTags,
   withProgress
@@ -342,7 +344,79 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.cloneRepository`,
       async (node: GistNode) => {
-        commands.executeCommand("git.clone", node.gist.git_pull_url);
+        const cloneDirectoryNameSetting = config.get("cloneDirectory");
+        
+        if (cloneDirectoryNameSetting === "gistId") {
+          // Use default behavior
+          return commands.executeCommand("git.clone", node.gist.git_pull_url);
+        }
+        
+        let directoryName: string;
+        
+        if (cloneDirectoryNameSetting === "description") {
+          // Use gist description as directory name, fallback to gist ID
+          directoryName = node.gist.description 
+            ? sanitizeDirectoryName(node.gist.description)
+            : node.gist.id;
+        } else if (cloneDirectoryNameSetting === "prompt") {
+          // Prompt user for directory name
+          const defaultName = node.gist.description 
+            ? sanitizeDirectoryName(node.gist.description)
+            : node.gist.id;
+            
+          const inputName = await window.showInputBox({
+            prompt: "Specify the name for the cloned repository directory",
+            value: defaultName,
+            placeHolder: "Directory name"
+          });
+          
+          if (!inputName) {
+            // User cancelled, fall back to default behavior
+            return commands.executeCommand("git.clone", node.gist.git_pull_url);
+          }
+          
+          directoryName = sanitizeDirectoryName(inputName);
+        } else {
+          // Fallback to default behavior for unknown settings
+          return commands.executeCommand("git.clone", node.gist.git_pull_url);
+        }
+        
+        // Ask user to select the parent directory
+        const parentDirectory = await window.showOpenDialog({
+          canSelectFiles: false,
+          canSelectFolders: true,
+          canSelectMany: false,
+          openLabel: "Select parent directory for clone"
+        });
+        
+        if (!parentDirectory || parentDirectory.length === 0) {
+          // User cancelled directory selection
+          return;
+        }
+        
+        const parentPath = parentDirectory[0].fsPath;
+        
+        try {
+          await withProgress(`Cloning gist to "${directoryName}"...`, async () => {
+            const targetPath = await cloneGistToDirectory(node.gist.id, parentPath, directoryName);
+            
+            // Optionally open the cloned directory
+            const openAction = await window.showInformationMessage(
+              `Gist successfully cloned to "${targetPath}"`,
+              "Open",
+              "Open in new window"
+            );
+            
+            if (openAction === "Open") {
+              commands.executeCommand("vscode.openFolder", Uri.file(targetPath), false);
+            } else if (openAction === "Open in new window") {
+              commands.executeCommand("vscode.openFolder", Uri.file(targetPath), true);
+            }
+          });
+        } catch (error) {
+          const message = error instanceof Error ? error.message : "Unknown error occurred";
+          window.showErrorMessage(`Failed to clone gist: ${message}`);
+        }
       }
     )
   );

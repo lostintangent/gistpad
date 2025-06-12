@@ -1,3 +1,7 @@
+## v0.9.3 (06/11/25)
+
+- Added "GistPad: New Note" command available in the command palette as well as the tree view
+
 ## v0.9.2 (06/10/25)
 
 - The `Open Gist as Workspace` command no longer adds the gist to the `Open Recent` list in VS Code

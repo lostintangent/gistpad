@@ -327,6 +327,14 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Sync on Save` - Specifies whether or not to enable the auto sync feature when saving a file. Consider disabling this option when VS Code's `files.autoSave` is enabled to prevent frequent syncing operations. Defaults to `true`.
 
+- `GistPad: Auto Save` - Controls auto-saving of gist files. Can be set to one of the following values:
+
+  - `off` _(default)_: Auto-save is disabled.
+  - `afterDelay`: Auto-save files after a configured delay.
+  - `onFocusChange`: Auto-save files when focus moves away from the editor.
+
+- `GistPad: Auto Save Delay` - Configure the delay in milliseconds after which a dirty file is saved automatically. Only applies when `GistPad: Auto Save` is set to `afterDelay`. Defaults to `1000`.
+
 - `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
 
 - `Gistpad > Wikis > Daily: Directory Name` - Specifies the name of the directory that daily pages are organized within. Defaults to `Daily`.

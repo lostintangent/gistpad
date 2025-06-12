@@ -1,5 +1,6 @@
 import * as vscode from "vscode";
 import { workspace } from "vscode";
+import { AutoSaveManager } from "./autoSave";
 import { registerCommands } from "./commands";
 import { registerCommentController } from "./comments";
 import * as config from "./config";
@@ -17,6 +18,7 @@ import { registerTreeProvider } from "./tree";
 import { registerProtocolHandler } from "./uriHandler";
 
 export let output: Output;
+let autoSaveManager: AutoSaveManager;
 
 export async function activate(context: vscode.ExtensionContext) {
   registerCommands(context);
@@ -31,6 +33,10 @@ export async function activate(context: vscode.ExtensionContext) {
   registerRepoModule(context);
   registerCodeSwingModule(context);
   registerShowcaseModule(context);
+
+  // Initialize auto-save manager
+  autoSaveManager = new AutoSaveManager();
+  context.subscriptions.push(autoSaveManager);
 
   const keysForSync = ["followedUsers", "repos"].map((key) => `gistpad.${key}`);
   if (config.get("output")) {

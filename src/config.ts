@@ -15,6 +15,8 @@ export function get(key: "dailyNotes.fileFormat"): string;
 export function get(key: "dailyNotes.show"): boolean;
 export function get(key: "showcaseUrl"): string;
 export function get(key: "syncOnSave"): boolean;
+export function get(key: "autoSave"): "off" | "afterDelay" | "onFocusChange";
+export function get(key: "autoSaveDelay"): number;
 export function get(key: "treeIcons"): boolean;
 
 export function get(key: any) {

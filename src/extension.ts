@@ -34,7 +34,6 @@ export async function activate(context: vscode.ExtensionContext) {
   registerCodeSwingModule(context);
   registerShowcaseModule(context);
 
-  // Initialize auto-save manager
   autoSaveManager = new AutoSaveManager();
   context.subscriptions.push(autoSaveManager);
 

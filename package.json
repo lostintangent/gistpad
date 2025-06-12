@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.9.3",
+  "version": "0.9.2",
   "extensionKind": [
     "ui",
     "workspace"
@@ -44,6 +44,27 @@
       "type": "object",
       "title": "GistPad",
       "properties": {
+        "gistpad.autoSave": {
+          "default": "off",
+          "type": "string",
+          "enum": [
+            "off",
+            "afterDelay",
+            "onFocusChange"
+          ],
+          "enumDescriptions": [
+            "Auto-save is disabled",
+            "Auto-save files after a configured delay",
+            "Auto-save files when focus moves away from the editor"
+          ],
+          "description": "Controls auto-saving of gist files. Defaults to off."
+        },
+        "gistpad.autoSaveDelay": {
+          "default": 5000,
+          "type": "number",
+          "minimum": 1,
+          "description": "Configure the delay in milliseconds after which a dirty file is saved automatically. Only applies when 'gistpad.autoSave' is set to 'afterDelay'. Defaults to 1000."
+        },
         "gistpad.comments.showThread": {
           "default": "whenNotEmpty",
           "type": "string",
@@ -143,6 +164,11 @@
           "default": "LL",
           "type": "string",
           "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."
+        },
+        "gistpad.wikis.daily.filenameFormat": {
+          "default": "YYYY-MM-DD",
+          "type": "string",
+          "description": "Specifies the date format (using Moment.js syntax) that is used to for the filename of daily pages."
         }
       }
     },
@@ -368,6 +394,7 @@
       {
         "command": "gistpad.newNote",
         "title": "New Note",
+        "category": "GistPad",
         "icon": "$(add)"
       },
       {
@@ -1626,7 +1653,7 @@
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "https-browserify": "^1.0.0",
-    "is-binary-path": "^2.1.0",
+    "is-binary-path": "^3.0.0",
     "markdown-it": "^14.1.0",
     "markdown-it-regex": "^0.2.0",
     "mobx": "^5.14.2",

@@ -110,6 +110,11 @@
           "type": "boolean",
           "description": "Specifies whether or not to display the daily notes node in the gists tree view."
         },
+        "gistpad.gists.dateFormat": {
+          "default": "calendar",
+          "type": "string",
+          "description": "Specifies the moment.js format string to use for displaying created and updated dates in gist tooltips. Use 'calendar' for relative time (e.g., 'Last Monday at 2:30 PM')."
+        },
         "gistpad.showcaseUrl": {
           "default": "https://aka.ms/gistpad-showcase",
           "type": "string",

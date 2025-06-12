@@ -142,9 +142,15 @@ export class GistNode extends TreeNode {
   }
 
   getTooltip(suffix?: string) {
+    const dateFormat = config.get("gists.dateFormat");
+    const formatDate = (dateString: string) => {
+      const date = moment(dateString);
+      return dateFormat === "calendar" ? date.calendar() : date.format(dateFormat);
+    };
+
     let tooltip = `Description: ${this.label}
-Updated: ${moment(this.gist.updated_at).calendar()}
-Created: ${moment(this.gist.created_at).calendar()}`;
+Updated: ${formatDate(this.gist.updated_at)}
+Created: ${formatDate(this.gist.created_at)}`;
 
     if (this.gist.tags && this.gist.tags.length) {
       tooltip += `

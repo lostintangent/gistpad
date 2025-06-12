@@ -13,6 +13,7 @@ export function get(key: "dailyNotes.directoryFormat"): string;
 export function get(key: "dailyNotes.fileExtension"): string;
 export function get(key: "dailyNotes.fileFormat"): string;
 export function get(key: "dailyNotes.show"): boolean;
+export function get(key: "gists.dateFormat"): string;
 export function get(key: "showcaseUrl"): string;
 export function get(key: "syncOnSave"): boolean;
 export function get(key: "treeIcons"): boolean;

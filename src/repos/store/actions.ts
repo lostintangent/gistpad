@@ -396,7 +396,7 @@ export async function mergeBranch(
 }
 
 const REFRESH_INTERVAL = 1000 * 60 * 5;
-let refreshTimer: NodeJS.Timer;
+let refreshTimer: NodeJS.Timeout | undefined;
 export async function refreshRepositories() {
   if (reposStorage.repos.length === 0) {
     return;

@@ -134,7 +134,7 @@ export function registerLinkDecorator() {
       return;
     }
 
-    let timeout: NodeJS.Timer | null = null;
+    let timeout: NodeJS.Timeout | null = null;
     const triggerUpdateDecorations = (editor: TextEditor) => {
       if (timeout) {
         clearTimeout(timeout);

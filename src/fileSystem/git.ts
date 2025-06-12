@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import * as git from "simple-git/promise";
+import { simpleGit as git, SimpleGit } from "simple-git";
 import { store } from "../store";
 import { refreshGist } from "../store/actions";
 import { getToken } from "../store/auth";
 
-async function ensureRepo(gistId: string): Promise<[string, git.SimpleGit]> {
+async function ensureRepo(gistId: string): Promise<[string, SimpleGit]> {
   const repoPath = path.join(os.tmpdir(), gistId);
   const repoExists = fs.existsSync(repoPath);
 
@@ -100,14 +100,14 @@ export async function cloneGistToDirectory(
   const token = await getToken();
   const remote = `https://${store.login}:${token}@gist.github.com/${gistId}.git`;
   const targetPath = path.join(parentDirectory, directoryName);
-  
+
   await git(parentDirectory).silent(true).clone(remote, directoryName);
-  
+
   return targetPath;
 }
 
 async function pushRemote(
-  repo: git.SimpleGit,
+  repo: SimpleGit,
   remoteName: string,
   remoteUrl: string
 ) {

@@ -116,6 +116,28 @@ export function registerFileCommands(context: ExtensionContext) {
     )
   );
 
+  context.subscriptions.push(
+    commands.registerCommand(
+      `${EXTENSION_NAME}.copyFileLatestUrl`,
+      async (nodeOrUri: GistFileNode | Uri) => {
+        let url: string;
+        if (nodeOrUri instanceof GistFileNode) {
+          const gist = findGistInStore(nodeOrUri.gistId)!;
+          url = `https://gist.githubusercontent.com/${gist.owner!.login}/${gist.id}/raw/${encodeURIComponent(nodeOrUri.file.filename!)}`;
+        } else {
+          const { gistId, file } = getGistDetailsFromUri(
+            encodeDirectoryUri(nodeOrUri)
+          );
+
+          const gist = findGistInStore(gistId)!;
+          url = `https://gist.githubusercontent.com/${gist.owner!.login}/${gistId}/raw/${encodeURIComponent(file)}`;
+        }
+
+        await env.clipboard.writeText(url);
+      }
+    )
+  );
+
   const DELETE_RESPONSE = "Delete";
   context.subscriptions.push(
     commands.registerCommand(

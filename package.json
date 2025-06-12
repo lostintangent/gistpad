@@ -245,6 +245,10 @@
         "title": "Copy GitHub URL"
       },
       {
+        "command": "gistpad.copyFileLatestUrl",
+        "title": "Copy Latest URL"
+      },
+      {
         "command": "gistpad.copyGistPadUrl",
         "title": "Copy GistPad URL"
       },
@@ -759,6 +763,10 @@
           "when": "false"
         },
         {
+          "command": "gistpad.copyFileLatestUrl",
+          "when": "false"
+        },
+        {
           "command": "gistpad.deleteDirectory",
           "when": "false"
         },
@@ -1228,6 +1236,11 @@
           "group": "base@2"
         },
         {
+          "command": "gistpad.copyFileLatestUrl",
+          "when": "viewItem =~ /^gistFile/",
+          "group": "base@3"
+        },
+        {
           "command": "gistpad.copyFileContents",
           "when": "viewItem =~ /^gistFile/",
           "group": "copy@2"
@@ -1513,6 +1526,10 @@
         },
         {
           "command": "gistpad.copyFileUrl",
+          "when": "resourceScheme == gist"
+        },
+        {
+          "command": "gistpad.copyFileLatestUrl",
           "when": "resourceScheme == gist"
         },
         {

@@ -147,9 +147,8 @@ export function registerDirectoryCommands(context: ExtensionContext) {
           Promise.all(
             uris.map(async (uri) => {
               const contents = await workspace.fs.readFile(uri);
-              const duplicateFileName = `${directory}${DIRECTORY_SEPARATOR}${path.basename(
-                uri.path
-              )}`;
+              const { file: fileName } = getGistDetailsFromUri(uri);
+              const duplicateFileName = `${directory}${DIRECTORY_SEPARATOR}${fileName}`;
 
               return workspace.fs.writeFile(
                 fileNameToUri(node.gist.id, duplicateFileName),
@@ -180,7 +179,7 @@ export function registerDirectoryCommands(context: ExtensionContext) {
           // so that we don't have to run them sequentially like this
           await withProgress(`Renaming directory...`, async () => {
             for (const uri of uris) {
-              const fileName = path.basename(uri.path);
+              const { file: fileName } = getGistDetailsFromUri(uri);
               const newFileName = `${newDirectoryName}${DIRECTORY_SEPARATOR}${fileName}`;
               const newUri = fileNameToUri(node.gist.id, newFileName);
 

@@ -436,7 +436,8 @@ export class GistFileSystemProvider implements FileSystemProvider {
     }
 
     if (isBinaryPath(uri.path)) {
-      await gitFS.addFile(gistId, path.basename(uri.path), content);
+      const { file: filename } = getGistDetailsFromUri(uri);
+      await gitFS.addFile(gistId, filename, content);
 
       this._onDidChangeFile.fire([
         {

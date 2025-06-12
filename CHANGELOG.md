@@ -1,6 +1,6 @@
 ## v0.9.3 (06/11/25)
 
-- Added a one-click "+" button to note-type gist groups for quickly creating new notes
+- Added "GistPad: New Note" command available in the command palette as well as the tree view
 
 ## v0.9.2 (06/10/25)
 

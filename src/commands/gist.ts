@@ -546,9 +546,8 @@ export async function registerGistCommands(context: ExtensionContext) {
           descriptionInputBox.hide();
           const description = descriptionInputBox.value || "Untitled note";
 
-          return window.withProgress(
-            { location: ProgressLocation.Notification, title: "Creating note..." },
-            () => newGist([{ filename: "README.md", content: "" }], false, description)
+          return withProgress("Creating note...", () =>
+            newGist([{ filename: "README.md", content: "" }], false, description)
           );
         });
 

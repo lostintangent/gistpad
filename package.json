@@ -60,7 +60,7 @@
           "description": "Controls auto-saving of gist files. Defaults to off."
         },
         "gistpad.autoSaveDelay": {
-          "default": 1000,
+          "default": 5000,
           "type": "number",
           "minimum": 1,
           "description": "Configure the delay in milliseconds after which a dirty file is saved automatically. Only applies when 'gistpad.autoSave' is set to 'afterDelay'. Defaults to 1000."
@@ -385,6 +385,7 @@
       {
         "command": "gistpad.newNote",
         "title": "New Note",
+        "category": "GistPad",
         "icon": "$(add)"
       },
       {

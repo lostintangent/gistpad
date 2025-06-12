@@ -333,7 +333,7 @@ In addition to the `Gists` view, this extension also provides the following comm
   - `afterDelay`: Auto-save files after a configured delay.
   - `onFocusChange`: Auto-save files when focus moves away from the editor.
 
-- `GistPad: Auto Save Delay` - Configure the delay in milliseconds after which a dirty file is saved automatically. Only applies when `GistPad: Auto Save` is set to `afterDelay`. Defaults to `1000`.
+- `GistPad: Auto Save Delay` - Configure the delay in milliseconds after which a dirty file is saved automatically. Only applies when `GistPad: Auto Save` is set to `afterDelay`. Defaults to `5000`.
 
 - `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
 

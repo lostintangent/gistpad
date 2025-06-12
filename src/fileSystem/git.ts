@@ -92,6 +92,20 @@ export async function duplicateGist(
   );
 }
 
+export async function cloneGistToDirectory(
+  gistId: string,
+  parentDirectory: string,
+  directoryName: string
+) {
+  const token = await getToken();
+  const remote = `https://${store.login}:${token}@gist.github.com/${gistId}.git`;
+  const targetPath = path.join(parentDirectory, directoryName);
+  
+  await git(parentDirectory).silent(true).clone(remote, directoryName);
+  
+  return targetPath;
+}
+
 async function pushRemote(
   repo: git.SimpleGit,
   remoteName: string,

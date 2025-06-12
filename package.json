@@ -134,6 +134,15 @@
           "default": "LL",
           "type": "string",
           "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."
+        },
+        "gistpad.clone.directoryName": {
+          "default": "gistId",
+          "enum": [
+            "gistId",
+            "description",
+            "prompt"
+          ],
+          "description": "Specifies how to name the directory when cloning a gist repository. 'gistId' uses the default behavior, 'description' uses the gist description if available (falling back to gistId), 'prompt' asks for a custom name."
         }
       }
     },

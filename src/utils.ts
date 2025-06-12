@@ -209,6 +209,19 @@ export function encodeDirectoryUri(uri: Uri) {
   return uri;
 }
 
+export function sanitizeDirectoryName(name: string): string {
+  // Remove invalid characters for directory names
+  // Replace spaces and special characters with hyphens
+  return name
+    .replace(/[<>:"/\\|?*\x00-\x1f]/g, '') // Remove invalid filesystem characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/[^\w\-\.]/g, '') // Keep only word characters, hyphens, and dots
+    .replace(/--+/g, '-') // Replace multiple consecutive hyphens with single hyphen
+    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
+    .substring(0, 100) // Limit length to 100 characters
+    || 'gist'; // Fallback if name becomes empty
+}
+
 export function decodeDirectoryUri(uri: Uri) {
   if (uri.path.includes(ENCODED_DIRECTORY_SEPARATOR)) {
     return uri.with({

@@ -319,6 +319,8 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad > Daily Notes: Show` - Specifies whether or not to display the daily notes node in the gists tree view. Defaults to `true`.
 
+- `GistPad > Gists: Date Format` - Specifies the [moment.js](https://momentjs.com/) format string to use for displaying created and updated dates in gist tooltips. Use `calendar` for relative time display (e.g. "Last Monday at 2:30 PM") or any moment.js format string (e.g. "MMM Do, YYYY" for "Nov 1st, 2021"). Defaults to `calendar`.
+
 - `GistPad > MCP: Enabled` - Specifies whether or not to enable the MCP server that exposes GistPad tools/resources/prompts to Copilot chat. Defaults to `true`.
 
 - `GistPad > MCP: Markdown Only` - Specifies whether the MCP resources that GistPad exposes should be limited to markdown notes only (e.g. because you only intend to use it for editing notes vs. code snippets). Defaults to `false`.

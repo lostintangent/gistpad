@@ -1653,7 +1653,7 @@
     "gists": "github:lostintangent/gists",
     "github-base": "^1.0.0",
     "https-browserify": "^1.0.0",
-    "is-binary-path": "^3.0.0",
+    "is-binary-path": "2.1",
     "markdown-it": "^14.1.0",
     "markdown-it-regex": "^0.2.0",
     "mobx": "^5.14.2",
@@ -1664,7 +1664,7 @@
     "rxjs": "^6.5.4",
     "simple-git": "^3.28.0",
     "stream-http": "^3.2.0",
-    "title-case": "^3.0.2",
+    "title-case": "^4.3.2",
     "url": "^0.11.3",
     "util": "^0.12.5"
   },

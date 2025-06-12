@@ -241,10 +241,15 @@ export function getGistDetailsFromUri(uri: Uri) {
     ? pathWithoutPrefix.split(DIRECTORY_SEPARATOR)[0]
     : "";
 
+  // Use lastIndexOf to find the last forward slash and extract filename
+  // This preserves backslashes that are part of the filename itself
+  const lastSlashIndex = uri.path.lastIndexOf('/');
+  const filename = lastSlashIndex >= 0 ? uri.path.substr(lastSlashIndex + 1) : uri.path;
+
   return {
     gistId: uri.authority,
     directory: decodeURIComponent(directory),
-    file: decodeURIComponent(path.basename(uri.path))
+    file: decodeURIComponent(filename)
   };
 }
 
@@ -303,7 +308,12 @@ export function stringToByteArray(value: string) {
 }
 
 export function uriToFileName(uri: Uri): string {
-  return decodeURIComponent(path.basename(uri.toString()));
+  // Use lastIndexOf to find the last forward slash and extract filename
+  // This preserves backslashes that are part of the filename itself
+  const uriString = uri.toString();
+  const lastSlashIndex = uriString.lastIndexOf('/');
+  const filename = lastSlashIndex >= 0 ? uriString.substr(lastSlashIndex + 1) : uriString;
+  return decodeURIComponent(filename);
 }
 
 const IMAGE_EXTENSIONS = [".png", ".tldraw"];

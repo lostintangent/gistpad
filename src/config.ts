@@ -16,7 +16,7 @@ export function get(key: "dailyNotes.show"): boolean;
 export function get(key: "showcaseUrl"): string;
 export function get(key: "syncOnSave"): boolean;
 export function get(key: "treeIcons"): boolean;
-export function get(key: "clone.directoryName"): "gistId" | "description" | "prompt";
+export function get(key: "cloneDirectory"): "gistId" | "description" | "prompt";
 
 export function get(key: any) {
   const extensionConfig = vscode.workspace.getConfiguration(CONFIG_SECTION);

@@ -344,7 +344,7 @@ export async function registerGistCommands(context: ExtensionContext) {
     commands.registerCommand(
       `${EXTENSION_NAME}.cloneRepository`,
       async (node: GistNode) => {
-        const cloneDirectoryNameSetting = config.get("clone.directoryName");
+        const cloneDirectoryNameSetting = config.get("cloneDirectory");
         
         if (cloneDirectoryNameSetting === "gistId") {
           // Use default behavior

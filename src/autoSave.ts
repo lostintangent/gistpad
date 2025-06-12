@@ -12,7 +12,6 @@ export class AutoSaveManager {
   private disposables: vscode.Disposable[] = [];
 
   constructor() {
-    // Listen for text document changes to trigger auto-save
     this.disposables.push(
       vscode.workspace.onDidChangeTextDocument((event) => {
         const document = event.document;
@@ -22,7 +21,6 @@ export class AutoSaveManager {
       })
     );
 
-    // Listen for focus changes to trigger auto-save on focus change
     this.disposables.push(
       vscode.window.onDidChangeActiveTextEditor((editor) => {
         if (config.get("autoSave") === "onFocusChange") {
@@ -36,7 +34,6 @@ export class AutoSaveManager {
       })
     );
 
-    // Listen for configuration changes to adjust auto-save behavior
     this.disposables.push(
       vscode.workspace.onDidChangeConfiguration((event) => {
         if (event.affectsConfiguration("gistpad.autoSave") || 
@@ -54,18 +51,16 @@ export class AutoSaveManager {
       })
     );
 
-    // Listen for document saves to clear timers
     this.disposables.push(
-      vscode.workspace.onDidSaveTextDocument((document) => {
-        this.clearTimer(document.uri.toString());
-      })
+      vscode.workspace.onDidSaveTextDocument((document) =>
+        this.clearTimer(document.uri.toString())
+      )
     );
 
-    // Listen for document closes to clear timers
     this.disposables.push(
-      vscode.workspace.onDidCloseTextDocument((document) => {
-        this.clearTimer(document.uri.toString());
-      })
+      vscode.workspace.onDidCloseTextDocument((document) =>
+        this.clearTimer(document.uri.toString())
+      )
     );
   }
 
@@ -114,14 +109,10 @@ export class AutoSaveManager {
 
   private async saveDocument(document: vscode.TextDocument): Promise<void> {
     try {
-      // Only save if the document is still dirty
       if (document.isDirty) {
         await document.save();
       }
     } catch (error) {
-      // Silently ignore save errors to avoid interrupting user workflow
-      // The user will see errors if they try to save manually
-      console.warn("Auto-save failed:", error);
     }
   }
 

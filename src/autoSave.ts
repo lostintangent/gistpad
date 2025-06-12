@@ -65,18 +65,15 @@ export class AutoSaveManager {
   }
 
   private shouldAutoSave(document: vscode.TextDocument): boolean {
-    // Only auto-save gist files
     if (document.uri.scheme !== FS_SCHEME) {
       return false;
     }
 
-    // Check if auto-save is enabled
     const autoSaveMode = config.get("autoSave");
     if (autoSaveMode === "off") {
       return false;
     }
 
-    // Don't auto-save if the document is not dirty
     if (!document.isDirty) {
       return false;
     }
@@ -87,17 +84,14 @@ export class AutoSaveManager {
   private scheduleAutoSave(document: vscode.TextDocument): void {
     const autoSaveMode = config.get("autoSave");
     
-    // Only schedule for afterDelay mode
     if (autoSaveMode !== "afterDelay") {
       return;
     }
 
     const uri = document.uri.toString();
     
-    // Clear existing timer for this document
     this.clearTimer(uri);
 
-    // Schedule new auto-save
     const delay = config.get("autoSaveDelay");
     const timer = setTimeout(() => {
       this.saveDocument(document);

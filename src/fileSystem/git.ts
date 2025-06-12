@@ -1,12 +1,12 @@
 import * as fs from "fs";
 import * as os from "os";
 import * as path from "path";
-import * as git from "simple-git/promise";
+import { simpleGit as git, type SimpleGit } from "simple-git";
 import { store } from "../store";
 import { refreshGist } from "../store/actions";
 import { getToken } from "../store/auth";
 
-async function ensureRepo(gistId: string): Promise<[string, git.SimpleGit]> {
+async function ensureRepo(gistId: string): Promise<[string, SimpleGit]> {
   const repoPath = path.join(os.tmpdir(), gistId);
   const repoExists = fs.existsSync(repoPath);
 
@@ -93,7 +93,7 @@ export async function duplicateGist(
 }
 
 async function pushRemote(
-  repo: git.SimpleGit,
+  repo: SimpleGit,
   remoteName: string,
   remoteUrl: string
 ) {

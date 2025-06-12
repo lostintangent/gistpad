@@ -155,6 +155,11 @@
           "default": "LL",
           "type": "string",
           "description": "Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages."
+        },
+        "gistpad.wikis.daily.filenameFormat": {
+          "default": "YYYY-MM-DD",
+          "type": "string",
+          "description": "Specifies the date format (using Moment.js syntax) that is used to for the filename of daily pages."
         }
       }
     },

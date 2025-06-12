@@ -1,7 +1,8 @@
 ## v0.9.3 (06/11/25)
 
-- Added "GistPad: New Note" command available in the command palette as well as the tree view
-- Added `gistpad.wikis.daily.filenameFormat` setting to customize the filename format for daily wiki pages independently of the title format
+- Added `GistPad: New Note` command available in the command palette as well as the tree view
+- Added `GistPad: Auto Save` and `GistPad: Auto Save Delay` configuration settings
+- Added `GistPad > Wikis > Daily > Filename Format` setting to customize the filename format for daily wiki pages independently of the title format
 
 ## v0.9.2 (06/10/25)
 

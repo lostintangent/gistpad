@@ -548,9 +548,7 @@ export async function registerGistCommands(context: ExtensionContext) {
 
           return window.withProgress(
             { location: ProgressLocation.Notification, title: "Creating note..." },
-            () => {
-              return newGist([{ filename: "README.md", content: "" }], false, description);
-            }
+            () => newGist([{ filename: "README.md", content: "" }], false, description)
           );
         });
 

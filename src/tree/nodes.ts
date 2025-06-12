@@ -295,7 +295,6 @@ export class GistGroupNode extends TreeNode {
       ? (label as GistType)
       : "tag";
 
-    // Set context value - append .editable for user's own gists
     let contextValue = `gistType.${iconType}`;
     if (nodeConstructor === GistNode) {
       contextValue += ".editable";

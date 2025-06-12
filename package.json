@@ -806,7 +806,6 @@
           "command": "gistpad.newGistFromTag",
           "when": "false"
         },
-
         {
           "command": "gistpad.recordRepoCodeTour",
           "when": "false"

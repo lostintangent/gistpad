@@ -397,16 +397,19 @@ export async function registerGistCommands(context: ExtensionContext) {
         const parentPath = parentDirectory[0].fsPath;
         
         try {
-          await withProgress(`Cloning gist to ${directoryName}...`, async () => {
+          await withProgress(`Cloning gist to "${directoryName}"...`, async () => {
             const targetPath = await cloneGistToDirectory(node.gist.id, parentPath, directoryName);
             
             // Optionally open the cloned directory
             const openAction = await window.showInformationMessage(
               `Gist successfully cloned to "${targetPath}"`,
+              "Open",
               "Open in new window"
             );
             
-            if (openAction) {
+            if (openAction === "Open") {
+              commands.executeCommand("vscode.openFolder", Uri.file(targetPath), false);
+            } else if (openAction === "Open in new window") {
               commands.executeCommand("vscode.openFolder", Uri.file(targetPath), true);
             }
           });

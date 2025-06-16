@@ -8,6 +8,7 @@ import {
   DIRECTORY_SEPARATOR,
   ZERO_WIDTH_SPACE
 } from "../constants";
+import { reloadMcpServer } from "../mcp";
 import {
   byteArrayToString,
   closeGistFiles,
@@ -102,6 +103,8 @@ export async function deleteGist(id: string) {
 
   store.gists = store.gists.filter((gist) => gist.id !== id);
   store.archivedGists = store.archivedGists.filter((gist) => gist.id !== id);
+
+  reloadMcpServer();
 }
 
 export async function deleteGistComment(
@@ -268,6 +271,8 @@ export async function newGist(
     openGistFiles(gist.id);
   }
 
+  reloadMcpServer();
+
   return gist;
 }
 
@@ -400,6 +405,8 @@ export async function refreshGists() {
       followedUser.isLoading = false;
     }
   }
+
+  reloadMcpServer();
 }
 
 export async function starredGists(): Promise<Gist[]> {

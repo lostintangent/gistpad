@@ -10,33 +10,30 @@ import {
 import * as config from "./config";
 import { store } from "./store";
 
+const onDidChange = new EventEmitter<void>();
+
+export function reloadMcpServer() {
+    onDidChange.fire();
+}
+
 export function registerMcpServerDefinitionProvider(context: ExtensionContext) {
-    // @ts-ignore
     if (!lm.registerMcpServerDefinitionProvider) return;
 
-    const onDidChange = new EventEmitter<void>();
-
-    // When the user signs in or update, let VS Code
+    // When the user signs in or out, let VS Code
     // know that it needs to refresh the MCP configuration.
-    reaction(
-        () => store.isSignedIn,
-        () => {
-            onDidChange.fire();
-        }
-    );
+    reaction(() => store.isSignedIn, reloadMcpServer);
 
     // When the user updates any of the GistPad MCP config
     // settings, let VS Code know that it needs to refresh.
     context.subscriptions.push(
         workspace.onDidChangeConfiguration((e) => {
             if (e.affectsConfiguration("gistpad.mcp")) {
-                onDidChange.fire();
+                reloadMcpServer();
             }
         })
     );
 
     context.subscriptions.push(
-        // @ts-ignore
         lm.registerMcpServerDefinitionProvider("gistpad", {
             onDidChangeMcpServerDefinitions: onDidChange.event,
             provideMcpServerDefinitions() {
@@ -44,8 +41,7 @@ export function registerMcpServerDefinitionProvider(context: ExtensionContext) {
 
                 const args = ["-y", "gistpad-mcp"];
 
-                if (config.get("mcp.markdownOnly") === true)
-                    args.push("--markdown");
+                if (config.get("mcp.markdownOnly") === true) args.push("--markdown");
 
                 if (config.get("mcp.resources.includeStarred") === true)
                     args.push("--starred");

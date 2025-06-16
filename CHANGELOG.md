@@ -1,3 +1,7 @@
+## v0.9.4 (06/16/25)
+
+- Introduced the `GistPad > MCP > Resources: Include Starred` and `GistPad > MCP > Resources: Include Archived` settings
+
 ## v0.9.3 (06/12/25)
 
 - Added `GistPad: Clone Directory` setting, which allows you to control the name of the directory that gists are cloned into (when running the `Clone Repository` command on a gist)

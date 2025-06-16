@@ -3,7 +3,7 @@
   "displayName": "GistPad",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "vsls-contrib",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "extensionKind": [
     "ui",
     "workspace"
@@ -106,14 +106,24 @@
           "description": "Specifies the upload method to use when pasting an image into a gist file."
         },
         "gistpad.mcp.enabled": {
-          "default": "true",
+          "default": true,
           "type": "boolean",
-          "description": "Specifies whether to enable the MCP server for GistPad. Defaults to true."
+          "markdownDescription": "Specifies whether to enable the MCP server for GistPad. Defaults to `true`."
         },
         "gistpad.mcp.markdownOnly": {
-          "default": "false",
+          "default": false,
           "type": "boolean",
-          "description": "Specifies whether to filter the gists that the MCP server returns, to only those that contain markdown. Defaults to false."
+          "markdownDescription": "Specifies whether to filter the gists that the MCP server returns, to only those that contain markdown. Defaults to `false`."
+        },
+        "gistpad.mcp.resources.includeArchived": {
+          "default": false,
+          "type": "boolean",
+          "markdownDescription": "Specifies whether to include archived gists in the list of MCP resources. Defaults to `false`."
+        },
+        "gistpad.mcp.resources.includeStarred": {
+          "default": false,
+          "type": "boolean",
+          "markdownDescription": "Specifies whether to include starred gists in the list of MCP resources. Defaults to `false`."
         },
         "gistpad.output": {
           "default": false,

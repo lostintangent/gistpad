@@ -226,7 +226,7 @@ When you create a new swing, you'll be asked to select a template, which is simp
 
 In addition to managing gists via the `Gists` tree view, you can also use Copilot chat (in `Agent` mode) to discuss and edit your gists/daily notes via natural language. For example, if you opened up Copilot chat and asked `What is the summary of my <X> gist?`, then Copilot would look up your list of gists, find the one about `<X>`, and then generate a summary for you. Or if you asked `Create a new gist that talks about the JavaScript programming language?`, then Copilot would generate a description + file contents based on the requested topic and then create a new gist for you.
 
-This experience works because the GistPad extension ships with the [GistPad MCP server](https://npmjs.com/gistpad-mcp) out of the box. Beyond simplifying setup, this approach is also more secure, since it creates and manages a GitHub token on your behald, with the minimal scopes. For more details about what you can do with GistPad + Copilot, check out the docs for the GistPad MCP server (including it's list of tools, resources, and prompts support).
+This experience works because the GistPad extension ships with the [GistPad MCP server](https://npmjs.com/gistpad-mcp) out of the box. Beyond simplifying setup, this approach is also more secure, since it creates and manages a GitHub token on your behald, with the minimal scopes. For more details about what you can do with GistPad + Copilot, refer to the `GistPad > MCP` settings and/or check out the docs for the GistPad MCP server (including it's list of tools, resources, and prompts support).
 
 ## Contributed Commands (File Explorer)
 
@@ -330,6 +330,10 @@ In addition to the `Gists` view, this extension also provides the following comm
 - `GistPad > MCP: Enabled` - Specifies whether or not to enable the MCP server that exposes GistPad tools/resources/prompts to Copilot chat. Defaults to `true`.
 
 - `GistPad > MCP: Markdown Only` - Specifies whether the MCP resources that GistPad exposes should be limited to markdown notes only (e.g. because you only intend to use it for editing notes vs. code snippets). Defaults to `false`.
+
+- `GistPad > MCP > Resources: Include Archived` - Specifies whether to include archived gists in the list of MCP resources. Defaults to `false`.
+
+- `GistPad > MCP > Resources: Include Starred` - Specifies whether to include starred gists in the list of MCP resources. Defaults to `false`.
 
 - `GistPad: Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 

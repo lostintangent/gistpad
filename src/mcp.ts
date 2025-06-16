@@ -43,9 +43,15 @@ export function registerMcpServerDefinitionProvider(context: ExtensionContext) {
                 if (!store.isSignedIn || !config.get("mcp.enabled")) return [];
 
                 const args = ["-y", "gistpad-mcp"];
-                if (config.get("mcp.markdownOnly")) {
+
+                if (config.get("mcp.markdownOnly") === true)
                     args.push("--markdown");
-                }
+
+                if (config.get("mcp.resources.includeStarred") === true)
+                    args.push("--starred");
+
+                if (config.get("mcp.resources.includeArchived") === true)
+                    args.push("--archived");
 
                 return [
                     new McpStdioServerDefinition("GistPad", "npx", args, {

@@ -8,6 +8,8 @@ export function get(key: "images.pasteType"): "file" | "base64";
 export function get(key: "images.directoryName"): string;
 export function get(key: "mcp.enabled"): boolean;
 export function get(key: "mcp.markdownOnly"): boolean;
+export function get(key: "mcp.resources.includeArchived"): boolean;
+export function get(key: "mcp.resources.includeStarred"): boolean;
 export function get(key: "output"): boolean;
 export function get(key: "dailyNotes.directoryFormat"): string;
 export function get(key: "dailyNotes.fileExtension"): string;

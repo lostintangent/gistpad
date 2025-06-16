@@ -102,7 +102,17 @@ export function getGistLabel(gist: Gist, stripTags: boolean = false): string {
     return description;
   }
 
-  return `${Object.keys(gist.files)[0]}`;
+  const firstFile = Object.keys(gist.files)[0];
+  if (firstFile !== "README.md") {
+    // Strip the extension of markdown files, since
+    // we'll treat those as pseudo descriptions.
+    return firstFile.replace(/\.md$/i, "");
+  } else {
+    // Explicity mark this as "Untitled", since the file
+    // name isn't unique enough to be used as a name, and 
+    // we want to draw attention to it.
+    return "Untitled";
+  }
 }
 
 export function getGistWorkspaceId() {

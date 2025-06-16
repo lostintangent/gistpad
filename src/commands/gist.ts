@@ -11,10 +11,10 @@ import {
   window,
   workspace
 } from "vscode";
-import { EXTENSION_NAME } from "../constants";
 import * as config from "../config";
+import { EXTENSION_NAME } from "../constants";
 import { updateGistFiles } from "../fileSystem/api";
-import { duplicateGist, exportToRepo, cloneGistToDirectory } from "../fileSystem/git";
+import { cloneGistToDirectory, duplicateGist, exportToRepo } from "../fileSystem/git";
 import { openRepo } from "../repos/store/actions";
 import { findGistInStore, Gist, GistFile, GroupType, SortOrder, store } from "../store";
 import {
@@ -345,42 +345,42 @@ export async function registerGistCommands(context: ExtensionContext) {
       `${EXTENSION_NAME}.cloneRepository`,
       async (node: GistNode) => {
         const cloneDirectoryNameSetting = config.get("cloneDirectory");
-        
+
         if (cloneDirectoryNameSetting === "gistId") {
           // Use default behavior
           return commands.executeCommand("git.clone", node.gist.git_pull_url);
         }
-        
+
         let directoryName: string;
-        
+
         if (cloneDirectoryNameSetting === "description") {
           // Use gist description as directory name, fallback to gist ID
-          directoryName = node.gist.description 
+          directoryName = node.gist.description
             ? sanitizeDirectoryName(node.gist.description)
             : node.gist.id;
         } else if (cloneDirectoryNameSetting === "prompt") {
           // Prompt user for directory name
-          const defaultName = node.gist.description 
+          const defaultName = node.gist.description
             ? sanitizeDirectoryName(node.gist.description)
             : node.gist.id;
-            
+
           const inputName = await window.showInputBox({
             prompt: "Specify the name for the cloned repository directory",
             value: defaultName,
             placeHolder: "Directory name"
           });
-          
+
           if (!inputName) {
             // User cancelled, fall back to default behavior
             return commands.executeCommand("git.clone", node.gist.git_pull_url);
           }
-          
+
           directoryName = sanitizeDirectoryName(inputName);
         } else {
           // Fallback to default behavior for unknown settings
           return commands.executeCommand("git.clone", node.gist.git_pull_url);
         }
-        
+
         // Ask user to select the parent directory
         const parentDirectory = await window.showOpenDialog({
           canSelectFiles: false,
@@ -388,25 +388,25 @@ export async function registerGistCommands(context: ExtensionContext) {
           canSelectMany: false,
           openLabel: "Select parent directory for clone"
         });
-        
+
         if (!parentDirectory || parentDirectory.length === 0) {
           // User cancelled directory selection
           return;
         }
-        
+
         const parentPath = parentDirectory[0].fsPath;
-        
+
         try {
           await withProgress(`Cloning gist to "${directoryName}"...`, async () => {
             const targetPath = await cloneGistToDirectory(node.gist.id, parentPath, directoryName);
-            
+
             // Optionally open the cloned directory
             const openAction = await window.showInformationMessage(
               `Gist successfully cloned to "${targetPath}"`,
               "Open",
               "Open in new window"
             );
-            
+
             if (openAction === "Open") {
               commands.executeCommand("vscode.openFolder", Uri.file(targetPath), false);
             } else if (openAction === "Open in new window") {
@@ -618,10 +618,8 @@ export async function registerGistCommands(context: ExtensionContext) {
 
         descriptionInputBox.onDidAccept(async () => {
           descriptionInputBox.hide();
-          const description = descriptionInputBox.value || "Untitled note";
-
           return withProgress("Creating note...", () =>
-            newGist([{ filename: "README.md", content: "" }], false, description)
+            newGist([{ filename: "README.md", content: "" }], false, descriptionInputBox.value)
           );
         });
 

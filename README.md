@@ -327,13 +327,13 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad > Daily Notes: Show` - Specifies whether or not to display the daily notes node in the gists tree view. Defaults to `true`.
 
-- `GistPad > MCP: Enabled` - Specifies whether or not to enable the MCP server that exposes GistPad tools/resources/prompts to Copilot chat. Defaults to `true`.
+- `GistPad > Mcp: Enabled` - Specifies whether or not to enable the MCP server that exposes GistPad tools/resources/prompts to Copilot chat (in `Agent` mode). Defaults to `true`.
 
-- `GistPad > MCP: Markdown Only` - Specifies whether the MCP resources that GistPad exposes should be limited to markdown notes only (e.g. because you only intend to use it for editing notes vs. code snippets). Defaults to `false`.
+- `GistPad > Mcp: Markdown Only` - Specifies whether the MCP resources that GistPad exposes should be limited to markdown notes only (e.g. because you only intend to use it for editing notes vs. code snippets). Defaults to `false`.
 
-- `GistPad > MCP > Resources: Include Archived` - Specifies whether to include archived gists in the list of MCP resources. Defaults to `false`.
+- `GistPad > Mcp > Resources: Include Archived` - Specifies whether to include archived gists in the list of MCP resources. Defaults to `false`.
 
-- `GistPad > MCP > Resources: Include Starred` - Specifies whether to include starred gists in the list of MCP resources. Defaults to `false`.
+- `GistPad > Mcp > Resources: Include Starred` - Specifies whether to include starred gists in the list of MCP resources. Defaults to `false`.
 
 - `GistPad: Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 

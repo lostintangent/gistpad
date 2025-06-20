@@ -150,7 +150,7 @@ async function syncGistFileInternal(textEditor: TextEditor) {
       }
 
       const content = textEditor.document.getText();
-      const filename = path.basename(uri.path);
+      const { file: filename } = getGistDetailsFromUri(uri);
 
       await updateGistFiles(gistId, [
         [filename, { content }],

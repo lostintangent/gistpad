@@ -103,15 +103,18 @@ export function getGistLabel(gist: Gist, stripTags: boolean = false): string {
   }
 
   const firstFile = Object.keys(gist.files)[0];
-  if (firstFile !== "README.md") {
+  if (firstFile && firstFile !== "README.md") {
     // Strip the extension of markdown files, since
     // we'll treat those as pseudo descriptions.
     return firstFile.replace(/\.md$/i, "");
-  } else {
+  } else if (firstFile === "README.md") {
     // Explicity mark this as "Untitled", since the file
     // name isn't unique enough to be used as a name, and 
     // we want to draw attention to it.
     return "Untitled";
+  } else {
+    // Gist has no files
+    return "Empty Gist";
   }
 }
 

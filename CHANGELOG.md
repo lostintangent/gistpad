@@ -1,3 +1,7 @@
+## v0.9.5 (07/07/25)
+
+- Fixed a bug where gists with no files and no description would break the tree view from loading
+
 ## v0.9.4 (06/16/25)
 
 - Introduced the `GistPad > MCP > Resources: Include Starred` and `GistPad > MCP > Resources: Include Archived` settings

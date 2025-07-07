@@ -114,7 +114,7 @@ export function getGistLabel(gist: Gist, stripTags: boolean = false): string {
     return "Untitled";
   } else {
     // Gist has no files
-    return "Empty Gist";
+    return "Empty";
   }
 }
 

@@ -40,7 +40,11 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
       return;
     }
 
-    const documentLinks = [...findLinks(document.getText())];
+    const links = findLinks(document.getText());
+    if (!links) {
+      return;
+    }
+    const documentLinks = [...links];
     return documentLinks.map(({ title, contentStart, contentEnd }) => {
       const linkRange = new Range(
         document.positionAt(contentStart),

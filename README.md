@@ -15,7 +15,7 @@ From here, you can create and edit [gists](#gist-management), [repositories](#re
 ---
 
 <details open>
-  <summary><h2>Gist Management</h2></summary>
+  <summary><h2>&nbsp;✍️ Gist Management</h2></summary>
 
 In order to create a new gist, simply open the `Gists` tree in the `GistPad` tab, and click the `+` icon in the toolbar. Specify the description and files to seed it with (including support for [directories](#files-and-directories)!). Additionally, you can create gists from local files or snippets by right-clicking them in the `Explorer` tree, or by right-clicking an editor window/tab and selecting `Copy File to Gist`, `Add Selection to Gist`, or `Paste Gist File Contents` ([details](#contributed-commands-editor)).
 
@@ -121,7 +121,7 @@ To see what can be done with gists and [code swings](#codeswing), and to keep up
 </details>
 
 <details open>
-  <summary><h2>Repository Management</h2></summary>
+  <summary><h2>&nbsp;🧑‍🤝‍🧑 Repositories</h2></summary>
 
 GistPad also allows you to create and edit GitHub repos without needing to clone anything locally. To get started, run the `GistPad: Open Repository` command, and specify/select the name of the repo you'd like to start managing. If you want to create a new repo, then select the `Create new repo` or `Create new private repo` options, then specify the name of the repo.
 
@@ -205,7 +205,7 @@ In addition to adding links to pages, it's sometimes valuable to embed the conte
 </details>
 
 <details open>
-  <summary><h2>CodeSwing</h2></summary>
+  <summary><h2>&nbsp;🛝 CodeSwing</h2></summary>
 
 If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template fields, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
@@ -214,16 +214,17 @@ When you create a new swing, you'll be asked to select a template, which is simp
 </details>
 
 <details open>
-  <summary><h2>Copilot chat</h2></summary>
+  <summary><h2>&nbsp;🗨️ Copilot chat</h2></summary>
 
 In addition to managing gists via the `Gists` tree view, you can also use Copilot chat (in `Agent` mode) to discuss and edit your gists/daily notes via natural language. For example, if you opened up Copilot chat and asked `What is the summary of my <X> gist?`, then Copilot would look up your list of gists, find the one about `<X>`, and then generate a summary for you. Or if you asked `Create a new gist that talks about the JavaScript programming language?`, then Copilot would generate a description + file contents based on the requested topic and then create a new gist for you.
 
 This experience works because the GistPad extension ships with the [GistPad MCP server](https://npmjs.com/gistpad-mcp) out of the box. Beyond simplifying setup, this approach is also more secure, since it creates and manages a GitHub token on your behald, with the minimal scopes. For more details about what you can do with GistPad + Copilot, refer to the `GistPad > MCP` settings and/or check out the docs for the GistPad MCP server (including it's list of tools, resources, and prompts support).
-
 </details>
 
+---
+
 <details open>
-  <summary><h2>Contributed Commands</h2></summary>
+  <summary><h2>&nbsp;⏯️ Appendix: Contributed Commands</h2></summary>
   
 ### Contributed Commands (File Explorer)
 
@@ -291,7 +292,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 </details>
 
 <details open>
-  <summary><h2>Configuration Settings</h2></summary>
+  <summary><h2>&nbsp;📋 Appendix: Configuration Settings</h2></summary>
 
 - `GistPad > Comments: Show Thread` - Specifies when to show the comment thread UI whenever you open a gist file. Can be set to one of the following values:
 

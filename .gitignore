@@ -3,3 +3,4 @@ dist
 out
 *.vsix
 .DS_Store
+.specstory

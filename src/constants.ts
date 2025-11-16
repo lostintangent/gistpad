@@ -1,4 +1,4 @@
-export const EXTENSION_NAME = "gistpad-cursor";
+export const EXTENSION_NAME = "gistpad";
 export const EXTENSION_ID = "robincollins.gistfs-cursor";
 
 export const FS_SCHEME = "gist";

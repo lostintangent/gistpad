@@ -3,7 +3,7 @@
   "displayName": "GistPad-Cursor",
   "description": "Manage your code snippets and developer notes using GitHub Gists and repositories.",
   "publisher": "robincollins",
-  "version": "0.9.6",
+  "version": "0.9.7",
   "extensionKind": [
     "ui",
     "workspace"

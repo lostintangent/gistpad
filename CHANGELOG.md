@@ -1,7 +1,13 @@
+## v0.9.7 (16/11/25)
+- Fixed changing `EXTENSION_NAME` to `gistpad-cursor` from `gistpad` in v0.9.6 update.
+- Should have tested more locally before publishing 😒
+
 ## v0.9.6 (16/11/25)
 
 - Added an Acknowledgements section to `README.md` linking to the source fork.
 - Created `FILETREE.md` to reflect current key files and recent changes.
+- Changed `name`, `displayname`, `publisher` in `package.json`
+- Changed `EXTENSION_NAME` and `EXTENSION_ID` in `constants.ts`
 - Lowered the `engine.vscode` version to ^1.95.0 for Cursor Compatibility.
 - Lowered the `@types/vscode` version to match the engine
 

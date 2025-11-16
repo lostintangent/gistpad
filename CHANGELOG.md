@@ -1,3 +1,10 @@
+## v0.9.6 (16/11/25)
+
+- Added an Acknowledgements section to `README.md` linking to the source fork.
+- Created `FILETREE.md` to reflect current key files and recent changes.
+- Lowered the `engine.vscode` version to ^1.95.0 for Cursor Compatibility.
+- Lowered the `@types/vscode` version to match the engine
+
 ## v0.9.5 (07/07/25)
 
 - Fixed a bug where gists with no files and no description would break the tree view from loading

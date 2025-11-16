@@ -1,8 +1,12 @@
-# GistPad 📘
+# GistPad-Cursor 📘
 
-GistPad is a Visual Studio Code extension that allows you to edit GitHub [Gists](https://gist.github.com/) and repositories from the comfort of your favorite editor. You can open, create, delete, fork, archive, and star gists/repositories, and then seamlessly begin editing files **as if they were local**, without ever cloning, pushing or pulling anything. It's like your very own developer library for building and referencing code snippets, commonly used config/scripts, programming-related notes, [knowledge bases](#wikis) and [interactive samples](#codeswing).
+GistPad-Cursor is a FORK of [GistPad  Visual Studio Code extension](https://github.com/lostintangent/gistpad) that has been tweaked to be able to load into the Cursor IDE, that allows you to edit GitHub [Gists](https://gist.github.com/) and repositories from the comfort of your favorite editor. You can open, create, delete, fork, archive, and star gists/repositories, and then seamlessly begin editing files **as if they were local**, without ever cloning, pushing or pulling anything. It's like your very own developer library for building and referencing code snippets, commonly used config/scripts, programming-related notes, [knowledge bases](#wikis) and [interactive samples](#codeswing).
 
 <img src="https://user-images.githubusercontent.com/116461/69910156-96274b80-13fe-11ea-9be4-d801f4e9c377.gif" width="750px" />
+
+## 🙏 Acknowledgements
+
+This project is a fork of the excellent [GistPad Visual Studio Code extension](https://github.com/lostintangent/gistpad). Huge thanks to the original authors and contributors.
 
 ## 🏃 Getting Started
 
@@ -75,7 +79,7 @@ Gist comments are exposed within the editor at the bottom of open gist files. If
 
 <img src="https://user-images.githubusercontent.com/116461/70118599-42467d80-161d-11ea-85eb-7f4cc6e4006b.gif" width="700px" />
 
-If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments. In order to control the behavior of how gist comment threads are displayed, refer to the `GistPad > Comments: Show Thread` config setting.
+If you're not authenticated, you can view existing comments, but you can't reply to them. If you are authenticated, you can add/reply, as well as edit/delete your own comments. In order to control the behavior of how gist comment threads are displayed, refer to the `GistPad-Cursor > Comments: Show Thread` config setting.
 
 ### Pasting Images
 
@@ -83,9 +87,9 @@ In order to make it easy to author Markdown and HTML/Pug files that include imag
 
 ![paste-image](https://user-images.githubusercontent.com/1478800/70382701-9a7ac980-1914-11ea-9fb0-6e55424e2e54.gif)
 
-By default, when you paste an image into a gist file, it's uploaded as a `.png` to the gist, and the appropriate reference is added to it from the document (e.g. inserting an `<img />`). However, this behavior can be changed by using the `GistPad > Images: Paste Format` and/or `GistPad > Images: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details.
+By default, when you paste an image into a gist file, it's uploaded as a `.png` to the gist, and the appropriate reference is added to it from the document (e.g. inserting an `<img />`). However, this behavior can be changed by using the `GistPad-Cursor > Images: Paste Format` and/or `GistPad-Cursor > Images: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details.
 
-By default, when you paste an image, it is uploaded to a directory called `images` within the gist. However, if you'd like to change this (e.g. to `assets` instead), you can set the `GistPad > Images: Directory Name` setting.
+By default, when you paste an image, it is uploaded to a directory called `images` within the gist. However, if you'd like to change this (e.g. to `assets` instead), you can set the `GistPad-Cursor > Images: Directory Name` setting.
 
 ### Following Users
 
@@ -99,9 +103,9 @@ At some point, your code/notes might outgrow the feature set offered by Gists (e
 
 ### Daily Notes
 
-To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad allows you to create "daily notes" by clicking the `New daily note` command under the `Daily Notes` node in the `Gists` tree (or running the `GistPad: New Daily Note` command). A daily note is simply a text document named by default for the time it was created.
+To make it easy to capture ephemeral/fleeting notes as you learn new things throughout the day, GistPad-Cursor allows you to create "daily notes" by clicking the `New daily note` command under the `Daily Notes` node in the `Gists` tree (or running the `GistPad: New Daily Note` command). A daily note is simply a text document named by default for the time it was created.
 
-By default, daily notes are Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad > Daily Notes: File Extension` setting. Furthermore, daily notes are created per day, but you can customize this by setting the `GistPad > Daily Notes: Directory Format` and `GistPad > Daily Notes: File Format` settings.
+By default, daily notes are Markdown documents, but you can customize that behavior (e.g. to create text/AsciiDoc/etc. files) by customizing the `GistPad-Cursor > Daily Notes: File Extension` setting. Furthermore, daily notes are created per day, but you can customize this by setting the `GistPad-Cursor > Daily Notes: Directory Format` and `GistPad-Cursor > Daily Notes: File Format` settings.
 
 In order to help differentiate daily notes from Notes in the `Your Gists` node, daily notes appear as children of a top-level `Daily Notes` node in the `Gists` tree. This makes it easy to view your outstanding daily notes, so you can periodically audit them and migrate meaningful content to a more appropriate location (e.g. a new or existing gist).
 
@@ -123,9 +127,9 @@ To see what can be done with gists and [code swings](#codeswing), and to keep up
 <details open>
   <summary><h2>&nbsp;🧑‍🤝‍🧑 Repositories</h2></summary>
 
-GistPad also allows you to create and edit GitHub repos without needing to clone anything locally. To get started, run the `GistPad: Open Repository` command, and specify/select the name of the repo you'd like to start managing. If you want to create a new repo, then select the `Create new repo` or `Create new private repo` options, then specify the name of the repo.
+GistPad-Cursor also allows you to create and edit GitHub repos without needing to clone anything locally. To get started, run the `GistPad: Open Repository` command, and specify/select the name of the repo you'd like to start managing. If you want to create a new repo, then select the `Create new repo` or `Create new private repo` options, then specify the name of the repo.
 
-After running this command, you'll see a new `Repositories` tree in the `GistPad` tab, which displays the selected repo(s). From here, you can add/upload/edit/delete/rename files, and behind the scenes, your edits will be translated into commits on the respective repo. GistPad will automatically keep your data in sync with GitHub, so you never have to think about pushing or pulling. You can just focus on editing 🚀
+After running this command, you'll see a new `Repositories` tree in the `GistPad` tab, which displays the selected repo(s). From here, you can add/upload/edit/delete/rename files, and behind the scenes, your edits will be translated into commits on the respective repo. GistPad-Cursor will automatically keep your data in sync with GitHub, so you never have to think about pushing or pulling. You can just focus on editing 🚀
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/87234682-46dbcd00-c388-11ea-9c57-6ce0e8c3105a.png" />
 
@@ -133,7 +137,7 @@ After running this command, you'll see a new `Repositories` tree in the `GistPad
 
 ### Directories
 
-In order to create new directories, simply add a new file and include the directory names in the specified file's path (e.g. `foo/bar/baz.md`). GistPad will then create any necessary directories as part of the file-creation process. Furthermore, if you want to move a file from one directory to another, simply right-click the file in the `Repositories` tree, select `Rename File`, and then specify the new directory name in the filepath.
+In order to create new directories, simply add a new file and include the directory names in the specified file's path (e.g. `foo/bar/baz.md`). GistPad-Cursor will then create any necessary directories as part of the file-creation process. Furthermore, if you want to move a file from one directory to another, simply right-click the file in the `Repositories` tree, select `Rename File`, and then specify the new directory name in the filepath.
 
 ### Repo Templates
 
@@ -141,7 +145,7 @@ In addition to creating a new repo "from scratch", you can also create a reposit
 
 ### Branches
 
-By default, when you create/manage a repository, GistPad will assume you're interested in editing the `master` branch. However, when managing a repo, you can specify a different branch by appending `#<branch>` to the specified repo name (e.g. `vsls-contrib/gistpad#featureA`). When you're managing a non-master branch, the repo node in the `Repositories` tree will display the branch name.
+By default, when you create/manage a repository, GistPad-Cursor will assume you're interested in editing the `master` branch. However, when managing a repo, you can specify a different branch by appending `#<branch>` to the specified repo name (e.g. `vsls-contrib/gistpad#featureA`). When you're managing a non-master branch, the repo node in the `Repositories` tree will display the branch name.
 
 If at any time, you want to switch branches, simply right-click the repo node in the `Repositories` tree and select `Switch Branch`. This will let you pick one of the repo's remote branches, as well as create a new branch. When you're done with a branch, simply right-click the repo and select either `Delete Branch` or `Merge Branch`. The later will perform a "squash merge" against `master`. Using branches allows you to "batch" change sets together, and then apply them in a single/semantic commit.
 
@@ -149,22 +153,22 @@ If at any time, you want to switch branches, simply right-click the repo node in
 
 Just like gists, you can copy images into your clipboard (e.g. taking a screenshot, clicking `Copy Image` in your browser, etc.) and then paste them directly into a markdown file by right-clicking the editor and selecting `Paste Image`, or using one of the following keyboard shortcuts: `ctrl+shift+v` _(Windows/Linux)_,`cmd+shift+v` _(macOS)_.
 
-By default, when you paste an image into a repo file, it's uploaded as a `.png` to the repo, and the appropriate reference is added to it from the document (e.g. a `[title](url)` link). However, this behavior can be changed by using the `GistPad > Images: Paste Format` and/or `GistPad > Images: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details. Furthermore, when you paste an image, it is uploaded to a directory called `images` within the gist. However, if you'd like to change this (e.g. to `assets` instead), you can set the `GistPad > Images: Directory Name` setting.
+By default, when you paste an image into a repo file, it's uploaded as a `.png` to the repo, and the appropriate reference is added to it from the document (e.g. a `[title](url)` link). However, this behavior can be changed by using the `GistPad-Cursor > Images: Paste Format` and/or `GistPad-Cursor > Images: Paste Type` settings. Refer to the [config settings](#configuration-settings) section below for more details. Furthermore, when you paste an image, it is uploaded to a directory called `images` within the gist. However, if you'd like to change this (e.g. to `assets` instead), you can set the `GistPad-Cursor > Images: Directory Name` setting.
 
 ### Wikis
 
-By default, when you create/manage a GitHub repository, GistPad will let you edit it like a remotely accessible "file system". However, if you'd like to use the repo as a Roam/Obsidian-like wiki, that's composed of bi-directionally linked markdown pages, then you can indicate that the repo is a wiki in one of the following ways:
+By default, when you create/manage a GitHub repository, GistPad-Cursor will let you edit it like a remotely accessible "file system". However, if you'd like to use the repo as a Roam/Obsidian-like wiki, that's composed of bi-directionally linked markdown pages, then you can indicate that the repo is a wiki in one of the following ways:
 
 1. Including `wiki` in the repo's name (e.g. `lostintangent/gistpad-wiki`)
 1. Adding a `gistpad.json` or `.vscode/gistpad.json` file to the repo itself
 
 <img width="250px" src="https://user-images.githubusercontent.com/116461/87234704-83a7c400-c388-11ea-90a8-2a660bef4dc5.png" />
 
-> Note: For interoperability with Foam, GistPad will also identify a repo as a wiki if it includes a `.vscode/foam.json` file.
+> Note: For interoperability with Foam, GistPad-Cursor will also identify a repo as a wiki if it includes a `.vscode/foam.json` file.
 
 #### Pages
 
-Wikis are composed of "pages", which are markdown files that are identified using their `# Heading`, not their underlying file name. As a result, when you add a new page to a wiki, you simply give it a title/heading (e.g. `Todo List`), as opposed to a file path. Behind the scenes, GistPad will create a new markdown file and pre-populate file name and `# Heading` using the specified title.
+Wikis are composed of "pages", which are markdown files that are identified using their `# Heading`, not their underlying file name. As a result, when you add a new page to a wiki, you simply give it a title/heading (e.g. `Todo List`), as opposed to a file path. Behind the scenes, GistPad-Cursor will create a new markdown file and pre-populate file name and `# Heading` using the specified title.
 
 Additionally, to make it really simple to add a new wiki page, you can either run the `GistPad: Add Wiki Page` command, or click the notebook icon in your status bar.
 
@@ -174,7 +178,7 @@ Additionally, to make it really simple to add a new wiki page, you can either ru
 
 #### Daily Pages
 
-In addition to being able to create topic-oriented pages, GistPad allows you to open your "today page" at any time, which makes it easy to keep track of your daily progress and/or journal. To open your current daily page (that represents today), simply click on the calendar icon to the right of the repo node in the `Repositories` tree. This will open a new page, that is titled based on the current date (e.g. `June 24, 2020`), and placed in a directory named `Daily`. If this page doesn't exist, GistPad will create it, otherwise, it will open the existing one.
+In addition to being able to create topic-oriented pages, GistPad-Cursor allows you to open your "today page" at any time, which makes it easy to keep track of your daily progress and/or journal. To open your current daily page (that represents today), simply click on the calendar icon to the right of the repo node in the `Repositories` tree. This will open a new page, that is titled based on the current date (e.g. `June 24, 2020`), and placed in a directory named `Daily`. If this page doesn't exist, GistPad-Cursor will create it, otherwise, it will open the existing one.
 
 <img width="800px" src="https://user-images.githubusercontent.com/116461/87234721-b356cc00-c388-11ea-946a-e7f9c92258a6.png" />
 
@@ -182,11 +186,11 @@ Additionally, to make it really simple to open your "today page", you can either
 
 <img width="75px" src="https://user-images.githubusercontent.com/116461/100490937-a981fb00-30d4-11eb-9e69-e7ab9b9bab61.png" />
 
-> If you'd like to change the name of the directory that daily pages are stored in, you can set the `GistPad > Wikis > Daily: Directory Name` setting. Furthermore, if you want to change the format that is used to title daily pages, you can set the `GistPad > Wikis > Daily: Title Format` setting. You can also customize the filename format separately using the `GistPad > Wikis > Daily: Filename Format` setting.
+> If you'd like to change the name of the directory that daily pages are stored in, you can set the `GistPad-Cursor > Wikis > Daily: Directory Name` setting. Furthermore, if you want to change the format that is used to title daily pages, you can set the `GistPad-Cursor > Wikis > Daily: Title Format` setting. You can also customize the filename format separately using the `GistPad-Cursor > Wikis > Daily: Filename Format` setting.
 
 #### Links
 
-In order to create connections between pages, you can add `[[links]]` to a page. When you type `[[`, GistPad will display a completion list of the name of all existing pages. Furthermore, you can type a new topic/page title, and GistPad will automatically create that page for you.
+In order to create connections between pages, you can add `[[links]]` to a page. When you type `[[`, GistPad-Cursor will display a completion list of the name of all existing pages. Furthermore, you can type a new topic/page title, and GistPad-Cursor will automatically create that page for you.
 
 When a page includes `[[links]]`, they will be syntax highlighted, and you can hover over them to quickly see the context of the referenced page. Furthermore, you can `cmd+click` the link in order to directly jump to that page. If the page doesn't already exit, then `cmd+clicking` it will automatically create the page before opening it. This workflow makes it easy to author and navigate the set of pages within your wiki.
 
@@ -207,7 +211,7 @@ In addition to adding links to pages, it's sometimes valuable to embed the conte
 <details open>
   <summary><h2>&nbsp;🛝 CodeSwing</h2></summary>
 
-If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template fields, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
+If you're building web applications, and want to create a quick playground environment in order to experiment with HTML, CSS or JavaScript (or [Sass/SCSS, Less, Pug and TypeScript](#additional-language-support)), you can install the [CodeSwing extension](https://aka.ms/codeswing), in order to have a CodePen-like web experience, integrated into VS Code. GistPad-Cursor provides an integration with CodeSwing, and so once it's installed, you can right-click the `Your Gists` node in the `GistPad` tree and select `New CodeSwing` or `New Secret CodeSwing`. This will create a new gist, seeded with the selected template fields, and then provide you with a live preview Webview, so that you can iterate on the code and visually see how it behaves.
 
 When you create a new swing, you'll be asked to select a template, which is simply a way to get started quickly, using the libraries and languages you intend to use (e.g. React.js, Vue.js). Since the swing is backed by a Gist, your changes are saved and shareable with your friends. Additionally, as you find other swings that you'd like to use, simply fork them and create your own swings. That way, you can use Gists as "templates" for swing environments, and collaborate on them with others just like you would any other gist. When you're done with a swing, simply close the preview window and all other documents will be automatically closed. If you no longer need the swing, then delete it just like any other gist 👍
 
@@ -218,7 +222,7 @@ When you create a new swing, you'll be asked to select a template, which is simp
 
 In addition to managing gists via the `Gists` tree view, you can also use Copilot chat (in `Agent` mode) to discuss and edit your gists/daily notes via natural language. For example, if you opened up Copilot chat and asked `What is the summary of my <X> gist?`, then Copilot would look up your list of gists, find the one about `<X>`, and then generate a summary for you. Or if you asked `Create a new gist that talks about the JavaScript programming language?`, then Copilot would generate a description + file contents based on the requested topic and then create a new gist for you.
 
-This experience works because the GistPad extension ships with the [GistPad MCP server](https://npmjs.com/gistpad-mcp) out of the box. Beyond simplifying setup, this approach is also more secure, since it creates and manages a GitHub token on your behald, with the minimal scopes. For more details about what you can do with GistPad + Copilot, refer to the `GistPad > MCP` settings and/or check out the docs for the GistPad MCP server (including it's list of tools, resources, and prompts support).
+This experience works because the GistPad-Cursor extension ships with the [GistPad-Cursor MCP server](https://npmjs.com/gistpad-mcp) out of the box. Beyond simplifying setup, this approach is also more secure, since it creates and manages a GitHub token on your behald, with the minimal scopes. For more details about what you can do with GistPad-Cursor + Copilot, refer to the `GistPad-Cursor > MCP` settings and/or check out the docs for the GistPad-Cursor MCP server (including it's list of tools, resources, and prompts support).
 </details>
 
 ---
@@ -228,13 +232,13 @@ This experience works because the GistPad extension ships with the [GistPad MCP 
   
 ### Contributed Commands (File Explorer)
 
-In addition to the `Gists` view, GistPad also contributes an `Copy File to Gist` command to the context menu of the `Explorer` file tree, which allows you to easily add local files to a new or existing Gist.
+In addition to the `Gists` view, GistPad-Cursor also contributes an `Copy File to Gist` command to the context menu of the `Explorer` file tree, which allows you to easily add local files to a new or existing Gist.
 
 <img width="260px" src="https://user-images.githubusercontent.com/116461/69831695-58001100-11df-11ea-997e-fc8020556348.png" />
 
 ### Contributed Commands (Editor)
 
-In addition to the `Explorer` file tree commands, GistPad also contributes the following commands to the editor's context menu:
+In addition to the `Explorer` file tree commands, GistPad-Cursor also contributes the following commands to the editor's context menu:
 
 - `Add Selection to Gist` - Allows you to add a snippet/selection of code to a Gist, instead of the entire document.
 
@@ -248,7 +252,7 @@ The `Copy File to Gist` command is also available on the editor tab's context me
 
 ### Contributed Commands (Editor Title Bar)
 
-In addition to the commands added to the editor context menu, GistPad also contributes the following commands to the editor's title bar menu (click the `...` in the upper right section of an editor window):
+In addition to the commands added to the editor context menu, GistPad-Cursor also contributes the following commands to the editor's title bar menu (click the `...` in the upper right section of an editor window):
 
 - `Delete File` - Allows you to delete the current file.
 - `Rename File` - Allows you to rename the current file.
@@ -275,7 +279,7 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: New Gist` - Creates a new [public Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#public-gists), and then opens its associated files. If you'd like to seed the gist with multiple files, you can specify a comma-separated list of names (e.g. `foo.txt,bar.js`).
 
-- `GistPad: Open Daily Note` - Creates a new daily note, which is a file whose name is derived from the `GistPad > Daily Notes: Extension` and `Gist > Daily Notes: Format` settings.
+- `GistPad: Open Daily Note` - Creates a new daily note, which is a file whose name is derived from the `GistPad-Cursor > Daily Notes: Extension` and `Gist > Daily Notes: Format` settings.
 
 - `GistPad: New Secret Gist` - Same behavior as the `GistPad: New Gist (Public)` command, except that it creates a [secret Gist](https://help.github.com/en/enterprise/2.13/user/articles/about-gists#secret-gists).
 
@@ -294,25 +298,25 @@ In addition to the `Gists` view, this extension also provides the following comm
 <details open>
   <summary><h2>&nbsp;📋 Appendix: Configuration Settings</h2></summary>
 
-- `GistPad > Comments: Show Thread` - Specifies when to show the comment thread UI whenever you open a gist file. Can be set to one of the following values:
+- `GistPad-Cursor > Comments: Show Thread` - Specifies when to show the comment thread UI whenever you open a gist file. Can be set to one of the following values:
 
   - `always`: Always display the comment thread whenever you open a gist file. You can manually collapse it as needed.
   - `never`: Never automatically open the comment thread when you open a gist file. You can manually expand it as needed.
   - `whenNotEmpty` _(default)_: Automatically display the comment thread whenever there are actually comments in a gist file. Otherwise, leave it collapsed.
 
-- `Gistpad > Images: Directory Name`: Specifies the name of the directory to upload images to. Defaults to `images`.
+- `GistPad-Cursor > Images: Directory Name`: Specifies the name of the directory to upload images to. Defaults to `images`.
 
-- `Gistpad > Images: Markdown Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
+- `GistPad-Cursor > Images: Markdown Paste Format`: Specifies the markup format to use when pasting an image into a gist file. Can be set to one of the following values:
 
   - `markdown` _(default)_: Pastes the image reference using `Markdown` format (e.g. `![image](link)`).
   - `html`: Pastes the image reference using `HTML` format (e.g. `<img src="link" />`). Note, when you paste an image into an HTML file, it will always use this format type, regardless what the setting is.
 
-- `Gistpad > Images: Paste Type`: Specifies the method to use when pasting an image into a gist file. Can be set to one of the following values:
+- `GistPad-Cursor > Images: Paste Type`: Specifies the method to use when pasting an image into a gist file. Can be set to one of the following values:
 
   - `file` _(default)_: The pasted image is uploaded as a `.png` to the gist, and a reference is added to file it's pasted into.
   - `base64`: The pasted image is base64-encoded and then embedded into the gist file.
 
-- `GistPad > Clone Directory`: Specifies how to name the directory when cloning a gist repository. Can be set to one of the following values:
+- `GistPad-Cursor > Clone Directory`: Specifies how to name the directory when cloning a gist repository. Can be set to one of the following values:
 
   - `gistId` _(default)_: Uses the original behavior where the gist GUID is used as the folder name.
   - `description`: Uses the gist description as the folder name (with invalid characters sanitized), falling back to the gist ID if no description is available.
@@ -320,21 +324,21 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `GistPad: Output` - When enabled, creates an Output trace channel at VSCode startup.
 
-- `GistPad > Daily Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new daily notes. Defaults to `LL` (e.g. `March 6, 2020`).
+- `GistPad-Cursor > Daily Notes: Directory Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating directories for new daily notes. Defaults to `LL` (e.g. `March 6, 2020`).
 
-- `GistPad > Daily Notes: File Extension` - Specifies the file extension to use when generating new daily notes. Defaults to `.md`.
+- `GistPad-Cursor > Daily Notes: File Extension` - Specifies the file extension to use when generating new daily notes. Defaults to `.md`.
 
-- `GistPad > Daily Notes: File Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new daily notes. Defaults to `LT` (e.g. `2:52 PM`).
+- `GistPad-Cursor > Daily Notes: File Format` - Specifies the [moment.js](https://momentjs.com/) format string to use when generating new daily notes. Defaults to `LT` (e.g. `2:52 PM`).
 
-- `GistPad > Daily Notes: Show` - Specifies whether or not to display the daily notes node in the gists tree view. Defaults to `true`.
+- `GistPad-Cursor > Daily Notes: Show` - Specifies whether or not to display the daily notes node in the gists tree view. Defaults to `true`.
 
-- `GistPad > Mcp: Enabled` - Specifies whether or not to enable the MCP server that exposes GistPad tools/resources/prompts to Copilot chat (in `Agent` mode). Defaults to `true`.
+- `GistPad-Cursor > Mcp: Enabled` - Specifies whether or not to enable the MCP server that exposes GistPad-Cursor tools/resources/prompts to Copilot chat (in `Agent` mode). Defaults to `true`.
 
-- `GistPad > Mcp: Markdown Only` - Specifies whether the MCP resources that GistPad exposes should be limited to markdown notes only (e.g. because you only intend to use it for editing notes vs. code snippets). Defaults to `false`.
+- `GistPad-Cursor > Mcp: Markdown Only` - Specifies whether the MCP resources that GistPad-Cursor exposes should be limited to markdown notes only (e.g. because you only intend to use it for editing notes vs. code snippets). Defaults to `false`.
 
-- `GistPad > Mcp > Resources: Include Archived` - Specifies whether to include archived gists in the list of MCP resources. Defaults to `false`.
+- `GistPad-Cursor > Mcp > Resources: Include Archived` - Specifies whether to include archived gists in the list of MCP resources. Defaults to `false`.
 
-- `GistPad > Mcp > Resources: Include Starred` - Specifies whether to include starred gists in the list of MCP resources. Defaults to `false`.
+- `GistPad-Cursor > Mcp > Resources: Include Starred` - Specifies whether to include starred gists in the list of MCP resources. Defaults to `false`.
 
 - `GistPad: Showcase URL` - Specifies the URL to use when displaying the showcase entry. This allows teams/classrooms/etc. to create their own showcase and share it amongst themselves.
 
@@ -350,10 +354,10 @@ In addition to the `Gists` view, this extension also provides the following comm
 
 - `Gistpad: Tree Icons` - Specifies whether to show the gist type icons in the gists tree.
 
-- `Gistpad > Wikis > Daily: Directory Name` - Specifies the name of the directory that daily pages are organized within. Defaults to `Daily`.
+- `GistPad-Cursor > Wikis > Daily: Directory Name` - Specifies the name of the directory that daily pages are organized within. Defaults to `Daily`.
 
-- `Gistpad > Wikis > Daily: Title Format` - Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages. Defaults to `LL`.
+- `GistPad-Cursor > Wikis > Daily: Title Format` - Specifies the date format (using Moment.js syntax) that is used to for the title of daily pages. Defaults to `LL`.
 
-- `Gistpad > Wikis > Daily: Filename Format` - Specifies the date format (using Moment.js syntax) that is used to for the filename of daily pages. Defaults to `YYYY-MM-DD`.
+- `GistPad-Cursor > Wikis > Daily: Filename Format` - Specifies the date format (using Moment.js syntax) that is used to for the filename of daily pages. Defaults to `YYYY-MM-DD`.
 
 </details>

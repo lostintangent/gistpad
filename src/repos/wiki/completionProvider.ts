@@ -21,7 +21,12 @@ class WikiLinkCompletionProvider implements CompletionItemProvider {
     document: TextDocument,
     position: Position
   ): CompletionItem[] | undefined {
-    const [repo, file] = RepoFileSystemProvider.getRepoInfo(document.uri)!;
+    const repoInfo = RepoFileSystemProvider.getRepoInfo(document.uri);
+    if (!repoInfo) {
+      return;
+    }
+
+    const [repo, file] = repoInfo;
     if (!repo.isWiki) {
       return;
     }

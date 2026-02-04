@@ -9,16 +9,22 @@ export function extendMarkdownIt(md: any) {
       regex: /(?<!\!)(?:\[\[)([^\]]+?)(?:\]\])/,
       replace: (link: string) => {
         if (
+          !vscode.window.activeTextEditor ||
           !RepoFileSystemProvider.isRepoDocument(
-            vscode.window.activeTextEditor!.document
+            vscode.window.activeTextEditor.document
           )
         ) {
           return;
         }
 
-        const [repo] = RepoFileSystemProvider.getRepoInfo(
-          vscode.window.activeTextEditor!.document.uri
-        )!;
+        const repoInfo = RepoFileSystemProvider.getRepoInfo(
+          vscode.window.activeTextEditor.document.uri
+        );
+        if (!repoInfo) {
+          return;
+        }
+
+        const [repo] = repoInfo;
         if (!repo.isWiki) {
           return;
         }
@@ -35,16 +41,22 @@ export function extendMarkdownIt(md: any) {
       regex: /(?:\!\[\[)([^\]]+?)(?:\]\])/,
       replace: (link: string) => {
         if (
+          !vscode.window.activeTextEditor ||
           !RepoFileSystemProvider.isRepoDocument(
-            vscode.window.activeTextEditor!.document
+            vscode.window.activeTextEditor.document
           )
         ) {
           return;
         }
 
-        const [repo] = RepoFileSystemProvider.getRepoInfo(
-          vscode.window.activeTextEditor!.document.uri
-        )!;
+        const repoInfo = RepoFileSystemProvider.getRepoInfo(
+          vscode.window.activeTextEditor.document.uri
+        );
+        if (!repoInfo) {
+          return;
+        }
+
+        const [repo] = repoInfo;
         if (!repo.isWiki) {
           return;
         }

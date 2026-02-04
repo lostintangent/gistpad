@@ -35,7 +35,12 @@ class WikiDocumentLinkProvider implements DocumentLinkProvider {
   public provideDocumentLinks(
     document: TextDocument
   ): WikiDocumentLink[] | undefined {
-    const [repo] = RepoFileSystemProvider.getRepoInfo(document.uri)!;
+    const repoInfo = RepoFileSystemProvider.getRepoInfo(document.uri);
+    if (!repoInfo) {
+      return;
+    }
+
+    const [repo] = repoInfo;
     if (!repo.isWiki) {
       return;
     }

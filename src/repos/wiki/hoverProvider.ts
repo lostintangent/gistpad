@@ -12,7 +12,12 @@ import { findLinks, getTreeItemFromLink, LINK_SELECTOR } from "./utils";
 
 class LinkHoverProvider implements HoverProvider {
   public provideHover(document: TextDocument, position: Position) {
-    const [repo] = RepoFileSystemProvider.getRepoInfo(document.uri)!;
+    const repoInfo = RepoFileSystemProvider.getRepoInfo(document.uri);
+    if (!repoInfo) {
+      return;
+    }
+
+    const [repo] = repoInfo;
     if (!repo.isWiki) {
       return;
     }

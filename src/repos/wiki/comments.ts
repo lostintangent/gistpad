@@ -22,8 +22,12 @@ export class WikiBacklinksComments implements Comment {
   constructor(backlinks: TreeItemBackLink[]) {
     const content = backlinks
       .map((link) => {
-        const [, file] = RepoFileSystemProvider.getRepoInfo(link.location.uri)!;
-        const title = file!.displayName || file!.path;
+        const repoInfo = RepoFileSystemProvider.getRepoInfo(link.location.uri);
+        if (!repoInfo || !repoInfo[1]) {
+          return "";
+        }
+        const [, file] = repoInfo;
+        const title = file.displayName || file.path;
         const args = [
           link.location.uri,
           {
@@ -76,7 +80,7 @@ export function registerCommentController() {
       return;
     }
 
-    const info = RepoFileSystemProvider.getRepoInfo(e.document.uri)!;
+    const info = RepoFileSystemProvider.getRepoInfo(e.document.uri);
     if (!info || !info[0].isWiki || !info[1]?.backLinks) {
       return;
     }

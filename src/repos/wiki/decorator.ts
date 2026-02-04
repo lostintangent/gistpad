@@ -117,7 +117,12 @@ function isWikiDocument(document: TextDocument) {
     return false;
   }
 
-  const [repo] = RepoFileSystemProvider.getRepoInfo(document.uri)!;
+  const repoInfo = RepoFileSystemProvider.getRepoInfo(document.uri);
+  if (!repoInfo) {
+    return false;
+  }
+
+  const [repo] = repoInfo;
   return repo.isWiki;
 }
 
@@ -130,7 +135,7 @@ export function registerLinkDecorator() {
 
   workspace.onDidChangeTextDocument((event) => {
     const editor = window.activeTextEditor;
-    if (!isWikiDocument(editor!.document)) {
+    if (!editor || !isWikiDocument(editor.document)) {
       return;
     }
 
@@ -142,7 +147,7 @@ export function registerLinkDecorator() {
       timeout = setTimeout(() => updateDecorations(editor), 1000);
     };
 
-    if (editor !== undefined && event.document === editor.document) {
+    if (event.document === editor.document) {
       triggerUpdateDecorations(editor);
     }
   });

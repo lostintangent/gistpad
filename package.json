@@ -1664,7 +1664,7 @@
     "github-base": "^1.0.0",
     "https-browserify": "^1.0.0",
     "is-binary-path": "2.1",
-    "markdown-it": "^14.1.0",
+    "markdown-it": "^14.1.1",
     "markdown-it-regex": "^0.2.0",
     "mobx": "^5.14.2",
     "moment": "^2.24.0",

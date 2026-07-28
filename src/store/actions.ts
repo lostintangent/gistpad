@@ -27,9 +27,13 @@ import moment = require("moment");
 
 const Gists = require("gists");
 
-export async function getApi(constructor = Gists) {
+/** Creates a GitHub API client with optional transport settings for the caller. */
+export async function getApi(
+  constructor = Gists,
+  requestOptions: { timeout?: number } = {}
+) {
   const token = await getToken();
-  return new constructor({ token });
+  return new constructor({ token, ...requestOptions });
 }
 
 export async function duplicateGist(

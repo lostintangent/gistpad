@@ -46,6 +46,7 @@ interface WriteOperation {
   type: FileChangeType;
   content?: string;
   resolve: () => void;
+  reject: (reason?: any) => void;
 }
 
 export class GistFileSystemProvider implements FileSystemProvider {
@@ -121,22 +122,33 @@ export class GistFileSystemProvider implements FileSystemProvider {
         }, new Map<string, WriteOperation[]>());
 
         writesByGist.forEach(async (writeOperations, gistId) => {
-          await updateGistFiles(
-            gistId,
-            writeOperations.map((write) => {
-              const value: GistFile | null =
-                write.type === FileChangeType.Deleted
-                  ? null
-                  : {
-                    filename: write.filename!,
-                    content: write.content!
-                  };
-              return [write.filename, value];
-            })
-          );
+          try {
+            await updateGistFiles(
+              gistId,
+              writeOperations.map((write) => {
+                const value: GistFile | null =
+                  write.type === FileChangeType.Deleted
+                    ? null
+                    : {
+                      filename: write.filename!,
+                      content: write.content!
+                    };
+                return [write.filename, value];
+              })
+            );
 
-          writeOperations.forEach((write) => write.resolve());
-          this._onDidChangeFile.fire(writeOperations);
+            writeOperations.forEach((write) => write.resolve());
+            this._onDidChangeFile.fire(writeOperations);
+          } catch (error) {
+            const message = error instanceof Error ? error.message : String(error);
+            const writeError = FileSystemError.Unavailable(
+              `Unable to save Gist: ${message}`
+            );
+
+            // Every queued VS Code write must settle after a failed remote update.
+            console.error(`Failed to save Gist ${gistId}: ${message}`);
+            writeOperations.forEach((write) => write.reject(writeError));
+          }
         });
       });
   }
@@ -227,13 +239,14 @@ export class GistFileSystemProvider implements FileSystemProvider {
     await ensureAuthenticated();
 
     const { gistId, file } = getGistDetailsFromUri(uri);
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       this._pendingWrites.next({
         type: FileChangeType.Deleted,
         gistId,
         filename: file,
         uri,
-        resolve
+        resolve,
+        reject
       });
     });
   }
@@ -455,14 +468,15 @@ export class GistFileSystemProvider implements FileSystemProvider {
         return;
       }
 
-      return new Promise((resolve) => {
+      return new Promise((resolve, reject) => {
         this._pendingWrites.next({
           type,
           gistId,
           filename: uriToFileName(uri),
           content: byteArrayToString(content),
           uri,
-          resolve
+          resolve,
+          reject
         });
       });
     }

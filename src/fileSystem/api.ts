@@ -5,6 +5,9 @@ import { Gist, GistFile, store } from "../store";
 import { getApi } from "../store/actions";
 
 const isBinaryPath = require("is-binary-path");
+
+const GIST_WRITE_TIMEOUT_MS = 30_000;
+
 export async function getFileContents(file: GistFile) {
   if (file.truncated || !file.content) {
     const responseType = isBinaryPath(file.filename!) ? "arraybuffer" : "text";
@@ -39,7 +42,7 @@ export async function updateGistFiles(
   id: string,
   gistFiles: Array<[string, GistFile | null]>
 ): Promise<Gist> {
-  const api = await getApi();
+  const api = await getApi(undefined, { timeout: GIST_WRITE_TIMEOUT_MS });
 
   const files = gistFiles.reduce((accumulator, [filename, file]) => {
     if (file && file.content === "") {

@@ -1652,6 +1652,7 @@
   },
   "scripts": {
     "compile": "tsc -p ./",
+    "test": "tsc -p ./ --skipLibCheck && node --test out/fileSystem/index.test.js",
     "package": "vsce package",
     "vscode:prepublish": "webpack",
     "watch": "webpack --mode development --watch --progress"

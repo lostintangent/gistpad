@@ -43,6 +43,14 @@ const vscode = {
   }
 };
 
+/** Identifies the compiled provider module across Windows and POSIX path separators. */
+function isFileSystemProviderModule(parent: NodeModule | undefined): boolean {
+  return (
+    parent?.filename.replace(/\\/g, "/").endsWith("/fileSystem/index.js") ??
+    false
+  );
+}
+
 /**
  * Loads the provider with a failed GitHub update and a minimal VS Code API.
  * The mock keeps this regression test focused on the file-system write contract.
@@ -53,7 +61,7 @@ function loadProvider() {
       return vscode;
     }
 
-    if (parent?.filename.endsWith("fileSystem\\index.js")) {
+    if (isFileSystemProviderModule(parent)) {
       switch (request) {
         case "../config":
           return { get: () => true };
@@ -103,6 +111,18 @@ function rejectAfter(delayMs: number): Promise<never> {
     setTimeout(() => reject(new Error("save never completed")), delayMs);
   });
 }
+
+test("stubs provider dependencies for POSIX module paths", () => {
+  loadProvider();
+
+  const config = (Module as any)._load(
+    "../config",
+    { filename: "/tmp/out/fileSystem/index.js" },
+    false
+  );
+
+  assert.equal(config.get(), true);
+});
 
 test("rejects a save when the GitHub update fails", async () => {
   const GistFileSystemProvider = loadProvider();
